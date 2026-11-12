@@ -5,5 +5,8 @@ storybook-static/
 # Local ODD tracking: specs, task list and log for this feature.
 odd/
 
+# Local CodeGraph index: SQLite database plus the daemon socket and pid files.
+.codegraph/
+
 .DS_Store
 *.log
