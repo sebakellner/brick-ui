@@ -2,12 +2,14 @@ import { esbuildPlugin } from '@web/dev-server-esbuild';
 import { sendMousePlugin } from '@web/test-runner-commands/plugins';
 
 export default {
-  files: [
-    // DIAGNOSTIC
-    'src/components/bk-input/bk-input.test.ts',
-    'src/components/theming.test.ts',
-  ],
+  files: 'src/**/*.test.ts',
   nodeResolve: true,
+  // One file at a time. The suite mixes tests that drive the browser through
+  // commands — `sendMouse`, and `updateComplete` inside form fixtures — with tests
+  // that force style recalculations over the whole page. Run together, they starve
+  // each other: the command-awaiting tests hang, and raising the timeout does not
+  // help because the work is not slow, it is not scheduled.
+  concurrency: 1,
   plugins: [
     esbuildPlugin({ ts: true, target: 'auto', tsconfig: './tsconfig.json' }),
     sendMousePlugin(),

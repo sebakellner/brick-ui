@@ -10,13 +10,18 @@ const hex = (value: string) =>
   )})`;
 
 /** Resolves a role the way a component would: through the custom property chain. */
+let probe: HTMLDivElement | undefined;
+
+/**
+ * Resolves a role the way a component would, through one reusable probe. The
+ * thirteen-role matrix used to build, append, measure and remove a div per role;
+ * each one forced a recalculation of the whole page, which is what starved the
+ * browser-command tests that used to run alongside this file.
+ */
 const role = (name: string): string => {
-  const probe = document.createElement('div');
+  probe ??= document.body.appendChild(document.createElement('div'));
   probe.style.color = `var(--bk-${name})`;
-  document.body.append(probe);
-  const resolved = getComputedStyle(probe).color;
-  probe.remove();
-  return resolved;
+  return getComputedStyle(probe).color;
 };
 
 const LIGHT: Record<string, string> = {
@@ -53,6 +58,11 @@ const DARK: Record<string, string> = {
 
 describe('theming', () => {
   before(() => loadTheme());
+
+  afterEach(() => {
+    probe?.remove();
+    probe = undefined;
+  });
 
   describe('light', () => {
     beforeEach(() => setTheme('light'));
