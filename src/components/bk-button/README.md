@@ -45,6 +45,9 @@ Every visual value comes from a token; the component holds no literals.
 | `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset` | focus ring |
 | `--bk-transition` | hover transition |
 
+The default variant paints on the accent (`--bk-palette-blue-600`, hover
+`--bk-palette-blue-700`); white text on it clears 4.5:1, which the tests assert.
+
 The first five are **override hooks**: they win over the variant default even
 when inherited from an ancestor. The variant defaults are
 `--bk-button-{primary,secondary,ghost}-{bg,bg-hover,fg,border}`.
