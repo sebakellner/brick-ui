@@ -1,7 +1,7 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import './bk-button.js';
 import type { BkButton } from './bk-button.js';
-import { contrastWithWhite } from '../../test/helpers/contrast.js';
+import { contrastRatio, contrastWithWhite } from '../../test/helpers/contrast.js';
 import { loadTheme } from '../../test/helpers/theme.js';
 
 const innerButton = (el: BkButton) => el.shadowRoot!.querySelector('button')!;
@@ -53,6 +53,13 @@ describe('bk-button', () => {
 
     button.focus();
     expect(button.shadowRoot!.activeElement).to.equal(innerButton(button));
+  });
+
+  it('should keep its label readable on the accent background', async () => {
+    const primary = await mount();
+    const style = getComputedStyle(innerButton(primary));
+
+    expect(contrastRatio(style.color, style.backgroundColor)).to.be.at.least(4.5);
   });
 
   it('should keep the secondary border at 3:1 against a white surface', async () => {

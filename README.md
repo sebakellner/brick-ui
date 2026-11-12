@@ -50,7 +50,8 @@ the tokens do not cover.
 
 `src/styles/theme.css` is the entry point. Tokens come from `tokens/*.json`
 through Style Dictionary, in six groups: space, rounded, color, control,
-typography and base.
+typography and base. The accent is the blue ramp (`--bk-palette-blue-600`, with
+`blue-700` on hover); the focus ring stays `sky-600`.
 
 Override a token anywhere in the tree:
 
