@@ -1,4 +1,5 @@
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, nextFrame } from '@open-wc/testing';
+import { sendMouse } from '@web/test-runner-commands';
 import './bk-input.js';
 import type { BkInput } from './bk-input.js';
 
@@ -46,6 +47,18 @@ describe('bk-input', () => {
 
     expect(style.backgroundColor).to.equal('rgb(7, 8, 9)');
     expect(style.borderTopColor).to.equal('rgb(1, 2, 3)');
+  });
+
+  it('should keep the danger border while the invalid field is hovered', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email" error="Required"></bk-input>`);
+    const field = innerInput(el);
+    const { x, y, width, height } = field.getBoundingClientRect();
+    await sendMouse({ type: 'move', position: [Math.round(x + width / 2), Math.round(y + height / 2)] });
+    await nextFrame();
+    await new Promise((resolve) => setTimeout(resolve, 250));
+
+    expect(field.matches(':hover')).to.equal(true);
+    expect(getComputedStyle(field).borderTopColor).to.equal('rgb(185, 28, 28)');
   });
 
   it('should emit bk-change with the value, bubbling out of the shadow root', async () => {

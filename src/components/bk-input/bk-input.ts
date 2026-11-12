@@ -61,7 +61,7 @@ export class BkInput extends LitElement {
       color: var(--bk-color-text-muted, #57534e);
     }
 
-    input:hover:not(:disabled) {
+    input:hover:not(:disabled):not([aria-invalid='true']) {
       border-color: var(--bk-color-border-strong, #a8a29e);
     }
 
