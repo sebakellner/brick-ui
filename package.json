@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@open-wc/testing": "^5.0.0",
+    "@storybook/addon-docs": "^10.6.7",
     "@storybook/web-components-vite": "^10.6.7",
     "@types/mocha": "^10.0.10",
     "@web/dev-server-esbuild": "^2.0.1",

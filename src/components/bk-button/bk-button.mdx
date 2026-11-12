@@ -1,0 +1,19 @@
+import { Meta, Canvas, Markdown } from '@storybook/addon-docs/blocks';
+import * as ButtonStories from './bk-button.stories';
+import readme from './README.md?raw';
+
+<Meta of={ButtonStories} />
+
+<Markdown>{readme}</Markdown>
+
+## Variants
+
+<Canvas of={ButtonStories.Variants} />
+
+## Disabled
+
+<Canvas of={ButtonStories.Disabled} />
+
+## Themed
+
+<Canvas of={ButtonStories.Themed} />

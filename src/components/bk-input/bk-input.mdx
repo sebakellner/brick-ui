@@ -1,0 +1,15 @@
+import { Meta, Canvas, Markdown } from '@storybook/addon-docs/blocks';
+import * as InputStories from './bk-input.stories';
+import readme from './README.md?raw';
+
+<Meta of={InputStories} />
+
+<Markdown>{readme}</Markdown>
+
+## Default
+
+<Canvas of={InputStories.Default} />
+
+## States
+
+<Canvas of={InputStories.States} />
