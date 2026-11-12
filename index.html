@@ -5,48 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Brick — playground</title>
     <link rel="stylesheet" href="/src/styles/theme.css" />
-    <style>
-      body {
-        margin: 0;
-        padding: 48px 32px;
-        font-family: var(--bk-font-sans);
-        color: var(--bk-color-text);
-        background: var(--bk-color-surface);
-      }
-      h1 {
-        margin: 0 0 32px;
-        font-size: 1.5rem;
-      }
-      section {
-        margin-bottom: 32px;
-      }
-      h2 {
-        margin: 0 0 12px;
-        font-size: 0.8125rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--bk-color-text-muted);
-      }
-      .row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        align-items: center;
-      }
-      .stack {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        width: 320px;
-      }
-    </style>
   </head>
   <body>
     <h1>Brick</h1>
 
     <section>
       <h2>Button</h2>
-      <div class="row">
+      <div>
         <bk-button>Save changes</bk-button>
         <bk-button variant="secondary">Cancel</bk-button>
         <bk-button variant="ghost">Learn more</bk-button>
@@ -56,7 +21,7 @@
 
     <section>
       <h2>Input</h2>
-      <div class="stack">
+      <div>
         <bk-input label="Email" helper="We never share it." placeholder="you@brick.dev"></bk-input>
         <bk-input label="Email" error="That address looks wrong." value="you@brick"></bk-input>
       </div>
