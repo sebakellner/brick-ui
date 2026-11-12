@@ -111,6 +111,18 @@
           Themed
         </bk-button>
       </div>
+
+      <h2>Input</h2>
+      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 380px;">
+        <bk-input label="Email" helper="We never share it." placeholder="you@brick.dev"></bk-input>
+        <bk-input
+          label="Email"
+          helper="We never share it."
+          error="That address looks wrong."
+          value="you@brick"
+        ></bk-input>
+        <bk-input label="Email" value="you@brick.dev" disabled></bk-input>
+      </div>
     </main>
     <script type="module" src="/src/index.ts"></script>
   </body>
