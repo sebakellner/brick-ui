@@ -40,8 +40,8 @@ Requirements: Node 22+, pnpm, and Chrome for the test runner.
 
 | Element | Summary | Docs |
 | --- | --- | --- |
-| `bk-button` | `primary`, `secondary` and `ghost` variants, disabled state | [README](src/components/bk-button/README.md) · [Stories](https://sebakellner.github.io/brick-ui/?path=/story/components-button--variants) |
-| `bk-input` | Single-line field with label, helper, error and `bk-change` | [README](src/components/bk-input/README.md) · [Stories](https://sebakellner.github.io/brick-ui/?path=/story/components-input--default) |
+| `bk-button` | `primary`, `secondary` and `ghost` variants, disabled state | [README](src/components/bk-button/README.md) · [Docs](https://sebakellner.github.io/brick-ui/?path=/docs/components-button--docs) |
+| `bk-input` | Single-line field with label, helper, error and `bk-change` | [README](src/components/bk-input/README.md) · [Docs](https://sebakellner.github.io/brick-ui/?path=/docs/components-input--docs) |
 
 Both delegate focus to the inner native control and expose `part`s for whatever
 the tokens do not cover.
@@ -70,7 +70,7 @@ Override hooks: `--bk-button-bg`, `--bk-button-bg-hover`, `--bk-button-fg`,
 ```
 tokens/                 token source: one JSON file per group
 src/
-├── components/         one folder per component: element, stories, test, README
+├── components/         one folder per component: element, stories, docs, test, README
 ├── styles/theme.css    theming entry point: imports the generated token files
 ├── styles/tokens/      generated CSS — do not edit by hand
 ├── test/helpers/       shared test setup (loads the theme)
@@ -95,7 +95,7 @@ pnpm typecheck      # tsc --noEmit
 | --- | --- |
 | This README | What the kit is, how to install and use it |
 | `src/components/*/README.md` | Each component's API: properties, events, parts, hooks |
-| [Storybook](https://sebakellner.github.io/brick-ui/) | Live examples of every variant and state |
+| [Storybook](https://sebakellner.github.io/brick-ui/) | Live examples of every variant and state, plus a docs page per component built from its README |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Token layering, conventions, checklist for a new component, releasing |
 
 ## License

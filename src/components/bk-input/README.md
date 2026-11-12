@@ -3,7 +3,7 @@
 A single-line text field with a real `<label>`, a helper/error message region
 and a `bk-change` event.
 
-[Live stories](https://sebakellner.github.io/brick-ui/?path=/story/components-input--default)
+[Docs page](https://sebakellner.github.io/brick-ui/?path=/docs/components-input--docs)
 
 ```html
 <bk-input label="Email" helper="We never share it." placeholder="you@brick.dev"></bk-input>
