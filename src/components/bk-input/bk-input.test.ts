@@ -2,12 +2,15 @@ import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendMouse } from '@web/test-runner-commands';
 import './bk-input.js';
 import type { BkInput } from './bk-input.js';
+import { loadTheme } from '../../test-helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkInput) => el.shadowRoot!.querySelector('label')!;
 const innerMessage = (el: BkInput) => el.shadowRoot!.querySelector('[part="message"]')!;
 
 describe('bk-input', () => {
+  before(loadTheme);
+
   it('should label the input with a real label element', async () => {
     const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
 

@@ -33,63 +33,63 @@ export class BkInput extends LitElement {
 
     label {
       display: block;
-      margin-bottom: var(--bk-space-1, 4px);
-      font-family: var(--bk-font-sans, system-ui, sans-serif);
-      font-size: var(--bk-font-size-sm, 0.8125rem);
+      margin-bottom: var(--bk-space-1);
+      font-family: var(--bk-font-sans);
+      font-size: var(--bk-font-size-sm);
       font-weight: 500;
-      color: var(--bk-input-label-color, #1c1917);
+      color: var(--bk-input-label-color);
     }
 
     input {
       box-sizing: border-box;
       width: 100%;
-      min-height: var(--bk-control-height, 40px);
-      padding: 0 var(--bk-space-3, 12px);
-      font-family: var(--bk-font-sans, system-ui, sans-serif);
-      font-size: var(--bk-font-size-md, 0.9375rem);
-      line-height: var(--bk-line-height-md, 1.5);
-      color: var(--bk-input-color, #1c1917);
-      background: var(--bk-input-bg, #ffffff);
-      border: var(--bk-border-width, 1px) solid var(--bk-input-border-color, #d6d3d1);
-      border-radius: var(--bk-input-radius, var(--bk-radius-md, 8px));
+      min-height: var(--bk-control-height);
+      padding: 0 var(--bk-space-3);
+      font-family: var(--bk-font-sans);
+      font-size: var(--bk-font-size-md);
+      line-height: var(--bk-line-height-md);
+      color: var(--bk-input-color);
+      background: var(--bk-input-bg);
+      border: var(--bk-border-width) solid var(--bk-input-border-color);
+      border-radius: var(--bk-input-radius, var(--bk-radius-md));
       transition:
-        border-color var(--bk-transition, 120ms ease),
-        background-color var(--bk-transition, 120ms ease);
+        border-color var(--bk-transition),
+        background-color var(--bk-transition);
     }
 
     input::placeholder {
-      color: var(--bk-color-text-muted, #57534e);
+      color: var(--bk-color-text-muted);
     }
 
     input:hover:not(:disabled):not([aria-invalid='true']) {
-      border-color: var(--bk-color-border-strong, #a8a29e);
+      border-color: var(--bk-color-border-strong);
     }
 
     input:focus-visible {
-      outline: 2px solid var(--bk-focus-ring, #0284c7);
+      outline: 2px solid var(--bk-focus-ring);
       outline-offset: 1px;
     }
 
     input:disabled {
       cursor: not-allowed;
-      color: var(--bk-color-text-muted, #57534e);
-      background: var(--bk-color-surface-muted, #f5f5f4);
+      color: var(--bk-color-text-muted);
+      background: var(--bk-color-surface-muted);
     }
 
     input[aria-invalid='true'] {
-      border-color: var(--bk-color-danger, #b91c1c);
+      border-color: var(--bk-color-danger);
     }
 
     .message {
-      margin-top: var(--bk-space-1, 4px);
-      font-family: var(--bk-font-sans, system-ui, sans-serif);
-      font-size: var(--bk-font-size-sm, 0.8125rem);
-      line-height: var(--bk-line-height-md, 1.5);
-      color: var(--bk-color-text-muted, #57534e);
+      margin-top: var(--bk-space-1);
+      font-family: var(--bk-font-sans);
+      font-size: var(--bk-font-size-sm);
+      line-height: var(--bk-line-height-md);
+      color: var(--bk-color-text-muted);
     }
 
     .message[data-state='error'] {
-      color: var(--bk-color-danger, #b91c1c);
+      color: var(--bk-color-danger);
     }
 
     .message:empty {
