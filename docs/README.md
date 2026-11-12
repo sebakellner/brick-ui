@@ -46,6 +46,12 @@ alternatives that lost. The rules of the folder:
   and mark the old `superseded by [NNNN](NNNN-slug.md)`. The history of a reversal
   is the most valuable thing in the folder.
 - Start from [0000-template.md](adr/0000-template.md) and replace every prompt.
+- **The Context describes our situation, not the industry's.** What hurt, what it
+  cost, verified in the code. Benchmarking belongs in the working notes: put it in
+  the Context and a reader years later will take what other systems do as the
+  argument for what we did.
+- An alternative may name the system it comes from, because that is how a rejected
+  option proves it was real. That is the only place an outside design belongs.
 
 ## When to update what
 
