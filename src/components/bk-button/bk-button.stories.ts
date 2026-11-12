@@ -59,13 +59,18 @@ export const Themed: Story = {
 
       <section style="display: grid; gap: var(--bk-space-2); justify-items: start;">
         <p style="margin: 0; color: var(--bk-text-muted); font: var(--bk-font-size-sm) var(--bk-font-sans);">
-          Hook: one control, and it beats the variant default
+          Hook: one control beats its variant default, and a background carries its foreground
         </p>
         <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
-          <bk-button style="--bk-button-bg: var(--bk-bg-surface-muted);">
+          <bk-button
+            style="--bk-button-bg: var(--bk-bg-surface-muted); --bk-button-fg: var(--bk-text-default);"
+          >
             A hook on a primary
           </bk-button>
-          <bk-button variant="ghost" style="--bk-button-bg: var(--bk-bg-accent);">
+          <bk-button
+            variant="ghost"
+            style="--bk-button-bg: var(--bk-bg-accent); --bk-button-fg: var(--bk-text-on-accent);"
+          >
             A hook on a ghost
           </bk-button>
         </div>
