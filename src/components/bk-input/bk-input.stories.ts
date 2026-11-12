@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import type { BkInputMode, BkInputType } from './bk-input.js';
+import '../bk-button/bk-button.js';
 import './bk-input.js';
 
 type Args = {
@@ -145,8 +146,8 @@ export const InAForm: Story = {
         helper="A numeric keypad on a phone."
       ></bk-input>
       <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
-        <button type="submit">Submit</button>
-        <button type="reset">Reset</button>
+        <bk-button type="submit">Submit</bk-button>
+        <bk-button type="reset" variant="secondary">Reset</bk-button>
       </div>
       <output style="font: var(--bk-font-size-sm) var(--bk-font-sans); color: var(--bk-text-muted);">
         Submit to read FormData.
