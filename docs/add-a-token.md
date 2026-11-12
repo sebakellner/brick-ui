@@ -45,8 +45,11 @@ the three layers are not familiar; the rules are in
 
 ```bash
 $ pnpm build:tokens && pnpm check:tokens
-token names ok: 57 declared, 11 hooks, 5 semantic roles consumed
+token names ok: 96 declared, 11 hooks, 13 semantic roles consumed
 ```
+
+The counts track the tree, so read them as a shape rather than as values to
+compare against: `check:tokens` is the authority and prints today's.
 
 Then confirm the value reached the browser: a test that overrides the token on
 `document.documentElement` and asserts the computed style follows. That is the
