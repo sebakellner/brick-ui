@@ -30,16 +30,20 @@ const preview: Preview = {
   // operating system through `prefers-color-scheme`, and the canvas keeps
   // Storybook's own background, which is how a dark role set ends up on a white
   // page. Pinning light makes what you see depend on the toolbar, not on whoever
-  // built the Storybook.
+  // built the Storybook. The same value is written again in `preview-head.html`,
+  // which lands before the first paint; this one governs what the decorator sets
+  // on every render. Change both.
   initialGlobals: { theme: 'light' },
   decorators: [
     (story, context) => {
       const theme = context.globals['theme'] as Theme | undefined;
       const root = document.documentElement;
-      // `system` removes the attribute so the media query in theme.css takes
-      // over, which is the third way a host can pick a theme and worth showing.
-      if (!theme || theme === 'system') root.removeAttribute('data-theme');
-      else root.dataset['theme'] = theme;
+      // Only the two themes the tokens define are written. `system` — and any
+      // stale global carried in an old URL — removes the attribute instead, so
+      // the media query decides. Writing an unrecognised name would match no
+      // rule at all and leave the light roles in place while claiming otherwise.
+      if (theme === 'light' || theme === 'dark') root.dataset.theme = theme;
+      else root.removeAttribute('data-theme');
       return story();
     },
   ],
