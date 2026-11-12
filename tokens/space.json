@@ -1,0 +1,9 @@
+{
+  "space": {
+    "base": { "value": "4px" },
+    "1": { "value": "calc({space.base} * 1)" },
+    "2": { "value": "calc({space.base} * 2)" },
+    "3": { "value": "calc({space.base} * 3)" },
+    "4": { "value": "calc({space.base} * 4)" }
+  }
+}

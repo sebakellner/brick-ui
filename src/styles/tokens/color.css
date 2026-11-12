@@ -12,11 +12,9 @@
   --bk-palette-stone-900: #1c1917;
   --bk-palette-red-700: #b91c1c;
   --bk-palette-sky-600: #0284c7;
-
+  --bk-focus-ring: var(--bk-palette-sky-600);
   --bk-color-surface-muted: var(--bk-palette-stone-50);
   --bk-color-border-strong: var(--bk-palette-stone-400);
   --bk-color-text-muted: var(--bk-palette-stone-600);
-
   --bk-color-danger: var(--bk-palette-red-700);
-  --bk-focus-ring: var(--bk-palette-sky-600);
 }

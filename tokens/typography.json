@@ -1,0 +1,14 @@
+{
+  "font": {
+    "sans": {
+      "value": "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+    }
+  },
+  "font-size": {
+    "sm": { "value": "0.8125rem" },
+    "md": { "value": "0.9375rem" }
+  },
+  "line-height": {
+    "md": { "value": "1.5" }
+  }
+}

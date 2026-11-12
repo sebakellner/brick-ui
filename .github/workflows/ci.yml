@@ -26,6 +26,10 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: tokens are generated from tokens/*.json
+        run: |
+          pnpm build:tokens
+          git diff --exit-code -- src/styles/tokens
       - run: pnpm typecheck
       - run: pnpm test
 
@@ -42,4 +46,5 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm build:tokens
       - run: pnpm build-storybook

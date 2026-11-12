@@ -11,6 +11,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:tokens": "style-dictionary build --config style-dictionary.config.mjs",
     "typecheck": "tsc --noEmit",
     "test": "web-test-runner",
     "test:watch": "web-test-runner --watch",
@@ -28,6 +29,7 @@
     "@web/test-runner": "^1.0.1",
     "@web/test-runner-commands": "^1.0.2",
     "storybook": "^10.6.7",
+    "style-dictionary": "^5.8.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.8"
   }
