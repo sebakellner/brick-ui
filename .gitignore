@@ -1,0 +1,9 @@
+node_modules/
+dist/
+storybook-static/
+
+# Local ODD tracking: specs, task list and log for this feature.
+odd/
+
+.DS_Store
+*.log

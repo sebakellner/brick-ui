@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Brick — playground</title>
+    <link rel="stylesheet" href="/src/styles/tokens.css" />
+    <style>
+      body {
+        margin: 0;
+        padding: 48px 32px;
+        background: var(--bk-color-surface);
+        color: var(--bk-color-text);
+        font-family: var(--bk-font-sans);
+        line-height: var(--bk-line-height-md);
+      }
+      h1 {
+        font-size: 1.5rem;
+        margin: 0 0 var(--bk-space-1);
+      }
+      h2 {
+        font-size: 0.8125rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--bk-color-text-muted);
+        margin: 40px 0 var(--bk-space-3);
+      }
+      p.lede {
+        margin: 0;
+        color: var(--bk-color-text-muted);
+        font-size: var(--bk-font-size-md);
+      }
+      .grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--bk-space-3);
+      }
+      .swatch {
+        width: 132px;
+        font-size: var(--bk-font-size-sm);
+        color: var(--bk-color-text-muted);
+      }
+      .swatch span {
+        display: block;
+        height: 56px;
+        border-radius: var(--bk-radius-md);
+        border: var(--bk-border-width) solid var(--bk-color-border);
+        margin-bottom: var(--bk-space-1);
+      }
+      .row {
+        display: flex;
+        gap: var(--bk-space-3);
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .box {
+        display: grid;
+        place-items: center;
+        width: 64px;
+        height: 48px;
+        font-size: var(--bk-font-size-sm);
+        color: var(--bk-color-text-muted);
+        background: var(--bk-color-surface-muted);
+        border: var(--bk-border-width) solid var(--bk-color-border);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Brick</h1>
+      <p class="lede">Design tokens and, from the next commit, live components.</p>
+    </header>
+
+    <main>
+      <h2>Color</h2>
+      <div class="grid">
+        <div class="swatch"><span style="background: var(--bk-color-primary)"></span>primary</div>
+        <div class="swatch"><span style="background: var(--bk-color-primary-hover)"></span>primary-hover</div>
+        <div class="swatch"><span style="background: var(--bk-color-primary-active)"></span>primary-active</div>
+        <div class="swatch"><span style="background: var(--bk-color-surface-muted)"></span>surface-muted</div>
+        <div class="swatch"><span style="background: var(--bk-color-border)"></span>border</div>
+        <div class="swatch"><span style="background: var(--bk-color-text)"></span>text</div>
+        <div class="swatch"><span style="background: var(--bk-color-danger)"></span>danger</div>
+        <div class="swatch"><span style="background: var(--bk-focus-ring)"></span>focus-ring</div>
+      </div>
+
+      <h2>Radius</h2>
+      <div class="row">
+        <div class="box" style="border-radius: var(--bk-radius-sm)">sm</div>
+        <div class="box" style="border-radius: var(--bk-radius-md)">md</div>
+        <div class="box" style="border-radius: var(--bk-radius-lg)">lg</div>
+      </div>
+
+      <h2>Spacing</h2>
+      <div class="row">
+        <div class="box" style="width: var(--bk-space-1)"></div>
+        <div class="box" style="width: var(--bk-space-2)"></div>
+        <div class="box" style="width: var(--bk-space-3)"></div>
+        <div class="box" style="width: var(--bk-space-4)"></div>
+      </div>
+    </main>
+  </body>
+</html>
