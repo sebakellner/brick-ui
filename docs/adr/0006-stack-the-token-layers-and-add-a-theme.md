@@ -144,37 +144,16 @@ Harder:
 - A role exists per theme but the *values* are unvalidated. The dark column above
   is a proposal until the contrast assertions pass in both themes.
 
-### Migrating from the removed names
+**No aliases.** The sixteen removed names and the four renames have no
+compatibility layer. The mapping is recoverable from the commit that removed them
+and from the deleted `tokens/component/control.json`; it is not reproduced here,
+because a decision record states what was decided and a name-by-name table is
+release-note material. Revisit when the package is published and a consumer needs
+a deprecation window.
 
-A host that overrode one of the sixteen control tokens has no alias waiting for it:
-the name is gone. This table is the path — the old name on the left, the role that
-now carries the value on the right.
-
-| Removed | Use instead |
-| --- | --- |
-| `--bk-button-primary-bg` | `--bk-bg-accent` |
-| `--bk-button-primary-bg-hover` | `--bk-bg-accent-hover` |
-| `--bk-button-primary-fg` | `--bk-text-on-accent` |
-| `--bk-button-secondary-bg`, `--bk-input-bg` | `--bk-bg-surface` |
-| `--bk-button-secondary-bg-hover` | `--bk-bg-surface-hover` |
-| `--bk-button-ghost-bg-hover` | `--bk-bg-surface-muted` |
-| `--bk-button-secondary-fg`, `--bk-button-ghost-fg`, `--bk-input-color`, `--bk-input-label-color` | `--bk-text-default` |
-| `--bk-button-secondary-border`, `--bk-input-border-color` | `--bk-border-default` |
-| `--bk-button-primary-border`, `--bk-button-ghost-bg`, `--bk-button-ghost-border` | nothing — all three were the `transparent` keyword |
-
-Four renames, all mechanical:
-
-| Renamed | Use instead |
-| --- | --- |
-| `--bk-color-surface-muted` | `--bk-bg-surface-muted` |
-| `--bk-color-text-muted` | `--bk-text-muted` |
-| `--bk-color-border-strong` | `--bk-border-strong` |
-| `--bk-color-danger` as a border | `--bk-border-danger` |
-| `--bk-color-danger` as text | `--bk-text-danger` |
-
-`--bk-color-danger` is the one that is not a pure rename: it served both a border
-and a piece of text, and the two are now separate roles even though both resolve to
-`red-700` today.
+`--bk-color-danger` is the one removal that is a semantic split rather than a pure
+rename: it served both a border and a piece of text, and those are now two roles
+even though both resolve to `red-700` today.
 
 Accepted debt: the component tier has one member and no rule yet for when a second
 one is justified. Revisit when a component needs a value that is neither a color
