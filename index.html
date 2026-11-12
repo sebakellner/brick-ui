@@ -9,121 +9,59 @@
       body {
         margin: 0;
         padding: 48px 32px;
-        background: var(--bk-color-surface);
-        color: var(--bk-color-text);
         font-family: var(--bk-font-sans);
-        line-height: var(--bk-line-height-md);
+        color: var(--bk-color-text);
+        background: var(--bk-color-surface);
       }
       h1 {
+        margin: 0 0 32px;
         font-size: 1.5rem;
-        margin: 0 0 var(--bk-space-1);
+      }
+      section {
+        margin-bottom: 32px;
       }
       h2 {
+        margin: 0 0 12px;
         font-size: 0.8125rem;
-        text-transform: uppercase;
         letter-spacing: 0.08em;
+        text-transform: uppercase;
         color: var(--bk-color-text-muted);
-        margin: 40px 0 var(--bk-space-3);
-      }
-      p.lede {
-        margin: 0;
-        color: var(--bk-color-text-muted);
-        font-size: var(--bk-font-size-md);
-      }
-      .grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: var(--bk-space-3);
-      }
-      .swatch {
-        width: 132px;
-        font-size: var(--bk-font-size-sm);
-        color: var(--bk-color-text-muted);
-      }
-      .swatch span {
-        display: block;
-        height: 56px;
-        border-radius: var(--bk-radius-md);
-        border: var(--bk-border-width) solid var(--bk-color-border);
-        margin-bottom: var(--bk-space-1);
       }
       .row {
         display: flex;
-        gap: var(--bk-space-3);
-        align-items: center;
         flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
       }
-      .box {
-        display: grid;
-        place-items: center;
-        width: 64px;
-        height: 48px;
-        font-size: var(--bk-font-size-sm);
-        color: var(--bk-color-text-muted);
-        background: var(--bk-color-surface-muted);
-        border: var(--bk-border-width) solid var(--bk-color-border);
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 320px;
       }
     </style>
   </head>
   <body>
-    <header>
-      <h1>Brick</h1>
-      <p class="lede">Design tokens and live components.</p>
-    </header>
+    <h1>Brick</h1>
 
-    <main>
-      <h2>Color</h2>
-      <div class="grid">
-        <div class="swatch"><span style="background: var(--bk-color-primary)"></span>primary</div>
-        <div class="swatch"><span style="background: var(--bk-color-primary-hover)"></span>primary-hover</div>
-        <div class="swatch"><span style="background: var(--bk-color-primary-active)"></span>primary-active</div>
-        <div class="swatch"><span style="background: var(--bk-color-surface-muted)"></span>surface-muted</div>
-        <div class="swatch"><span style="background: var(--bk-color-border)"></span>border</div>
-        <div class="swatch"><span style="background: var(--bk-color-text)"></span>text</div>
-        <div class="swatch"><span style="background: var(--bk-color-danger)"></span>danger</div>
-        <div class="swatch"><span style="background: var(--bk-focus-ring)"></span>focus-ring</div>
-      </div>
-
-      <h2>Radius</h2>
-      <div class="row">
-        <div class="box" style="border-radius: var(--bk-radius-sm)">sm</div>
-        <div class="box" style="border-radius: var(--bk-radius-md)">md</div>
-        <div class="box" style="border-radius: var(--bk-radius-lg)">lg</div>
-      </div>
-
-      <h2>Spacing</h2>
-      <div class="row">
-        <div class="box" style="width: var(--bk-space-1)"></div>
-        <div class="box" style="width: var(--bk-space-2)"></div>
-        <div class="box" style="width: var(--bk-space-3)"></div>
-        <div class="box" style="width: var(--bk-space-4)"></div>
-      </div>
-
+    <section>
       <h2>Button</h2>
       <div class="row">
         <bk-button>Save changes</bk-button>
         <bk-button variant="secondary">Cancel</bk-button>
         <bk-button variant="ghost">Learn more</bk-button>
         <bk-button disabled>Disabled</bk-button>
-        <bk-button
-          style="--bk-button-bg: #0f766e; --bk-button-bg-hover: #115e59; --bk-button-radius: 999px;"
-        >
-          Themed
-        </bk-button>
       </div>
+    </section>
 
+    <section>
       <h2>Input</h2>
-      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 380px;">
+      <div class="stack">
         <bk-input label="Email" helper="We never share it." placeholder="you@brick.dev"></bk-input>
-        <bk-input
-          label="Email"
-          helper="We never share it."
-          error="That address looks wrong."
-          value="you@brick"
-        ></bk-input>
-        <bk-input label="Email" value="you@brick.dev" disabled></bk-input>
+        <bk-input label="Email" error="That address looks wrong." value="you@brick"></bk-input>
       </div>
-    </main>
+    </section>
+
     <script type="module" src="/src/index.ts"></script>
   </body>
 </html>
