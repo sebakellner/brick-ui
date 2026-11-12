@@ -5,7 +5,8 @@
  * 1. Every name a component reads must exist: either as a declared token
  *    (generated CSS) or as a hook (a name the component reads or sets that the
  *    token source does not declare). A typo here renders nothing at runtime and
- *    no other check catches it, because the name lives inside a CSS string.
+ *    no other check catches it, because the name lives inside a CSS string. This
+ *    one covers tests and stories too: a typo in either is still a typo.
  *
  * 2. Every semantic role must be read by a component. A role that nothing reads
  *    is a public contract with no behaviour: it costs a breaking change to
@@ -22,6 +23,9 @@
  *    the structural values have no role layer, so reading those directly is not
  *    a violation — they do not change between themes.
  *
+ * R5 and R6 are claims about what a *component* paints, so they skip the test and
+ * story files. R1 does not.
+ *
  * See docs/conventions-tokens.md for the rules and docs/adr/0006 for why.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
@@ -34,7 +38,8 @@ const HOOKS_SOURCE = 'style-dictionary.config.mjs';
 
 const NAMES = /^\s*(--bk-[a-z0-9-]+):/gm;
 const REFERENCES = /(--bk-[a-z0-9-]+)/g;
-const DECLARATION = /^\s*(--bk-[a-z0-9-]+|[a-z-]+)\s*:/;
+const DECLARATION = /^\s*(--[a-z0-9-]+|[a-z-]+)\s*:/;
+const RULE_BOUNDARY = /[{}]/;
 const SUPPORT_FILE = /\.(test|stories)\.ts$/;
 const PRIMITIVE = '--bk-palette-';
 
@@ -54,12 +59,23 @@ const PROPERTIES = {
     'border-right-color',
     'border-bottom-color',
     'border-left-color',
+    'border-block',
+    'border-block-color',
+    'border-inline',
+    'border-inline-color',
   ],
   focus: ['outline', 'outline-color'],
 };
 
 const read = (path) => readFileSync(path, 'utf8');
-const stripComments = (source) => source.replace(/\/\*[\s\S]*?\*\//g, '');
+
+// Comments are blanked rather than deleted: the scan is line-addressed, and
+// removing a block comment outright would shift every line after it.
+const stripComments = (source) =>
+  source
+    .replace(/\/\*[\s\S]*?\*\//g, (comment) => comment.replace(/[^\n]/g, ' '))
+    .replace(/\/\/[^\n]*/g, '');
+
 const names = (css) => [...css.matchAll(NAMES)].map(([, name]) => name);
 const walk = (dir) =>
   readdirSync(dir).flatMap((entry) => {
@@ -87,25 +103,35 @@ if (semantic.length === 0) {
 }
 const roles = new Set(semantic);
 
-/** R5: the property a role is read under has to belong to its family. */
+/**
+ * R5: the property a role is read under has to belong to its family.
+ *
+ * Declarations are split on `;` so that two on one line are attributed to their
+ * own property, and a rule boundary clears the context so a selector is never
+ * mistaken for a property.
+ */
 const misplacedRoles = (file, source) => {
   const found = [];
   let property;
 
   source.split('\n').forEach((line, i) => {
-    const declaration = line.match(DECLARATION);
-    if (declaration) property = declaration[1];
+    if (RULE_BOUNDARY.test(line)) property = undefined;
 
-    // A role assigned to a custom property is the hook indirection: the value is
-    // read somewhere else, and that is where the property matters.
-    if (property?.startsWith('--')) return;
+    for (const segment of line.split(';')) {
+      const declaration = segment.match(DECLARATION);
+      if (declaration) property = declaration[1];
 
-    for (const [, name] of line.matchAll(REFERENCES)) {
-      if (!roles.has(name)) continue;
-      const family = name.slice('--bk-'.length).split('-')[0];
-      const allowed = PROPERTIES[family];
-      if (!allowed || !property || allowed.includes(property)) continue;
-      found.push(`${file}:${i + 1}: ${name} read under ${property} (R5)`);
+      // A role assigned to a custom property is the hook indirection: the value is
+      // read somewhere else, and that is where the property matters.
+      if (property?.startsWith('--')) continue;
+
+      for (const [, name] of segment.matchAll(REFERENCES)) {
+        if (!roles.has(name)) continue;
+        const family = name.slice('--bk-'.length).split('-')[0];
+        const allowed = PROPERTIES[family];
+        if (!allowed || !property || allowed.includes(property)) continue;
+        found.push(`${file}:${i + 1}: ${name} read under ${property} (R5)`);
+      }
     }
   });
 
@@ -122,6 +148,12 @@ for (const file of componentFiles) {
     if (!declared.has(name) && !hooks.has(name)) {
       problems.push(`${file}: unknown token ${name}`);
     }
+  }
+
+  // R5 and R6 are about what a component paints; a test or a story is not one.
+  if (SUPPORT_FILE.test(file)) continue;
+
+  for (const [, name] of source.matchAll(REFERENCES)) {
     if (name.startsWith(PRIMITIVE)) {
       problems.push(`${file}: colour primitive read by a component, use a role (R6): ${name}`);
     }
