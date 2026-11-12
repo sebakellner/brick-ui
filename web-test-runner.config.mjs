@@ -9,11 +9,11 @@ export default {
     sendMousePlugin(),
   ],
   browserLogs: true,
-  // The default 2s per test is tight for commands that cross into the browser:
-  // `sendMouse` and `emulateMedia` are round trips, and on a slower runner an
-  // async test that waits on one can spend most of its budget there rather than
-  // in the assertion. The suite runs in 1.3s locally; on CI it started timing out
-  // once the theme added two stylesheets and a media emulation.
+  // Margin, not a fix: the tests that hung on CI did so at 5s too, so the default
+  // was never the cause. The commands that cross into the browser — `sendMouse`,
+  // `nextFrame` — are round trips, and the default two seconds left an async test
+  // with almost no room on a slower runner. Five is the slow end of normal, not a
+  // budget for a hang.
   testFramework: {
     config: { timeout: 5000 },
   },

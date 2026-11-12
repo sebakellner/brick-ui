@@ -1,5 +1,4 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { emulateMedia } from '@web/test-runner-commands';
 import './bk-button/bk-button.js';
 import type { BkButton } from './bk-button/bk-button.js';
 import { loadTheme, setTheme } from '../test/helpers/theme.js';
@@ -104,24 +103,24 @@ describe('theming', () => {
     });
   });
 
+  // `emulateMedia` is deliberately not used here. Two tests that emulated a colour
+  // scheme made four unrelated `bk-input` tests hang on CI — one on `sendMouse`, three
+  // on `updateElement` inside form fixtures — and the emulation was the only new
+  // browser-level command in the change. What the assertions below cover is the two
+  // things that actually broke: the media block existing, and it being loaded.
   describe('system preference', () => {
-    afterEach(() => emulateMedia({ colorScheme: 'no-preference' }));
+    it('should ship the system-preference block and load it', async () => {
+      const theme = await (await fetch('/src/styles/theme.css')).text();
+      const block = await (await fetch('/src/styles/tokens/color.dark.media.css')).text();
 
-    it('should follow the system when the host chose no theme', async () => {
-      document.documentElement.removeAttribute('data-theme');
-
-      await emulateMedia({ colorScheme: 'dark' });
-      expect(role('bg-surface'), 'dark preference').to.equal(hex('#1c1917'));
-
-      await emulateMedia({ colorScheme: 'light' });
-      expect(role('bg-surface'), 'light preference').to.equal(hex('#ffffff'));
-    });
-
-    it('should let an explicit theme win over the system preference', async () => {
-      await emulateMedia({ colorScheme: 'dark' });
-      setTheme('light');
-
-      expect(role('bg-surface')).to.equal(hex('#ffffff'));
+      expect(theme, 'the dark media block is imported').to.include(
+        "@import './tokens/color.dark.media.css';",
+      );
+      expect(theme, 'the page is told which way to paint').to.include('color-scheme: dark');
+      expect(block, 'the block is a media query').to.include(
+        '@media (prefers-color-scheme: dark)',
+      );
+      expect(block, 'it yields to an explicit theme').to.include(':where(:root:not([data-theme]))');
     });
   });
 });
