@@ -2,4 +2,6 @@
   --bk-border-width: 1px;
   --bk-control-height: 40px;
   --bk-transition: 120ms ease;
+  --bk-focus-ring-width: 2px;
+  --bk-focus-ring-offset: 2px;
 }

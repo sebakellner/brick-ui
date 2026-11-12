@@ -67,8 +67,8 @@ export class BkButton extends LitElement {
     }
 
     button:focus-visible {
-      outline: 2px solid var(--bk-focus-ring);
-      outline-offset: 2px;
+      outline: var(--bk-focus-ring-width) solid var(--bk-focus-ring);
+      outline-offset: var(--bk-focus-ring-offset);
     }
 
     button:disabled {

@@ -22,6 +22,8 @@ export default {
     color: platform([cssFile('color.css', only('palette', 'color', 'focus-ring'))]),
     control: platform([cssFile('control.css', only('button', 'input'))]),
     typography: platform([cssFile('typography.css', only('font', 'font-size', 'line-height'))]),
-    base: platform([cssFile('base.css', only('border-width', 'control-height', 'transition'))]),
+    base: platform([
+      cssFile('base.css', only('border-width', 'control-height', 'transition', 'focus-ring-width', 'focus-ring-offset')),
+    ]),
   },
 };

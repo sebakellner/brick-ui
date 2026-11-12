@@ -67,7 +67,14 @@ fallbacks survived where they express composition rather than a value, e.g.
 `var(--bk-button-bg, var(--bk-button-variant-bg))`.
 
 Tests load the real stylesheet through `src/test/helpers/theme.ts`, so the suite
-exercises the configuration people actually use.
+exercises the configuration people actually use. The helper memoizes its promise:
+each test file calls it from `before`, and a fresh link per call would stack
+duplicate stylesheets in the same page.
+
+The focus ring is a token too (`--bk-focus-ring-width`, `--bk-focus-ring-offset`,
+both in `base.css`), so the components keep no style literals at all. Unifying
+the offset moved the input's ring from 1px to 2px, which is the value the button
+already used.
 
 ## What the tests cover
 

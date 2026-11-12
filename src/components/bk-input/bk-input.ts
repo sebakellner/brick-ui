@@ -66,8 +66,8 @@ export class BkInput extends LitElement {
     }
 
     input:focus-visible {
-      outline: 2px solid var(--bk-focus-ring);
-      outline-offset: 1px;
+      outline: var(--bk-focus-ring-width) solid var(--bk-focus-ring);
+      outline-offset: var(--bk-focus-ring-offset);
     }
 
     input:disabled {
