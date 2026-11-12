@@ -2,7 +2,11 @@ import { esbuildPlugin } from '@web/dev-server-esbuild';
 import { sendMousePlugin } from '@web/test-runner-commands/plugins';
 
 export default {
-  files: 'src/components/bk-input/bk-input.test.ts', // DIAGNOSTIC
+  files: [
+    // DIAGNOSTIC
+    'src/components/bk-input/bk-input.test.ts',
+    'src/components/theming.test.ts',
+  ],
   nodeResolve: true,
   plugins: [
     esbuildPlugin({ ts: true, target: 'auto', tsconfig: './tsconfig.json' }),
