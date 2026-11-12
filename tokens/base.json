@@ -1,5 +1,17 @@
 {
-  "border-width": { "value": "1px" },
-  "control-height": { "value": "40px" },
-  "transition": { "value": "120ms ease" }
+  "border-width": {
+    "value": "1px"
+  },
+  "control-height": {
+    "value": "40px"
+  },
+  "transition": {
+    "value": "120ms ease"
+  },
+  "focus-ring-width": {
+    "value": "2px"
+  },
+  "focus-ring-offset": {
+    "value": "1px"
+  }
 }

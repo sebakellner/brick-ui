@@ -1,6 +1,7 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import './bk-button.js';
 import type { BkButton } from './bk-button.js';
+import { loadTheme } from '../../test/helpers/theme.js';
 
 const innerButton = (el: BkButton) => el.shadowRoot!.querySelector('button')!;
 
@@ -12,6 +13,8 @@ const mount = (variant?: string) =>
   );
 
 describe('bk-button', () => {
+  before(loadTheme);
+
   // :root and body live outside the fixture wrapper, so fixtureCleanup leaves
   // them alone; the inherited-property tests have to clean up after themselves.
   afterEach(() => {
