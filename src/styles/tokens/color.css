@@ -1,0 +1,33 @@
+:root {
+  --bk-palette-white: #ffffff;
+  --bk-palette-orange-700: #c2410c;
+  --bk-palette-orange-800: #9a3412;
+  --bk-palette-orange-900: #7c2d12;
+  --bk-palette-stone-50: #f5f5f4;
+  --bk-palette-stone-200: #e7e5e4;
+  --bk-palette-stone-300: #d6d3d1;
+  --bk-palette-stone-400: #a8a29e;
+  --bk-palette-stone-600: #57534e;
+  --bk-palette-stone-700: #44403c;
+  --bk-palette-stone-900: #1c1917;
+  --bk-palette-red-700: #b91c1c;
+  --bk-palette-sky-600: #0284c7;
+
+  --bk-color-primary: var(--bk-palette-orange-700);
+  --bk-color-primary-hover: var(--bk-palette-orange-800);
+  --bk-color-primary-active: var(--bk-palette-orange-900);
+  --bk-color-on-primary: var(--bk-palette-white);
+
+  --bk-color-surface: var(--bk-palette-white);
+  --bk-color-surface-muted: var(--bk-palette-stone-50);
+  --bk-color-surface-hover: var(--bk-palette-stone-200);
+  --bk-color-border: var(--bk-palette-stone-300);
+  --bk-color-border-strong: var(--bk-palette-stone-400);
+  --bk-color-text: var(--bk-palette-stone-900);
+  --bk-color-text-muted: var(--bk-palette-stone-600);
+  --bk-color-text-on-muted: var(--bk-palette-stone-700);
+
+  --bk-color-danger: var(--bk-palette-red-700);
+  --bk-color-on-danger: var(--bk-palette-white);
+  --bk-focus-ring: var(--bk-palette-sky-600);
+}
