@@ -53,19 +53,23 @@ theme is active.
 | `bg-surface` | `white` | `neutral-900` |
 | `bg-surface-muted` | `neutral-100` | `neutral-800` |
 | `bg-surface-hover` | `neutral-200` | `neutral-700` |
-| `bg-accent` | `blue-600` | `blue-500` |
-| `bg-accent-hover` | `blue-700` | `blue-400` |
+| `bg-accent` | `blue-600` | `blue-600` |
+| `bg-accent-hover` | `blue-700` | `blue-700` |
 | `text-default` | `neutral-900` | `neutral-100` |
 | `text-muted` | `neutral-600` | `neutral-400` |
 | `text-on-accent` | `white` | `white` |
 | `text-danger` | `red-700` | `red-400` |
-| `border-default` | `neutral-500` | `neutral-700` |
-| `border-strong` | `neutral-600` | `neutral-500` |
+| `border-default` | `neutral-500` | `neutral-500` |
+| `border-strong` | `neutral-600` | `neutral-400` |
 | `border-danger` | `red-700` | `red-400` |
 | `focus-ring` | `sky-600` | `sky-400` |
 
-The dark column is a starting point to be validated by the contrast assertions,
-not a settled design. Every value is checked against its own surface.
+The dark column is not a guess: it is the column the contrast assertions rewrote.
+Four values were proposed here first and failed when the suite ran in both themes —
+`bg-accent` at `blue-500` put white text at 3.7:1 instead of 4.5:1, and
+`border-default` at `neutral-700` put the input border at 1.7:1 instead of 3:1
+against its own surface. A light accent on a dark page is the tempting move and the
+wrong one: it buys atmosphere with legibility, and the assertion is what says so.
 
 **Naming grammar.** Primitives carry no tier word and the three vocabularies are
 disjoint by vocabulary rather than by prefix: primitives are hues and ramps

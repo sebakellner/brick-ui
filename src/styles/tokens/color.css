@@ -1,4 +1,4 @@
-:root {
+:where(:root), :where([data-theme="light"]) {
   --bk-palette-white: #ffffff;
   --bk-palette-neutral-100: #f5f5f4;
   --bk-palette-neutral-200: #e7e5e4;

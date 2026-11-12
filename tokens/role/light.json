@@ -1,47 +1,49 @@
 {
-  "bg": {
-    "surface": {
-      "value": "{palette.white}"
+  "role-light": {
+    "bg": {
+      "surface": {
+        "value": "{palette.white}"
+      },
+      "surface-muted": {
+        "value": "{palette.neutral-100}"
+      },
+      "surface-hover": {
+        "value": "{palette.neutral-200}"
+      },
+      "accent": {
+        "value": "{palette.blue-600}"
+      },
+      "accent-hover": {
+        "value": "{palette.blue-700}"
+      }
     },
-    "surface-muted": {
-      "value": "{palette.neutral-100}"
+    "text": {
+      "default": {
+        "value": "{palette.neutral-900}"
+      },
+      "muted": {
+        "value": "{palette.neutral-600}"
+      },
+      "on-accent": {
+        "value": "{palette.white}"
+      },
+      "danger": {
+        "value": "{palette.red-700}"
+      }
     },
-    "surface-hover": {
-      "value": "{palette.neutral-200}"
+    "border": {
+      "default": {
+        "value": "{palette.neutral-500}"
+      },
+      "strong": {
+        "value": "{palette.neutral-600}"
+      },
+      "danger": {
+        "value": "{palette.red-700}"
+      }
     },
-    "accent": {
-      "value": "{palette.blue-600}"
-    },
-    "accent-hover": {
-      "value": "{palette.blue-700}"
+    "focus-ring": {
+      "value": "{palette.sky-600}"
     }
-  },
-  "text": {
-    "default": {
-      "value": "{palette.neutral-900}"
-    },
-    "muted": {
-      "value": "{palette.neutral-600}"
-    },
-    "on-accent": {
-      "value": "{palette.white}"
-    },
-    "danger": {
-      "value": "{palette.red-700}"
-    }
-  },
-  "border": {
-    "default": {
-      "value": "{palette.neutral-500}"
-    },
-    "strong": {
-      "value": "{palette.neutral-600}"
-    },
-    "danger": {
-      "value": "{palette.red-700}"
-    }
-  },
-  "focus-ring": {
-    "value": "{palette.sky-600}"
   }
 }

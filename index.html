@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Brick — playground</title>
     <link rel="stylesheet" href="/src/styles/theme.css" />
+    <style>
+      /* The playground paints its own canvas from the roles, which is what a host
+         has to do: the theme says what a component paints, not what the page
+         does. Without this the page stays white under a dark preference. */
+      body {
+        background: var(--bk-bg-surface);
+        color: var(--bk-text-default);
+      }
+    </style>
   </head>
   <body>
     <h1>Brick</h1>
