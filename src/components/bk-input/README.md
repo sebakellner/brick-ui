@@ -21,6 +21,8 @@ and a `bk-change` event.
 | `name` | `name` | `string` | `''` | |
 | `type` | `type` | `'text' \| 'email' \| 'password' \| 'search' \| 'tel' \| 'url'` | `'text'` | |
 | `placeholder` | `placeholder` | `string` | `''` | |
+| `autocomplete` | `autocomplete` | `string` | `''` | forwarded to the field (WCAG 1.3.5) |
+| `inputMode` | — | `'text' \| 'tel' \| 'url' \| 'email' \| 'numeric' \| 'decimal' \| 'search' \| 'none' \| ''` | `''` | sets `inputmode` on the field |
 | `disabled` | `disabled` | `boolean` | `false` | reflected |
 | `required` | `required` | `boolean` | `false` | reflected |
 
@@ -74,5 +76,15 @@ are shared roles.
 - A real `<label>` bound by `for`/`id`; the id is generated once per instance so
   re-renders never break the link.
 - `aria-describedby` points at the message region only while it has content.
-- `error` sets `aria-invalid="true"` and the region is `aria-live="polite"`.
+- `error` sets `aria-invalid="true"`. The message region is `role="status"` and
+  stays in the accessibility tree while empty (visually collapsed instead of
+  `display: none`), so an announcement is not lost when the text appears.
+- `autocomplete` and `inputMode` are forwarded, so a field can identify its
+  purpose (WCAG 1.3.5).
+- **Form-associated**: the element takes part in a `<form>` — its `value`
+  submits under `name`, `reset()` restores the initial value, the form can
+  disable it, and constraint validation reflects `required` and `error` through
+  `ElementInternals`.
+- The field border clears 3:1 against a white surface (WCAG 1.4.11), which the
+  tests assert.
 - Focus is delegated to the native input.

@@ -1,4 +1,4 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export type BkButtonVariant = 'primary' | 'secondary' | 'ghost';
@@ -58,7 +58,7 @@ export class BkButton extends LitElement {
         color var(--bk-transition);
     }
 
-    button:hover:not(:disabled) {
+    button:hover:not([aria-disabled='true']) {
       background: var(--bk-button-bg-hover, var(--bk-button-variant-bg-hover));
       border-color: var(
         --bk-button-border-hover,
@@ -71,7 +71,7 @@ export class BkButton extends LitElement {
       outline-offset: var(--bk-focus-ring-offset);
     }
 
-    button:disabled {
+    button[aria-disabled='true'] {
       cursor: not-allowed;
       opacity: 0.55;
     }
@@ -97,11 +97,21 @@ export class BkButton extends LitElement {
 
   override render() {
     return html`
-      <button part="button" ?disabled=${this.disabled}>
+      <button
+        part="button"
+        aria-disabled=${this.disabled ? 'true' : nothing}
+        @click=${this.handleClick}
+      >
         <slot></slot>
       </button>
     `;
   }
+
+  private readonly handleClick = (event: MouseEvent) => {
+    if (!this.disabled) return;
+    event.stopImmediatePropagation();
+    event.preventDefault();
+  };
 }
 
 customElements.define('bk-button', BkButton);

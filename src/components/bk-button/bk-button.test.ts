@@ -1,6 +1,7 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import './bk-button.js';
 import type { BkButton } from './bk-button.js';
+import { contrastWithWhite } from '../../test/helpers/contrast.js';
 import { loadTheme } from '../../test/helpers/theme.js';
 
 const innerButton = (el: BkButton) => el.shadowRoot!.querySelector('button')!;
@@ -37,7 +38,7 @@ describe('bk-button', () => {
     expect(innerButton(button).getAttribute('part')).to.equal('button');
   });
 
-  it('should propagate disabled to the native button, which stops firing clicks', async () => {
+  it('should mark a disabled button as unavailable without dropping it from the tab order', async () => {
     const button = await mount();
     button.disabled = true;
     await button.updateComplete;
@@ -46,9 +47,19 @@ describe('bk-button', () => {
 
     innerButton(button).click();
 
-    expect(button.disabled).to.equal(true);
-    expect(innerButton(button).disabled).to.equal(true);
+    expect(innerButton(button).getAttribute('aria-disabled')).to.equal('true');
+    expect(innerButton(button).disabled).to.equal(false);
     expect(clicks).to.equal(0);
+
+    button.focus();
+    expect(button.shadowRoot!.activeElement).to.equal(innerButton(button));
+  });
+
+  it('should keep the secondary border at 3:1 against a white surface', async () => {
+    const secondary = await mount('secondary');
+    const border = getComputedStyle(innerButton(secondary)).borderTopColor;
+
+    expect(contrastWithWhite(border)).to.be.at.least(3);
   });
 
   it('should let a public custom property win over the variant default', async () => {

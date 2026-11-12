@@ -3,6 +3,16 @@ import { property } from 'lit/decorators.js';
 
 export type BkInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'url';
 
+export type BkInputMode =
+  | 'none'
+  | 'text'
+  | 'tel'
+  | 'url'
+  | 'email'
+  | 'numeric'
+  | 'decimal'
+  | 'search';
+
 let instanceCount = 0;
 const nextInstanceId = () => `bk-input-${++instanceCount}`;
 
@@ -17,6 +27,11 @@ const nextInstanceId = () => `bk-input-${++instanceCount}`;
  * `error` wins over `helper`, and sets `aria-invalid` on the input.
  */
 export class BkInput extends LitElement {
+  static formAssociated = true;
+
+  private readonly internals = this.attachInternals();
+  private initialValue = '';
+
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
     delegatesFocus: true,
@@ -93,7 +108,13 @@ export class BkInput extends LitElement {
     }
 
     .message:empty {
-      display: none;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
     }
   `;
 
@@ -111,6 +132,10 @@ export class BkInput extends LitElement {
 
   @property({ type: String }) placeholder = '';
 
+  @property({ type: String }) autocomplete = '';
+
+  @property({ type: String }) override inputMode: BkInputMode | '' = '';
+
   @property({ type: Boolean, reflect: true }) disabled = false;
 
   @property({ type: Boolean, reflect: true }) required = false;
@@ -119,6 +144,38 @@ export class BkInput extends LitElement {
   private readonly controlId = nextInstanceId();
 
   private readonly messageId = `${this.controlId}-message`;
+
+  override firstUpdated() {
+    this.initialValue = this.value;
+    this.syncFormValue();
+  }
+
+  override updated(changed: Map<PropertyKey, unknown>) {
+    if (changed.has('value') || changed.has('error') || changed.has('required')) {
+      this.syncFormValue();
+    }
+  }
+
+  formResetCallback() {
+    this.value = this.initialValue;
+  }
+
+  formDisabledCallback(disabled: boolean) {
+    this.disabled = disabled;
+  }
+
+  private syncFormValue() {
+    this.internals.setFormValue(this.value);
+
+    const field = this.shadowRoot?.querySelector('input') ?? undefined;
+    if (this.error) {
+      this.internals.setValidity({ customError: true }, this.error, field);
+    } else if (this.required && !this.value) {
+      this.internals.setValidity({ valueMissing: true }, 'This field is required.', field);
+    } else {
+      this.internals.setValidity({});
+    }
+  }
 
   override render() {
     const message = this.error || this.helper;
@@ -133,6 +190,8 @@ export class BkInput extends LitElement {
         type=${this.type}
         name=${this.name || nothing}
         placeholder=${this.placeholder || nothing}
+        autocomplete=${this.autocomplete || nothing}
+        inputmode=${this.inputMode || nothing}
         .value=${this.value}
         ?disabled=${this.disabled}
         ?required=${this.required}
@@ -146,7 +205,7 @@ export class BkInput extends LitElement {
         id=${this.messageId}
         class="message"
         data-state=${this.error ? 'error' : nothing}
-        aria-live="polite"
+        role="status"
       >
         ${message || nothing}
       </div>

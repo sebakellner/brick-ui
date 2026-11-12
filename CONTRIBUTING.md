@@ -93,6 +93,19 @@ The token name is its JSON path joined with `-`, prefixed by `--bk-`
 9. **Docs.** Add the element to the README components table, and name any
    limitation you are shipping with in the PR description.
 
+## Accessibility bar
+
+- Native semantics first: real `<label>`, native `<input>`/`<button>`, focus
+  delegated to the inner control.
+- Non-text contrast is asserted, not eyeballed: control boundaries and focus
+  rings need 3:1 against their surface (`src/test/helpers/contrast.ts`).
+- Never remove a live region from the accessibility tree to hide it; collapse it
+  visually and keep `role="status"` in place.
+- Disabled controls use `aria-disabled` and block activation in the component, so
+  they stay focusable and discoverable.
+- Form controls are form-associated (`ElementInternals`): value, reset, disabled
+  and validity go through the platform.
+
 ## Testing recipe
 
 ```ts
