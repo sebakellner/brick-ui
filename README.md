@@ -76,7 +76,9 @@ src/
 ├── styles/tokens/      generated CSS — do not edit by hand
 ├── test/helpers/       shared test setup (loads the theme)
 └── index.ts            public entry point
-CONTRIBUTING.md         conventions and checklist for the next component
+CONTRIBUTING.md         setup, commands, CI gates
+AGENTS.md               instructions for coding agents
+docs/                   architecture, conventions, how-to guides, decision records
 ```
 
 ## Development
@@ -97,7 +99,9 @@ pnpm typecheck      # tsc --noEmit
 | This README | What the kit is, how to install and use it |
 | `src/components/*/README.md` | Each component's API: properties, events, parts, hooks |
 | [Storybook](https://sebakellner.github.io/brick-ui/) | Live examples of every variant and state, plus a docs page per component built from its README |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Token layering, conventions, checklist for a new component, releasing |
+| [docs/](docs/README.md) | Architecture, token conventions, the accessibility and testing rules, how-to guides, and the decision records |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Setup, commands, CI gates, how to send a change |
+| [AGENTS.md](AGENTS.md) | The same map, written for coding agents |
 
 ## License
 

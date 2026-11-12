@@ -2,18 +2,31 @@
 
 How Brick is put together and why. The root [README](../README.md) covers usage
 and is written for consumers; this directory is for whoever changes the kit.
+[AGENTS.md](../AGENTS.md) at the repository root is the same map, written for
+coding agents.
 
 ## Read in this order
 
-1. [Token conventions](conventions-tokens.md) — the rules the token layers obey.
-2. [0001. Generate the token CSS from JSON](adr/0001-generate-token-css-from-json.md)
-   — where the tokens come from, then the four decisions that follow it.
+1. [architecture.md](architecture.md) — the system in one screen, and what it
+   deliberately does not do.
+2. [conventions-tokens.md](conventions-tokens.md) — the rules the token layers
+   obey, each with the thing that enforces it.
+3. [add-a-component.md](add-a-component.md) — the first real task. Follow its
+   links into the accessibility, testing and code conventions as you need them.
+4. [0001. Generate the token CSS from JSON](adr/0001-generate-token-css-from-json.md)
+   — why, and what lost.
 
 ## Documents
 
 | Document | Type | Answers |
 | --- | --- | --- |
+| [architecture.md](architecture.md) | explanation | how a value travels from a JSON file to a pixel, and what is out of scope |
 | [conventions-tokens.md](conventions-tokens.md) | reference | which token rules apply, and what enforces each |
+| [conventions-accessibility.md](conventions-accessibility.md) | reference | the bar a component clears before it ships |
+| [conventions-testing.md](conventions-testing.md) | reference | how to write a test that proves something |
+| [conventions-code.md](conventions-code.md) | reference | TypeScript, stylesheets and tooling |
+| [add-a-token.md](add-a-token.md) | how-to | a new design value, without breaking the build |
+| [add-a-component.md](add-a-component.md) | how-to | the third element, without re-deciding anything |
 | [adr/](adr/) | explanation | why the kit is arranged this way, and what was rejected |
 
 `Type` is one of tutorial, how-to, reference and explanation — the
@@ -38,7 +51,8 @@ alternatives that lost. The rules of the folder:
 
 | If you change… | Update |
 | --- | --- |
-| a token, a layer or the pipeline | [conventions-tokens.md](conventions-tokens.md); a new ADR if it is a decision |
+| a token, a layer or the pipeline | [architecture.md](architecture.md) and [conventions-tokens.md](conventions-tokens.md); a new ADR if it is a decision |
+| a component's public surface | its `README.md`, its Storybook page, and the components table in the root README |
 | a check, a CI gate or a command | [CONTRIBUTING.md](../CONTRIBUTING.md) |
 | something that makes a past decision false | not that ADR — a new one that supersedes it |
 

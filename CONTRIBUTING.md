@@ -1,130 +1,56 @@
 # Contributing
 
-How the kit is put together and how to add the next component without
-re-deciding any of it. Read this before writing a component; the README covers
-usage.
+How to get the repository running and how to send a change. Everything about the
+internals lives in [`docs/`](docs/README.md); the [README](README.md) covers usage.
 
-## The contract in one screen
+## Where everything lives
 
-```
-tokens/*.json  ──build:tokens──>  src/styles/tokens/*.css  ──>  theme.css
-                                                                   │
-                                    components read it with var(--bk-*) and no fallback
-```
+| You want | Go to |
+| --- | --- |
+| how a value travels from JSON to a pixel | [docs/architecture.md](docs/architecture.md) |
+| the rules the token layers obey | [docs/conventions-tokens.md](docs/conventions-tokens.md) |
+| the accessibility bar | [docs/conventions-accessibility.md](docs/conventions-accessibility.md) |
+| how to test, and what makes a test real | [docs/conventions-testing.md](docs/conventions-testing.md) |
+| TypeScript and tooling gotchas | [docs/conventions-code.md](docs/conventions-code.md) |
+| add a token | [docs/add-a-token.md](docs/add-a-token.md) |
+| add a component | [docs/add-a-component.md](docs/add-a-component.md) |
+| why the kit is arranged this way | [docs/adr/](docs/adr/) |
+| instructions for coding agents | [AGENTS.md](AGENTS.md) |
 
-1. **Tokens are generated, never hand-written.** `tokens/*.json` is the source;
-   the CSS under `src/styles/tokens/` is output and committed. CI fails when they
-   diverge, including untracked output.
-2. **Aliases stay aliases.** The build uses `outputReferences`, so
-   `{palette.orange-700}` becomes `var(--bk-palette-orange-700)` and never a
-   resolved literal. Runtime theming keeps working; a values-only pipeline would
-   have flattened it.
-3. **The theme is required.** Components carry no fallback values. Defaults live
-   once, in the generated CSS.
-4. **Components carry no style literals.** Every color, length and duration comes
-   from a token, written as `var(--bk-…)` so the CSS stays readable and
-   greppable. `pnpm check:tokens` validates every name in the components against
-   the declared tokens and the hooks, and fails when a semantic role has no
-   consumer, so a typo fails CI instead of rendering nothing and a dead role
-   cannot accumulate. (`px` appears only in story scaffolding.)
-5. **No CSS comments.** Token files and component styles stay declarative; the
-   explanation lives here.
+## Setup
 
-## Token layers
+Node 22+, pnpm, and Chrome for the test runner.
 
-| Layer | Lives in | Answers | Example |
-| --- | --- | --- | --- |
-| Primitive | `tokens/color.json` → `palette.*` | what colors exist | `--bk-palette-orange-700` |
-| Semantic | `palette` siblings: `color.*`, `focus-ring` | shared roles | `--bk-color-danger` |
-| Control | `tokens/control.json` → `<component>.*` | what one control paints | `--bk-button-secondary-bg` |
-
-Rules:
-
-- Reference **downwards only**: control → palette, semantic → palette, `rounded` →
-  `space`. Nothing references a control token.
-- Prefer a control token for anything only one component paints. A semantic
-  role is for a value shared across controls or a global affordance (focus ring,
-  danger); when in doubt, check which components read it before adding one.
-- A control token needs a component; if the component stops reading it, delete it.
-- The palette is a reference ramp, not a usage list: unused entries stay.
-
-### Naming
-
-The token name is its JSON path joined with `-`, prefixed by `--bk-`
-(`platform.prefix`). `button.secondary.bg-hover` becomes
-`--bk-button-secondary-bg-hover`. So the path you write is the public name.
-
-## Adding a component: checklist
-
-1. **Tokens.** Add `tokens/<component>.json` with a top-level group named after
-   the component, wired to palette entries. Reuse semantic roles only when the
-   role is genuinely shared.
-2. **Platform filter.** Add the group to `style-dictionary.config.mjs`. The
-   filters are explicit lists: a group that is not listed is generated into no
-   file at all, silently. Either add the name to an existing platform or add a
-   new one with `cssFile('<group>.css', only('<group>'))`.
-3. **Generate.** `pnpm build:tokens` and commit the CSS.
-4. **Element.** `src/components/bk-<name>/bk-<name>.ts`, Lit + `delegatesFocus`,
-   styles read tokens with no fallback, `part` attributes for escape hatches.
-5. **Variants, if any.** Reflected attribute, plus the mapping pattern:
-
-   ```css
-   :host {
-     --bk-x-variant-bg: var(--bk-x-primary-bg);
-   }
-
-   :host([variant='secondary']) {
-     --bk-x-variant-bg: var(--bk-x-secondary-bg);
-   }
-
-   button /* the inner native element */ {
-     background: var(--bk-x-bg, var(--bk-x-variant-bg));
-   }
-   ```
-
-   The public hook is read first and the variant default lives in a different
-   variable. That is what makes an override inherited from an ancestor win; if
-   the variant wrote `--bk-x-bg` itself, the inherited override would lose.
-6. **Accessibility in the component.** Real `<label>`/`for`, `aria-describedby`
-   only while the described region has content, `aria-invalid` on error,
-   `:focus-visible` for rings. Never rely on a host page to wire it.
-7. **Tests.** `bk-<name>.test.ts` next to the element; `before(loadTheme)` from
-   `src/test/helpers/theme.ts`; assert behaviour and computed styles.
-8. **Stories.** `bk-<name>.stories.ts` with one story per variant and per state.
-9. **Docs.** Add the element to the README components table, and name any
-   limitation you are shipping with in the PR description.
-
-## Accessibility bar
-
-- Native semantics first: real `<label>`, native `<input>`/`<button>`, focus
-  delegated to the inner control.
-- Non-text contrast is asserted, not eyeballed: control boundaries and focus
-  rings need 3:1 against their surface (`src/test/helpers/contrast.ts`).
-- Never remove a live region from the accessibility tree to hide it; collapse it
-  visually and keep `role="status"` in place.
-- Disabled controls use `aria-disabled` and block activation in the component, so
-  they stay focusable and discoverable.
-- Form controls are form-associated (`ElementInternals`): value, reset, disabled
-  and validity go through the platform.
-
-## Testing recipe
-
-```ts
-before(loadTheme);                                   // the theme is required
-
-const el = await fixture<BkX>(html`<bk-x label="Email"></bk-x>`);
-expect(getComputedStyle(inner(el)).borderTopColor).to.equal('rgb(185, 28, 28)');
+```bash
+pnpm install
 ```
 
-- Assert **computed styles**, not markup, for anything a token drives. Markup
-  assertions pass through specificity bugs.
-- For states the browser only enters with real input (hover, focus), dispatch it
-  through `@web/test-runner-commands` (`sendMouse`); the plugin is registered in
-  `web-test-runner.config.mjs`. A class swap cannot reproduce a specificity loss.
-- Wait past the `--bk-transition` duration (120ms) before asserting a transitioned
-  property, or you sample an interpolated color.
-- Every fix should be provable by mutation: break the code, watch the test go red,
-  restore it. If it stays green, the test is decorative.
+## Commands
+
+| Command | Use |
+| --- | --- |
+| `pnpm dev` | the playground |
+| `pnpm storybook` | component stories and the docs pages |
+| `pnpm test` | the suite, in real Chrome |
+| `pnpm test:watch` | the suite, watching |
+| `pnpm typecheck` | `tsc --noEmit` |
+| `pnpm build:tokens` | regenerate the CSS and `tokens.generated.ts`; commit the result |
+| `pnpm check:tokens` | every name a component reads exists, and every semantic role is read |
+| `pnpm build` | the bundle |
+| `pnpm build-storybook` | the static site |
+
+## Sending a change
+
+- Branch from `main`. It is protected: a PR is required, and both CI jobs are
+  required, admins included.
+- Conventional Commits, in English, like the history.
+- Keep the tests and the docs in the same commit as the behaviour they describe.
+  A commit that changes behavior without its test is not reviewable.
+- Name any limitation you are shipping with in the PR description. One written
+  down is a limitation someone can fix; one kept quiet is a bug report six months
+  late.
+- Before pushing: `pnpm test`, `pnpm typecheck`, `pnpm check:tokens`. If you
+  touched `tokens/`, also run `pnpm build:tokens` and commit the output.
 
 ## CI gates
 
@@ -132,52 +58,14 @@ expect(getComputedStyle(inner(el)).borderTopColor).to.equal('rgb(185, 28, 28)');
 
 | Job | Checks |
 | --- | --- |
-| `test` | tokens match the JSON (`git status --porcelain`, so untracked output counts), `typecheck`, the suite in real Chrome |
+| `test` | tokens match the JSON (`git status --porcelain`, so untracked output counts), `check:tokens`, `typecheck`, the suite in real Chrome |
 | `storybook build` | regenerates the tokens and builds the site |
 
-`storybook-pages.yml` publishes from `main` only, gated by the suite. `main` is
-protected: PR required, both jobs required, admins included.
+`storybook-pages.yml` publishes from `main` only, gated by the suite.
 
-## Scope decisions
+## Scope
 
-Recorded so they are not reopened by accident:
-
-| Decision | Value | Revisit when |
-| --- | --- | --- |
-| License | MIT (`LICENSE`) | never, unless relicensing |
-| Browsers in the suite | Chrome only | a shadow-DOM or `:has()` bug escapes |
-| Packaging | not published; consumed from the repo | the kit gets an outside consumer |
-| Token names | validated in CI (`pnpm check:tokens`), not typed | a typo slips past the check |
-| Visual regression | not covered; computed styles only | a layout bug escapes the suite |
-
-## Harness gotchas
-
-- **TS imports carry `.js`** (`verbatimModuleSyntax` + bundler resolution): import
-  `'./bk-x.js'` from a `.ts` file.
-- **`strict`, `noUnusedLocals`, `noUnusedParameters`** are on; unused fixture
-  bindings fail `typecheck`, not just lint.
-- Style Dictionary `css/variables` emits a header comment by default —
-  `showFileHeader: false` keeps the token files comment-free.
-- The `base` platform's filter is a name list; a new structural token (like
-  `--bk-focus-ring-offset`) is silently dropped until its group is added.
-- Lit types `css` as accepting only `CSSResultGroup | number` interpolations, so
-  a token name cannot be a typed expression without wrapping it in `unsafeCSS`.
-  That turned every `var()` into noise for a guarantee `pnpm check:tokens`
-  provides anyway, so the components keep plain CSS names.
-
-## Why the load-bearing decisions are what they are
-
-- **Generated tokens.** The alternative was hand-written CSS plus a script that
-  validates it. A generator makes a broken reference a build error instead of a
-  review catch, and leaves room for a second platform (TypeScript values, a dark
-  theme) without rewriting the token layer.
-- **Aliases as `var()`.** Resolving them at build time would kill per-subtree
-  theming; a host could no longer re-theme `.checkout` without a rebuild.
-- **Theme required.** Components used to carry ~50 hard-coded fallbacks. Nothing
-  ever exercised them — the playground and Storybook both load the theme — while
-  they duplicated the source of truth. Change a palette entry, rebuild, and the
-  fallback kept painting the old color with no error. A visibly unstyled
-  component gets fixed; a subtly off-brand one ships.
-- **No inline literals.** The focus ring was the last holdout — a 2px outline
-  written inline next to a tokenized color. It now reads
-  `--bk-focus-ring-width` and `--bk-focus-ring-offset`.
+What the kit deliberately does not do — no published package, no visual
+regression, one browser — is recorded with its revisit condition in
+[docs/architecture.md](docs/architecture.md#boundaries). A change that would cross
+one of those lines is a decision, not an implementation detail: it needs an ADR.
