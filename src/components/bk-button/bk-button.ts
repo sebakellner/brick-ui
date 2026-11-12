@@ -37,7 +37,7 @@ export class BkButton extends LitElement {
       gap: var(--bk-space-2, 8px);
       min-height: var(--bk-control-height, 40px);
       padding: 0 var(--bk-space-4, 16px);
-      font-family: inherit;
+      font-family: var(--bk-font-sans, system-ui, sans-serif);
       font-size: var(--bk-font-size-md, 0.9375rem);
       font-weight: 500;
       line-height: var(--bk-line-height-md, 1.5);
