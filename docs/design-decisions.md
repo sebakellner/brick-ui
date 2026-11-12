@@ -73,8 +73,7 @@ duplicate stylesheets in the same page.
 
 The focus ring is a token too (`--bk-focus-ring-width`, `--bk-focus-ring-offset`,
 both in `base.css`), so the components keep no style literals at all. Unifying
-the offset moved the input's ring from 1px to 2px, which is the value the button
-already used.
+the offset settled both controls on 1px, the value the input already used.
 
 ## What the tests cover
 
