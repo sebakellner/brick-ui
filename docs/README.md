@@ -45,6 +45,11 @@ alternatives that lost. The rules of the folder:
 - An accepted ADR is **not edited** when the decision changes. Write a new one
   and mark the old `superseded by [NNNN](NNNN-slug.md)`. The history of a reversal
   is the most valuable thing in the folder.
+- When only part of an accepted decision is reversed, the new ADR supersedes that
+  part and the old one is marked `superseded in part by [NNNN](NNNN-slug.md)`, with
+  one sentence naming what still holds. 0003 is the case: its rule about `var()`
+  aliases survived 0006, its description of the layers did not. Marking the status
+  is the only edit an accepted ADR receives; the body below it is never rewritten.
 - Start from [0000-template.md](adr/0000-template.md) and replace every prompt.
 - **The Context describes our situation, not the industry's.** What hurt, what it
   cost, verified in the code. Benchmarking belongs in the working notes: put it in

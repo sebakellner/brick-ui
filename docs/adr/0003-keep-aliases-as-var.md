@@ -4,7 +4,10 @@ Date: 2026-11-12
 
 ## Status
 
-accepted
+superseded in part by [0006](0006-stack-the-token-layers-and-add-a-theme.md).
+The decision below still holds: an alias is a `var()` reference, never a flattened
+value. What 0006 replaced is the three-layer description this file assumed, which
+had one theme and no role tier.
 
 ## Context
 
