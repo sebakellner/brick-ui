@@ -7,6 +7,7 @@
   --bk-palette-stone-200: #e7e5e4;
   --bk-palette-stone-300: #d6d3d1;
   --bk-palette-stone-400: #a8a29e;
+  --bk-palette-stone-500: #78716c;
   --bk-palette-stone-600: #57534e;
   --bk-palette-stone-700: #44403c;
   --bk-palette-stone-900: #1c1917;
@@ -14,7 +15,7 @@
   --bk-palette-sky-600: #0284c7;
   --bk-focus-ring: var(--bk-palette-sky-600);
   --bk-color-surface-muted: var(--bk-palette-stone-50);
-  --bk-color-border-strong: var(--bk-palette-stone-400);
+  --bk-color-border-strong: var(--bk-palette-stone-600);
   --bk-color-text-muted: var(--bk-palette-stone-600);
   --bk-color-danger: var(--bk-palette-red-700);
 }

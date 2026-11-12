@@ -13,6 +13,7 @@ export const tokens = {
   paletteStone200: '--bk-palette-stone-200',
   paletteStone300: '--bk-palette-stone-300',
   paletteStone400: '--bk-palette-stone-400',
+  paletteStone500: '--bk-palette-stone-500',
   paletteStone600: '--bk-palette-stone-600',
   paletteStone700: '--bk-palette-stone-700',
   paletteStone900: '--bk-palette-stone-900',

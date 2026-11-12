@@ -8,11 +8,11 @@
   --bk-button-secondary-bg: var(--bk-palette-white);
   --bk-button-secondary-bg-hover: var(--bk-palette-stone-200);
   --bk-button-secondary-fg: var(--bk-palette-stone-900);
-  --bk-button-secondary-border: var(--bk-palette-stone-300);
+  --bk-button-secondary-border: var(--bk-palette-stone-500);
   --bk-button-ghost-bg-hover: var(--bk-palette-stone-50);
   --bk-button-ghost-fg: var(--bk-palette-stone-900);
   --bk-input-bg: var(--bk-palette-white);
   --bk-input-color: var(--bk-palette-stone-900);
   --bk-input-label-color: var(--bk-palette-stone-900);
-  --bk-input-border-color: var(--bk-palette-stone-300);
+  --bk-input-border-color: var(--bk-palette-stone-500);
 }

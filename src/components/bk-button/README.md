@@ -16,7 +16,7 @@ A button that delegates focus to its inner native `<button>`.
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `variant` | `variant` | `'primary' \| 'secondary' \| 'ghost'` | `'primary'` | reflected |
-| `disabled` | `disabled` | `boolean` | `false` | reflected; blocks clicks |
+| `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner button and blocks activation |
 
 ## Content
 
@@ -60,6 +60,10 @@ when inherited from an ancestor. The variant defaults are
 
 - Focus is delegated to the native button, so keyboard behaviour is the
   platform's.
-- The focus ring uses `:focus-visible`. Disabled buttons keep `cursor:
-  not-allowed` and native semantics.
-- `disabled` reaches the inner button, so clicks and activation are blocked.
+- The focus ring uses `:focus-visible` and clears 3:1 against a white surface.
+- `disabled` sets `aria-disabled` instead of the native attribute: the button
+  stays in the tab order and is announced as unavailable, while clicks and
+  keyboard activation are blocked. A native `disabled` button is skipped
+  entirely, which hides it from someone navigating with a screen reader.
+- The secondary border clears 3:1 against a white surface (WCAG 1.4.11), which
+  the tests assert.

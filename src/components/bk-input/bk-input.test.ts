@@ -2,6 +2,7 @@ import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendMouse } from '@web/test-runner-commands';
 import './bk-input.js';
 import type { BkInput } from './bk-input.js';
+import { contrastWithWhite } from '../../test/helpers/contrast.js';
 import { loadTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
@@ -64,6 +65,85 @@ describe('bk-input', () => {
 
     expect(field.matches(':hover')).to.equal(true);
     expect(getComputedStyle(field).borderTopColor).to.equal('rgb(185, 28, 28)');
+  });
+
+  it('should pass autocomplete and inputmode through to the field', async () => {
+    const el = await fixture<BkInput>(
+      html`<bk-input label="Email" autocomplete="email" inputmode="email"></bk-input>`,
+    );
+
+    expect(innerInput(el).getAttribute('autocomplete')).to.equal('email');
+    expect(innerInput(el).getAttribute('inputmode')).to.equal('email');
+  });
+
+  it('should keep the message region available to assistive tech while empty', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+    const message = innerMessage(el);
+
+    expect(message.getAttribute('role')).to.equal('status');
+    expect(message.textContent!.trim()).to.equal('');
+    expect(getComputedStyle(message).display).to.not.equal('none');
+  });
+
+  it('should submit with the form and restore the initial value on reset', async () => {
+    const form = await fixture<HTMLFormElement>(
+      html`<form><bk-input name="email" value="a@b.c" label="Email"></bk-input></form>`,
+    );
+    const field = form.querySelector('bk-input') as BkInput;
+    await field.updateComplete;
+
+    expect(new FormData(form).get('email')).to.equal('a@b.c');
+
+    field.value = 'changed@b.c';
+    await field.updateComplete;
+    expect(new FormData(form).get('email')).to.equal('changed@b.c');
+
+    form.reset();
+    await field.updateComplete;
+    expect(field.value).to.equal('a@b.c');
+  });
+
+  it('should clear the submitted value on reset without waiting a render', async () => {
+    const form = await fixture<HTMLFormElement>(
+      html`<form><bk-input name="email" value="a@b.c" label="Email"></bk-input></form>`,
+    );
+    const field = form.querySelector('bk-input') as BkInput;
+    field.value = 'changed@b.c';
+    await field.updateComplete;
+
+    form.reset();
+
+    expect(new FormData(form).get('email')).to.equal('a@b.c');
+  });
+
+  it('should keep an author-disabled field disabled when its fieldset re-enables', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <fieldset disabled>
+          <bk-input name="email" label="Email" disabled></bk-input>
+          <bk-input name="other" label="Other"></bk-input>
+        </fieldset>
+      </form>
+    `);
+    const fieldset = form.querySelector('fieldset')!;
+    const field = form.querySelector('bk-input') as BkInput;
+
+    const plain = form.querySelectorAll('bk-input')[1] as BkInput;
+    expect(innerInput(plain).disabled).to.equal(true);
+
+    fieldset.disabled = false;
+    await field.updateComplete;
+    await plain.updateComplete;
+
+    expect(field.disabled).to.equal(true);
+    expect(innerInput(field).disabled).to.equal(true);
+    expect(innerInput(plain).disabled).to.equal(false);
+  });
+
+  it('should keep the field border at 3:1 against a white surface', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+
+    expect(contrastWithWhite(getComputedStyle(innerInput(el)).borderTopColor)).to.be.at.least(3);
   });
 
   it('should emit bk-change with the value, bubbling out of the shadow root', async () => {
