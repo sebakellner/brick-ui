@@ -7,9 +7,10 @@ export type BkButtonVariant = 'primary' | 'secondary' | 'ghost';
  * A button.
  *
  * Theming is layered on purpose: `--bk-button-*` are the public properties a
- * consumer may set, and each variant only fills internal `--bk-button-variant-*`
- * variables that the public ones fall back to. That way a host page can re-theme
- * a single button without fighting the variant defaults.
+ * consumer may set, `--bk-button-{variant}-*` are the control tokens each
+ * variant pulls its defaults from, and the public property wins over the
+ * variant default whether it is set on the element or inherited. Both token
+ * layers resolve to palette entries, so re-theming never needs a raw color.
  *
  * `::part(button)` exposes the inner native button for anything the properties
  * do not cover.
@@ -24,6 +25,10 @@ export class BkButton extends LitElement {
   static override styles = css`
     :host {
       display: inline-block;
+      --bk-button-variant-bg: var(--bk-button-primary-bg, #c2410c);
+      --bk-button-variant-bg-hover: var(--bk-button-primary-bg-hover, #9a3412);
+      --bk-button-variant-fg: var(--bk-button-primary-fg, #ffffff);
+      --bk-button-variant-border: var(--bk-button-primary-border, transparent);
     }
 
     :host([hidden]) {
@@ -42,13 +47,10 @@ export class BkButton extends LitElement {
       font-weight: 500;
       line-height: var(--bk-line-height-md, 1.5);
       border: var(--bk-border-width, 1px) solid
-        var(--bk-button-border, var(--bk-button-variant-border, transparent));
+        var(--bk-button-border, var(--bk-button-variant-border));
       border-radius: var(--bk-button-radius, var(--bk-radius-md, 8px));
-      background: var(
-        --bk-button-bg,
-        var(--bk-button-variant-bg, var(--bk-color-primary, #c2410c))
-      );
-      color: var(--bk-button-fg, var(--bk-button-variant-fg, var(--bk-color-on-primary, #ffffff)));
+      background: var(--bk-button-bg, var(--bk-button-variant-bg));
+      color: var(--bk-button-fg, var(--bk-button-variant-fg));
       cursor: pointer;
       transition:
         background-color var(--bk-transition, 120ms ease),
@@ -57,13 +59,10 @@ export class BkButton extends LitElement {
     }
 
     button:hover:not(:disabled) {
-      background: var(
-        --bk-button-bg-hover,
-        var(--bk-button-variant-bg-hover, var(--bk-color-primary-hover, #9a3412))
-      );
+      background: var(--bk-button-bg-hover, var(--bk-button-variant-bg-hover));
       border-color: var(
         --bk-button-border-hover,
-        var(--bk-button-border, var(--bk-button-variant-border, transparent))
+        var(--bk-button-border, var(--bk-button-variant-border))
       );
     }
 
@@ -78,17 +77,17 @@ export class BkButton extends LitElement {
     }
 
     :host([variant='secondary']) {
-      --bk-button-variant-bg: var(--bk-color-surface, #ffffff);
-      --bk-button-variant-bg-hover: var(--bk-color-surface-hover, #e7e5e4);
-      --bk-button-variant-fg: var(--bk-color-text, #1c1917);
-      --bk-button-variant-border: var(--bk-color-border, #d6d3d1);
+      --bk-button-variant-bg: var(--bk-button-secondary-bg, #ffffff);
+      --bk-button-variant-bg-hover: var(--bk-button-secondary-bg-hover, #e7e5e4);
+      --bk-button-variant-fg: var(--bk-button-secondary-fg, #1c1917);
+      --bk-button-variant-border: var(--bk-button-secondary-border, #d6d3d1);
     }
 
     :host([variant='ghost']) {
-      --bk-button-variant-bg: transparent;
-      --bk-button-variant-bg-hover: var(--bk-color-surface-muted, #f5f5f4);
-      --bk-button-variant-fg: var(--bk-color-text, #1c1917);
-      --bk-button-variant-border: transparent;
+      --bk-button-variant-bg: var(--bk-button-ghost-bg, transparent);
+      --bk-button-variant-bg-hover: var(--bk-button-ghost-bg-hover, #f5f5f4);
+      --bk-button-variant-fg: var(--bk-button-ghost-fg, #1c1917);
+      --bk-button-variant-border: var(--bk-button-ghost-border, transparent);
     }
   `;
 

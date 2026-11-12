@@ -37,7 +37,7 @@ export class BkInput extends LitElement {
       font-family: var(--bk-font-sans, system-ui, sans-serif);
       font-size: var(--bk-font-size-sm, 0.8125rem);
       font-weight: 500;
-      color: var(--bk-input-label-color, var(--bk-color-text, #1c1917));
+      color: var(--bk-input-label-color, #1c1917);
     }
 
     input {
@@ -48,10 +48,9 @@ export class BkInput extends LitElement {
       font-family: var(--bk-font-sans, system-ui, sans-serif);
       font-size: var(--bk-font-size-md, 0.9375rem);
       line-height: var(--bk-line-height-md, 1.5);
-      color: var(--bk-input-color, var(--bk-color-text, #1c1917));
-      background: var(--bk-input-bg, var(--bk-color-surface, #ffffff));
-      border: var(--bk-border-width, 1px) solid
-        var(--bk-input-border-color, var(--bk-color-border, #d6d3d1));
+      color: var(--bk-input-color, #1c1917);
+      background: var(--bk-input-bg, #ffffff);
+      border: var(--bk-border-width, 1px) solid var(--bk-input-border-color, #d6d3d1);
       border-radius: var(--bk-input-radius, var(--bk-radius-md, 8px));
       transition:
         border-color var(--bk-transition, 120ms ease),

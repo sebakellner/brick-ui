@@ -10,82 +10,108 @@ deliberately out of it.
 
 ```bash
 pnpm install
-pnpm dev                 # playground at http://localhost:5173
-pnpm storybook           # stories at http://localhost:6006
-pnpm test                # Web Test Runner, real Chrome
-pnpm typecheck           # tsc --noEmit
+pnpm dev          # playground
+pnpm storybook    # stories
+pnpm test         # Web Test Runner, real Chrome
+pnpm typecheck    # tsc --noEmit
 ```
 
-Requirements: Node 22+ (the test runner requires it), pnpm and a local Chrome install.
+Node 22+, pnpm and a local Chrome install.
 
 ## Structure
 
 ```
 src/
-├── components/          one folder per component: element, stories, test
-├── styles/theme.css     theming entry point, only @imports the token files
-├── styles/tokens/       one file per token group: space, rounded, color,
-│                        typography, base
-└── index.ts             public entry point
+├── components/         one folder per component: element, stories, test
+├── styles/theme.css    theming entry point: imports the token files only
+├── styles/tokens/      one file per group: space, rounded, color, control,
+│                       typography, base
+└── index.ts            public entry point
 ```
 
-Load `src/styles/theme.css` once in the host page (link or import). Components
-never import it; each reads its custom properties with a hard-coded fallback, so
-the tokens are optional at runtime and overridable at any level.
+Load `src/styles/theme.css` once in the host page. Components never import it:
+each reads its custom properties with a hard-coded fallback, so the tokens are
+optional at runtime and overridable at any level.
 
 ## Design tokens
 
-The token files hold declarations only — no comments, no logic. What matters
-about them is documented here instead.
+The token files are declarations only — no comments, no logic. What needs
+explaining lives here.
 
-### Groups
-
-| File | Tokens | Rule |
+| File | Declares | Rule |
 | --- | --- | --- |
-| `space.css` | `--bk-space-base`, `--bk-space-1…4` | 4px base; every step is a multiple of it |
-| `rounded.css` | `--bk-radius-sm`, `-md`, `-lg` | aliases into the space scale, never raw pixels |
-| `color.css` | `--bk-palette-*`, `--bk-color-*`, `--bk-focus-ring` | two layers: primitives, then semantic roles |
-| `typography.css` | `--bk-font-sans`, `--bk-font-size-sm/md`, `--bk-line-height-md` | sizes in `rem` so browser font settings apply |
-| `base.css` | `--bk-border-width`, `--bk-control-height`, `--bk-transition` | structural values outside the four groups |
+| `space.css` | `--bk-space-base`, `--bk-space-1…4` | 4px base; every step is a multiple |
+| `rounded.css` | `--bk-radius-sm/md/lg` | aliases into the space scale |
+| `color.css` | `--bk-palette-*`, `--bk-color-*`, `--bk-focus-ring` | palette first, then semantic roles |
+| `control.css` | `--bk-button-{variant}-*`, `--bk-input-*` | control roles, aliased to the palette |
+| `typography.css` | `--bk-font-sans`, `--bk-font-size-sm/md`, `--bk-line-height-md` | `rem` sizes, so browser font settings apply |
+| `base.css` | `--bk-border-width`, `--bk-control-height`, `--bk-transition` | structural values, outside the groups above |
 
-### Space is the single rhythm
+### Three layers of color
 
-`--bk-space-base` is 4px and every step derives from it:
-`--bk-space-2` is `calc(var(--bk-space-base) * 2)`. Change the base and the
-whole spacing rhythm rescales. Do not add a step that is not a multiple of the
-base; a one-off padding is how the scale stops meaning anything.
+`--bk-palette-*` → `--bk-color-*` → `--bk-button-{variant}-*` / `--bk-input-*`.
 
-### Radius follows space, it does not have its own scale
+Primitives are raw values, referenced only by the two layers above them.
+Semantic roles are general-purpose surfaces and text. Control roles are what a
+form control paints; a component never holds a literal color, so re-theming a
+variant is a token edit.
 
-`--bk-radius-sm` is `--bk-space-1`, `-md` is `--bk-space-2`, `-lg` is
-`--bk-space-4`. A corner can therefore never drift off the 4px grid. This is
-why `--bk-radius-lg` is 16px: before the split it was 14px, which had no place
-on the scale. Nothing in the kit read it, so no rendering changed.
+### Three kinds of custom property
 
-### Color has two layers
+- **Declared tokens** are the defaults in the table above.
+- **Component internals** are `--bk-button-variant-*`: a component sets them on
+  `:host` from its control tokens (`--bk-button-secondary-bg`, …) so a public
+  hook can win first. Not part of the contract, don't override them.
+- **Override hooks** are read by a component and declared nowhere, so they always
+  win over a default and keep a hard-coded fallback for a page without the theme:
+  `--bk-button-bg`, `-bg-hover`, `-fg`, `-border`, `-border-hover`,
+  `--bk-button-radius`, `--bk-input-radius`.
 
-- **Primitives** (`--bk-palette-*`) are raw values — the palette as it exists,
-named after color and step. Nothing but `color.css` should reference them.
-- **Semantic** (`--bk-color-*`, `--bk-focus-ring`) are roles, and each one is an
-alias to a primitive. Components and themes use only this layer.
-
-Re-theme by overriding semantic tokens on `:root` or on any subtree:
+A hook can be set on any ancestor, not only on the element itself:
 
 ```css
-.acme {
-  --bk-color-primary: var(--bk-palette-sky-600);
-  --bk-focus-ring: var(--bk-palette-orange-700);
+.checkout {
+  --bk-button-bg: var(--bk-palette-sky-600);
+  --bk-button-bg-hover: var(--bk-palette-sky-700);
 }
 ```
 
-Touch a palette token only when the brand palette itself changes, and only in
-`color.css`.
+That reaches all three variants: the component reads the hook before the variant
+default, and the variant default is a different variable, set on the component
+host.
 
-### Adding a token
+### Rules that keep the scale honest
 
-Add it to the file of its group, wire it to the layer above it (`rounded` to
-`space`, semantic to a primitive), and document any value that is not obvious
-from its name in this section. If a value needs a comment to be understood
-inside the CSS file, that is a documentation task, not a comment.
+- Space is the only rhythm: `--bk-space-2` is `calc(var(--bk-space-base) * 2)`.
+  Do not add a step off the 4px grid; a one-off padding is how a scale dies.
+- Radius has no scale of its own: it aliases space (`-sm` = space 1, `-md` = 2,
+  `-lg` = 4). A corner that needs its own pixel value is a design decision, not a
+  token.
+- A new token goes in its group file and is wired to the layer above it
+  (`rounded` → `space`, a control role → a palette entry). If it needs a comment
+  inside the CSS to be understood, it belongs in this section.
 
-Contracts and technical decisions live in this README section.
+## Contracts
+
+- The theme is opt-in: with no stylesheet loaded, every component still renders
+  because each `var()` carries the resolved value as its fallback.
+- Overrides beat defaults, and that is why hooks are never declared in the token
+  layer: a declared value would be a default fighting the override.
+- `::part(button)`, `part="input"`, `part="label"` and `part="message"` are the
+  escape hatches for whatever the tokens do not cover. `bk-input` emits a
+  `bk-change` event with `{ value }`.
+- Accessibility belongs to the component, not to the theme: focus rings come from
+  `--bk-focus-ring`, the label/input link and `aria-describedby` are wired in
+  `bk-input`, and `error` sets `aria-invalid`.
+
+## Known gaps
+
+- No test asserts a computed style, so a miswired control token or a wrong
+  variant color is invisible to the suite.
+- `bk-input` marks its message region with `data-state="helper"`, but only the
+  `error` state has a rule.
+- Several semantic roles have no consumer since the controls took their own
+  layer: `--bk-color-primary`, `-primary-hover`, `-primary-active`, `-on-primary`,
+  `-on-danger`, `-surface`, `-surface-hover`, `-text`, `-text-on-muted`,
+  `-border`. Only `-border-strong`, `-danger`, `-surface-muted`, `-text-muted`
+  and `--bk-focus-ring` are still read by a component.
