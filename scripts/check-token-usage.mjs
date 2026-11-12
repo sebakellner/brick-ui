@@ -1,5 +1,5 @@
 /**
- * Two checks over the `--bk-*` names that live inside CSS strings, where no
+ * Four checks over the `--bk-*` names that live inside CSS strings, where no
  * other tooling can see them.
  *
  * 1. Every name a component reads must exist: either as a declared token
@@ -11,6 +11,18 @@
  *    is a public contract with no behaviour: it costs a breaking change to
  *    delete later. Ten of them were removed by hand in d9dfacd, and this check
  *    is that cleanup made repeatable. See docs/conventions-tokens.md (R1).
+ *
+ * 3. A role is read under the property it belongs to (R5): `--bk-bg-*` in a
+ *    background, `--bk-text-*` in a `color`, `--bk-border-*` in a border,
+ *    `--bk-focus-ring` in an outline. Indirection through a custom property is
+ *    not checked — that is the hook pattern, and the value lands elsewhere.
+ *
+ * 4. A component never reads a colour primitive (R6): `--bk-palette-*` is the
+ *    raw ramp, and reaching for it bypasses the theme. Spacing, radius, type and
+ *    the structural values have no role layer, so reading those directly is not
+ *    a violation — they do not change between themes.
+ *
+ * See docs/conventions-tokens.md for the rules and docs/adr/0006 for why.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
@@ -22,7 +34,29 @@ const HOOKS_SOURCE = 'style-dictionary.config.mjs';
 
 const NAMES = /^\s*(--bk-[a-z0-9-]+):/gm;
 const REFERENCES = /(--bk-[a-z0-9-]+)/g;
+const DECLARATION = /^\s*(--bk-[a-z0-9-]+|[a-z-]+)\s*:/;
 const SUPPORT_FILE = /\.(test|stories)\.ts$/;
+const PRIMITIVE = '--bk-palette-';
+
+// Which CSS properties may read which role family. A family missing here is not
+// checked, so adding a role family means adding its properties.
+const PROPERTIES = {
+  bg: ['background', 'background-color'],
+  text: ['color'],
+  border: [
+    'border',
+    'border-color',
+    'border-top',
+    'border-right',
+    'border-bottom',
+    'border-left',
+    'border-top-color',
+    'border-right-color',
+    'border-bottom-color',
+    'border-left-color',
+  ],
+  focus: ['outline', 'outline-color'],
+};
 
 const read = (path) => readFileSync(path, 'utf8');
 const stripComments = (source) => source.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -43,7 +77,7 @@ for (const [, name] of read(HOOKS_SOURCE).matchAll(/'(--bk-[a-z0-9-]+)'/g)) hook
 
 // The palette is the primitive layer; everything else declared in color.css is
 // a semantic role the components are supposed to read.
-const semantic = names(read(COLOR_CSS)).filter((name) => !name.startsWith('--bk-palette-'));
+const semantic = names(read(COLOR_CSS)).filter((name) => !name.startsWith(PRIMITIVE));
 if (semantic.length === 0) {
   console.error(
     `no semantic roles found in ${COLOR_CSS}. The color platform in ` +
@@ -51,15 +85,49 @@ if (semantic.length === 0) {
   );
   process.exit(1);
 }
+const roles = new Set(semantic);
+
+/** R5: the property a role is read under has to belong to its family. */
+const misplacedRoles = (file, source) => {
+  const found = [];
+  let property;
+
+  source.split('\n').forEach((line, i) => {
+    const declaration = line.match(DECLARATION);
+    if (declaration) property = declaration[1];
+
+    // A role assigned to a custom property is the hook indirection: the value is
+    // read somewhere else, and that is where the property matters.
+    if (property?.startsWith('--')) return;
+
+    for (const [, name] of line.matchAll(REFERENCES)) {
+      if (!roles.has(name)) continue;
+      const family = name.slice('--bk-'.length).split('-')[0];
+      const allowed = PROPERTIES[family];
+      if (!allowed || !property || allowed.includes(property)) continue;
+      found.push(`${file}:${i + 1}: ${name} read under ${property} (R5)`);
+    }
+  });
+
+  return found;
+};
 
 const componentFiles = walk(COMPONENTS_DIR).filter((path) => path.endsWith('.ts'));
 const problems = [];
 
 for (const file of componentFiles) {
-  for (const [, name] of stripComments(read(file)).matchAll(REFERENCES)) {
-    if (declared.has(name) || hooks.has(name)) continue;
-    problems.push(`${file}: unknown token ${name}`);
+  const source = stripComments(read(file));
+
+  for (const [, name] of source.matchAll(REFERENCES)) {
+    if (!declared.has(name) && !hooks.has(name)) {
+      problems.push(`${file}: unknown token ${name}`);
+    }
+    if (name.startsWith(PRIMITIVE)) {
+      problems.push(`${file}: colour primitive read by a component, use a role (R6): ${name}`);
+    }
   }
+
+  problems.push(...misplacedRoles(file, source));
 }
 
 // A test or a story is not a consumer: R1 is about what a component paints.

@@ -45,17 +45,20 @@ Every visual value comes from a token; the component holds no literals.
 | `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset` | focus ring |
 | `--bk-transition` | hover transition |
 
-The default variant paints on the accent (`--bk-palette-blue-600`, hover
-`--bk-palette-blue-700`); white text on it clears 4.5:1, which the tests assert.
+The default variant paints on the accent role (`--bk-bg-accent`, which the light
+theme resolves to `blue-600` and the dark one to `blue-600` as well); white text on
+it clears 4.5:1 in both, which the tests assert.
 
-The first five are **override hooks**: they win over the variant default even
-when inherited from an ancestor. The variant defaults are
-`--bk-button-{primary,secondary,ghost}-{bg,bg-hover,fg,border}`.
+The first five are **override hooks**: they win over the variant default even when
+inherited from an ancestor. The per-variant values they fall back to
+(`--bk-button-variant-*`) are internal, not part of the API.
 
 ```css
 .checkout {
-  --bk-button-bg: var(--bk-palette-sky-600);
-  --bk-button-bg-hover: var(--bk-palette-sky-700);
+  /* the role: every component that reads it follows */
+  --bk-bg-accent: var(--bk-palette-sky-600);
+  /* the hook: one component, even inherited from an ancestor */
+  --bk-button-bg: var(--bk-bg-accent);
 }
 ```
 

@@ -10,6 +10,8 @@ why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 | R2 | References point downwards, one hop, never at a role | review |
 | R3 | The palette is a reference ramp, not a usage list | review |
 | R4 | The token path is the public name | review |
+| R5 | A role is read under the property it belongs to | `pnpm check:tokens` |
+| R6 | A component reads a role for colour and a primitive for everything else | `pnpm check:tokens` |
 
 ## R1. A semantic role exists only while a component reads it
 
@@ -103,3 +105,36 @@ to say what the value is for, because that is what a consumer greps for.
 **Don't** — name the appearance: `--bk-blue-surface`.
 
 **Enforced by.** Review.
+
+## R5. A role is read under the property it belongs to
+
+**Rule.** `--bk-bg-*` in a `background`, `--bk-text-*` in a `color`,
+`--bk-border-*` in a border colour, `--bk-focus-ring` in an `outline`. A role
+assigned to a custom property is not checked: that is the hook indirection, and
+the property that matters is wherever the hook is finally read.
+
+**Why.** The family is in the name so the misuse is decidable without judgement.
+`color: var(--bk-bg-surface)` compiles, paints something nobody intended, and a
+reviewer reading forty correct declarations does not notice the forty-first.
+
+**Do** — `background: var(--bk-bg-surface);`
+
+**Don't** — `color: var(--bk-bg-surface);`
+
+**Enforced by.** `pnpm check:tokens`.
+
+## R6. A component reads a role for colour and a primitive for everything else
+
+**Rule.** A component never reads `--bk-palette-*`. It reads space, radius,
+typography and the structural primitives directly.
+
+**Why.** A role exists where one name must resolve to different values in
+different contexts. Colour has two themes; spacing has one. Reaching for the ramp
+bypasses the theme silently: the value is right today and wrong the moment the
+theme switches, with nothing to notice it.
+
+**Do** — `background: var(--bk-bg-accent);`
+
+**Don't** — `background: var(--bk-palette-blue-600);`
+
+**Enforced by.** `pnpm check:tokens`.
