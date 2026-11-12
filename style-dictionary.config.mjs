@@ -69,7 +69,7 @@ export default {
     rounded: platform([cssFile('rounded.css', only('radius'))]),
     color: platform([cssFile('color.css', only('palette', 'color', 'focus-ring'))]),
     control: platform([cssFile('control.css', only('button', 'input'))]),
-    typography: platform([cssFile('typography.css', only('font', 'font-size', 'line-height'))]),
+    typography: platform([cssFile('typography.css', only('font', 'font-size', 'font-weight', 'line-height'))]),
     typescript: {
       transformGroup: 'css',
       prefix: 'bk',

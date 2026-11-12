@@ -8,6 +8,9 @@
     "sm": { "value": "0.8125rem" },
     "md": { "value": "0.9375rem" }
   },
+  "font-weight": {
+    "medium": { "value": "500" }
+  },
   "line-height": {
     "md": { "value": "1.5" }
   }

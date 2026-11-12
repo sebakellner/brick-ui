@@ -39,6 +39,7 @@ export const tokens = {
   buttonGhostBgHover: '--bk-button-ghost-bg-hover',
   buttonGhostFg: '--bk-button-ghost-fg',
   buttonGhostBorder: '--bk-button-ghost-border',
+  buttonDisabledOpacity: '--bk-button-disabled-opacity',
   inputBg: '--bk-input-bg',
   inputColor: '--bk-input-color',
   inputLabelColor: '--bk-input-label-color',
@@ -54,6 +55,7 @@ export const tokens = {
   fontSans: '--bk-font-sans',
   fontSizeSm: '--bk-font-size-sm',
   fontSizeMd: '--bk-font-size-md',
+  fontWeightMedium: '--bk-font-weight-medium',
   lineHeightMd: '--bk-line-height-md',
 } as const;
 

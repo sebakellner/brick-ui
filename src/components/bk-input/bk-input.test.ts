@@ -12,12 +12,25 @@ const innerMessage = (el: BkInput) => el.shadowRoot!.querySelector('[part="messa
 describe('bk-input', () => {
   before(loadTheme);
 
+  // documentElement lives outside the fixture wrapper, so fixtureCleanup leaves
+  // it alone; the inherited-token test has to clean up after itself.
+  afterEach(() => {
+    document.documentElement.style.removeProperty('--bk-font-weight-medium');
+  });
+
   it('should label the input with a real label element', async () => {
     const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
 
     expect(innerLabel(el).textContent!.trim()).to.equal('Email');
     expect(innerLabel(el).htmlFor).to.equal(innerInput(el).id);
     expect(innerInput(el).id).to.not.equal('');
+  });
+
+  it('should take the label weight from the shared typography token', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+    document.documentElement.style.setProperty('--bk-font-weight-medium', '700');
+
+    expect(getComputedStyle(innerLabel(el)).fontWeight).to.equal('700');
   });
 
   it('should describe the input with the helper text and stay valid', async () => {
