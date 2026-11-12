@@ -192,22 +192,5 @@
     "sky-900": {
       "value": "#0c4a6e"
     }
-  },
-  "focus-ring": {
-    "value": "{palette.sky-600}"
-  },
-  "color": {
-    "surface-muted": {
-      "value": "{palette.neutral-100}"
-    },
-    "border-strong": {
-      "value": "{palette.neutral-600}"
-    },
-    "text-muted": {
-      "value": "{palette.neutral-600}"
-    },
-    "danger": {
-      "value": "{palette.red-700}"
-    }
   }
 }

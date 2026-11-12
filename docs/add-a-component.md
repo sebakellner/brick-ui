@@ -15,10 +15,10 @@ component does not re-decide any of it.
 
 ## Steps
 
-1. **Tokens.** `tokens/<component>.json` with a top-level group named after the
-   component, wired to palette entries. Reuse a semantic role only when it is
-   genuinely shared. Register the group in `style-dictionary.config.mjs`, run
-   `pnpm build:tokens`, commit the output.
+1. **Tokens.** `tokens/component/<component>.json` with a top-level group named
+   after the component, wired to palette entries. Reuse a semantic role only when
+   it is genuinely shared. Register the group in `style-dictionary.config.mjs`,
+   run `pnpm build:tokens`, commit the output.
 
 2. **Element.** `src/components/bk-<name>/bk-<name>.ts`: Lit, `delegatesFocus`,
    styles that read tokens with no fallback, a `part` attribute on each thing a
