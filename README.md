@@ -3,27 +3,20 @@
 [![ci](https://github.com/sebakellner/brick-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/sebakellner/brick-ui/actions/workflows/ci.yml)
 
 A small set of web components built with [Lit](https://lit.dev) and TypeScript,
-shipped as plain custom elements with a documented theming contract.
+shipped as plain custom elements with a token-driven theming contract.
 
 Two components are in scope: `bk-button` and `bk-input`.
 
-[Live Storybook](https://sebakellner.github.io/brick-ui/) · [Contributing](CONTRIBUTING.md)
+[Storybook](https://sebakellner.github.io/brick-ui/) · [Contributing](CONTRIBUTING.md)
 
-> **Status: 0.1.0, not published.** The package is `private` and has no `exports`,
-> `types` or `LICENSE` yet. Use it from the repository.
+> **Status: 0.1.0, not published.** The package is `private`; consume it from the
+> repository.
 
-## Quick start
+## Install
 
 ```bash
 pnpm install
-pnpm build:tokens   # regenerate src/styles/tokens/*.css from tokens/*.json
-pnpm dev            # playground
-pnpm storybook      # component stories
-pnpm test           # Web Test Runner, real Chrome
-pnpm typecheck      # tsc --noEmit
 ```
-
-Node 22+, pnpm, and a local Chrome for the test runner.
 
 Load the theme once, then use the elements:
 
@@ -38,26 +31,28 @@ Load the theme once, then use the elements:
 <script type="module" src="/src/index.ts"></script>
 ```
 
-**The theme is required.** Components read tokens with no inline fallbacks, so a
-page that skips `theme.css` renders unstyled — visibly, not subtly.
+The theme is required: components carry no fallback values, so a page without
+`theme.css` renders visibly unstyled.
+
+Requirements: Node 22+, pnpm, and Chrome for the test runner.
 
 ## Components
 
-| Element | Properties | Event |
+| Element | Summary | Docs |
 | --- | --- | --- |
-| `bk-button` | `variant` (`primary`, `secondary`, `ghost`), `disabled` | — |
-| `bk-input` | `label`, `helper`, `error`, `value`, `name`, `type`, `placeholder`, `disabled`, `required` | `bk-change` with `{ value }` |
+| `bk-button` | `primary`, `secondary` and `ghost` variants, disabled state | [README](src/components/bk-button/README.md) · [Stories](https://sebakellner.github.io/brick-ui/?path=/story/components-button--variants) |
+| `bk-input` | Single-line field with label, helper, error and `bk-change` | [README](src/components/bk-input/README.md) · [Stories](https://sebakellner.github.io/brick-ui/?path=/story/components-input--default) |
 
-Both delegate focus to the inner native control and expose `part`s for anything
-the tokens do not cover: `button` for the button, `label`, `input` and `message`
-for the field. `bk-input` wires a real `<label>`, `aria-describedby` and
-`aria-invalid`; `error` wins over `helper`.
+Both delegate focus to the inner native control and expose `part`s for whatever
+the tokens do not cover.
 
 ## Theming
 
-`src/styles/theme.css` is the entry point; the tokens come from `tokens/*.json`
+`src/styles/theme.css` is the entry point. Tokens come from `tokens/*.json`
 through Style Dictionary, in six groups: space, rounded, color, control,
-typography and base. Override a semantic or control token anywhere in the tree:
+typography and base.
+
+Override a token anywhere in the tree:
 
 ```css
 .checkout {
@@ -66,25 +61,43 @@ typography and base. Override a semantic or control token anywhere in the tree:
 }
 ```
 
-`--bk-button-bg`, `--bk-button-bg-hover`, `--bk-button-fg`, `--bk-button-border`,
-`--bk-button-border-hover`, `--bk-button-radius` and `--bk-input-radius` are the
-override hooks. The rest are defaults.
+Override hooks: `--bk-button-bg`, `--bk-button-bg-hover`, `--bk-button-fg`,
+`--bk-button-border`, `--bk-button-border-hover`, `--bk-button-radius`,
+`--bk-input-radius`. Everything else is a declared default.
 
-## Project layout
+## Structure
 
 ```
 tokens/                 token source: one JSON file per group
 src/
-├── components/         one folder per component: element, stories, test
+├── components/         one folder per component: element, stories, test, README
 ├── styles/theme.css    theming entry point: imports the generated token files
 ├── styles/tokens/      generated CSS — do not edit by hand
 ├── test/helpers/       shared test setup (loads the theme)
 └── index.ts            public entry point
-CONTRIBUTING.md         conventions, checklist for the next component
+CONTRIBUTING.md         conventions and checklist for the next component
 ```
 
-## Contributing
+## Development
 
-Pull requests only — `main` is protected, and both CI jobs (`test` and
-`storybook build`) are required. `pnpm build:tokens` output is committed; CI
-fails when the generated CSS does not match `tokens/*.json`.
+```bash
+pnpm dev            # playground
+pnpm storybook      # component stories
+pnpm build:tokens   # regenerate src/styles/tokens/*.css from tokens/*.json
+pnpm check:tokens   # validate token names used by the components
+pnpm test           # Web Test Runner, real Chrome
+pnpm typecheck      # tsc --noEmit
+```
+
+## Documentation
+
+| Where | What |
+| --- | --- |
+| This README | What the kit is, how to install and use it |
+| `src/components/*/README.md` | Each component's API: properties, events, parts, hooks |
+| [Storybook](https://sebakellner.github.io/brick-ui/) | Live examples of every variant and state |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Token layering, conventions, checklist for a new component, releasing |
+
+## License
+
+[MIT](LICENSE)
