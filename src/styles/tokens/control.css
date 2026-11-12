@@ -1,19 +1,16 @@
 :root {
+  --bk-button-primary-border: transparent;
+  --bk-button-ghost-bg: transparent;
+  --bk-button-ghost-border: transparent;
   --bk-button-primary-bg: var(--bk-palette-orange-700);
   --bk-button-primary-bg-hover: var(--bk-palette-orange-800);
   --bk-button-primary-fg: var(--bk-palette-white);
-  --bk-button-primary-border: transparent;
-
   --bk-button-secondary-bg: var(--bk-palette-white);
   --bk-button-secondary-bg-hover: var(--bk-palette-stone-200);
   --bk-button-secondary-fg: var(--bk-palette-stone-900);
   --bk-button-secondary-border: var(--bk-palette-stone-300);
-
-  --bk-button-ghost-bg: transparent;
   --bk-button-ghost-bg-hover: var(--bk-palette-stone-50);
   --bk-button-ghost-fg: var(--bk-palette-stone-900);
-  --bk-button-ghost-border: transparent;
-
   --bk-input-bg: var(--bk-palette-white);
   --bk-input-color: var(--bk-palette-stone-900);
   --bk-input-label-color: var(--bk-palette-stone-900);

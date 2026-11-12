@@ -1,0 +1,7 @@
+{
+  "radius": {
+    "sm": { "value": "{space.1}" },
+    "md": { "value": "{space.2}" },
+    "lg": { "value": "{space.4}" }
+  }
+}

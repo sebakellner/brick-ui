@@ -19,10 +19,11 @@ that half work.
 
 ```bash
 pnpm install
-pnpm dev          # playground
-pnpm storybook    # component stories
-pnpm test         # Web Test Runner, real Chrome
-pnpm typecheck    # tsc --noEmit
+pnpm dev            # playground
+pnpm build:tokens   # regenerate src/styles/tokens/*.css from tokens/*.json
+pnpm storybook      # component stories
+pnpm test           # Web Test Runner, real Chrome
+pnpm typecheck      # tsc --noEmit
 ```
 
 Node 22+, pnpm, and a local Chrome for the test runner.
@@ -130,6 +131,15 @@ of the contract — don't override them.
 
 ### Token reference
 
+The source of truth is `tokens/*.json`. `src/styles/tokens/*.css` is generated
+from it by [Style Dictionary](https://styledictionary.com) — never edit those
+files, and never hand-write a new token in them. `pnpm build:tokens` regenerates
+them; CI reruns it and fails if the committed CSS is stale.
+
+Aliases are written as references (`{palette.orange-700}`) and emitted as
+`var()` (`--bk-button-primary-bg: var(--bk-palette-orange-700)`), so the CSS
+keeps resolving at runtime and a host can still re-theme a subtree.
+
 | File | Declares | Rule |
 | --- | --- | --- |
 | `space.css` | `--bk-space-base`, `--bk-space-1…4` | 4px base, every step a multiple |
@@ -139,10 +149,9 @@ of the contract — don't override them.
 | `typography.css` | `--bk-font-sans`, `--bk-font-size-sm/md`, `--bk-line-height-md` | `rem` sizes respect browser font settings |
 | `base.css` | `--bk-border-width`, `--bk-control-height`, `--bk-transition` | structural values outside the groups above |
 
-The token files are declarations only — no comments, no logic. If a value needs
-a comment to be understood inside the CSS, that explanation belongs in this
-section instead. A new token goes in its group file and is wired to the layer
-above it.
+A value that needs explaining gets its explanation here, not a comment in the
+generated CSS. A new token is added in the JSON file of its group and wired to
+the layer above it; the build derives the CSS.
 
 ## Accessibility
 
@@ -156,10 +165,11 @@ above it.
 ## Project layout
 
 ```
+tokens/                 token source: one JSON file per group
 src/
 ├── components/         one folder per component: element, stories, test
-├── styles/theme.css    theming entry point: imports the token files only
-├── styles/tokens/      one file per group (see the token reference)
+├── styles/theme.css    theming entry point: imports the generated token files
+├── styles/tokens/      generated CSS — do not edit by hand
 └── index.ts            public entry point
 ```
 
@@ -179,7 +189,8 @@ back to `font-family: inherit` on the button, or letting `input:hover` win over
 ## CI and delivery
 
 - `ci.yml` runs `typecheck`, the suite and a Storybook build on every pull
-  request and on `main`.
+  request and on `main`, and fails when the generated token CSS does not match
+  `tokens/*.json`.
 - `storybook-pages.yml` publishes the Storybook to GitHub Pages, from `main`
   only, gated by the suite.
 - `main` is protected: pull request required, both jobs required, admins

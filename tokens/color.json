@@ -1,0 +1,24 @@
+{
+  "palette": {
+    "white": { "value": "#ffffff" },
+    "orange-700": { "value": "#c2410c" },
+    "orange-800": { "value": "#9a3412" },
+    "orange-900": { "value": "#7c2d12" },
+    "stone-50": { "value": "#f5f5f4" },
+    "stone-200": { "value": "#e7e5e4" },
+    "stone-300": { "value": "#d6d3d1" },
+    "stone-400": { "value": "#a8a29e" },
+    "stone-600": { "value": "#57534e" },
+    "stone-700": { "value": "#44403c" },
+    "stone-900": { "value": "#1c1917" },
+    "red-700": { "value": "#b91c1c" },
+    "sky-600": { "value": "#0284c7" }
+  },
+  "focus-ring": { "value": "{palette.sky-600}" },
+  "color": {
+    "surface-muted": { "value": "{palette.stone-50}" },
+    "border-strong": { "value": "{palette.stone-400}" },
+    "text-muted": { "value": "{palette.stone-600}" },
+    "danger": { "value": "{palette.red-700}" }
+  }
+}
