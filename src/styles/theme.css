@@ -6,3 +6,26 @@
 @import './tokens/control.css';
 @import './tokens/typography.css';
 @import './tokens/base.css';
+
+/* The roles say what a component paints. The canvas is the host page's job, and
+   `color-scheme` is how the host tells the browser which way to paint its own
+   defaults — the page background, the scrollbars, the caret, form controls.
+   Without it a dark role set lands on a white page: the components go dark and
+   everything around them does not.
+
+   Every selector is zero-specificity so a host that wants to opt out can, with an
+   ordinary class. */
+:where(:root),
+:where([data-theme='light']) {
+  color-scheme: light;
+}
+
+:where([data-theme='dark']) {
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme])) {
+    color-scheme: dark;
+  }
+}

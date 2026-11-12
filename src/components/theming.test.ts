@@ -1,4 +1,5 @@
 import { expect, fixture, html } from '@open-wc/testing';
+import { emulateMedia } from '@web/test-runner-commands';
 import './bk-button/bk-button.js';
 import type { BkButton } from './bk-button/bk-button.js';
 import { loadTheme, setTheme } from '../test/helpers/theme.js';
@@ -100,6 +101,27 @@ describe('theming', () => {
 
       expect(getComputedStyle(probe).color).to.equal(hex('#1c1917'));
       wrapper.remove();
+    });
+  });
+
+  describe('system preference', () => {
+    afterEach(() => emulateMedia({ colorScheme: null }));
+
+    it('should follow the system when the host chose no theme', async () => {
+      document.documentElement.removeAttribute('data-theme');
+
+      await emulateMedia({ colorScheme: 'dark' });
+      expect(role('bg-surface'), 'dark preference').to.equal(hex('#1c1917'));
+
+      await emulateMedia({ colorScheme: 'light' });
+      expect(role('bg-surface'), 'light preference').to.equal(hex('#ffffff'));
+    });
+
+    it('should let an explicit theme win over the system preference', async () => {
+      await emulateMedia({ colorScheme: 'dark' });
+      setTheme('light');
+
+      expect(role('bg-surface')).to.equal(hex('#ffffff'));
     });
   });
 });
