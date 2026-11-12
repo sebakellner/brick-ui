@@ -66,7 +66,7 @@ is visibly unstyled, and a visibly unstyled component gets fixed. Composite
 fallbacks survived where they express composition rather than a value, e.g.
 `var(--bk-button-bg, var(--bk-button-variant-bg))`.
 
-Tests load the real stylesheet through `src/test-helpers/theme.ts`, so the suite
+Tests load the real stylesheet through `src/test/helpers/theme.ts`, so the suite
 exercises the configuration people actually use.
 
 ## What the tests cover

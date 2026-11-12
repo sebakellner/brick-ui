@@ -1,7 +1,7 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import './bk-button.js';
 import type { BkButton } from './bk-button.js';
-import { loadTheme } from '../../test-helpers/theme.js';
+import { loadTheme } from '../../test/helpers/theme.js';
 
 const innerButton = (el: BkButton) => el.shadowRoot!.querySelector('button')!;
 

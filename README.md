@@ -78,7 +78,7 @@ src/
 ├── components/         one folder per component: element, stories, test
 ├── styles/theme.css    theming entry point: imports the generated token files
 ├── styles/tokens/      generated CSS — do not edit by hand
-├── test-helpers/       shared test setup (loads the theme)
+├── test/helpers/       shared test setup (loads the theme)
 └── index.ts            public entry point
 docs/                   design rationale and known gaps
 ```
