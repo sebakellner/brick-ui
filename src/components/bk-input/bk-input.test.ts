@@ -7,7 +7,7 @@ const innerLabel = (el: BkInput) => el.shadowRoot!.querySelector('label')!;
 const innerMessage = (el: BkInput) => el.shadowRoot!.querySelector('[part="message"]')!;
 
 describe('bk-input', () => {
-  it('labels the input with a real label element', async () => {
+  it('should label the input with a real label element', async () => {
     const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
 
     expect(innerLabel(el).textContent!.trim()).to.equal('Email');
@@ -15,7 +15,7 @@ describe('bk-input', () => {
     expect(innerInput(el).id).to.not.equal('');
   });
 
-  it('describes the input with the helper text and stays valid', async () => {
+  it('should describe the input with the helper text and stay valid', async () => {
     const el = await fixture<BkInput>(
       html`<bk-input label="Email" helper="We never share it"></bk-input>`,
     );
@@ -25,7 +25,7 @@ describe('bk-input', () => {
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
   });
 
-  it('shows the error instead of the helper and marks the field invalid', async () => {
+  it('should show the error instead of the helper and mark the field invalid', async () => {
     const el = await fixture<BkInput>(
       html`<bk-input label="Email" helper="Helper" error="Required"></bk-input>`,
     );
@@ -35,16 +35,29 @@ describe('bk-input', () => {
     expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerMessage(el).id);
   });
 
-  it('emits bk-change with the value, bubbling out of the shadow root', async () => {
+  it('should paint its field from the control tokens', async () => {
+    const el = await fixture<BkInput>(
+      html`<bk-input
+        label="Email"
+        style="--bk-input-bg: rgb(7, 8, 9); --bk-input-border-color: rgb(1, 2, 3)"
+      ></bk-input>`,
+    );
+    const style = getComputedStyle(innerInput(el));
+
+    expect(style.backgroundColor).to.equal('rgb(7, 8, 9)');
+    expect(style.borderTopColor).to.equal('rgb(1, 2, 3)');
+  });
+
+  it('should emit bk-change with the value, bubbling out of the shadow root', async () => {
     const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
     let received: CustomEvent<{ value: string }> | undefined;
     el.addEventListener('bk-change', (event) => {
       received = event as CustomEvent<{ value: string }>;
     });
 
-    const input = innerInput(el);
-    input.value = 'hi@brick.dev';
-    input.dispatchEvent(new Event('change', { bubbles: true }));
+    const field = innerInput(el);
+    field.value = 'hi@brick.dev';
+    field.dispatchEvent(new Event('change', { bubbles: true }));
 
     expect(received?.detail).to.deep.equal({ value: 'hi@brick.dev' });
     expect(received?.bubbles).to.equal(true);
