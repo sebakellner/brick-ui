@@ -68,7 +68,7 @@
   <body>
     <header>
       <h1>Brick</h1>
-      <p class="lede">Design tokens and, from the next commit, live components.</p>
+      <p class="lede">Design tokens and live components.</p>
     </header>
 
     <main>
@@ -98,6 +98,20 @@
         <div class="box" style="width: var(--bk-space-3)"></div>
         <div class="box" style="width: var(--bk-space-4)"></div>
       </div>
+
+      <h2>Button</h2>
+      <div class="row">
+        <bk-button>Save changes</bk-button>
+        <bk-button variant="secondary">Cancel</bk-button>
+        <bk-button variant="ghost">Learn more</bk-button>
+        <bk-button disabled>Disabled</bk-button>
+        <bk-button
+          style="--bk-button-bg: #0f766e; --bk-button-bg-hover: #115e59; --bk-button-radius: 999px;"
+        >
+          Themed
+        </bk-button>
+      </div>
     </main>
+    <script type="module" src="/src/index.ts"></script>
   </body>
 </html>
