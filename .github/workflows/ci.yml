@@ -29,7 +29,11 @@ jobs:
       - name: tokens are generated from tokens/*.json
         run: |
           pnpm build:tokens
-          git diff --exit-code -- src/styles/tokens
+          if [ -n "$(git status --porcelain -- src/styles/tokens)" ]; then
+            git status --porcelain -- src/styles/tokens
+            echo "::error::generated token CSS is out of date; run pnpm build:tokens and commit the result"
+            exit 1
+          fi
       - run: pnpm typecheck
       - run: pnpm test
 
