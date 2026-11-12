@@ -82,9 +82,12 @@ are shared roles.
 - `autocomplete` and `inputMode` are forwarded, so a field can identify its
   purpose (WCAG 1.3.5).
 - **Form-associated**: the element takes part in a `<form>` — its `value`
-  submits under `name`, `reset()` restores the initial value, the form can
-  disable it, and constraint validation reflects `required` and `error` through
-  `ElementInternals`.
+  submits under `name`, the form can disable it, and constraint validation
+  reflects `required` and `error` through `ElementInternals`.
+- `reset()` restores the initial value synchronously, so a reset handler can read
+  `FormData` or submit immediately.
+- The author's `disabled` and a `<fieldset>` disabling the field are separate
+  states: re-enabling the fieldset never clears an author-disabled field.
 - The field border clears 3:1 against a white surface (WCAG 1.4.11), which the
   tests assert.
 - Focus is delegated to the native input.

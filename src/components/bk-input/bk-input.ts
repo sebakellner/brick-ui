@@ -31,6 +31,7 @@ export class BkInput extends LitElement {
 
   private readonly internals = this.attachInternals();
   private initialValue = '';
+  private formDisabled = false;
 
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
@@ -158,10 +159,22 @@ export class BkInput extends LitElement {
 
   formResetCallback() {
     this.value = this.initialValue;
+    // A reset handler may read FormData or submit before the next render, so the
+    // internals and the visible field are updated synchronously.
+    this.syncFormValue();
+    const field = this.shadowRoot?.querySelector('input');
+    if (field) field.value = this.initialValue;
   }
 
   formDisabledCallback(disabled: boolean) {
-    this.disabled = disabled;
+    if (this.formDisabled === disabled) return;
+    this.formDisabled = disabled;
+    this.requestUpdate();
+  }
+
+  /** The author's `disabled` and the form's disabling are separate states. */
+  private get fieldDisabled(): boolean {
+    return this.disabled || this.formDisabled;
   }
 
   private syncFormValue() {
@@ -193,7 +206,7 @@ export class BkInput extends LitElement {
         autocomplete=${this.autocomplete || nothing}
         inputmode=${this.inputMode || nothing}
         .value=${this.value}
-        ?disabled=${this.disabled}
+        ?disabled=${this.fieldDisabled}
         ?required=${this.required}
         aria-invalid=${this.error ? 'true' : nothing}
         aria-describedby=${message ? this.messageId : nothing}

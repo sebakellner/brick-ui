@@ -103,6 +103,43 @@ describe('bk-input', () => {
     expect(field.value).to.equal('a@b.c');
   });
 
+  it('should clear the submitted value on reset without waiting a render', async () => {
+    const form = await fixture<HTMLFormElement>(
+      html`<form><bk-input name="email" value="a@b.c" label="Email"></bk-input></form>`,
+    );
+    const field = form.querySelector('bk-input') as BkInput;
+    field.value = 'changed@b.c';
+    await field.updateComplete;
+
+    form.reset();
+
+    expect(new FormData(form).get('email')).to.equal('a@b.c');
+  });
+
+  it('should keep an author-disabled field disabled when its fieldset re-enables', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <fieldset disabled>
+          <bk-input name="email" label="Email" disabled></bk-input>
+          <bk-input name="other" label="Other"></bk-input>
+        </fieldset>
+      </form>
+    `);
+    const fieldset = form.querySelector('fieldset')!;
+    const field = form.querySelector('bk-input') as BkInput;
+
+    const plain = form.querySelectorAll('bk-input')[1] as BkInput;
+    expect(innerInput(plain).disabled).to.equal(true);
+
+    fieldset.disabled = false;
+    await field.updateComplete;
+    await plain.updateComplete;
+
+    expect(field.disabled).to.equal(true);
+    expect(innerInput(field).disabled).to.equal(true);
+    expect(innerInput(plain).disabled).to.equal(false);
+  });
+
   it('should keep the field border at 3:1 against a white surface', async () => {
     const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
 
