@@ -1,10 +1,12 @@
+import { formattedVariables } from 'style-dictionary/utils';
+
 const only = (...groups) => (token) => groups.includes(token.path[0]);
 
-const cssFile = (destination, filter) => ({
+const cssFile = (destination, filter, selector = ':root') => ({
   destination,
   format: 'css/variables',
   filter,
-  options: { selector: ':root', outputReferences: true, showFileHeader: false },
+  options: { selector, outputReferences: true, showFileHeader: false },
 });
 
 // Names a component reads or sets but that the token source does not declare:
@@ -29,16 +31,33 @@ const camel = (path) =>
     .map((part, i) => (i === 0 ? part : part[0].toUpperCase() + part.slice(1)))
     .join('');
 
-const platform = (files) => ({
+// Roles live under a theme group in the source (`role-light`, `role-dark`) so the
+// two files can declare the same names without colliding in the token tree. The
+// theme segment is stripped here: the published name carries no theme.
+const THEMED = (token) => token.path[0] === 'role-light' || token.path[0] === 'role-dark';
+
+const platform = (files, transforms = []) => ({
   transformGroup: 'css',
+  transforms,
   prefix: 'bk',
   buildPath: 'src/styles/tokens/',
   files,
 });
 
+const LIGHT_ROLES = ':where(:root), :where([data-theme="light"])';
+const DARK_ROLES = ':where([data-theme="dark"])';
+const DARK_ROLES_AUTO = ':where(:root:not([data-theme]))';
+
 export default {
   source: ['tokens/**/*.json'],
   hooks: {
+    transforms: {
+      'name/strip-theme': {
+        type: 'name',
+        filter: THEMED,
+        transform: (token) => `bk-${token.path.slice(1).join('-')}`,
+      },
+    },
     formats: {
       'typescript/token-names': ({ dictionary }) => {
         const entries = dictionary.allTokens
@@ -62,22 +81,70 @@ export default {
           '',
         ].join('\n');
       },
+      // Style Dictionary cannot wrap a file in a media query, and `@import` cannot
+      // sit inside one, so the auto-switch block is generated as its own file.
+      'css/variables-in-media': ({ dictionary, options }) => {
+        const body = formattedVariables({
+          format: 'css',
+          dictionary,
+          outputReferences: options.outputReferences,
+        })
+          .split('\n')
+          .map((line) => (line ? `  ${line}` : line))
+          .join('\n');
+        return [
+          '@media (prefers-color-scheme: dark) {',
+          `  ${options.selector} {`,
+          body,
+          '  }',
+          '}',
+          '',
+        ].join('\n');
+      },
     },
   },
   platforms: {
     space: platform([cssFile('space.css', only('space'))]),
     rounded: platform([cssFile('rounded.css', only('radius'))]),
-    color: platform([cssFile('color.css', only('palette', 'bg', 'text', 'border', 'focus-ring'))]),
+    color: platform(
+      [cssFile('color.css', only('palette', 'role-light'), LIGHT_ROLES)],
+      ['name/strip-theme'],
+    ),
+    colorDark: platform(
+      [cssFile('color.dark.css', only('role-dark'), DARK_ROLES)],
+      ['name/strip-theme'],
+    ),
+    colorDarkAuto: platform(
+      [
+        {
+          destination: 'color.dark.media.css',
+          format: 'css/variables-in-media',
+          filter: only('role-dark'),
+          options: {
+            selector: DARK_ROLES_AUTO,
+            outputReferences: true,
+            showFileHeader: false,
+          },
+        },
+      ],
+      ['name/strip-theme'],
+    ),
     control: platform([cssFile('control.css', only('button'))]),
-    typography: platform([cssFile('typography.css', only('font', 'font-size', 'font-weight', 'line-height'))]),
+    typography: platform([
+      cssFile('typography.css', only('font', 'font-size', 'font-weight', 'line-height')),
+    ]),
     typescript: {
       transformGroup: 'css',
+      transforms: ['name/strip-theme'],
       prefix: 'bk',
       buildPath: 'src/styles/',
       files: [{ destination: 'tokens.generated.ts', format: 'typescript/token-names' }],
     },
     base: platform([
-      cssFile('base.css', only('border-width', 'control-height', 'transition', 'focus-ring-width', 'focus-ring-offset')),
+      cssFile(
+        'base.css',
+        only('border-width', 'control-height', 'transition', 'focus-ring-width', 'focus-ring-offset'),
+      ),
     ]),
   },
 };

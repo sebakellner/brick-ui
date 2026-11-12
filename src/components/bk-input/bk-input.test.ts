@@ -2,8 +2,8 @@ import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendMouse } from '@web/test-runner-commands';
 import './bk-input.js';
 import type { BkInput } from './bk-input.js';
-import { contrastWithWhite } from '../../test/helpers/contrast.js';
-import { loadTheme } from '../../test/helpers/theme.js';
+import { contrastRatio } from '../../test/helpers/contrast.js';
+import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkInput) => el.shadowRoot!.querySelector('label')!;
@@ -16,6 +16,7 @@ describe('bk-input', () => {
   // it alone; the inherited-token test has to clean up after itself.
   afterEach(() => {
     document.documentElement.style.removeProperty('--bk-font-weight-medium');
+    setTheme('light');
   });
 
   it('should label the input with a real label element', async () => {
@@ -181,11 +182,15 @@ describe('bk-input', () => {
     expect(innerInput(plain).disabled).to.equal(false);
   });
 
-  it('should keep the field border at 3:1 against a white surface', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+  for (const theme of ['light', 'dark'] as const) {
+    it(`should keep the field border at 3:1 against its own surface (${theme})`, async () => {
+      await loadTheme(theme);
+      const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+      const style = getComputedStyle(innerInput(el));
 
-    expect(contrastWithWhite(getComputedStyle(innerInput(el)).borderTopColor)).to.be.at.least(3);
-  });
+      expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
+    });
+  }
 
   it('should emit bk-change with the value, bubbling out of the shadow root', async () => {
     const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);

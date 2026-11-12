@@ -1,8 +1,8 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import './bk-button.js';
 import type { BkButton } from './bk-button.js';
-import { contrastRatio, contrastWithWhite } from '../../test/helpers/contrast.js';
-import { loadTheme } from '../../test/helpers/theme.js';
+import { contrastRatio } from '../../test/helpers/contrast.js';
+import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const innerButton = (el: BkButton) => el.shadowRoot!.querySelector('button')!;
 
@@ -33,6 +33,7 @@ describe('bk-button', () => {
       document.documentElement.style.removeProperty(prop);
       document.body.style.removeProperty(prop);
     }
+    setTheme('light');
   });
 
   it('should default to the primary variant, reflected on the host', async () => {
@@ -60,19 +61,23 @@ describe('bk-button', () => {
     expect(button.shadowRoot!.activeElement).to.equal(innerButton(button));
   });
 
-  it('should keep its label readable on the accent background', async () => {
-    const primary = await mount();
-    const style = getComputedStyle(innerButton(primary));
+  for (const theme of ['light', 'dark'] as const) {
+    it(`should keep its label readable on the accent background (${theme})`, async () => {
+      await loadTheme(theme);
+      const primary = await mount();
+      const style = getComputedStyle(innerButton(primary));
 
-    expect(contrastRatio(style.color, style.backgroundColor)).to.be.at.least(4.5);
-  });
+      expect(contrastRatio(style.color, style.backgroundColor)).to.be.at.least(4.5);
+    });
 
-  it('should keep the secondary border at 3:1 against a white surface', async () => {
-    const secondary = await mount('secondary');
-    const border = getComputedStyle(innerButton(secondary)).borderTopColor;
+    it(`should keep the secondary border at 3:1 against its own surface (${theme})`, async () => {
+      await loadTheme(theme);
+      const secondary = await mount('secondary');
+      const style = getComputedStyle(innerButton(secondary));
 
-    expect(contrastWithWhite(border)).to.be.at.least(3);
-  });
+      expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
+    });
+  }
 
   it('should let a public custom property win over the variant default', async () => {
     const ghost = await mount('ghost');

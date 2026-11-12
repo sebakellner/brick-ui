@@ -1,0 +1,15 @@
+:where([data-theme="dark"]) {
+  --bk-bg-surface: var(--bk-palette-neutral-900);
+  --bk-bg-surface-muted: var(--bk-palette-neutral-800);
+  --bk-bg-surface-hover: var(--bk-palette-neutral-700);
+  --bk-bg-accent: var(--bk-palette-blue-600);
+  --bk-bg-accent-hover: var(--bk-palette-blue-700);
+  --bk-text-default: var(--bk-palette-neutral-100);
+  --bk-text-muted: var(--bk-palette-neutral-400);
+  --bk-text-on-accent: var(--bk-palette-white);
+  --bk-text-danger: var(--bk-palette-red-400);
+  --bk-border-default: var(--bk-palette-neutral-500);
+  --bk-border-strong: var(--bk-palette-neutral-400);
+  --bk-border-danger: var(--bk-palette-red-400);
+  --bk-focus-ring: var(--bk-palette-sky-400);
+}

@@ -1,0 +1,49 @@
+{
+  "role-dark": {
+    "bg": {
+      "surface": {
+        "value": "{palette.neutral-900}"
+      },
+      "surface-muted": {
+        "value": "{palette.neutral-800}"
+      },
+      "surface-hover": {
+        "value": "{palette.neutral-700}"
+      },
+      "accent": {
+        "value": "{palette.blue-600}"
+      },
+      "accent-hover": {
+        "value": "{palette.blue-700}"
+      }
+    },
+    "text": {
+      "default": {
+        "value": "{palette.neutral-100}"
+      },
+      "muted": {
+        "value": "{palette.neutral-400}"
+      },
+      "on-accent": {
+        "value": "{palette.white}"
+      },
+      "danger": {
+        "value": "{palette.red-400}"
+      }
+    },
+    "border": {
+      "default": {
+        "value": "{palette.neutral-500}"
+      },
+      "strong": {
+        "value": "{palette.neutral-400}"
+      },
+      "danger": {
+        "value": "{palette.red-400}"
+      }
+    },
+    "focus-ring": {
+      "value": "{palette.sky-400}"
+    }
+  }
+}
