@@ -52,10 +52,12 @@ never another role, and no chain is longer than one hop.
 reader, and with a shadow root in between the only practical way to find the color
 is DevTools. One hop means a role is answerable by opening two small files.
 
-The control tier is gone. Sixteen tokens that existed only to alias the palette
-were removed when the roles arrived — four of them were `text-default`, two were
-`border-default`, two were `bg-surface-hover`. `--bk-button-disabled-opacity` is
-the only component token left, because opacity is not a color.
+The control tier is gone. The sixteen tokens removed were
+`button.{primary,secondary,ghost}.{bg,bg-hover,fg,border}` and
+`input.{bg,color,label-color,border-color}`; their values now live in
+`text-default`, `border-default`, `bg-surface*` and `bg-accent*`.
+`--bk-button-disabled-opacity` is the only component token left, because opacity
+is not a color.
 
 **Do**
 
