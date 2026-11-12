@@ -16,11 +16,24 @@ A button that delegates focus to its inner native `<button>`.
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `variant` | `variant` | `'primary' \| 'secondary' \| 'ghost'` | `'primary'` | reflected |
+| `type` | `type` | `'submit' \| 'reset' \| 'button'` | `'button'` | reflected; acts on the closest `<form>` |
 | `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner button and blocks activation |
 
 ## Content
 
 A single default slot: the label.
+
+## Forms
+
+`type` defaults to `'button'`, not to the platform default of `'submit'`: a button
+that is usually a plain action should not send a form by accident. In a form,
+`type="submit"` validates and submits, `type="reset"` resets to the initial
+values, and `'button'` does nothing on its own.
+
+The inner `<button>` cannot reach the form — form association does not cross a
+shadow boundary — so the host looks it up and calls `requestSubmit()` or
+`reset()`. Everything a form needs to see, including validation, still happens
+through the platform.
 
 ## Parts
 
