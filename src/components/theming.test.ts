@@ -105,7 +105,7 @@ describe('theming', () => {
   });
 
   describe('system preference', () => {
-    afterEach(() => emulateMedia({ colorScheme: null }));
+    afterEach(() => emulateMedia({ colorScheme: undefined }));
 
     it('should follow the system when the host chose no theme', async () => {
       document.documentElement.removeAttribute('data-theme');
