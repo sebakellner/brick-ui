@@ -85,7 +85,7 @@ CONTRIBUTING.md         conventions and checklist for the next component
 pnpm dev            # playground
 pnpm storybook      # component stories
 pnpm build:tokens   # regenerate src/styles/tokens/*.css from tokens/*.json
-pnpm check:tokens   # validate token names used by the components
+pnpm check:tokens   # validate the names components use and the roles they read
 pnpm test           # Web Test Runner, real Chrome
 pnpm typecheck      # tsc --noEmit
 ```
