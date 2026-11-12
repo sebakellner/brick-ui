@@ -1,0 +1,8 @@
+<!-- The decorator in preview.ts sets `data-theme` inside the render pipeline, and
+     preview.css paints the canvas as soon as it loads. Without this the first
+     paint resolves the roles through `prefers-color-scheme`, so a dark host sees
+     a dark canvas flash before the toolbar theme lands. Mirrors
+     `initialGlobals.theme` in preview.ts: change one, change the other. -->
+<script>
+  document.documentElement.dataset.theme = 'light';
+</script>

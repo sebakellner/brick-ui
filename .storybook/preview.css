@@ -1,0 +1,15 @@
+/* The canvas is part of the demonstration, not scenery. A component whose roles
+   resolved to dark on a white page is invisible, and the ghost variant, which
+   paints no background of its own, is the first to disappear. So the page reads
+   the same roles the components do: change the toolbar theme and the canvas
+   follows.
+
+   `!important` because Storybook paints the preview body from its own theme and
+   we do not own that selector. This is the one place in the repository where it
+   is the honest tool. */
+html,
+body,
+#storybook-root {
+  background: var(--bk-bg-surface) !important;
+  color: var(--bk-text-default) !important;
+}

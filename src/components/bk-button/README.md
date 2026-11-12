@@ -38,10 +38,11 @@ Every visual value comes from a token; the component holds no literals.
 | `--bk-button-fg` | label color |
 | `--bk-button-border`, `--bk-button-border-hover` | border color |
 | `--bk-button-radius` | corner radius (defaults to `--bk-radius-md`) |
+| `--bk-button-disabled-opacity` | opacity while `aria-disabled` |
 | `--bk-border-width` | border width |
 | `--bk-control-height` | minimum height |
 | `--bk-space-2`, `--bk-space-4` | gap and horizontal padding |
-| `--bk-font-sans`, `--bk-font-size-md`, `--bk-line-height-md` | typography |
+| `--bk-font-sans`, `--bk-font-size-md`, `--bk-line-height-md`, `--bk-font-weight-medium` | typography |
 | `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset` | focus ring |
 | `--bk-transition` | hover transition |
 
@@ -49,9 +50,10 @@ The default variant paints on the accent role (`--bk-bg-accent`, which the light
 theme resolves to `blue-600` and the dark one to `blue-600` as well); white text on
 it clears 4.5:1 in both, which the tests assert.
 
-The first five are **override hooks**: they win over the variant default even when
-inherited from an ancestor. The per-variant values they fall back to
-(`--bk-button-variant-*`) are internal, not part of the API.
+The first six are **override hooks**: they win over the variant default even when
+inherited from an ancestor. That covers the five colour hooks and the radius. The
+per-variant values they fall back to (`--bk-button-variant-*`) are internal, not
+part of the API.
 
 ```css
 .checkout {

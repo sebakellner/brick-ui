@@ -42,16 +42,43 @@ export const Disabled: Story = {
 };
 
 export const Themed: Story = {
+  name: 'Theming: role, then hook',
   render: () => html`
-    <div style="display: flex; gap: 12px; align-items: center;">
-      <bk-button
-        style="--bk-button-bg: #0f766e; --bk-button-bg-hover: #115e59; --bk-button-radius: 999px;"
+    <div style="display: grid; gap: var(--bk-space-4); justify-items: start;">
+      <section
+        style="--bk-bg-accent: var(--bk-palette-green-600); display: grid; gap: var(--bk-space-2); justify-items: start;"
       >
-        Themed through custom properties
-      </bk-button>
-      <bk-button variant="secondary" style="--bk-button-radius: 999px;">
-        Secondary, same radius
-      </bk-button>
+        <p style="margin: 0; color: var(--bk-text-muted); font: var(--bk-font-size-sm) var(--bk-font-sans);">
+          Role: every control that reads it follows
+        </p>
+        <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
+          <bk-button>Reads the role</bk-button>
+          <bk-button variant="ghost">Reads the same role</bk-button>
+        </div>
+      </section>
+
+      <section style="display: grid; gap: var(--bk-space-2); justify-items: start;">
+        <p style="margin: 0; color: var(--bk-text-muted); font: var(--bk-font-size-sm) var(--bk-font-sans);">
+          Hook: one control, and it beats the variant default
+        </p>
+        <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
+          <bk-button style="--bk-button-bg: var(--bk-bg-surface-muted);">
+            A hook on a primary
+          </bk-button>
+          <bk-button variant="ghost" style="--bk-button-bg: var(--bk-bg-accent);">
+            A hook on a ghost
+          </bk-button>
+        </div>
+      </section>
+
+      <section style="display: grid; gap: var(--bk-space-2); justify-items: start;">
+        <p style="margin: 0; color: var(--bk-text-muted); font: var(--bk-font-size-sm) var(--bk-font-sans);">
+          Radius is a hook too: inherited from an ancestor, not only set on the element
+        </p>
+        <div style="--bk-button-radius: var(--bk-radius-sm); display: flex; gap: var(--bk-space-3);">
+          <bk-button>Inherits the radius</bk-button>
+        </div>
+      </section>
     </div>
   `,
 };

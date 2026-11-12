@@ -65,7 +65,7 @@ appears, and collapses with `:empty` when it has nothing to say. It carries
 | `--bk-bg-surface-muted` | background when disabled |
 | `--bk-border-width` | border width |
 | `--bk-control-height`, `--bk-space-1`, `--bk-space-3` | height and padding |
-| `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-size-md`, `--bk-line-height-md` | typography |
+| `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-size-md`, `--bk-line-height-md`, `--bk-font-weight-medium` | typography |
 | `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset` | focus ring |
 | `--bk-transition` | border transition |
 

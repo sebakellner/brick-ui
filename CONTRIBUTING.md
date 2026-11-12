@@ -39,6 +39,13 @@ pnpm install
 | `pnpm build` | the bundle |
 | `pnpm build-storybook` | the static site |
 
+Storybook starts in the light theme whatever the operating system says, and the
+**Theme** toolbar switches it to `dark` or `system`. The preview canvas paints
+itself with the same roles the components read, so a theme switch moves the page
+and the controls together. A story captured without a `data-theme` follows
+`prefers-color-scheme` instead — that is the `system` option, and it is the only
+state in which the operating system decides what you see.
+
 ## Sending a change
 
 - Branch from `main`. It is protected: a PR is required, and both CI jobs are
