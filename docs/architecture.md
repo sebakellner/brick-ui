@@ -18,9 +18,9 @@ the arrow, and the generated CSS is never edited by hand.
 
 | Layer | Lives in | Answers | Example |
 | --- | --- | --- | --- |
-| Primitive | `tokens/color.json` → `palette.*` | what colors exist | `--bk-palette-blue-600` |
-| Semantic | `palette` siblings: `color.*`, `focus-ring` | roles read directly by a component | `--bk-color-danger` |
-| Control | `tokens/control.json` → `<component>.*` | what one control paints | `--bk-button-secondary-bg` |
+| Primitive | `tokens/base/color.json` → `palette.*` | what colors exist | `--bk-palette-blue-600` |
+| Semantic | `tokens/role/light.json` → `color.*`, `focus-ring` | roles read directly by a component | `--bk-color-danger` |
+| Control | `tokens/component/control.json` → `<component>.*` | what one control paints | `--bk-button-secondary-bg` |
 
 The semantic and control layers are **peers, not a stack**: control tokens alias
 the palette, and the five semantic roles are read by components directly. Nothing
@@ -53,7 +53,9 @@ not have to reopen the question.
 ## Where things live
 
 ```
-tokens/*.json          one JSON file per token group
+tokens/base/           primitives: palette, space, radius, typography, structure
+tokens/role/light.json semantic roles, one file per theme
+tokens/component/      what one component paints, one file per component
 src/components/bk-*/   element, stories, Storybook docs page, test, README
 src/styles/theme.css   imports the generated token files; the consumer entry point
 src/index.ts           public entry point

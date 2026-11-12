@@ -11,7 +11,9 @@ in scope: `bk-button` and `bk-input`. Nothing is published; the package is
 private and consumed from this repository.
 
 ```
-tokens/*.json          token source, one JSON file per group
+tokens/base/           primitives, theme-invariant
+tokens/role/light.json semantic roles, one file per theme
+tokens/component/      what one component paints
 src/components/bk-*/   element, stories, docs page, test, README
 src/styles/tokens/     generated CSS — never edit by hand
 src/styles/theme.css   the theming entry point, imports the generated files
