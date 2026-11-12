@@ -50,7 +50,7 @@ better homes already: its `README.md` and its Storybook page.
 
 ```css
 /* the accent is blue-600 so the label stays readable */
-background: var(--bk-button-primary-bg);
+background: var(--bk-bg-accent);
 ```
 
 **Enforced by.** Review. There is no mechanical check, and the risk when this is
@@ -83,7 +83,7 @@ Typed names exist and are exported (`TokenName`, `HookName` in
 **Do**
 
 ```css
-background: var(--bk-button-primary-bg);
+background: var(--bk-bg-accent);
 ```
 
 **Don't**

@@ -54,22 +54,23 @@ appears, and collapses with `:empty` when it has nothing to say. It carries
 
 | Token | Paints |
 | --- | --- |
-| `--bk-input-bg`, `--bk-input-border-color` | field surface and border |
-| `--bk-input-color`, `--bk-input-label-color` | input text and label |
 | `--bk-input-radius` | corner radius (defaults to `--bk-radius-md`) |
-| `--bk-color-border-strong` | border on hover |
-| `--bk-color-danger` | border and message on error |
-| `--bk-color-text-muted` | placeholder and message |
-| `--bk-color-surface-muted` | background when disabled |
+| `--bk-bg-surface` | field surface |
+| `--bk-border-default` | field border |
+| `--bk-border-strong` | border on hover |
+| `--bk-border-danger` | border on error |
+| `--bk-text-default` | input text and label |
+| `--bk-text-danger` | message on error |
+| `--bk-text-muted` | placeholder and message |
+| `--bk-bg-surface-muted` | background when disabled |
 | `--bk-border-width` | border width |
 | `--bk-control-height`, `--bk-space-1`, `--bk-space-3` | height and padding |
 | `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-size-md`, `--bk-line-height-md` | typography |
 | `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset` | focus ring |
 | `--bk-transition` | border transition |
 
-`--bk-input-bg`, `--bk-input-color`, `--bk-input-label-color`,
-`--bk-input-border-color` and `--bk-input-radius` are override hooks; the rest
-are shared roles.
+`--bk-input-radius` is the only override hook. The rest are shared roles or base
+values: theming the input means theming the roles, not the field.
 
 ## Accessibility
 

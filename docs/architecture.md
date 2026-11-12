@@ -19,8 +19,8 @@ the arrow, and the generated CSS is never edited by hand.
 | Layer | Lives in | Answers | Example |
 | --- | --- | --- | --- |
 | Primitive | `tokens/base/color.json` → `palette.*` | what colors exist | `--bk-palette-blue-600` |
-| Semantic | `tokens/role/light.json` → `color.*`, `focus-ring` | roles read directly by a component | `--bk-color-danger` |
-| Control | `tokens/component/control.json` → `<component>.*` | what one control paints | `--bk-button-secondary-bg` |
+| Semantic | `tokens/role/light.json` → `bg.*`, `text.*`, `border.*`, `focus-ring` | roles read directly by a component | `--bk-text-danger` |
+| Control | `tokens/component/control.json` → `<component>.*` | what one control paints, when no role can carry it | `--bk-button-disabled-opacity` |
 
 The semantic and control layers are **peers, not a stack**: control tokens alias
 the palette, and the five semantic roles are read by components directly. Nothing

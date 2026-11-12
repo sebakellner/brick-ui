@@ -55,17 +55,45 @@ describe('bk-input', () => {
     expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerMessage(el).id);
   });
 
-  it('should paint its field from the control tokens', async () => {
+  it('should paint its field from the roles', async () => {
     const el = await fixture<BkInput>(
       html`<bk-input
         label="Email"
-        style="--bk-input-bg: rgb(7, 8, 9); --bk-input-border-color: rgb(1, 2, 3)"
+        style="--bk-bg-surface: rgb(7, 8, 9); --bk-border-default: rgb(1, 2, 3)"
       ></bk-input>`,
     );
     const style = getComputedStyle(innerInput(el));
 
     expect(style.backgroundColor).to.equal('rgb(7, 8, 9)');
     expect(style.borderTopColor).to.equal('rgb(1, 2, 3)');
+  });
+
+  it('should take the label colour from the text role', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+    el.style.setProperty('--bk-text-default', 'rgb(3, 3, 3)');
+
+    expect(getComputedStyle(innerLabel(el)).color).to.equal('rgb(3, 3, 3)');
+  });
+
+  it('should take the disabled field from the muted roles', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email" disabled></bk-input>`);
+    el.style.setProperty('--bk-bg-surface-muted', 'rgb(4, 4, 4)');
+    el.style.setProperty('--bk-text-muted', 'rgb(5, 5, 5)');
+    const style = getComputedStyle(innerInput(el));
+
+    expect(style.backgroundColor).to.equal('rgb(4, 4, 4)');
+    expect(style.color).to.equal('rgb(5, 5, 5)');
+  });
+
+  it('should take the error border and message from the danger roles', async () => {
+    const el = await fixture<BkInput>(
+      html`<bk-input label="Email" error="Required"></bk-input>`,
+    );
+    el.style.setProperty('--bk-border-danger', 'rgb(6, 6, 6)');
+    el.style.setProperty('--bk-text-danger', 'rgb(7, 7, 7)');
+
+    expect(getComputedStyle(innerInput(el)).borderTopColor).to.equal('rgb(6, 6, 6)');
+    expect(getComputedStyle(innerMessage(el)).color).to.equal('rgb(7, 7, 7)');
   });
 
   it('should keep the danger border while the invalid field is hovered', async () => {

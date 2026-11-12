@@ -1,63 +1,7 @@
 {
   "button": {
-    "primary": {
-      "bg": {
-        "value": "{palette.blue-600}"
-      },
-      "bg-hover": {
-        "value": "{palette.blue-700}"
-      },
-      "fg": {
-        "value": "{palette.white}"
-      },
-      "border": {
-        "value": "transparent"
-      }
-    },
-    "secondary": {
-      "bg": {
-        "value": "{palette.white}"
-      },
-      "bg-hover": {
-        "value": "{palette.neutral-200}"
-      },
-      "fg": {
-        "value": "{palette.neutral-900}"
-      },
-      "border": {
-        "value": "{palette.neutral-500}"
-      }
-    },
-    "ghost": {
-      "bg": {
-        "value": "transparent"
-      },
-      "bg-hover": {
-        "value": "{palette.neutral-100}"
-      },
-      "fg": {
-        "value": "{palette.neutral-900}"
-      },
-      "border": {
-        "value": "transparent"
-      }
-    },
     "disabled-opacity": {
       "value": "0.55"
-    }
-  },
-  "input": {
-    "bg": {
-      "value": "{palette.white}"
-    },
-    "color": {
-      "value": "{palette.neutral-900}"
-    },
-    "label-color": {
-      "value": "{palette.neutral-900}"
-    },
-    "border-color": {
-      "value": "{palette.neutral-500}"
     }
   }
 }

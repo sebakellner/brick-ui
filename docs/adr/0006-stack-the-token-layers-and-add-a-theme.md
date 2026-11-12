@@ -144,6 +144,17 @@ Harder:
 - A role exists per theme but the *values* are unvalidated. The dark column above
   is a proposal until the contrast assertions pass in both themes.
 
+**No aliases.** The sixteen removed names and the four renames have no
+compatibility layer. The mapping is recoverable from the commit that removed them
+and from the deleted `tokens/component/control.json`; it is not reproduced here,
+because a decision record states what was decided and a name-by-name table is
+release-note material. Revisit when the package is published and a consumer needs
+a deprecation window.
+
+`--bk-color-danger` is the one removal that is a semantic split rather than a pure
+rename: it served both a border and a piece of text, and those are now two roles
+even though both resolve to `red-700` today.
+
 Accepted debt: the component tier has one member and no rule yet for when a second
 one is justified. Revisit when a component needs a value that is neither a color
 role nor a primitive — the next `disabled-*` or a separator.

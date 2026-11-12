@@ -21,8 +21,11 @@ describe('bk-button', () => {
   afterEach(() => {
     for (const prop of [
       '--bk-button-bg',
-      '--bk-button-primary-bg',
-      '--bk-button-secondary-bg',
+      '--bk-bg-accent',
+      '--bk-bg-surface',
+      '--bk-border-default',
+      '--bk-text-default',
+      '--bk-text-on-accent',
       '--bk-button-disabled-opacity',
       '--bk-font-weight-medium',
       'font-family',
@@ -87,11 +90,11 @@ describe('bk-button', () => {
     expect(getComputedStyle(innerButton(secondary)).backgroundColor).to.equal('rgb(9, 9, 9)');
   });
 
-  it('should map the default variant and a named variant to their control tokens', async () => {
+  it('should map the default variant and a named variant to their roles', async () => {
     const primary = await mount();
     const secondary = await mount('secondary');
-    document.documentElement.style.setProperty('--bk-button-primary-bg', 'rgb(4, 5, 6)');
-    document.documentElement.style.setProperty('--bk-button-secondary-bg', 'rgb(7, 8, 9)');
+    document.documentElement.style.setProperty('--bk-bg-accent', 'rgb(4, 5, 6)');
+    document.documentElement.style.setProperty('--bk-bg-surface', 'rgb(7, 8, 9)');
 
     expect(getComputedStyle(innerButton(primary)).backgroundColor).to.equal('rgb(4, 5, 6)');
     expect(getComputedStyle(innerButton(secondary)).backgroundColor).to.equal('rgb(7, 8, 9)');
@@ -121,5 +124,27 @@ describe('bk-button', () => {
     document.documentElement.style.setProperty('--bk-button-disabled-opacity', '0.25');
 
     expect(getComputedStyle(innerButton(button)).opacity).to.equal('0.25');
+  });
+
+  it('should take the label colour from the on-accent role', async () => {
+    const button = await mount();
+    document.documentElement.style.setProperty('--bk-text-on-accent', 'rgb(1, 1, 1)');
+
+    expect(getComputedStyle(innerButton(button)).color).to.equal('rgb(1, 1, 1)');
+  });
+
+  it('should take the secondary border from the border role', async () => {
+    const secondary = await mount('secondary');
+    document.documentElement.style.setProperty('--bk-border-default', 'rgb(2, 2, 2)');
+
+    expect(getComputedStyle(innerButton(secondary)).borderTopColor).to.equal('rgb(2, 2, 2)');
+  });
+
+  it('should take the secondary label from the text role, not the on-accent role', async () => {
+    const secondary = await mount('secondary');
+    document.documentElement.style.setProperty('--bk-text-default', 'rgb(9, 9, 9)');
+    document.documentElement.style.setProperty('--bk-text-on-accent', 'rgb(8, 8, 8)');
+
+    expect(getComputedStyle(innerButton(secondary)).color).to.equal('rgb(9, 9, 9)');
   });
 });

@@ -76,8 +76,8 @@ alternatives that lost. The rules of the folder:
 | Term | Meaning |
 | --- | --- |
 | primitive / palette | a raw declared value (`--bk-palette-blue-600`). A reference ramp, not a usage list |
-| semantic role | a role in `color.json` read **directly** by a component (`--bk-color-danger`). See R1 in [conventions-tokens.md](conventions-tokens.md) |
-| control token | what one control paints (`--bk-button-primary-bg`). Aliases the palette |
+| semantic role | a role in `color.json` read **directly** by a component (`--bk-text-danger`). See R1 in [conventions-tokens.md](conventions-tokens.md) |
+| control token | what one component paints, when no role can carry it (`--bk-button-disabled-opacity`) |
 | hook | a public custom property a consumer may override (`--bk-button-bg`), declared in `style-dictionary.config.mjs` |
 | part | a styling escape hatch exposed through `::part()` |
 | invariant | a rule that holds across the codebase and has something enforcing it |

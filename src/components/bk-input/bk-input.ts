@@ -53,7 +53,7 @@ export class BkInput extends LitElement {
       font-family: var(--bk-font-sans);
       font-size: var(--bk-font-size-sm);
       font-weight: var(--bk-font-weight-medium);
-      color: var(--bk-input-label-color);
+      color: var(--bk-text-default);
     }
 
     input {
@@ -64,9 +64,9 @@ export class BkInput extends LitElement {
       font-family: var(--bk-font-sans);
       font-size: var(--bk-font-size-md);
       line-height: var(--bk-line-height-md);
-      color: var(--bk-input-color);
-      background: var(--bk-input-bg);
-      border: var(--bk-border-width) solid var(--bk-input-border-color);
+      color: var(--bk-text-default);
+      background: var(--bk-bg-surface);
+      border: var(--bk-border-width) solid var(--bk-border-default);
       border-radius: var(--bk-input-radius, var(--bk-radius-md));
       transition:
         border-color var(--bk-transition),
@@ -74,11 +74,11 @@ export class BkInput extends LitElement {
     }
 
     input::placeholder {
-      color: var(--bk-color-text-muted);
+      color: var(--bk-text-muted);
     }
 
     input:hover:not(:disabled):not([aria-invalid='true']) {
-      border-color: var(--bk-color-border-strong);
+      border-color: var(--bk-border-strong);
     }
 
     input:focus-visible {
@@ -88,12 +88,12 @@ export class BkInput extends LitElement {
 
     input:disabled {
       cursor: not-allowed;
-      color: var(--bk-color-text-muted);
-      background: var(--bk-color-surface-muted);
+      color: var(--bk-text-muted);
+      background: var(--bk-bg-surface-muted);
     }
 
     input[aria-invalid='true'] {
-      border-color: var(--bk-color-danger);
+      border-color: var(--bk-border-danger);
     }
 
     .message {
@@ -101,11 +101,11 @@ export class BkInput extends LitElement {
       font-family: var(--bk-font-sans);
       font-size: var(--bk-font-size-sm);
       line-height: var(--bk-line-height-md);
-      color: var(--bk-color-text-muted);
+      color: var(--bk-text-muted);
     }
 
     .message[data-state='error'] {
-      color: var(--bk-color-danger);
+      color: var(--bk-text-danger);
     }
 
     .message:empty {
