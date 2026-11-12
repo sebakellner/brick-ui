@@ -7,9 +7,7 @@
  *    token source does not declare). A typo here renders nothing at runtime and
  *    no other check catches it, because the name lives inside a CSS string. This
  *    one covers tests and stories too: a typo in either is still a typo. It also
- *    covers `.storybook/`: the preview is host code, free to read roles and
- *    primitives alike, but the names it writes are the names a consumer would
- *    write, and a typo there is a preview that silently paints nothing.
+ *    covers `.storybook/`, which is host code and can hold the same typo.
  *
  * 2. Every semantic role must be read by a component. A role that nothing reads
  *    is a public contract with no behaviour: it costs a breaking change to
@@ -27,8 +25,7 @@
  *    a violation — they do not change between themes.
  *
  * R5 and R6 are claims about what a *component* paints, so they skip the test and
- * story files. R1 does not. `.storybook/` is scanned for existence only, because
- * none of it paints a component: it paints the page around one.
+ * story files. R1 does not. `.storybook/` gets existence only.
  *
  * See docs/conventions-tokens.md for the rules and docs/adr/0006 for why.
  */
@@ -168,9 +165,8 @@ for (const file of componentFiles) {
   problems.push(...misplacedRoles(file, source));
 }
 
-// The preview is host code: it may read a role or a primitive, but the name has
-// to exist. HTML comments are blanked the same way CSS comments are, minus the
-// `//` rule, which would eat a `https://` and hide whatever follows it.
+// The preview is host code: it may read a role or a primitive, but the name has to
+// exist. HTML comments are blanked with their own rule; `//` would eat a `https://`.
 const blankHtmlComments = (source) =>
   source.replace(/<!--[\s\S]*?-->/g, (block) => block.replace(/[^\n]/g, ' '));
 
