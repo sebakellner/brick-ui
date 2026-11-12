@@ -1,5 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { property } from 'lit/decorators.js';
+import { hooks, tokens } from '../../styles/tokens.generated.js';
+import { v } from '../../styles/tokens.js';
 
 export type BkButtonVariant = 'primary' | 'secondary' | 'ghost';
 
@@ -25,10 +27,10 @@ export class BkButton extends LitElement {
   static override styles = css`
     :host {
       display: inline-block;
-      --bk-button-variant-bg: var(--bk-button-primary-bg);
-      --bk-button-variant-bg-hover: var(--bk-button-primary-bg-hover);
-      --bk-button-variant-fg: var(--bk-button-primary-fg);
-      --bk-button-variant-border: var(--bk-button-primary-border);
+      ${v(hooks.buttonVariantBg)}: var(${v(tokens.buttonPrimaryBg)});
+      ${v(hooks.buttonVariantBgHover)}: var(${v(tokens.buttonPrimaryBgHover)});
+      ${v(hooks.buttonVariantFg)}: var(${v(tokens.buttonPrimaryFg)});
+      ${v(hooks.buttonVariantBorder)}: var(${v(tokens.buttonPrimaryBorder)});
     }
 
     :host([hidden]) {
@@ -39,36 +41,36 @@ export class BkButton extends LitElement {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: var(--bk-space-2);
-      min-height: var(--bk-control-height);
-      padding: 0 var(--bk-space-4);
-      font-family: var(--bk-font-sans);
-      font-size: var(--bk-font-size-md);
+      gap: var(${v(tokens.space2)});
+      min-height: var(${v(tokens.controlHeight)});
+      padding: 0 var(${v(tokens.space4)});
+      font-family: var(${v(tokens.fontSans)});
+      font-size: var(${v(tokens.fontSizeMd)});
       font-weight: 500;
-      line-height: var(--bk-line-height-md);
-      border: var(--bk-border-width) solid
-        var(--bk-button-border, var(--bk-button-variant-border));
-      border-radius: var(--bk-button-radius, var(--bk-radius-md));
-      background: var(--bk-button-bg, var(--bk-button-variant-bg));
-      color: var(--bk-button-fg, var(--bk-button-variant-fg));
+      line-height: var(${v(tokens.lineHeightMd)});
+      border: var(${v(tokens.borderWidth)}) solid
+        var(${v(hooks.buttonBorder)}, var(${v(hooks.buttonVariantBorder)}));
+      border-radius: var(${v(hooks.buttonRadius)}, var(${v(tokens.radiusMd)}));
+      background: var(${v(hooks.buttonBg)}, var(${v(hooks.buttonVariantBg)}));
+      color: var(${v(hooks.buttonFg)}, var(${v(hooks.buttonVariantFg)}));
       cursor: pointer;
       transition:
-        background-color var(--bk-transition),
-        border-color var(--bk-transition),
-        color var(--bk-transition);
+        background-color var(${v(tokens.transition)}),
+        border-color var(${v(tokens.transition)}),
+        color var(${v(tokens.transition)});
     }
 
     button:hover:not(:disabled) {
-      background: var(--bk-button-bg-hover, var(--bk-button-variant-bg-hover));
+      background: var(${v(hooks.buttonBgHover)}, var(${v(hooks.buttonVariantBgHover)}));
       border-color: var(
         --bk-button-border-hover,
-        var(--bk-button-border, var(--bk-button-variant-border))
+        var(${v(hooks.buttonBorder)}, var(${v(hooks.buttonVariantBorder)}))
       );
     }
 
     button:focus-visible {
-      outline: var(--bk-focus-ring-width) solid var(--bk-focus-ring);
-      outline-offset: var(--bk-focus-ring-offset);
+      outline: var(${v(tokens.focusRingWidth)}) solid var(${v(tokens.focusRing)});
+      outline-offset: var(${v(tokens.focusRingOffset)});
     }
 
     button:disabled {
@@ -77,17 +79,17 @@ export class BkButton extends LitElement {
     }
 
     :host([variant='secondary']) {
-      --bk-button-variant-bg: var(--bk-button-secondary-bg);
-      --bk-button-variant-bg-hover: var(--bk-button-secondary-bg-hover);
-      --bk-button-variant-fg: var(--bk-button-secondary-fg);
-      --bk-button-variant-border: var(--bk-button-secondary-border);
+      ${v(hooks.buttonVariantBg)}: var(${v(tokens.buttonSecondaryBg)});
+      ${v(hooks.buttonVariantBgHover)}: var(${v(tokens.buttonSecondaryBgHover)});
+      ${v(hooks.buttonVariantFg)}: var(${v(tokens.buttonSecondaryFg)});
+      ${v(hooks.buttonVariantBorder)}: var(${v(tokens.buttonSecondaryBorder)});
     }
 
     :host([variant='ghost']) {
-      --bk-button-variant-bg: var(--bk-button-ghost-bg);
-      --bk-button-variant-bg-hover: var(--bk-button-ghost-bg-hover);
-      --bk-button-variant-fg: var(--bk-button-ghost-fg);
-      --bk-button-variant-border: var(--bk-button-ghost-border);
+      ${v(hooks.buttonVariantBg)}: var(${v(tokens.buttonGhostBg)});
+      ${v(hooks.buttonVariantBgHover)}: var(${v(tokens.buttonGhostBgHover)});
+      ${v(hooks.buttonVariantFg)}: var(${v(tokens.buttonGhostFg)});
+      ${v(hooks.buttonVariantBorder)}: var(${v(tokens.buttonGhostBorder)});
     }
   `;
 

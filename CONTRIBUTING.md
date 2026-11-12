@@ -22,7 +22,10 @@ tokens/*.json  ──build:tokens──>  src/styles/tokens/*.css  ──>  them
 3. **The theme is required.** Components carry no fallback values. Defaults live
    once, in the generated CSS.
 4. **Components carry no style literals.** Every color, length and duration comes
-   from a token. (`px` appears only in story scaffolding.)
+   from a token, and every token name is checked: `pnpm build:tokens` also emits
+   `src/styles/tokens.generated.ts` with a `tokens` map, a `hooks` map and their
+   unions, so `v(tokens.buttnBg)` fails `tsc` instead of rendering nothing.
+   (`px` appears only in story scaffolding.)
 5. **No CSS comments.** Token files and component styles stay declarative; the
    explanation lives here.
 
@@ -76,6 +79,9 @@ The token name is its JSON path joined with `-`, prefixed by `--bk-`
    button /* the inner native element */ {
      background: var(--bk-x-bg, var(--bk-x-variant-bg));
    }
+
+   /* written in the component as: */
+   background: var(${v(tokens.xBg)}, var(${v(hooks.xVariantBg)}));
    ```
 
    The public hook is read first and the variant default lives in a different
@@ -121,6 +127,18 @@ expect(getComputedStyle(inner(el)).borderTopColor).to.equal('rgb(185, 28, 28)');
 `storybook-pages.yml` publishes from `main` only, gated by the suite. `main` is
 protected: PR required, both jobs required, admins included.
 
+## Scope decisions
+
+Recorded so they are not reopened by accident:
+
+| Decision | Value | Revisit when |
+| --- | --- | --- |
+| License | MIT (`LICENSE`) | never, unless relicensing |
+| Browsers in the suite | Chrome only | a shadow-DOM or `:has()` bug escapes |
+| Packaging | not published; consumed from the repo | the kit gets an outside consumer |
+| Token names | typed through `tokens.generated.ts` | — |
+| Visual regression | not covered; computed styles only | a layout bug escapes the suite |
+
 ## Harness gotchas
 
 - **TS imports carry `.js`** (`verbatimModuleSyntax` + bundler resolution): import
@@ -131,6 +149,9 @@ protected: PR required, both jobs required, admins included.
   `showFileHeader: false` keeps the token files comment-free.
 - The `base` platform's filter is a name list; a new structural token (like
   `--bk-focus-ring-offset`) is silently dropped until its group is added.
+- Lit types `css` as accepting only `CSSResultGroup | number` interpolations, so
+  a token name goes through `v()` (`src/styles/tokens.ts`) — a bare string fails
+  `tsc` even though it works at runtime.
 
 ## Why the load-bearing decisions are what they are
 
