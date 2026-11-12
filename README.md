@@ -52,8 +52,9 @@ explaining lives here.
 `--bk-palette-*` → `--bk-color-*` → `--bk-button-{variant}-*` / `--bk-input-*`.
 
 Primitives are raw values, referenced only by the two layers above them.
-Semantic roles are general-purpose surfaces and text. Control roles are what a
-form control paints; a component never holds a literal color, so re-theming a
+Semantic roles are the few roles still shared across components: muted text,
+muted surface, strong border, danger and the focus ring. Control roles are what
+a form control paints; a component never holds a literal color, so re-theming a
 variant is a token edit.
 
 ### Three kinds of custom property
@@ -110,8 +111,3 @@ host.
   variant color is invisible to the suite.
 - `bk-input` marks its message region with `data-state="helper"`, but only the
   `error` state has a rule.
-- Several semantic roles have no consumer since the controls took their own
-  layer: `--bk-color-primary`, `-primary-hover`, `-primary-active`, `-on-primary`,
-  `-on-danger`, `-surface`, `-surface-hover`, `-text`, `-text-on-muted`,
-  `-border`. Only `-border-strong`, `-danger`, `-surface-muted`, `-text-muted`
-  and `--bk-focus-ring` are still read by a component.
