@@ -55,11 +55,11 @@ describe('bk-input', () => {
     expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerMessage(el).id);
   });
 
-  it('should paint its field from the control tokens', async () => {
+  it('should paint its field from the roles', async () => {
     const el = await fixture<BkInput>(
       html`<bk-input
         label="Email"
-        style="--bk-input-bg: rgb(7, 8, 9); --bk-input-border-color: rgb(1, 2, 3)"
+        style="--bk-bg-surface: rgb(7, 8, 9); --bk-border-default: rgb(1, 2, 3)"
       ></bk-input>`,
     );
     const style = getComputedStyle(innerInput(el));

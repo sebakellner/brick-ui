@@ -63,9 +63,17 @@
   --bk-palette-sky-700: #0369a1;
   --bk-palette-sky-800: #075985;
   --bk-palette-sky-900: #0c4a6e;
+  --bk-bg-surface: var(--bk-palette-white);
+  --bk-bg-surface-muted: var(--bk-palette-neutral-100);
+  --bk-bg-surface-hover: var(--bk-palette-neutral-200);
+  --bk-bg-accent: var(--bk-palette-blue-600);
+  --bk-bg-accent-hover: var(--bk-palette-blue-700);
+  --bk-text-default: var(--bk-palette-neutral-900);
+  --bk-text-muted: var(--bk-palette-neutral-600);
+  --bk-text-on-accent: var(--bk-palette-white);
+  --bk-text-danger: var(--bk-palette-red-700);
+  --bk-border-default: var(--bk-palette-neutral-500);
+  --bk-border-strong: var(--bk-palette-neutral-600);
+  --bk-border-danger: var(--bk-palette-red-700);
   --bk-focus-ring: var(--bk-palette-sky-600);
-  --bk-color-surface-muted: var(--bk-palette-neutral-100);
-  --bk-color-border-strong: var(--bk-palette-neutral-600);
-  --bk-color-text-muted: var(--bk-palette-neutral-600);
-  --bk-color-danger: var(--bk-palette-red-700);
 }

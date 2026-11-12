@@ -7,7 +7,7 @@ why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 | # | Rule | Enforced by |
 | --- | --- | --- |
 | R1 | A semantic role exists only while a component reads it directly | `pnpm check:tokens` |
-| R2 | References point downwards, one hop, never at a control token | review |
+| R2 | References point downwards, one hop, never at a role | review |
 | R3 | The palette is a reference ramp, not a usage list | review |
 | R4 | The token path is the public name | review |
 
@@ -43,39 +43,30 @@ that themed it, so adding the role is a decision to pay that cost eventually.
 fails when no component reads one. Tests and stories do not count as consumers.
 The control-token half of the rule is review only.
 
-## R2. References point downwards, one hop, never at a control token
+## R2. References point downwards, one hop, never at a role
 
-**Rule.** `control → palette`, `semantic → palette`, `radius → space`. Nothing
-references a control token, and no chain is longer than one hop.
+**Rule.** `role → palette`, `radius → space`. A role aliases a palette step,
+never another role, and no chain is longer than one hop.
 
-**Why.** A control token belongs to one component; referencing it from another
-couples them, and a change to one control would repaint an unrelated one. One
-hop keeps the resolved value followable by hand — with two hops inside a shadow
-root, the only practical way to read a color is DevTools.
+**Why.** A role that aliases a role leaves the resolved value two hops from the
+reader, and with a shadow root in between the only practical way to find the color
+is DevTools. One hop means a role is answerable by opening two small files.
 
-Two properties of the current shape that are easy to misread:
-
-- The layers are **peers, not a stack**. Control tokens alias the palette, and
-  the five semantic roles are read by components directly — `--bk-color-danger`
-  paints the input's error border and its message, `--bk-focus-ring` is read by
-  both components. A control token never aliases a role. See
-  [ADR 0003](adr/0003-keep-aliases-as-var.md).
-- Consequently there is no single lever for "every accent-colored thing".
-  Re-theming `--bk-color-danger` reaches the input's error state because the
-  input reads it, and reaches nothing else; the button's accent is the palette
-  entry or the button's own control tokens. That is the accepted debt in ADR
-  0003, not an oversight.
+The control tier is gone. Sixteen tokens that existed only to alias the palette
+were removed when the roles arrived — four of them were `text-default`, two were
+`border-default`, two were `bg-surface-hover`. `--bk-button-disabled-opacity` is
+the only component token left, because opacity is not a color.
 
 **Do**
 
 ```css
---bk-button-primary-bg: var(--bk-palette-blue-600);
+--bk-bg-accent: var(--bk-palette-blue-600);
 ```
 
 **Don't**
 
 ```css
---bk-button-secondary-bg: var(--bk-button-primary-bg);
+--bk-border-default: var(--bk-bg-accent);
 ```
 
 **Enforced by.** Review.
@@ -98,16 +89,15 @@ to current usage would turn every new component into a palette edit.
 ## R4. The token path is the public name
 
 **Rule.** A token name is its JSON path joined with `-`, prefixed with `--bk-`
-(`platform.prefix`). `button.secondary.bg-hover` becomes
-`--bk-button-secondary-bg-hover`, so the path you write is the name a host
-overrides.
+(`platform.prefix`). `bg.accent-hover` becomes `--bk-bg-accent-hover`, so the path
+you write is the name a host overrides.
 
 **Why.** A token name is public contract, and renaming one is a breaking change
 for anyone who themed it. Naming is API design rather than filing: the name has
 to say what the value is for, because that is what a consumer greps for.
 
-**Do** — name the role: `--bk-button-primary-bg`.
+**Do** — name the role: `--bk-bg-accent`.
 
-**Don't** — name the appearance: `--bk-button-blue`.
+**Don't** — name the appearance: `--bk-blue-surface`.
 
 **Enforced by.** Review.

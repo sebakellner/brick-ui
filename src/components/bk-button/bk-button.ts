@@ -25,10 +25,10 @@ export class BkButton extends LitElement {
   static override styles = css`
     :host {
       display: inline-block;
-      --bk-button-variant-bg: var(--bk-button-primary-bg);
-      --bk-button-variant-bg-hover: var(--bk-button-primary-bg-hover);
-      --bk-button-variant-fg: var(--bk-button-primary-fg);
-      --bk-button-variant-border: var(--bk-button-primary-border);
+      --bk-button-variant-bg: var(--bk-bg-accent);
+      --bk-button-variant-bg-hover: var(--bk-bg-accent-hover);
+      --bk-button-variant-fg: var(--bk-text-on-accent);
+      --bk-button-variant-border: transparent;
     }
 
     :host([hidden]) {
@@ -77,17 +77,17 @@ export class BkButton extends LitElement {
     }
 
     :host([variant='secondary']) {
-      --bk-button-variant-bg: var(--bk-button-secondary-bg);
-      --bk-button-variant-bg-hover: var(--bk-button-secondary-bg-hover);
-      --bk-button-variant-fg: var(--bk-button-secondary-fg);
-      --bk-button-variant-border: var(--bk-button-secondary-border);
+      --bk-button-variant-bg: var(--bk-bg-surface);
+      --bk-button-variant-bg-hover: var(--bk-bg-surface-hover);
+      --bk-button-variant-fg: var(--bk-text-default);
+      --bk-button-variant-border: var(--bk-border-default);
     }
 
     :host([variant='ghost']) {
-      --bk-button-variant-bg: var(--bk-button-ghost-bg);
-      --bk-button-variant-bg-hover: var(--bk-button-ghost-bg-hover);
-      --bk-button-variant-fg: var(--bk-button-ghost-fg);
-      --bk-button-variant-border: var(--bk-button-ghost-border);
+      --bk-button-variant-bg: transparent;
+      --bk-button-variant-bg-hover: var(--bk-bg-surface-muted);
+      --bk-button-variant-fg: var(--bk-text-default);
+      --bk-button-variant-border: transparent;
     }
   `;
 

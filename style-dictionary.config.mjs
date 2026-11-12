@@ -67,7 +67,7 @@ export default {
   platforms: {
     space: platform([cssFile('space.css', only('space'))]),
     rounded: platform([cssFile('rounded.css', only('radius'))]),
-    color: platform([cssFile('color.css', only('palette', 'color', 'focus-ring'))]),
+    color: platform([cssFile('color.css', only('palette', 'bg', 'text', 'border', 'focus-ring'))]),
     control: platform([cssFile('control.css', only('button', 'input'))]),
     typography: platform([cssFile('typography.css', only('font', 'font-size', 'font-weight', 'line-height'))]),
     typescript: {

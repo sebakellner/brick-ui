@@ -21,8 +21,8 @@ describe('bk-button', () => {
   afterEach(() => {
     for (const prop of [
       '--bk-button-bg',
-      '--bk-button-primary-bg',
-      '--bk-button-secondary-bg',
+      '--bk-bg-accent',
+      '--bk-bg-surface',
       '--bk-button-disabled-opacity',
       '--bk-font-weight-medium',
       'font-family',
@@ -87,11 +87,11 @@ describe('bk-button', () => {
     expect(getComputedStyle(innerButton(secondary)).backgroundColor).to.equal('rgb(9, 9, 9)');
   });
 
-  it('should map the default variant and a named variant to their control tokens', async () => {
+  it('should map the default variant and a named variant to their roles', async () => {
     const primary = await mount();
     const secondary = await mount('secondary');
-    document.documentElement.style.setProperty('--bk-button-primary-bg', 'rgb(4, 5, 6)');
-    document.documentElement.style.setProperty('--bk-button-secondary-bg', 'rgb(7, 8, 9)');
+    document.documentElement.style.setProperty('--bk-bg-accent', 'rgb(4, 5, 6)');
+    document.documentElement.style.setProperty('--bk-bg-surface', 'rgb(7, 8, 9)');
 
     expect(getComputedStyle(innerButton(primary)).backgroundColor).to.equal('rgb(4, 5, 6)');
     expect(getComputedStyle(innerButton(secondary)).backgroundColor).to.equal('rgb(7, 8, 9)');
