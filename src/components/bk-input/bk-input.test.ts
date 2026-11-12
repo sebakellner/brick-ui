@@ -25,6 +25,7 @@ describe('bk-input', () => {
     );
 
     expect(innerMessage(el).textContent!.trim()).to.equal('We never share it');
+    expect(innerMessage(el).getAttribute('data-state')).to.equal(null);
     expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerMessage(el).id);
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
   });
@@ -35,6 +36,7 @@ describe('bk-input', () => {
     );
 
     expect(innerMessage(el).textContent!.trim()).to.equal('Required');
+    expect(innerMessage(el).getAttribute('data-state')).to.equal('error');
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
     expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerMessage(el).id);
   });

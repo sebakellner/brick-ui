@@ -1,4 +1,4 @@
-# Design decisions
+# Contributing
 
 How the kit is put together and how to add the next component without
 re-deciding any of it. Read this before writing a component; the README covers
@@ -87,8 +87,8 @@ The token name is its JSON path joined with `-`, prefixed by `--bk-`
 7. **Tests.** `bk-<name>.test.ts` next to the element; `before(loadTheme)` from
    `src/test/helpers/theme.ts`; assert behaviour and computed styles.
 8. **Stories.** `bk-<name>.stories.ts` with one story per variant and per state.
-9. **Docs.** Add the element to the README components table and to
-   [Known gaps](#known-gaps) if it ships with a limitation.
+9. **Docs.** Add the element to the README components table, and name any
+   limitation you are shipping with in the PR description.
 
 ## Testing recipe
 
@@ -148,14 +148,3 @@ protected: PR required, both jobs required, admins included.
 - **No inline literals.** The focus ring was the last holdout — a 2px outline
   written inline next to a tokenized color. It now reads
   `--bk-focus-ring-width` and `--bk-focus-ring-offset`.
-
-## Known gaps
-
-- `bk-input` marks its message region with `data-state="helper"`, but only
-  `error` has a style rule; helper text inherits the neutral message color.
-- No visual regression coverage: computed styles are asserted, geometry is not.
-- Chrome is the only browser in the suite.
-- Not publishable yet: no `exports`, no `types`, no `LICENSE`, no `files`
-  allowlist, and no build step that emits JS plus `.d.ts`.
-- Token names inside `css\`\`` templates are strings, so a typo is caught by
-  review, not by `tsc`.

@@ -7,7 +7,7 @@ shipped as plain custom elements with a documented theming contract.
 
 Two components are in scope: `bk-button` and `bk-input`.
 
-[Live Storybook](https://sebakellner.github.io/brick-ui/) · [Design decisions](docs/design-decisions.md)
+[Live Storybook](https://sebakellner.github.io/brick-ui/) · [Contributing](CONTRIBUTING.md)
 
 > **Status: 0.1.0, not published.** The package is `private` and has no `exports`,
 > `types` or `LICENSE` yet. Use it from the repository.
@@ -80,7 +80,7 @@ src/
 ├── styles/tokens/      generated CSS — do not edit by hand
 ├── test/helpers/       shared test setup (loads the theme)
 └── index.ts            public entry point
-docs/                   design rationale and known gaps
+CONTRIBUTING.md         conventions, checklist for the next component
 ```
 
 ## Contributing

@@ -145,7 +145,7 @@ export class BkInput extends LitElement {
         part="message"
         id=${this.messageId}
         class="message"
-        data-state=${this.error ? 'error' : 'helper'}
+        data-state=${this.error ? 'error' : nothing}
         aria-live="polite"
       >
         ${message || nothing}
