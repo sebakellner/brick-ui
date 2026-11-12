@@ -7,7 +7,9 @@ Date: YYYY-MM-DD
 ## Status
 
 One of: proposed, accepted, rejected, deprecated, superseded by
-[NNNN](NNNN-slug.md).
+[NNNN](NNNN-slug.md), or superseded in part by [NNNN](NNNN-slug.md) — the last
+when only part of the decision is reversed, in which case one sentence under the
+status names what still holds.
 
 ## Context
 
