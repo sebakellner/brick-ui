@@ -41,6 +41,9 @@
       "border": {
         "value": "transparent"
       }
+    },
+    "disabled-opacity": {
+      "value": "0.55"
     }
   },
   "input": {

@@ -23,6 +23,8 @@ describe('bk-button', () => {
       '--bk-button-bg',
       '--bk-button-primary-bg',
       '--bk-button-secondary-bg',
+      '--bk-button-disabled-opacity',
+      '--bk-font-weight-medium',
       'font-family',
     ]) {
       document.documentElement.style.removeProperty(prop);
@@ -103,5 +105,21 @@ describe('bk-button', () => {
     expect(getComputedStyle(document.body).fontFamily).to.include('Times');
     expect(font).to.include('system-ui');
     expect(font).to.not.include('Times');
+  });
+
+  it('should take the label weight from the shared typography token', async () => {
+    const button = await mount();
+    document.documentElement.style.setProperty('--bk-font-weight-medium', '700');
+
+    expect(getComputedStyle(innerButton(button)).fontWeight).to.equal('700');
+  });
+
+  it('should take the disabled opacity from its control token', async () => {
+    const button = await mount();
+    button.disabled = true;
+    await button.updateComplete;
+    document.documentElement.style.setProperty('--bk-button-disabled-opacity', '0.25');
+
+    expect(getComputedStyle(innerButton(button)).opacity).to.equal('0.25');
   });
 });

@@ -2,5 +2,6 @@
   --bk-font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   --bk-font-size-sm: 0.8125rem;
   --bk-font-size-md: 0.9375rem;
+  --bk-font-weight-medium: 500;
   --bk-line-height-md: 1.5;
 }

@@ -52,7 +52,7 @@ export class BkInput extends LitElement {
       margin-bottom: var(--bk-space-1);
       font-family: var(--bk-font-sans);
       font-size: var(--bk-font-size-sm);
-      font-weight: 500;
+      font-weight: var(--bk-font-weight-medium);
       color: var(--bk-input-label-color);
     }
 

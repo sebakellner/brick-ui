@@ -2,6 +2,7 @@
   --bk-button-primary-border: transparent;
   --bk-button-ghost-bg: transparent;
   --bk-button-ghost-border: transparent;
+  --bk-button-disabled-opacity: 0.55;
   --bk-button-primary-bg: var(--bk-palette-blue-600);
   --bk-button-primary-bg-hover: var(--bk-palette-blue-700);
   --bk-button-primary-fg: var(--bk-palette-white);

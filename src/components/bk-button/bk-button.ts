@@ -44,7 +44,7 @@ export class BkButton extends LitElement {
       padding: 0 var(--bk-space-4);
       font-family: var(--bk-font-sans);
       font-size: var(--bk-font-size-md);
-      font-weight: 500;
+      font-weight: var(--bk-font-weight-medium);
       line-height: var(--bk-line-height-md);
       border: var(--bk-border-width) solid
         var(--bk-button-border, var(--bk-button-variant-border));
@@ -73,7 +73,7 @@ export class BkButton extends LitElement {
 
     button[aria-disabled='true'] {
       cursor: not-allowed;
-      opacity: 0.55;
+      opacity: var(--bk-button-disabled-opacity);
     }
 
     :host([variant='secondary']) {

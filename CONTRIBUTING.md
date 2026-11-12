@@ -24,8 +24,9 @@ tokens/*.json  ──build:tokens──>  src/styles/tokens/*.css  ──>  them
 4. **Components carry no style literals.** Every color, length and duration comes
    from a token, written as `var(--bk-…)` so the CSS stays readable and
    greppable. `pnpm check:tokens` validates every name in the components against
-   the declared tokens and the hooks, so a typo fails CI instead of rendering
-   nothing. (`px` appears only in story scaffolding.)
+   the declared tokens and the hooks, and fails when a semantic role has no
+   consumer, so a typo fails CI instead of rendering nothing and a dead role
+   cannot accumulate. (`px` appears only in story scaffolding.)
 5. **No CSS comments.** Token files and component styles stay declarative; the
    explanation lives here.
 
