@@ -1,7 +1,5 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { hooks, tokens } from '../../styles/tokens.generated.js';
-import { v } from '../../styles/tokens.js';
 
 export type BkInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'url';
 
@@ -35,63 +33,63 @@ export class BkInput extends LitElement {
 
     label {
       display: block;
-      margin-bottom: var(${v(tokens.space1)});
-      font-family: var(${v(tokens.fontSans)});
-      font-size: var(${v(tokens.fontSizeSm)});
+      margin-bottom: var(--bk-space-1);
+      font-family: var(--bk-font-sans);
+      font-size: var(--bk-font-size-sm);
       font-weight: 500;
-      color: var(${v(tokens.inputLabelColor)});
+      color: var(--bk-input-label-color);
     }
 
     input {
       box-sizing: border-box;
       width: 100%;
-      min-height: var(${v(tokens.controlHeight)});
-      padding: 0 var(${v(tokens.space3)});
-      font-family: var(${v(tokens.fontSans)});
-      font-size: var(${v(tokens.fontSizeMd)});
-      line-height: var(${v(tokens.lineHeightMd)});
-      color: var(${v(tokens.inputColor)});
-      background: var(${v(tokens.inputBg)});
-      border: var(${v(tokens.borderWidth)}) solid var(${v(tokens.inputBorderColor)});
-      border-radius: var(${v(hooks.inputRadius)}, var(${v(tokens.radiusMd)}));
+      min-height: var(--bk-control-height);
+      padding: 0 var(--bk-space-3);
+      font-family: var(--bk-font-sans);
+      font-size: var(--bk-font-size-md);
+      line-height: var(--bk-line-height-md);
+      color: var(--bk-input-color);
+      background: var(--bk-input-bg);
+      border: var(--bk-border-width) solid var(--bk-input-border-color);
+      border-radius: var(--bk-input-radius, var(--bk-radius-md));
       transition:
-        border-color var(${v(tokens.transition)}),
-        background-color var(${v(tokens.transition)});
+        border-color var(--bk-transition),
+        background-color var(--bk-transition);
     }
 
     input::placeholder {
-      color: var(${v(tokens.colorTextMuted)});
+      color: var(--bk-color-text-muted);
     }
 
     input:hover:not(:disabled):not([aria-invalid='true']) {
-      border-color: var(${v(tokens.colorBorderStrong)});
+      border-color: var(--bk-color-border-strong);
     }
 
     input:focus-visible {
-      outline: var(${v(tokens.focusRingWidth)}) solid var(${v(tokens.focusRing)});
-      outline-offset: var(${v(tokens.focusRingOffset)});
+      outline: var(--bk-focus-ring-width) solid var(--bk-focus-ring);
+      outline-offset: var(--bk-focus-ring-offset);
     }
 
     input:disabled {
       cursor: not-allowed;
-      color: var(${v(tokens.colorTextMuted)});
-      background: var(${v(tokens.colorSurfaceMuted)});
+      color: var(--bk-color-text-muted);
+      background: var(--bk-color-surface-muted);
     }
 
     input[aria-invalid='true'] {
-      border-color: var(${v(tokens.colorDanger)});
+      border-color: var(--bk-color-danger);
     }
 
     .message {
-      margin-top: var(${v(tokens.space1)});
-      font-family: var(${v(tokens.fontSans)});
-      font-size: var(${v(tokens.fontSizeSm)});
-      line-height: var(${v(tokens.lineHeightMd)});
-      color: var(${v(tokens.colorTextMuted)});
+      margin-top: var(--bk-space-1);
+      font-family: var(--bk-font-sans);
+      font-size: var(--bk-font-size-sm);
+      line-height: var(--bk-line-height-md);
+      color: var(--bk-color-text-muted);
     }
 
     .message[data-state='error'] {
-      color: var(${v(tokens.colorDanger)});
+      color: var(--bk-color-danger);
     }
 
     .message:empty {

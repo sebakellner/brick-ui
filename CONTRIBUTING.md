@@ -22,10 +22,10 @@ tokens/*.json  ──build:tokens──>  src/styles/tokens/*.css  ──>  them
 3. **The theme is required.** Components carry no fallback values. Defaults live
    once, in the generated CSS.
 4. **Components carry no style literals.** Every color, length and duration comes
-   from a token, and every token name is checked: `pnpm build:tokens` also emits
-   `src/styles/tokens.generated.ts` with a `tokens` map, a `hooks` map and their
-   unions, so `v(tokens.buttnBg)` fails `tsc` instead of rendering nothing.
-   (`px` appears only in story scaffolding.)
+   from a token, written as `var(--bk-…)` so the CSS stays readable and
+   greppable. `pnpm check:tokens` validates every name in the components against
+   the declared tokens and the hooks, so a typo fails CI instead of rendering
+   nothing. (`px` appears only in story scaffolding.)
 5. **No CSS comments.** Token files and component styles stay declarative; the
    explanation lives here.
 
@@ -79,9 +79,6 @@ The token name is its JSON path joined with `-`, prefixed by `--bk-`
    button /* the inner native element */ {
      background: var(--bk-x-bg, var(--bk-x-variant-bg));
    }
-
-   /* written in the component as: */
-   background: var(${v(tokens.xBg)}, var(${v(hooks.xVariantBg)}));
    ```
 
    The public hook is read first and the variant default lives in a different
@@ -136,7 +133,7 @@ Recorded so they are not reopened by accident:
 | License | MIT (`LICENSE`) | never, unless relicensing |
 | Browsers in the suite | Chrome only | a shadow-DOM or `:has()` bug escapes |
 | Packaging | not published; consumed from the repo | the kit gets an outside consumer |
-| Token names | typed through `tokens.generated.ts` | — |
+| Token names | validated in CI (`pnpm check:tokens`), not typed | a typo slips past the check |
 | Visual regression | not covered; computed styles only | a layout bug escapes the suite |
 
 ## Harness gotchas
@@ -150,8 +147,9 @@ Recorded so they are not reopened by accident:
 - The `base` platform's filter is a name list; a new structural token (like
   `--bk-focus-ring-offset`) is silently dropped until its group is added.
 - Lit types `css` as accepting only `CSSResultGroup | number` interpolations, so
-  a token name goes through `v()` (`src/styles/tokens.ts`) — a bare string fails
-  `tsc` even though it works at runtime.
+  a token name cannot be a typed expression without wrapping it in `unsafeCSS`.
+  That turned every `var()` into noise for a guarantee `pnpm check:tokens`
+  provides anyway, so the components keep plain CSS names.
 
 ## Why the load-bearing decisions are what they are
 

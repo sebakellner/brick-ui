@@ -34,6 +34,7 @@ jobs:
             echo "::error::generated token CSS is out of date; run pnpm build:tokens and commit the result"
             exit 1
           fi
+      - run: pnpm check:tokens
       - run: pnpm typecheck
       - run: pnpm test
 

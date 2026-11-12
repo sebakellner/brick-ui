@@ -12,6 +12,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:tokens": "style-dictionary build --config style-dictionary.config.mjs",
+    "check:tokens": "node scripts/check-token-usage.mjs",
     "typecheck": "tsc --noEmit",
     "test": "web-test-runner",
     "test:watch": "web-test-runner --watch",
