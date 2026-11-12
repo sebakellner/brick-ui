@@ -26,20 +26,14 @@ const preview: Preview = {
       },
     },
   },
-  // Deterministic by default: without a `data-theme` the role layer follows the
-  // operating system through `prefers-color-scheme`, and the canvas keeps
-  // Storybook's own background, which is how a dark role set ends up on a white
-  // page. Pinning light makes what you see depend on the toolbar, not on whoever
-  // built the Storybook.
+  // Mirrored in preview-head.html, which runs before the first paint: change both.
   initialGlobals: { theme: 'light' },
   decorators: [
     (story, context) => {
       const theme = context.globals['theme'] as Theme | undefined;
       const root = document.documentElement;
-      // `system` removes the attribute so the media query in theme.css takes
-      // over, which is the third way a host can pick a theme and worth showing.
-      if (!theme || theme === 'system') root.removeAttribute('data-theme');
-      else root.dataset['theme'] = theme;
+      if (theme === 'light' || theme === 'dark') root.dataset.theme = theme;
+      else root.removeAttribute('data-theme');
       return story();
     },
   ],

@@ -6,7 +6,8 @@
  *    (generated CSS) or as a hook (a name the component reads or sets that the
  *    token source does not declare). A typo here renders nothing at runtime and
  *    no other check catches it, because the name lives inside a CSS string. This
- *    one covers tests and stories too: a typo in either is still a typo.
+ *    one covers tests and stories too: a typo in either is still a typo. It also
+ *    covers `.storybook/`, which is host code and can hold the same typo.
  *
  * 2. Every semantic role must be read by a component. A role that nothing reads
  *    is a public contract with no behaviour: it costs a breaking change to
@@ -24,7 +25,7 @@
  *    a violation — they do not change between themes.
  *
  * R5 and R6 are claims about what a *component* paints, so they skip the test and
- * story files. R1 does not.
+ * story files. R1 does not. `.storybook/` gets existence only.
  *
  * See docs/conventions-tokens.md for the rules and docs/adr/0006 for why.
  */
@@ -41,6 +42,8 @@ const REFERENCES = /(--bk-[a-z0-9-]+)/g;
 const DECLARATION = /^\s*(--[a-z0-9-]+|[a-z-]+)\s*:/;
 const RULE_BOUNDARY = /[{}]/;
 const SUPPORT_FILE = /\.(test|stories)\.ts$/;
+const STORYBOOK_DIR = '.storybook';
+const STORYBOOK_FILE = /\.(css|ts|html)$/;
 const PRIMITIVE = '--bk-palette-';
 
 // Which CSS properties may read which role family. A family missing here is not
@@ -160,6 +163,23 @@ for (const file of componentFiles) {
   }
 
   problems.push(...misplacedRoles(file, source));
+}
+
+// The preview is host code: it may read a role or a primitive, but the name has to
+// exist. HTML comments are blanked with their own rule; `//` would eat a `https://`.
+const blankHtmlComments = (source) =>
+  source.replace(/<!--[\s\S]*?-->/g, (block) => block.replace(/[^\n]/g, ' '));
+
+for (const file of walk(STORYBOOK_DIR).filter((path) => STORYBOOK_FILE.test(path))) {
+  const source = file.endsWith('.html')
+    ? blankHtmlComments(read(file))
+    : stripComments(read(file));
+
+  for (const [, name] of source.matchAll(REFERENCES)) {
+    if (!declared.has(name) && !hooks.has(name)) {
+      problems.push(`${file}: unknown token ${name}`);
+    }
+  }
 }
 
 // A test or a story is not a consumer: R1 is about what a component paints.
