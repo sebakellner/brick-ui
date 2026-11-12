@@ -6,9 +6,10 @@ why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 
 | # | Rule | Enforced by |
 | --- | --- | --- |
-| R1 | A semantic role exists only while a component reads it directly | review — a check is planned |
+| R1 | A semantic role exists only while a component reads it directly | `pnpm check:tokens` |
 | R2 | References point downwards, one hop, never at a control token | review |
 | R3 | The palette is a reference ramp, not a usage list | review |
+| R4 | The token path is the public name | review |
 
 ## R1. A semantic role exists only while a component reads it
 
@@ -17,6 +18,11 @@ it directly, and deleted in the same change that stops reading it. A role that
 exists only so that a control token can alias it is a middle tier — this kit has
 none, and the ten roles that tried to be one were removed. A role with no
 consumer is not forward planning; it is a public name with no behaviour.
+
+The converse holds too. A value that only one component paints is a control
+token, not a role — a role read by one component is that component's token
+wearing a public name. And a control token needs a component: when the component
+stops reading it, delete it in the same change.
 
 **Why.** Ten roles were authored up front — `primary`, `primary-hover`,
 `primary-active`, `on-primary`, `on-danger`, `surface`, `surface-hover`, `text`,
@@ -33,8 +39,9 @@ that themed it, so adding the role is a decision to pay that cost eventually.
 
 **Don't** — add the canonical ten-role set so the token file "looks complete".
 
-**Enforced by.** Review. A check that fails on a zero-consumer role is planned:
-the cleanup `d9dfacd` did by hand, made repeatable.
+**Enforced by.** `pnpm check:tokens`, which derives the roles from `color.css` and
+fails when no component reads one. Tests and stories do not count as consumers.
+The control-token half of the rule is review only.
 
 ## R2. References point downwards, one hop, never at a control token
 
@@ -85,5 +92,22 @@ to current usage would turn every new component into a palette edit.
 **Do** — add the full ramp for a color even if only two steps are read.
 
 **Don't** — delete `--bk-palette-orange-900` because `grep` finds no consumer.
+
+**Enforced by.** Review.
+
+## R4. The token path is the public name
+
+**Rule.** A token name is its JSON path joined with `-`, prefixed with `--bk-`
+(`platform.prefix`). `button.secondary.bg-hover` becomes
+`--bk-button-secondary-bg-hover`, so the path you write is the name a host
+overrides.
+
+**Why.** A token name is public contract, and renaming one is a breaking change
+for anyone who themed it. Naming is API design rather than filing: the name has
+to say what the value is for, because that is what a consumer greps for.
+
+**Do** — name the role: `--bk-button-primary-bg`.
+
+**Don't** — name the appearance: `--bk-button-blue`.
 
 **Enforced by.** Review.
