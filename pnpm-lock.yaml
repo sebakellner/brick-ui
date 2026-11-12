@@ -185,6 +185,9 @@ importers:
       '@web/test-runner':
         specifier: ^1.0.1
         version: 1.0.1(supports-color@7.2.0)
+      '@web/test-runner-commands':
+        specifier: ^1.0.2
+        version: 1.0.2(supports-color@7.2.0)
       storybook:
         specifier: ^10.6.7
         version: 10.6.7(react@19.3.1)
