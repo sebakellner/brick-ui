@@ -38,6 +38,20 @@ document.querySelector('bk-input').addEventListener('bk-change', (event) => {
 });
 ```
 
+## Form API
+
+Inherited from `FormControlMixin`, the same surface a native control offers:
+
+| Member | What it does |
+| --- | --- |
+| `form` | the owning `<form>`, or `null` |
+| `validity`, `validationMessage` | the delegated validity state and its message |
+| `checkValidity()`, `reportValidity()` | the platform validation calls |
+
+`error` wins over `required`: a field with a message is invalid because of it, and
+its validity carries `customError`. A `required` field with no value reports
+`valueMissing`.
+
 ## Parts
 
 | Part | Element |
