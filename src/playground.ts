@@ -1,2 +1,2 @@
-import './components/bk-button/bk-button.js';
+import './components/bk-button/define.js';
 import './components/bk-input/define.js';

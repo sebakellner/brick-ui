@@ -1,4 +1,4 @@
-import type { LitElement, PropertyValues } from 'lit';
+import type { LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export type Constructor<T = object> = new (...args: any[]) => T;
@@ -38,10 +38,6 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
 
     private readonly internals = this.attachInternals();
 
-    private initialValue = '';
-
-    private initialized = false;
-
     private formDisabled = false;
 
     @property({ type: String }) name = '';
@@ -75,12 +71,13 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
     }
 
     formResetCallback(): void {
-      this.value = this.initialValue;
+      const initial = this.getAttribute('value') ?? '';
+      this.value = initial;
       // A reset handler may read FormData or submit before the next render, so the
       // internals and the visible field are updated synchronously.
       this.syncFormValue();
       const control = this.formControlElement;
-      if (control) control.value = this.initialValue;
+      if (control) control.value = initial;
     }
 
     formDisabledCallback(disabled: boolean): void {
@@ -104,16 +101,8 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       return undefined;
     }
 
-    override updated(changed: PropertyValues): void {
-      const first = !this.initialized;
-      if (first) {
-        this.initialized = true;
-        this.initialValue = this.value;
-      }
-
-      if (first || changed.has('value') || changed.has('error') || changed.has('required')) {
-        this.syncFormValue();
-      }
+    override updated(): void {
+      this.syncFormValue();
     }
 
     private syncFormValue(): void {

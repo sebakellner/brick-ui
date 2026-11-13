@@ -128,7 +128,6 @@ export class BkButton extends LitElement {
   };
 }
 
-customElements.define('bk-button', BkButton);
 
 declare global {
   interface HTMLElementTagNameMap {

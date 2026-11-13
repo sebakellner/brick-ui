@@ -1,5 +1,5 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import './bk-button.js';
+import './define.js';
 import type { BkButton } from './bk-button.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
