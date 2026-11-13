@@ -233,3 +233,21 @@ describe('bk-input form integration', () => {
     });
   });
 });
+
+describe('bk-input reset semantics', () => {
+  it('should reset to the value attribute, not to the value it had when it mounted', async () => {
+    const form = await fixture<HTMLFormElement>(html`<form></form>`);
+    const el = document.createElement('bk-input') as BkInput;
+    el.setAttribute('name', 'email');
+    el.setAttribute('label', 'Email');
+    el.setAttribute('value', 'default@b.c');
+    el.value = 'start@b.c';
+    form.append(el);
+    await el.updateComplete;
+
+    form.reset();
+
+    expect(el.value).to.equal('default@b.c');
+    expect(new FormData(form).get('email')).to.equal('default@b.c');
+  });
+});

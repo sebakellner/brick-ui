@@ -1,5 +1,5 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import './bk-button/bk-button.js';
+import './bk-button/define.js';
 import type { BkButton } from './bk-button/bk-button.js';
 import { loadTheme, setTheme } from '../test/helpers/theme.js';
 

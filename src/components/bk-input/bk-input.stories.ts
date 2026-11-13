@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import type { BkInputMode, BkInputType } from './bk-input.js';
-import '../bk-button/bk-button.js';
+import '../bk-button/define.js';
 import './define.js';
 
 type Args = {

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import type { BkButtonVariant } from './bk-button.js';
-import './bk-button.js';
+import './define.js';
 
 type Args = {
   variant: BkButtonVariant;
