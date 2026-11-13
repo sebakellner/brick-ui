@@ -17,6 +17,20 @@ internals lives in [`docs/`](docs/README.md); the [README](README.md) covers usa
 | why the kit is arranged this way | [docs/adr/](docs/adr/) |
 | instructions for coding agents | [AGENTS.md](AGENTS.md) |
 
+## How a field is built
+
+A field is three layers, and only the last one is specific to it:
+
+| Layer | Where | What it owns |
+| --- | --- | --- |
+| behaviour | `src/components/shared/form-control.mixin.ts` | form association, the value in `FormData`, validity, reset, restore, and the disabling a `fieldset` imposes |
+| styles | `src/components/shared/form-control.styles.ts` | label, control wrapper, message and the collapsed error region, in logical properties |
+| the field | `src/components/bk-*/bk-*.ts` | the native control, its attributes, its render |
+
+A second field composes the first two — `class BkTextarea extends FormControlMixin(LitElement)` with `static styles = [formControlStyles, css\`…\`]` — and overrides `formControlElement` to return the native control inside its shadow root. Nothing about form participation is copied:
+
+Component modules carry **no side effects**. Registration lives in a `define.ts` beside the component, guarded so a second copy of the package cannot throw, and the package entry point exports without registering. `src/playground.ts` is the only module that registers for the dev server.
+
 ## Setup
 
 Node 22+, pnpm, and Chrome for the test runner.
