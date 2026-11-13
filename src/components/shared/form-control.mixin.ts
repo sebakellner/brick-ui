@@ -29,7 +29,6 @@ export interface FormControlInterface {
   ): void;
 }
 
-/** Form participation for a custom element that wraps a native control. */
 export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
   class FormControl extends Base implements FormControlInterface {
     static formAssociated = true;
@@ -72,8 +71,6 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       const initial = this.getAttribute('value') ?? '';
       this.error = '';
       this.value = initial;
-      // A reset handler may read FormData or submit before the next render, so the
-      // internals and the visible field are updated synchronously.
       this.syncFormValue();
       const control = this.formControlElement;
       if (control) control.value = initial;
@@ -90,12 +87,12 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       this.syncFormValue();
     }
 
-    /** The author's `disabled` and the form's disabling are separate states. */
+    
     get fieldDisabled(): boolean {
       return this.disabled || this.formDisabled;
     }
 
-    /** The native control: validity anchors on it, and a reset writes it. */
+    
     get formControlElement(): NativeFormControl | undefined {
       return undefined;
     }
@@ -113,7 +110,6 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       if (this.error) {
         this.internals.setValidity({ customError: true }, this.error, control);
       } else if (control && !control.validity.valid) {
-        // The control already knows how to describe the failure, in the user locale.
         this.internals.setValidity(control.validity, control.validationMessage, control);
       } else {
         this.internals.setValidity({});

@@ -1,11 +1,3 @@
-/**
- * WCAG contrast maths. 1.4.11 asks for 3:1 on non-text UI boundaries, 1.4.3 for
- * 4.5:1 on body text.
- *
- * Both sides are passed in. There is no `contrastWithWhite`: a component's surface
- * is no longer white, it is `--bk-bg-surface`, which differs per theme — so the
- * caller reads the background it actually paints instead of assuming one.
- */
 const channel = (value: number) =>
   value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
 

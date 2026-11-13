@@ -18,15 +18,6 @@ export type BkInputMode =
 let instanceCount = 0;
 const nextInstanceId = () => `bk-input-${++instanceCount}`;
 
-/**
- * A single-line text field.
- *
- * Form participation — the form value, validity, reset and the form's disabling
- * — comes from `FormControlMixin`; the paint comes from `formControlStyles`.
- * What is left here is the text input itself: the `<label>`/`id` link, the
- * message region that is the input's `aria-describedby`, and the native
- * attributes a text field forwards.
- */
 export class BkInput extends FormControlMixin(LitElement) {
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
@@ -54,7 +45,6 @@ export class BkInput extends FormControlMixin(LitElement) {
 
   @property({ type: String }) override inputMode: BkInputMode | '' = '';
 
-  // Generated once per instance: re-rendering must never break the label/id link.
   private readonly controlId = nextInstanceId();
 
   private readonly messageId = `${this.controlId}-message`;

@@ -12,8 +12,6 @@ const innerMessage = (el: BkInput) => el.shadowRoot!.querySelector('[part="messa
 describe('bk-input', () => {
   before(loadTheme);
 
-  // documentElement lives outside the fixture wrapper, so fixtureCleanup leaves
-  // it alone; the inherited-token test has to clean up after itself.
   afterEach(() => {
     document.documentElement.style.removeProperty('--bk-font-weight-medium');
     setTheme('light');
