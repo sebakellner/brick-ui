@@ -59,7 +59,8 @@ export class BkButton extends LitElement {
         color var(--bk-transition);
     }
 
-    button:hover:not([aria-disabled='true']) {
+    button:hover:not([aria-disabled='true']),
+    button:active:not([aria-disabled='true']) {
       background: var(--bk-button-bg-hover, var(--bk-button-variant-bg-hover));
       border-color: var(
         --bk-button-border-hover,
@@ -75,6 +76,13 @@ export class BkButton extends LitElement {
     button[aria-disabled='true'] {
       cursor: not-allowed;
       opacity: var(--bk-button-disabled-opacity);
+    }
+
+    /* High contrast repaints the background and can erase a transparent border. */
+    @media (forced-colors: active) {
+      button {
+        border-color: ButtonText;
+      }
     }
 
     :host([variant='secondary']) {
@@ -94,6 +102,9 @@ export class BkButton extends LitElement {
 
   @property({ type: String, reflect: true }) variant: BkButtonVariant = 'primary';
 
+  /** The accessible name for a button that shows an icon and no text. */
+  @property({ attribute: 'aria-label' }) label = '';
+
   // `button` rather than the platform default, so a button dropped into a form
   // does not submit it by accident. The inner button cannot act on that form —
   // form association does not cross a shadow boundary — so the host finds it.
@@ -106,12 +117,20 @@ export class BkButton extends LitElement {
       <button
         part="button"
         type=${this.type}
+        aria-label=${this.label || nothing}
         aria-disabled=${this.disabled ? 'true' : nothing}
         @click=${this.handleClick}
       >
         <slot></slot>
       </button>
     `;
+  }
+
+  // The listener lives on the inner button, so a click sent to the host would
+  // skip the disabled guard entirely.
+  override click(): void {
+    if (this.disabled) return;
+    super.click();
   }
 
   private readonly handleClick = (event: MouseEvent) => {

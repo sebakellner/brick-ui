@@ -3,6 +3,7 @@ import './define.js';
 import type { BkButton } from './bk-button.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
+import { sendKeys } from '@web/test-runner-commands';
 
 const innerButton = (el: BkButton) => el.shadowRoot!.querySelector('button')!;
 
@@ -199,5 +200,60 @@ describe('bk-button in a form', () => {
     innerButton(form.querySelector('bk-button')!).click();
 
     expect(field.value).to.equal('initial');
+  });
+});
+
+describe('bk-button activation', () => {
+  it('should ignore a programmatic click while disabled', async () => {
+    const button = await mount();
+    button.disabled = true;
+    await button.updateComplete;
+    let clicks = 0;
+    button.addEventListener('click', () => (clicks += 1));
+
+    button.click();
+
+    expect(clicks).to.equal(0);
+  });
+
+  it('should still deliver a programmatic click when enabled', async () => {
+    const button = await mount();
+    let clicks = 0;
+    button.addEventListener('click', () => (clicks += 1));
+
+    button.click();
+
+    expect(clicks).to.equal(1);
+  });
+
+  it('should carry the host aria-label to the button that takes focus', async () => {
+    const button = await fixture<BkButton>(html`<bk-button aria-label="Close">x</bk-button>`);
+
+    expect(innerButton(button).getAttribute('aria-label')).to.equal('Close');
+  });
+
+  it('should activate from Enter and Space', async () => {
+    const button = await mount();
+    let clicks = 0;
+    button.addEventListener('click', () => (clicks += 1));
+    button.focus();
+
+    await sendKeys({ press: 'Enter' });
+    await sendKeys({ press: 'Space' });
+
+    expect(clicks).to.equal(2);
+  });
+
+  it('should not activate from the keyboard while disabled', async () => {
+    const button = await mount();
+    button.disabled = true;
+    await button.updateComplete;
+    let clicks = 0;
+    button.addEventListener('click', () => (clicks += 1));
+    button.focus();
+
+    await sendKeys({ press: 'Enter' });
+
+    expect(clicks).to.equal(0);
   });
 });

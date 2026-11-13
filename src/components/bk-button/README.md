@@ -17,6 +17,7 @@ A button that delegates focus to its inner native `<button>`.
 | --- | --- | --- | --- | --- |
 | `variant` | `variant` | `'primary' \| 'secondary' \| 'ghost'` | `'primary'` | reflected |
 | `type` | `type` | `'submit' \| 'reset' \| 'button'` | `'button'` | reflected; acts on the closest `<form>` |
+| `label` | `aria-label` | `string` | `''` | accessible name for a button that shows an icon and no text |
 | `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner button and blocks activation |
 
 ## Content
@@ -39,6 +40,18 @@ in the form does not route to it, and a form with more than one field will not
 submit at all. Keep a native `<button type="submit">` in any form that has to
 submit from the keyboard; use `type="reset"` here, which has no such
 requirement.
+
+Three limits that follow from the same decision:
+
+- A `form="other-id"` attribute is ignored. The element acts on the `<form>` it
+  sits inside, not on one named from elsewhere.
+- `requestSubmit()` runs without a submitter, so `event.submitter` is `null` and
+  the button's own `name` and `value` do not travel with the submission.
+- The lookup is `closest('form')` from the host and does not cross a shadow
+  boundary: a `<form>` outside the boundary that contains the element is
+  invisible to it.
+
+A programmatic `el.click()` on a disabled button does nothing, as on the platform.
 
 ## Parts
 
