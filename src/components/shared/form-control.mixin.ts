@@ -1,4 +1,4 @@
-import type { LitElement } from 'lit';
+import type { LitElement, PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export type Constructor<T = object> = new (...args: any[]) => T;
@@ -28,8 +28,6 @@ export interface FormControlInterface {
     mode: 'restore' | 'autocomplete',
   ): void;
 }
-
-const REQUIRED_MESSAGE = 'This field is required.';
 
 /** Form participation for a custom element that wraps a native control. */
 export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
@@ -72,6 +70,7 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
 
     formResetCallback(): void {
       const initial = this.getAttribute('value') ?? '';
+      this.error = '';
       this.value = initial;
       // A reset handler may read FormData or submit before the next render, so the
       // internals and the visible field are updated synchronously.
@@ -101,21 +100,23 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       return undefined;
     }
 
-    override updated(): void {
+    override updated(changed: PropertyValues): void {
+      super.updated(changed);
       this.syncFormValue();
     }
 
     private syncFormValue(): void {
       this.internals.setFormValue(this.value);
 
+      const control = this.formControlElement;
+
       if (this.error) {
-        this.internals.setValidity({ customError: true }, this.error, this.formControlElement);
-      } else if (this.required && !this.value) {
-        this.internals.setValidity(
-          { valueMissing: true },
-          REQUIRED_MESSAGE,
-          this.formControlElement,
-        );
+        this.internals.setValidity({ customError: true }, this.error, control);
+      } else if (control && !control.validity.valid) {
+        // The control already knows how to describe the failure, in the user locale.
+        this.internals.setValidity(control.validity, control.validationMessage, control);
+      } else if (!control && this.required && !this.value) {
+        this.internals.setValidity({ valueMissing: true });
       } else {
         this.internals.setValidity({});
       }
