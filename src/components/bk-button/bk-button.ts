@@ -2,6 +2,7 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 
 export type BkButtonVariant = 'primary' | 'secondary' | 'ghost';
+export type BkButtonType = 'submit' | 'reset' | 'button';
 
 /**
  * A button.
@@ -93,12 +94,18 @@ export class BkButton extends LitElement {
 
   @property({ type: String, reflect: true }) variant: BkButtonVariant = 'primary';
 
+  // `button` rather than the platform default, so a button dropped into a form
+  // does not submit it by accident. The inner button cannot act on that form —
+  // form association does not cross a shadow boundary — so the host finds it.
+  @property({ type: String, reflect: true }) type: BkButtonType = 'button';
+
   @property({ type: Boolean, reflect: true }) disabled = false;
 
   override render() {
     return html`
       <button
         part="button"
+        type=${this.type}
         aria-disabled=${this.disabled ? 'true' : nothing}
         @click=${this.handleClick}
       >
@@ -108,9 +115,16 @@ export class BkButton extends LitElement {
   }
 
   private readonly handleClick = (event: MouseEvent) => {
-    if (!this.disabled) return;
-    event.stopImmediatePropagation();
-    event.preventDefault();
+    if (this.disabled) {
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      return;
+    }
+
+    const form = this.closest('form');
+    if (!form) return;
+    if (this.type === 'submit') form.requestSubmit();
+    else if (this.type === 'reset') form.reset();
   };
 }
 

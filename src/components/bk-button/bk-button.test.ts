@@ -153,3 +153,51 @@ describe('bk-button', () => {
     expect(getComputedStyle(innerButton(secondary)).color).to.equal('rgb(9, 9, 9)');
   });
 });
+
+describe('bk-button in a form', () => {
+  const inForm = (button: unknown) =>
+    fixture<HTMLFormElement>(html`<form>${button}<input name="field" value="initial" /></form>`);
+
+  it('should default to type button, so it never submits a form by accident', async () => {
+    const button = await mount();
+
+    expect(button.type).to.equal('button');
+    expect(innerButton(button).type).to.equal('button');
+  });
+
+  it('should not submit the form it sits in unless asked to', async () => {
+    const form = await inForm(html`<bk-button>Save</bk-button>`);
+    let submits = 0;
+    form.addEventListener('submit', (event) => {
+      submits += 1;
+      event.preventDefault();
+    });
+
+    innerButton(form.querySelector('bk-button')!).click();
+
+    expect(submits).to.equal(0);
+  });
+
+  it('should submit the form when type is submit', async () => {
+    const form = await inForm(html`<bk-button type="submit">Save</bk-button>`);
+    let submits = 0;
+    form.addEventListener('submit', (event) => {
+      submits += 1;
+      event.preventDefault();
+    });
+
+    innerButton(form.querySelector('bk-button')!).click();
+
+    expect(submits).to.equal(1);
+  });
+
+  it('should reset the form when type is reset', async () => {
+    const form = await inForm(html`<bk-button type="reset">Reset</bk-button>`);
+    const field = form.querySelector('input')!;
+    field.value = 'changed';
+
+    innerButton(form.querySelector('bk-button')!).click();
+
+    expect(field.value).to.equal('initial');
+  });
+});

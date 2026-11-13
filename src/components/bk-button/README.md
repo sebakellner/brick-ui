@@ -16,11 +16,29 @@ A button that delegates focus to its inner native `<button>`.
 | Property | Attribute | Type | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `variant` | `variant` | `'primary' \| 'secondary' \| 'ghost'` | `'primary'` | reflected |
+| `type` | `type` | `'submit' \| 'reset' \| 'button'` | `'button'` | reflected; acts on the closest `<form>` |
 | `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner button and blocks activation |
 
 ## Content
 
 A single default slot: the label.
+
+## Forms
+
+`type` defaults to `'button'`, not to the platform default of `'submit'`: a button
+that is usually a plain action should not send a form by accident.
+
+The inner `<button>` cannot reach the form — form association does not cross a
+shadow boundary — so the host finds the form and calls `requestSubmit()` or
+`reset()`. Validation and resetting still happen through the platform.
+
+**It is not the form's submit button.** Clicking or pressing Enter on a
+`type="submit"` element submits, but the element is not associated with the
+form, so it is not its default button: pressing Enter in a text field elsewhere
+in the form does not route to it, and a form with more than one field will not
+submit at all. Keep a native `<button type="submit">` in any form that has to
+submit from the keyboard; use `type="reset"` here, which has no such
+requirement.
 
 ## Parts
 
