@@ -1,5 +1,5 @@
 import { LitElement, css, html, nothing } from 'lit';
-import { property } from 'lit/decorators.js';
+import { property, state } from 'lit/decorators.js';
 
 export type BkButtonVariant = 'primary' | 'secondary' | 'ghost';
 export type BkButtonType = 'submit' | 'reset' | 'button';
@@ -17,6 +17,12 @@ export type BkButtonType = 'submit' | 'reset' | 'button';
  * do not cover.
  */
 export class BkButton extends LitElement {
+  static formAssociated = true;
+
+  private readonly internals = this.attachInternals();
+
+  @state() private formDisabled = false;
+
   // The real button lives in the shadow root, so focus must be delegated to it.
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
@@ -59,12 +65,23 @@ export class BkButton extends LitElement {
         color var(--bk-transition);
     }
 
-    button:hover:not([aria-disabled='true']) {
+    button:active:not([aria-disabled='true']) {
       background: var(--bk-button-bg-hover, var(--bk-button-variant-bg-hover));
       border-color: var(
         --bk-button-border-hover,
         var(--bk-button-border, var(--bk-button-variant-border))
       );
+    }
+
+    /* A touch screen has no pointer to leave, but it keeps :hover after a tap. */
+    @media (hover: hover) {
+      button:hover:not([aria-disabled='true']) {
+        background: var(--bk-button-bg-hover, var(--bk-button-variant-bg-hover));
+        border-color: var(
+          --bk-button-border-hover,
+          var(--bk-button-border, var(--bk-button-variant-border))
+        );
+      }
     }
 
     button:focus-visible {
@@ -75,6 +92,19 @@ export class BkButton extends LitElement {
     button[aria-disabled='true'] {
       cursor: not-allowed;
       opacity: var(--bk-button-disabled-opacity);
+    }
+
+    /* High contrast repaints the background and can erase a transparent border. */
+    @media (forced-colors: active) {
+      button {
+        border-color: ButtonText;
+      }
+
+      /* opacity says nothing here, so the disabled state needs its own signal. */
+      button[aria-disabled='true'] {
+        color: GrayText;
+        border-color: GrayText;
+      }
     }
 
     :host([variant='secondary']) {
@@ -94,6 +124,9 @@ export class BkButton extends LitElement {
 
   @property({ type: String, reflect: true }) variant: BkButtonVariant = 'primary';
 
+  /** The accessible name for a button that shows an icon and no text. */
+  @property({ type: String }) label = '';
+
   // `button` rather than the platform default, so a button dropped into a form
   // does not submit it by accident. The inner button cannot act on that form —
   // form association does not cross a shadow boundary — so the host finds it.
@@ -105,8 +138,9 @@ export class BkButton extends LitElement {
     return html`
       <button
         part="button"
-        type=${this.type}
-        aria-disabled=${this.disabled ? 'true' : nothing}
+        type="button"
+        aria-label=${this.label || nothing}
+        aria-disabled=${this.isDisabled ? 'true' : nothing}
         @click=${this.handleClick}
       >
         <slot></slot>
@@ -114,14 +148,31 @@ export class BkButton extends LitElement {
     `;
   }
 
+  // The listener lives on the inner button, so a click sent to the host would
+  // skip the disabled guard and the activation entirely.
+  override click(): void {
+    if (this.isDisabled) return;
+    this.renderRoot.querySelector('button')?.click();
+  }
+
+  // A fieldset can disable the element from outside; that is not the author's
+  // disabled state, and neither one implies the other.
+  formDisabledCallback(disabled: boolean): void {
+    this.formDisabled = disabled;
+  }
+
+  private get isDisabled(): boolean {
+    return this.disabled || this.formDisabled;
+  }
+
   private readonly handleClick = (event: MouseEvent) => {
-    if (this.disabled) {
+    if (this.isDisabled) {
       event.stopImmediatePropagation();
       event.preventDefault();
       return;
     }
 
-    const form = this.closest('form');
+    const form = this.internals.form;
     if (!form) return;
     if (this.type === 'submit') form.requestSubmit();
     else if (this.type === 'reset') form.reset();
