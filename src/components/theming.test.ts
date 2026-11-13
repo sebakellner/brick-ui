@@ -9,15 +9,8 @@ const hex = (value: string) =>
     16,
   )})`;
 
-/** Resolves a role the way a component would: through the custom property chain. */
 let probe: HTMLDivElement | undefined;
 
-/**
- * Resolves a role the way a component would, through one reusable probe. The
- * thirteen-role matrix used to build, append, measure and remove a div per role;
- * each one forced a recalculation of the whole page, which is what starved the
- * browser-command tests that used to run alongside this file.
- */
 const role = (name: string): string => {
   probe ??= document.body.appendChild(document.createElement('div'));
   probe.style.color = `var(--bk-${name})`;
@@ -113,11 +106,6 @@ describe('theming', () => {
     });
   });
 
-  // `emulateMedia` is deliberately not used here. Two tests that emulated a colour
-  // scheme made four unrelated `bk-input` tests hang on CI — one on `sendMouse`, three
-  // on `updateElement` inside form fixtures — and the emulation was the only new
-  // browser-level command in the change. What the assertions below cover is the two
-  // things that actually broke: the media block existing, and it being loaded.
   describe('system preference', () => {
     it('should ship the system-preference block and load it', async () => {
       const theme = await (await fetch('/src/styles/theme.css')).text();

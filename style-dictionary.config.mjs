@@ -9,8 +9,6 @@ const cssFile = (destination, filter, selector = ':root') => ({
   options: { selector, outputReferences: true, showFileHeader: false },
 });
 
-// Names a component reads or sets but that the token source does not declare:
-// public override seams and the per-variant internals they feed.
 const hooks = {
   buttonBg: '--bk-button-bg',
   buttonBgHover: '--bk-button-bg-hover',
@@ -31,9 +29,6 @@ const camel = (path) =>
     .map((part, i) => (i === 0 ? part : part[0].toUpperCase() + part.slice(1)))
     .join('');
 
-// Roles live under a theme group in the source (`role-light`, `role-dark`) so the
-// two files can declare the same names without colliding in the token tree. The
-// theme segment is stripped here: the published name carries no theme.
 const THEMED = (token) => token.path[0] === 'role-light' || token.path[0] === 'role-dark';
 
 const platform = (files, transforms = []) => ({
@@ -81,8 +76,6 @@ export default {
           '',
         ].join('\n');
       },
-      // Style Dictionary cannot wrap a file in a media query, and `@import` cannot
-      // sit inside one, so the auto-switch block is generated as its own file.
       'css/variables-in-media': ({ dictionary, options }) => {
         const body = formattedVariables({
           format: 'css',

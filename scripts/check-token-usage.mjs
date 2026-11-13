@@ -1,34 +1,3 @@
-/**
- * Four checks over the `--bk-*` names that live inside CSS strings, where no
- * other tooling can see them.
- *
- * 1. Every name a component reads must exist: either as a declared token
- *    (generated CSS) or as a hook (a name the component reads or sets that the
- *    token source does not declare). A typo here renders nothing at runtime and
- *    no other check catches it, because the name lives inside a CSS string. This
- *    one covers tests and stories too: a typo in either is still a typo. It also
- *    covers `.storybook/`, which is host code and can hold the same typo.
- *
- * 2. Every semantic role must be read by a component. A role that nothing reads
- *    is a public contract with no behaviour: it costs a breaking change to
- *    delete later. Ten of them were removed by hand in d9dfacd, and this check
- *    is that cleanup made repeatable. See docs/conventions-tokens.md (R1).
- *
- * 3. A role is read under the property it belongs to (R5): `--bk-bg-*` in a
- *    background, `--bk-text-*` in a `color`, `--bk-border-*` in a border,
- *    `--bk-focus-ring` in an outline. Indirection through a custom property is
- *    not checked — that is the hook pattern, and the value lands elsewhere.
- *
- * 4. A component never reads a colour primitive (R6): `--bk-palette-*` is the
- *    raw ramp, and reaching for it bypasses the theme. Spacing, radius, type and
- *    the structural values have no role layer, so reading those directly is not
- *    a violation — they do not change between themes.
- *
- * R5 and R6 are claims about what a *component* paints, so they skip the test and
- * story files. R1 does not. `.storybook/` gets existence only.
- *
- * See docs/conventions-tokens.md for the rules and docs/adr/0006 for why.
- */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -46,8 +15,6 @@ const STORYBOOK_DIR = '.storybook';
 const STORYBOOK_FILE = /\.(css|ts|html)$/;
 const PRIMITIVE = '--bk-palette-';
 
-// Which CSS properties may read which role family. A family missing here is not
-// checked, so adding a role family means adding its properties.
 const PROPERTIES = {
   bg: ['background', 'background-color'],
   text: ['color'],
@@ -72,8 +39,6 @@ const PROPERTIES = {
 
 const read = (path) => readFileSync(path, 'utf8');
 
-// Comments are blanked rather than deleted: the scan is line-addressed, and
-// removing a block comment outright would shift every line after it.
 const stripComments = (source) =>
   source
     .replace(/\/\*[\s\S]*?\*\//g, (comment) => comment.replace(/[^\n]/g, ' '))
@@ -94,8 +59,6 @@ for (const file of walk(TOKENS_CSS_DIR)) {
 const hooks = new Set();
 for (const [, name] of read(HOOKS_SOURCE).matchAll(/'(--bk-[a-z0-9-]+)'/g)) hooks.add(name);
 
-// The palette is the primitive layer; everything else declared in color.css is
-// a semantic role the components are supposed to read.
 const semantic = names(read(COLOR_CSS)).filter((name) => !name.startsWith(PRIMITIVE));
 if (semantic.length === 0) {
   console.error(
@@ -106,13 +69,6 @@ if (semantic.length === 0) {
 }
 const roles = new Set(semantic);
 
-/**
- * R5: the property a role is read under has to belong to its family.
- *
- * Declarations are split on `;` so that two on one line are attributed to their
- * own property, and a rule boundary clears the context so a selector is never
- * mistaken for a property.
- */
 const misplacedRoles = (file, source) => {
   const found = [];
   let property;
@@ -124,8 +80,6 @@ const misplacedRoles = (file, source) => {
       const declaration = segment.match(DECLARATION);
       if (declaration) property = declaration[1];
 
-      // A role assigned to a custom property is the hook indirection: the value is
-      // read somewhere else, and that is where the property matters.
       if (property?.startsWith('--')) continue;
 
       for (const [, name] of segment.matchAll(REFERENCES)) {
@@ -153,7 +107,6 @@ for (const file of componentFiles) {
     }
   }
 
-  // R5 and R6 are about what a component paints; a test or a story is not one.
   if (SUPPORT_FILE.test(file)) continue;
 
   for (const [, name] of source.matchAll(REFERENCES)) {
@@ -165,8 +118,6 @@ for (const file of componentFiles) {
   problems.push(...misplacedRoles(file, source));
 }
 
-// The preview is host code: it may read a role or a primitive, but the name has to
-// exist. HTML comments are blanked with their own rule; `//` would eat a `https://`.
 const blankHtmlComments = (source) =>
   source.replace(/<!--[\s\S]*?-->/g, (block) => block.replace(/[^\n]/g, ' '));
 
@@ -182,7 +133,6 @@ for (const file of walk(STORYBOOK_DIR).filter((path) => STORYBOOK_FILE.test(path
   }
 }
 
-// A test or a story is not a consumer: R1 is about what a component paints.
 const consumed = new Set();
 for (const file of componentFiles.filter((path) => !SUPPORT_FILE.test(path))) {
   for (const [, name] of stripComments(read(file)).matchAll(REFERENCES)) consumed.add(name);

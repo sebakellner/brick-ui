@@ -13,6 +13,11 @@ why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 | R5 | A role is read under the property it belongs to | `pnpm check:tokens` |
 | R6 | A component reads a role for colour and a primitive for everything else | `pnpm check:tokens` |
 
+Before any of these rules, `pnpm check:tokens` asserts **existence**: every
+`--bk-*` name read inside a CSS string must be a declared token or a hook. No
+other tool sees those names, and a typo renders nothing at runtime. It covers
+tests, stories and `.storybook/`, because a typo in any of them is still a typo.
+
 ## R1. A semantic role exists only while a component reads it
 
 **Rule.** A role under `color.*` or `focus-ring` is added when a component reads

@@ -17,8 +17,6 @@ const mount = (variant?: string) =>
 describe('bk-button', () => {
   before(loadTheme);
 
-  // :root and body live outside the fixture wrapper, so fixtureCleanup leaves
-  // them alone; the inherited-property tests have to clean up after themselves.
   afterEach(() => {
     for (const prop of [
       '--bk-button-bg',

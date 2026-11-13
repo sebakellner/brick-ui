@@ -4,18 +4,6 @@ import { property, state } from 'lit/decorators.js';
 export type BkButtonVariant = 'primary' | 'secondary' | 'ghost';
 export type BkButtonType = 'submit' | 'reset' | 'button';
 
-/**
- * A button.
- *
- * Theming is layered on purpose: `--bk-button-*` are the public properties a
- * consumer may set, `--bk-button-{variant}-*` are the control tokens each
- * variant pulls its defaults from, and the public property wins over the
- * variant default whether it is set on the element or inherited. Both token
- * layers resolve to palette entries, so re-theming never needs a raw color.
- *
- * `::part(button)` exposes the inner native button for anything the properties
- * do not cover.
- */
 export class BkButton extends LitElement {
   static formAssociated = true;
 
@@ -23,7 +11,6 @@ export class BkButton extends LitElement {
 
   @state() private formDisabled = false;
 
-  // The real button lives in the shadow root, so focus must be delegated to it.
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
     delegatesFocus: true,
@@ -73,7 +60,7 @@ export class BkButton extends LitElement {
       );
     }
 
-    /* A touch screen has no pointer to leave, but it keeps :hover after a tap. */
+    
     @media (hover: hover) {
       button:hover:not([aria-disabled='true']) {
         background: var(--bk-button-bg-hover, var(--bk-button-variant-bg-hover));
@@ -94,13 +81,13 @@ export class BkButton extends LitElement {
       opacity: var(--bk-button-disabled-opacity);
     }
 
-    /* High contrast repaints the background and can erase a transparent border. */
+    
     @media (forced-colors: active) {
       button {
         border-color: ButtonText;
       }
 
-      /* opacity says nothing here, so the disabled state needs its own signal. */
+      
       button[aria-disabled='true'] {
         color: GrayText;
         border-color: GrayText;
@@ -124,12 +111,9 @@ export class BkButton extends LitElement {
 
   @property({ type: String, reflect: true }) variant: BkButtonVariant = 'primary';
 
-  /** The accessible name for a button that shows an icon and no text. */
+  
   @property({ type: String }) label = '';
 
-  // `button` rather than the platform default, so a button dropped into a form
-  // does not submit it by accident. The inner button cannot act on that form —
-  // form association does not cross a shadow boundary — so the host finds it.
   @property({ type: String, reflect: true }) type: BkButtonType = 'button';
 
   @property({ type: Boolean, reflect: true }) disabled = false;
@@ -148,15 +132,11 @@ export class BkButton extends LitElement {
     `;
   }
 
-  // The listener lives on the inner button, so a click sent to the host would
-  // skip the disabled guard and the activation entirely.
   override click(): void {
     if (this.isDisabled) return;
     this.renderRoot.querySelector('button')?.click();
   }
 
-  // A fieldset can disable the element from outside; that is not the author's
-  // disabled state, and neither one implies the other.
   formDisabledCallback(disabled: boolean): void {
     this.formDisabled = disabled;
   }
@@ -178,7 +158,6 @@ export class BkButton extends LitElement {
     else if (this.type === 'reset') form.reset();
   };
 }
-
 
 declare global {
   interface HTMLElementTagNameMap {
