@@ -112,14 +112,10 @@ const readout = (form: HTMLFormElement, prefix: string) => {
 };
 
 export const InAForm: Story = {
-  name: 'In a form: name, inputMode, required, reset',
+  name: 'In a form: name, inputMode, reset',
   render: () => html`
     <form
       style="display: grid; gap: var(--bk-space-4); width: 320px;"
-      @submit=${(event: SubmitEvent) => {
-        event.preventDefault();
-        readout(event.currentTarget as HTMLFormElement, 'FormData');
-      }}
       @reset=${(event: Event) => {
         const form = event.currentTarget as HTMLFormElement;
         requestAnimationFrame(() => readout(form, 'FormData after reset'));
@@ -135,7 +131,7 @@ export const InAForm: Story = {
         autocomplete="email"
         required
         value="you@brick.dev"
-        helper="Required, and named for the form."
+        helper="Named for the form."
       ></bk-input>
       <bk-input
         label="Phone"
@@ -146,11 +142,10 @@ export const InAForm: Story = {
         helper="A numeric keypad on a phone."
       ></bk-input>
       <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
-        <button type="submit">Submit</button>
         <bk-button type="reset" variant="secondary">Reset</bk-button>
       </div>
       <output style="font: var(--bk-font-size-sm) var(--bk-font-sans); color: var(--bk-text-muted);">
-        Submit to read FormData.
+        Change a field or reset to read FormData.
       </output>
     </form>
   `,
