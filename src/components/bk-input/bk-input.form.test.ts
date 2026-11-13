@@ -251,3 +251,59 @@ describe('bk-input reset semantics', () => {
     expect(new FormData(form).get('email')).to.equal('default@b.c');
   });
 });
+
+describe('bk-input platform validity', () => {
+  it('should reject a value the native control rejects', async () => {
+    const form = await fixture<HTMLFormElement>(
+      html`<form><bk-input name="email" label="Email" type="email" value="nope"></bk-input></form>`,
+    );
+    const el = form.querySelector('bk-input') as BkInput;
+
+    expect(el.validity.typeMismatch).to.equal(true);
+    expect(el.checkValidity()).to.equal(false);
+  });
+
+  it('should use the message the platform already localised', async () => {
+    const form = await fixture<HTMLFormElement>(
+      html`<form><bk-input name="email" label="Email" type="email" value="nope"></bk-input></form>`,
+    );
+    const el = form.querySelector('bk-input') as BkInput;
+    const control = el.shadowRoot!.querySelector('input')!;
+
+    expect(el.validationMessage).to.equal(control.validationMessage);
+    expect(el.validationMessage).to.not.equal('');
+  });
+
+  it('should clear a server error on reset, so the form is not stuck invalid', async () => {
+    const form = await fixture<HTMLFormElement>(
+      html`<form><bk-input name="email" label="Email" value="a@b.c"></bk-input></form>`,
+    );
+    const el = form.querySelector('bk-input') as BkInput;
+    el.error = 'That address is taken.';
+    await el.updateComplete;
+    expect(el.checkValidity()).to.equal(false);
+
+    form.reset();
+
+    expect(el.error).to.equal('');
+    expect(el.checkValidity()).to.equal(true);
+  });
+});
+
+describe('bk-input required', () => {
+  it('should report a required empty field as invalid, with the platform message', async () => {
+    const form = await fixture<HTMLFormElement>(
+      html`<form><bk-input name="email" label="Email" required></bk-input></form>`,
+    );
+    const el = form.querySelector('bk-input') as BkInput;
+
+    expect(el.validity.valueMissing).to.equal(true);
+    expect(el.validationMessage).to.not.equal('');
+
+    el.value = 'a@b.c';
+    await el.updateComplete;
+
+    expect(el.validity.valueMissing).to.equal(false);
+    expect(el.checkValidity()).to.equal(true);
+  });
+});
