@@ -289,3 +289,21 @@ describe('bk-input platform validity', () => {
     expect(el.checkValidity()).to.equal(true);
   });
 });
+
+describe('bk-input required', () => {
+  it('should report a required empty field as invalid, with the platform message', async () => {
+    const form = await fixture<HTMLFormElement>(
+      html`<form><bk-input name="email" label="Email" required></bk-input></form>`,
+    );
+    const el = form.querySelector('bk-input') as BkInput;
+
+    expect(el.validity.valueMissing).to.equal(true);
+    expect(el.validationMessage).to.not.equal('');
+
+    el.value = 'a@b.c';
+    await el.updateComplete;
+
+    expect(el.validity.valueMissing).to.equal(false);
+    expect(el.checkValidity()).to.equal(true);
+  });
+});

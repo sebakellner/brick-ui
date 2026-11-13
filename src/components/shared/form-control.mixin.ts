@@ -115,8 +115,6 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       } else if (control && !control.validity.valid) {
         // The control already knows how to describe the failure, in the user locale.
         this.internals.setValidity(control.validity, control.validationMessage, control);
-      } else if (!control && this.required && !this.value) {
-        this.internals.setValidity({ valueMissing: true });
       } else {
         this.internals.setValidity({});
       }
