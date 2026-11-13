@@ -146,7 +146,7 @@ export const InAForm: Story = {
         helper="A numeric keypad on a phone."
       ></bk-input>
       <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
-        <bk-button type="submit">Submit</bk-button>
+        <button type="submit">Submit</button>
         <bk-button type="reset" variant="secondary">Reset</bk-button>
       </div>
       <output style="font: var(--bk-font-size-sm) var(--bk-font-sans); color: var(--bk-text-muted);">
