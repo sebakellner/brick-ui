@@ -62,7 +62,9 @@ thing.
 ## A5. Disabled is `aria-disabled`
 
 **Rule.** A disabled control sets `aria-disabled="true"` on the inner element and
-blocks activation in the component. It does not set the `disabled` attribute.
+blocks activation in the component. It does not set the `disabled` attribute. A
+text field adds `readonly`, so its value stays readable, selectable and
+untypeable while the control keeps its place in the tab order.
 
 **Why.** `disabled` removes the control from the tab order, so a keyboard user
 cannot reach it to find out why it is unavailable. `aria-disabled` keeps it

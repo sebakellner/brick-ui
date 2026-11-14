@@ -92,7 +92,8 @@ Set the two hooks above, not those.
 - **Form-associated** through `ElementInternals`: a checked box submits under
   `name`, an unchecked one submits nothing, `required` reports `valueMissing`,
   `error` reports `customError`, a disabled `<fieldset>` disables the field, and
-  `reset()` restores the authored `checked` attribute and drops `error`.
+  `reset()` restores the authored `checked` attribute and drops `error`. A
+  disabled box submits nothing and reports no error, like a native one.
 
 ## Limitations
 

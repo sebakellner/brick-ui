@@ -70,8 +70,9 @@ export class BkInput extends FormControlMixin(LitElement) {
         autocomplete=${this.autocomplete || nothing}
         inputmode=${this.inputMode || nothing}
         .value=${this.value}
-        ?disabled=${this.fieldDisabled}
+        ?readonly=${this.fieldDisabled}
         ?required=${this.required}
+        aria-disabled=${this.fieldDisabled ? 'true' : nothing}
         aria-invalid=${this.fieldInvalid ? 'true' : nothing}
         aria-describedby=${message ? this.messageId : nothing}
         @input=${this.handleInput}

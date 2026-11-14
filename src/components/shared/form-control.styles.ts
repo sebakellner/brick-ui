@@ -40,7 +40,7 @@ export const formControlStyles = css`
     color: var(--bk-text-muted);
   }
 
-  .control:hover:not(:disabled):not([aria-invalid='true']) {
+  .control:hover:not(:disabled):not([aria-disabled='true']):not([aria-invalid='true']) {
     border-color: var(--bk-border-strong);
   }
 
@@ -49,7 +49,7 @@ export const formControlStyles = css`
     outline-offset: var(--bk-focus-ring-offset);
   }
 
-  .control:disabled {
+  .control:is(:disabled, [aria-disabled='true']) {
     cursor: not-allowed;
     color: var(--bk-text-muted);
     background: var(--bk-bg-surface-muted);

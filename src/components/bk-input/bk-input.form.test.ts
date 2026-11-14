@@ -101,13 +101,14 @@ describe('bk-input form integration', () => {
       await nextFrame();
       await el.updateComplete;
 
-      expect(innerInput(el).disabled).to.equal(true);
+      expect(innerInput(el).getAttribute('aria-disabled')).to.equal('true');
+      expect(innerInput(el).hasAttribute('disabled')).to.equal(false);
 
       fieldset.disabled = false;
       await nextFrame();
       await el.updateComplete;
 
-      expect(innerInput(el).disabled).to.equal(false);
+      expect(innerInput(el).getAttribute('aria-disabled')).to.equal(null);
     });
 
     it('should keep an author-disabled field disabled when its fieldset re-enables', async () => {
@@ -128,7 +129,41 @@ describe('bk-input form integration', () => {
       await el.updateComplete;
 
       expect(el.disabled).to.equal(true);
-      expect(innerInput(el).disabled).to.equal(true);
+      expect(innerInput(el).getAttribute('aria-disabled')).to.equal('true');
+      expect(innerInput(el).hasAttribute('disabled')).to.equal(false);
+    });
+
+    it('should submit nothing and report valid while disabled', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-input name="email" label="Email" value="a@b.c" required disabled></bk-input>
+        </form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await el.updateComplete;
+
+      expect(new FormData(form).get('email')).to.equal(null);
+      expect(el.checkValidity()).to.equal(true);
+      expect(form.checkValidity()).to.equal(true);
+    });
+
+    it('should block submission with an error only while it is enabled', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-input name="email" label="Email" error="That address looks wrong." disabled></bk-input>
+        </form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await el.updateComplete;
+
+      expect(el.validity.customError).to.equal(false);
+      expect(form.checkValidity()).to.equal(true);
+
+      el.disabled = false;
+      await el.updateComplete;
+
+      expect(el.validity.customError).to.equal(true);
+      expect(form.checkValidity()).to.equal(false);
     });
   });
 

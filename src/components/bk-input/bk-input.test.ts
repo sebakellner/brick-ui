@@ -1,5 +1,5 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
-import { sendMouse } from '@web/test-runner-commands';
+import { sendKeys, sendMouse } from '@web/test-runner-commands';
 import './define.js';
 import type { BkInput } from './bk-input.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
@@ -169,15 +169,40 @@ describe('bk-input', () => {
     const field = form.querySelector('bk-input') as BkInput;
 
     const plain = form.querySelectorAll('bk-input')[1] as BkInput;
-    expect(innerInput(plain).disabled).to.equal(true);
+    expect(innerInput(plain).getAttribute('aria-disabled')).to.equal('true');
 
     fieldset.disabled = false;
     await field.updateComplete;
     await plain.updateComplete;
 
     expect(field.disabled).to.equal(true);
-    expect(innerInput(field).disabled).to.equal(true);
-    expect(innerInput(plain).disabled).to.equal(false);
+    expect(innerInput(field).getAttribute('aria-disabled')).to.equal('true');
+    expect(innerInput(plain).getAttribute('aria-disabled')).to.equal(null);
+  });
+
+  it('should use aria-disabled on the inner field and keep it focusable', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email" disabled></bk-input>`);
+    const input = innerInput(el);
+
+    expect(input.getAttribute('aria-disabled')).to.equal('true');
+    expect(input.hasAttribute('disabled')).to.equal(false);
+    expect(input.disabled).to.equal(false);
+
+    el.focus();
+    expect(el.shadowRoot!.activeElement).to.equal(input);
+  });
+
+  it('should refuse typed input while disabled', async () => {
+    const el = await fixture<BkInput>(
+      html`<bk-input label="Email" value="a@b.c" disabled></bk-input>`,
+    );
+
+    el.focus();
+    await sendKeys({ type: 'x' });
+    await el.updateComplete;
+
+    expect(innerInput(el).value).to.equal('a@b.c');
+    expect(el.value).to.equal('a@b.c');
   });
 
   for (const theme of ['light', 'dark'] as const) {
