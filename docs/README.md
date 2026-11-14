@@ -31,8 +31,7 @@ coding agents.
 
 `Type` is one of tutorial, how-to, reference and explanation — the
 [Diátaxis](https://diataxis.fr/start-here/) split. There is no tutorial, and none
-should be invented: the kit is three components and the root README is the whole
-onboarding.
+should be invented: the kit is small and the root README is the whole onboarding.
 
 ## Architecture decisions
 
@@ -63,7 +62,7 @@ alternatives that lost. The rules of the folder:
 | If you change… | Update |
 | --- | --- |
 | a token, a layer or the pipeline | [architecture.md](architecture.md) and [conventions-tokens.md](conventions-tokens.md); a new ADR if it is a decision |
-| a component's public surface | its `README.md`, its Storybook page, and the components table in the root README |
+| a component's public surface | its `README.md` and its Storybook page |
 | a check, a CI gate or a command | [CONTRIBUTING.md](../CONTRIBUTING.md) |
 | something that makes a past decision false | not that ADR — a new one that supersedes it |
 
