@@ -26,12 +26,12 @@ coding agents.
 | [conventions-testing.md](conventions-testing.md) | reference | how to write a test that proves something |
 | [conventions-code.md](conventions-code.md) | reference | TypeScript, stylesheets and tooling |
 | [add-a-token.md](add-a-token.md) | how-to | a new design value, without breaking the build |
-| [add-a-component.md](add-a-component.md) | how-to | the third element, without re-deciding anything |
+| [add-a-component.md](add-a-component.md) | how-to | the next element, without re-deciding anything |
 | [adr/](adr/) | explanation | why the kit is arranged this way, and what was rejected |
 
 `Type` is one of tutorial, how-to, reference and explanation — the
 [Diátaxis](https://diataxis.fr/start-here/) split. There is no tutorial, and none
-should be invented: the kit is two components and the root README is the whole
+should be invented: the kit is three components and the root README is the whole
 onboarding.
 
 ## Architecture decisions

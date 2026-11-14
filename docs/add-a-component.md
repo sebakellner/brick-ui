@@ -1,6 +1,6 @@
 # Add a component
 
-Use this to add a third element to the kit. It assumes the token layers are
+Use this to add the next element to the kit. It assumes the token layers are
 familiar — read [architecture.md](architecture.md) and
 [conventions-tokens.md](conventions-tokens.md) first — and it exists so the next
 component does not re-decide any of it.

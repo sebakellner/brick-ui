@@ -5,7 +5,7 @@
 A small set of web components built with [Lit](https://lit.dev) and TypeScript,
 shipped as plain custom elements with a token-driven theming contract.
 
-Two components are in scope: `bk-button` and `bk-input`.
+Three components are in scope: `bk-button`, `bk-input` and `bk-checkbox`.
 
 [Storybook](https://sebakellner.github.io/brick-ui/) · [Contributing](CONTRIBUTING.md)
 
@@ -27,6 +27,7 @@ Load the theme once, then use the elements:
 <bk-button variant="secondary">Cancel</bk-button>
 
 <bk-input label="Email" helper="We never share it." placeholder="you@brick.dev"></bk-input>
+<bk-checkbox label="Accept the terms"></bk-checkbox>
 
 <script type="module" src="/src/index.ts"></script>
 ```
@@ -42,9 +43,10 @@ Requirements: Node 22+, pnpm, and Chrome for the test runner.
 | --- | --- | --- |
 | `bk-button` | `primary`, `secondary` and `ghost` variants, disabled state | [README](src/components/bk-button/README.md) · [Docs](https://sebakellner.github.io/brick-ui/?path=/docs/components-button--docs) |
 | `bk-input` | Single-line field with label, helper, error and `bk-change` | [README](src/components/bk-input/README.md) · [Docs](https://sebakellner.github.io/brick-ui/?path=/docs/components-input--docs) |
+| `bk-checkbox` | Checkbox with label, helper, error, `checked` and `bk-change` | [README](src/components/bk-checkbox/README.md) · [Docs](https://sebakellner.github.io/brick-ui/?path=/docs/components-checkbox--docs) |
 
-Both delegate focus to the inner native control and expose `part`s for whatever
-the tokens do not cover.
+All three delegate focus to the inner native control and expose `part`s for
+whatever the tokens do not cover.
 
 ## Theming
 
@@ -59,12 +61,14 @@ Override a token anywhere in the tree:
 .checkout {
   --bk-button-bg: var(--bk-palette-sky-600);
   --bk-input-radius: var(--bk-radius-sm);
+  --bk-checkbox-size: var(--bk-space-3);
 }
 ```
 
 Override hooks: `--bk-button-bg`, `--bk-button-bg-hover`, `--bk-button-fg`,
 `--bk-button-border`, `--bk-button-border-hover`, `--bk-button-radius`,
-`--bk-input-radius`. Everything else is a declared default.
+`--bk-input-radius`, `--bk-checkbox-size`, `--bk-checkbox-radius`. Everything
+else is a declared default.
 
 ## Structure
 

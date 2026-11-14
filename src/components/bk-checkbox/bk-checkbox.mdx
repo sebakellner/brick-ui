@@ -1,0 +1,32 @@
+import { Meta, Canvas, Markdown } from '@storybook/addon-docs/blocks';
+import * as CheckboxStories from './bk-checkbox.stories';
+import readme from './README.md?raw';
+
+<Meta of={CheckboxStories} />
+
+<Markdown>{readme}</Markdown>
+
+## Default
+
+<Canvas of={CheckboxStories.Default} />
+
+## Checked
+
+<Canvas of={CheckboxStories.Checked} />
+
+## States
+
+<Canvas of={CheckboxStories.States} />
+
+## Required
+
+The native constraint, not a message: an unchecked required box reports
+`valueMissing`, and the browser's own message appears once the field is touched.
+
+<Canvas of={CheckboxStories.Required} />
+
+## Custom size
+
+The two override hooks, set from the host page.
+
+<Canvas of={CheckboxStories.CustomSize} />

@@ -6,9 +6,9 @@ whole repo; there are no nested AGENTS.md files.
 ## What this repo is
 
 Brick — a small web-components kit built with Lit and TypeScript, shipped as
-plain custom elements with a token-driven theming contract. Two components are
-in scope: `bk-button` and `bk-input`. Nothing is published; the package is
-private and consumed from this repository.
+plain custom elements with a token-driven theming contract. Three components are
+in scope: `bk-button`, `bk-input` and `bk-checkbox`. Nothing is published; the
+package is private and consumed from this repository.
 
 ```
 tokens/base/           primitives, theme-invariant
