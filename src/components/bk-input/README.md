@@ -80,16 +80,20 @@ async rule, or translate a message.
 
 ## Parts
 
-| Part      | Element                 |
-| --------- | ----------------------- |
-| `label`   | the `<label>`           |
-| `input`   | the native `<input>`    |
-| `message` | the helper/error region |
+| Part          | Element                           |
+| ------------- | --------------------------------- |
+| `label`       | the `<label>`                     |
+| `input`       | the native `<input>`              |
+| `message`     | the container of the two regions  |
+| `description` | the help region                   |
+| `error`       | the error region, `role="status"` |
 
-The message region always exists so screen readers announce an error when it
-appears, and collapses with `:empty` when it has nothing to say. It carries
-`data-state="error"` while it is showing either channel; the native message is a
-problem too, so it is painted as one.
+The two regions always exist so screen readers announce an error when it
+appears: the description is hidden while the error has text, and an empty region
+is collapsed with `data-empty` instead of being removed, so it stays in the
+accessibility tree. The error region carries `data-state="error"` while it is
+showing either channel; the native message is a problem too, so it is painted as
+one.
 
 ## Tokens
 
@@ -117,12 +121,12 @@ values: theming the input means theming the roles, not the field.
 
 - A real `<label>` bound by `for`/`id`; the id is generated once per instance so
   re-renders never break the link.
-- `aria-describedby` points at the message region only while it has content.
-- `aria-invalid` follows what the message region displays, never what the field
-  computes: an invalid field nobody has touched is not marked. The message region
-  is `role="status"` and stays in the accessibility tree while empty (visually
-  collapsed instead of `display: none`), so an announcement is not lost when the
-  text appears.
+- `aria-describedby` points at the error region while it has content, otherwise
+  at the description region. `aria-invalid` follows what the error region
+  displays, never what the field computes: an invalid field nobody has touched is
+  not marked. The error region is `role="status"` and stays in the accessibility
+  tree while empty (visually collapsed instead of `display: none`), so an
+  announcement is not lost when the text appears.
 - `autocomplete` and `inputMode` are forwarded, so a field can identify its
   purpose (WCAG 1.3.5).
 - **Form-associated**: the element takes part in a `<form>` — its `value`

@@ -1,7 +1,7 @@
 # `bk-checkbox`
 
-A checkbox with a real `<label>`, a helper/error message region and a
-`bk-change` event.
+A checkbox with a real `<label>`, helper and error slots, and a `bk-change`
+event. The label sits beside the box, never above it.
 
 [Docs page](https://sebakellner.github.io/brick-ui/?path=/docs/components-checkbox--docs)
 
@@ -9,20 +9,43 @@ A checkbox with a real `<label>`, a helper/error message region and a
 <bk-checkbox label="Accept the terms" helper="You can change this later."></bk-checkbox>
 <bk-checkbox label="Accept the terms" checked></bk-checkbox>
 <bk-checkbox label="Accept the terms" error="You have to accept the terms."></bk-checkbox>
+
+<bk-field>
+  <bk-checkbox name="terms" required>
+    <bk-field-label>Accept the terms</bk-field-label>
+    <bk-field-description>You can change this later.</bk-field-description>
+  </bk-checkbox>
+</bk-field>
 ```
 
 ## Attributes and properties
 
 | Property   | Attribute  | Type      | Default | Notes                                                                                                                                                                                   |
 | ---------- | ---------- | --------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `label`    | `label`    | `string`  | `''`    | the visible text, bound to the box with `for`/`id`; the box renders alone when empty                                                                                                    |
-| `helper`   | `helper`   | `string`  | `''`    | shown when there is no `error`                                                                                                                                                          |
-| `error`    | `error`    | `string`  | `''`    | wins over `helper` and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input`                                                                    |
+| `label`    | `label`    | `string`  | `''`    | fallback for the `label` slot; the box renders alone when neither is present                                                                                                            |
+| `helper`   | `helper`   | `string`  | `''`    | fallback for the `description` slot; shown when there is no `error`                                                                                                                     |
+| `error`    | `error`    | `string`  | `''`    | fallback for the `error` slot; wins over `helper` and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input`                                     |
 | `checked`  | `checked`  | `boolean` | `false` | the state. The attribute is the default the form returns to on reset, like the platform's `defaultChecked`; the property is not reflected, so the attribute stays what the author wrote |
 | `value`    | `value`    | `string`  | `''`    | submits as `on` while checked, and submits nothing while unchecked                                                                                                                      |
 | `name`     | `name`     | `string`  | `''`    |                                                                                                                                                                                         |
 | `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner checkbox and blocks activation                                                                                                             |
 | `required` | `required` | `boolean` | `false` | reflected; the field is invalid until it is checked                                                                                                                                     |
+
+## Slots
+
+| Slot          | Receives                                                      | Fallback property |
+| ------------- | ------------------------------------------------------------- | ----------------- |
+| `label`       | the name of the box, beside the box                           | `label`           |
+| `description` | the help text, under the label row                            | `helper`          |
+| `error`       | the error message; replaces the description while it has text | `error`           |
+
+The slot content wins; the property is what the slot falls back to when nothing
+is assigned, so both shapes work at once and no public surface was removed.
+
+The `label` goes inside the `<label>` that wraps the native input, so the
+association stays implicit by containment. The description and the error are
+rendered outside it: text inside a label joins the control's accessible name, and
+the name of this control is the label, not its help text.
 
 ## Events
 
@@ -38,15 +61,23 @@ document.querySelector('bk-checkbox').addEventListener('bk-change', (event) => {
 
 ## Parts
 
-| Part      | Element                                 |
-| --------- | --------------------------------------- |
-| `label`   | the `<label>` row: the box and the text |
-| `input`   | the native `<input type="checkbox">`    |
-| `box`     | the painted square                      |
-| `message` | the helper/error region                 |
+| Part          | Element                                  |
+| ------------- | ---------------------------------------- |
+| `label`       | the `<label>` row: the box and the label |
+| `input`       | the native `<input type="checkbox">`     |
+| `box`         | the painted square                       |
+| `message`     | the container of the two message regions |
+| `description` | the help region                          |
+| `error`       | the error region, `role="status"`        |
 
-The message region always exists so screen readers announce an error when it
-appears, and collapses with `:empty` when it has nothing to say.
+Both message regions always exist so screen readers announce an error when it
+appears. The description is hidden while the error has text, and an empty region
+is collapsed with `data-empty` instead of being removed, so it stays in the
+accessibility tree. The part names do not move with the state: `description`
+keeps its name while the error shows.
+
+The label is inline beside the box by design. The row is the checkbox's own
+layout, so no `orientation` decides it and the field never reaches into it.
 
 ## Override hooks
 
@@ -87,8 +118,11 @@ Set the two hooks above, not those.
   the control stays in the tab order and is announced as unavailable, while
   Space and the label stop changing it. A native `disabled` input would be
   skipped entirely, which hides it from someone navigating with a screen reader.
-- `aria-describedby` points at the message region only while it has content, and
-  the region is `role="status"` while visually collapsed.
+- `aria-describedby` points at the error region while it has text, otherwise at
+  the description region, and at neither while both are empty. Content that
+  arrives through a slot is read from `slotchange` and `assignedNodes()`, never
+  from the region's `textContent`. The error region is `role="status"` and stays
+  in the accessibility tree while it is visually collapsed.
 - **Form-associated** through `ElementInternals`: a checked box submits under
   `name`, an unchecked one submits nothing, `required` reports `valueMissing`,
   `error` reports `customError`, a disabled `<fieldset>` disables the field, and
