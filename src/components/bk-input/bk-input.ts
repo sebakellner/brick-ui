@@ -1,7 +1,11 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { FormControlMixin } from '../shared/form-control.mixin.js';
-import { formControlStyles } from '../shared/form-control.styles.js';
+import {
+  FieldMessagesController,
+  FormControlMixin,
+  formControlStyles,
+  type FieldMessageFallbacks,
+} from '../shared/form-control/index.js';
 
 export type BkInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'url';
 
@@ -40,21 +44,30 @@ export class BkInput extends FormControlMixin(LitElement) {
 
   private readonly controlId = nextInstanceId();
 
-  private readonly messageId = `${this.controlId}-message`;
+  private readonly messages = new FieldMessagesController(this, this.controlId);
+
+  private hasSlottedLabel = false;
 
   override get formControlElement(): HTMLInputElement | undefined {
     return this.shadowRoot?.querySelector('input') ?? undefined;
   }
 
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.hasSlottedLabel = this.readSlottedLabel();
+    this.messages.connect();
+  }
+
   override render() {
-    const message = this.error || this.fieldMessage || this.helper;
+    const describedBy = this.messages.update(this.messageSources());
+    const labelled = this.label !== '' || this.hasSlottedLabel;
 
     return html`
-      ${
-        this.label
-          ? html`<label class="label" part="label" for=${this.controlId}>${this.label}</label>`
-          : nothing
-      }
+      <label class="label" part="label" for=${this.controlId} ?hidden=${!labelled}>
+        <slot name="label" @slotchange=${this.handleLabelSlotChange}>
+          ${this.hasSlottedLabel ? nothing : this.label}
+        </slot>
+      </label>
       <input
         part="input"
         class="control"
@@ -68,21 +81,31 @@ export class BkInput extends FormControlMixin(LitElement) {
         ?disabled=${this.fieldDisabled}
         ?required=${this.required}
         aria-invalid=${this.fieldInvalid ? 'true' : nothing}
-        aria-describedby=${message ? this.messageId : nothing}
+        aria-describedby=${describedBy || nothing}
         @input=${this.handleInput}
         @change=${this.handleChange}
       />
-      <div
-        part="message"
-        id=${this.messageId}
-        class="message"
-        data-state=${this.fieldInvalid ? 'error' : nothing}
-        role="status"
-      >
-        ${message || nothing}
-      </div>
+      ${this.messages.render()}
     `;
   }
+
+  private messageSources(): FieldMessageFallbacks {
+    return {
+      description: this.helper,
+      error: this.error || this.fieldMessage,
+    };
+  }
+
+  private readSlottedLabel(): boolean {
+    return Array.from(this.children).some((child) => child.slot === 'label');
+  }
+
+  private readonly handleLabelSlotChange = (event: Event): void => {
+    const slotted = (event.target as HTMLSlotElement).assignedNodes({ flatten: false }).length > 0;
+    if (slotted === this.hasSlottedLabel) return;
+    this.hasSlottedLabel = slotted;
+    this.requestUpdate();
+  };
 
   private readonly handleInput = (event: Event) => {
     this.value = (event.target as HTMLInputElement).value;

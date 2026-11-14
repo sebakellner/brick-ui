@@ -1,7 +1,6 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { FormControlMixin } from '../shared/form-control.mixin.js';
-import { formControlStyles } from '../shared/form-control.styles.js';
+import { FormControlMixin, formControlStyles } from '../shared/form-control/index.js';
 
 let instanceCount = 0;
 const nextInstanceId = () => `bk-checkbox-${++instanceCount}`;

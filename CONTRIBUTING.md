@@ -19,13 +19,14 @@ internals lives in [`docs/`](docs/README.md); the [README](README.md) covers usa
 
 ## How a field is built
 
-A field is three layers, and only the last one is specific to it:
+A field is up to four layers, and only the last one is specific to it:
 
-| Layer     | Where                                          | What it owns                                                                                                |
-| --------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| behaviour | `src/components/shared/form-control.mixin.ts`  | form association, the value in `FormData`, validity, reset, restore, and the disabling a `fieldset` imposes |
-| styles    | `src/components/shared/form-control.styles.ts` | label, control wrapper, message and the collapsed error region, in logical properties                       |
-| the field | `src/components/bk-*/bk-*.ts`                  | the native control, its attributes, its render                                                              |
+| Layer     | Where                                                             | What it owns                                                                                                |
+| --------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| behaviour | `src/components/shared/form-control/form-control.mixin.ts`        | form association, the value in `FormData`, validity, reset, restore, and the disabling a `fieldset` imposes |
+| styles    | `src/components/shared/form-control/form-control.styles.ts`       | label, control wrapper, message and the collapsed error region, in logical properties                       |
+| messages  | `src/components/shared/form-control/field-messages.controller.ts` | the description and error regions, their ids, and the `aria-describedby` a field announces                  |
+| the field | `src/components/bk-*/bk-*.ts`                                     | the native control, its attributes, its render                                                              |
 
 A second field composes the first two — `class BkTextarea extends FormControlMixin(LitElement)` with `static styles = [formControlStyles, css\`…\`]`— and overrides`formControlElement` to return the native control inside its shadow root. Nothing about form participation is copied:
 
