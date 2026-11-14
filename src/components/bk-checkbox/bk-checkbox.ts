@@ -1,6 +1,11 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { FormControlMixin, formControlStyles } from '../shared/form-control/index.js';
+import {
+  FieldMessagesController,
+  FormControlMixin,
+  formControlStyles,
+  type FieldMessageFallbacks,
+} from '../shared/form-control/index.js';
 
 let instanceCount = 0;
 const nextInstanceId = () => `bk-checkbox-${++instanceCount}`;
@@ -73,7 +78,7 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
         background: var(--bk-bg-surface-muted);
       }
 
-      .native[aria-disabled='true'] ~ .text {
+      .native[aria-disabled='true'] ~ slot > .text {
         color: var(--bk-text-muted);
       }
 
@@ -107,7 +112,7 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
 
   private readonly controlId = nextInstanceId();
 
-  private readonly messageId = `${this.controlId}-message`;
+  private readonly messages = new FieldMessagesController(this, this.controlId);
 
   override get formControlElement(): HTMLInputElement | undefined {
     return this.shadowRoot?.querySelector('input') ?? undefined;
@@ -117,8 +122,13 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
     return this.checked ? this.value || 'on' : null;
   }
 
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.messages.connect();
+  }
+
   override render() {
-    const message = this.error || this.fieldMessage || this.helper;
+    const describedBy = this.messages.update(this.messageSources());
 
     return html`
       <label class="field label" part="label" for=${this.controlId}>
@@ -132,23 +142,24 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
           ?required=${this.required}
           aria-disabled=${this.fieldDisabled ? 'true' : nothing}
           aria-invalid=${this.fieldInvalid ? 'true' : nothing}
-          aria-describedby=${message ? this.messageId : nothing}
+          aria-describedby=${describedBy || nothing}
           @click=${this.handleClick}
           @change=${this.handleChange}
         />
         <span part="box" class="box" aria-hidden="true"></span>
-        ${this.label ? html`<span class="text">${this.label}</span>` : nothing}
+        <slot name="label"
+          >${this.label ? html`<span class="text">${this.label}</span>` : nothing}</slot
+        >
       </label>
-      <div
-        part="message"
-        id=${this.messageId}
-        class="message"
-        data-state=${this.fieldInvalid ? 'error' : nothing}
-        role="status"
-      >
-        ${message || nothing}
-      </div>
+      ${this.messages.render()}
     `;
+  }
+
+  private messageSources(): FieldMessageFallbacks {
+    return {
+      description: this.helper,
+      error: this.error || this.fieldMessage,
+    };
   }
 
   override formResetCallback(): void {

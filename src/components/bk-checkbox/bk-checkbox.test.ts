@@ -8,8 +8,10 @@ import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 const innerInput = (el: BkCheckbox) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkCheckbox) => el.shadowRoot!.querySelector('label')!;
 const innerBox = (el: BkCheckbox) => el.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
-const innerMessage = (el: BkCheckbox) =>
-  el.shadowRoot!.querySelector<HTMLElement>('[part="message"]')!;
+const innerText = (el: BkCheckbox) => el.shadowRoot!.querySelector<HTMLElement>('.text')!;
+const innerDescription = (el: BkCheckbox) =>
+  el.shadowRoot!.querySelector<HTMLElement>('[part="description"]')!;
+const innerError = (el: BkCheckbox) => el.shadowRoot!.querySelector<HTMLElement>('[part="error"]')!;
 
 const pastTransition = async () => {
   await nextFrame();
@@ -231,19 +233,22 @@ describe('bk-checkbox', () => {
     expect(getComputedStyle(innerBox(el)).backgroundColor).to.equal(
       await colorOf('var(--bk-bg-surface-muted)'),
     );
+    expect(getComputedStyle(innerText(el)).color, 'the label text stays legible').to.equal(
+      await colorOf('var(--bk-text-muted)'),
+    );
   });
 
   it('should reference the message region only while it has text', async () => {
     const el = await fixture<BkCheckbox>(html`<bk-checkbox label="Accept terms"></bk-checkbox>`);
 
     expect(innerInput(el).getAttribute('aria-describedby')).to.equal(null);
-    expect(innerMessage(el).textContent!.trim()).to.equal('');
+    expect(innerDescription(el).textContent!.trim()).to.equal('');
 
     el.helper = 'You can change this later.';
     await el.updateComplete;
 
-    expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerMessage(el).id);
-    expect(innerMessage(el).textContent!.trim()).to.equal('You can change this later.');
+    expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerDescription(el).id);
+    expect(innerDescription(el).textContent!.trim()).to.equal('You can change this later.');
   });
 
   it('should show the error, mark the field invalid and colour the message', async () => {
@@ -252,11 +257,9 @@ describe('bk-checkbox', () => {
     el.error = 'You have to accept the terms.';
     await el.updateComplete;
 
-    expect(innerMessage(el).textContent!.trim()).to.equal('You have to accept the terms.');
+    expect(innerError(el).textContent!.trim()).to.equal('You have to accept the terms.');
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
-    expect(getComputedStyle(innerMessage(el)).color).to.equal(
-      await colorOf('var(--bk-text-danger)'),
-    );
+    expect(getComputedStyle(innerError(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
     expect(getComputedStyle(innerBox(el)).borderTopColor).to.equal(
       await colorOf('var(--bk-border-danger)'),
     );
@@ -268,7 +271,7 @@ describe('bk-checkbox', () => {
     el.helper = 'We never share it.';
     await el.updateComplete;
 
-    expect(getComputedStyle(innerMessage(el)).color).to.equal(
+    expect(getComputedStyle(innerDescription(el)).color).to.equal(
       await colorOf('var(--bk-text-muted)'),
     );
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
@@ -281,13 +284,13 @@ describe('bk-checkbox', () => {
 
     expect(el.checkValidity()).to.equal(false);
     expect(el.validity.valueMissing).to.equal(true);
-    expect(innerMessage(el).textContent!.trim()).to.equal('');
+    expect(innerError(el).textContent!.trim()).to.equal('');
 
     el.showValidationMessage();
     await el.updateComplete;
 
     expect(el.fieldInvalid).to.equal(true);
-    expect(innerMessage(el).textContent!.trim()).to.not.equal('');
+    expect(innerError(el).textContent!.trim()).to.not.equal('');
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
 
     el.checked = true;
