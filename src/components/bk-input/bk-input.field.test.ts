@@ -162,4 +162,47 @@ describe('bk-input composed field parts', () => {
     );
     expect(projectedText(describedNode(input))).to.deep.equal(['Added later.']);
   });
+
+  it('should collapse an empty region and give it space once it has content', async () => {
+    const el = await fixture<BkInput>(html`<bk-input name="email" label="Email"></bk-input>`);
+    await el.updateComplete;
+    const error = region(el, 'error')!;
+
+    expect(error.isConnected, 'the region stays in the tree while empty').to.equal(true);
+    expect(getComputedStyle(error).position, 'and is taken out of the flow').to.equal('absolute');
+    const before = el.getBoundingClientRect().height;
+
+    const atom = document.createElement('bk-field-error');
+    atom.slot = 'error';
+    atom.textContent = 'Enter a valid address.';
+    el.append(atom);
+    await el.updateComplete;
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await el.updateComplete;
+
+    expect(getComputedStyle(error).position, 'content brings it back into the flow').to.not.equal(
+      'absolute',
+    );
+    expect(el.getBoundingClientRect().height, 'and the field grows').to.be.greaterThan(before);
+  });
+
+  it('should hide an empty label and show it once the atom arrives', async () => {
+    const el = await fixture<BkInput>(html`<bk-input name="email"></bk-input>`);
+    await el.updateComplete;
+    const label = innerLabel(el)!;
+
+    expect(label.hasAttribute('hidden'), 'an empty label is hidden, not omitted').to.equal(true);
+    expect(label.getBoundingClientRect().height, 'and takes no space').to.equal(0);
+
+    const atom = document.createElement('bk-field-label');
+    atom.slot = 'label';
+    atom.textContent = 'Email';
+    el.append(atom);
+    await el.updateComplete;
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    await el.updateComplete;
+
+    expect(label.hasAttribute('hidden'), 'the label appears with its content').to.equal(false);
+    expect(label.getBoundingClientRect().height).to.be.greaterThan(0);
+  });
 });
