@@ -7,7 +7,7 @@ import {
 export type FieldLabelState = 'invalid' | 'disabled';
 
 export type FieldPartsHost = LitElement & {
-  readonly label: string;
+  readonly label?: string;
   readonly required: boolean;
   readonly fieldInvalid: boolean;
   readonly fieldDisabled: boolean;
@@ -32,11 +32,7 @@ export class FieldPartsController implements ReactiveController {
   }
 
   get labelled(): boolean {
-    return this.host.label !== '' || this.slotted;
-  }
-
-  get slottedLabel(): boolean {
-    return this.slotted;
+    return (this.host.label ?? '') !== '' || this.slotted;
   }
 
   get glyph(): TemplateResult | typeof nothing {

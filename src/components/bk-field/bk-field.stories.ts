@@ -105,14 +105,6 @@ export const PropsSideBySide: Story = {
           <bk-field-description>Label and description are slotted content.</bk-field-description>
         </bk-input>
       </bk-field>
-      <bk-field>
-        <bk-input
-          name="properties"
-          type="email"
-          label="Properties"
-          helper="Still works: the label and helper attributes are the fallback."
-        ></bk-input>
-      </bk-field>
     </div>
   `,
 };

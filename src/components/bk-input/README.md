@@ -1,22 +1,29 @@
 # `bk-input`
 
-A single-line text field with a real `<label>`, a helper/error message region
+A single-line text field with a real `<label>`, a description and an error slot,
 and a `bk-change` event.
 
 [Docs page](https://sebakellner.github.io/brick-ui/?path=/docs/components-input--docs)
 
 ```html
-<bk-input label="Email" helper="We never share it." placeholder="you@brick.dev"></bk-input>
-<bk-input label="Email" error="That address looks wrong." value="you@brick"></bk-input>
+<bk-field>
+  <bk-input name="email" placeholder="you@brick.dev">
+    <bk-field-label>Email</bk-field-label>
+    <bk-field-description>We never share it.</bk-field-description>
+  </bk-input>
+</bk-field>
+<bk-field>
+  <bk-input name="email" value="you@brick" error="That address looks wrong.">
+    <bk-field-label>Email</bk-field-label>
+  </bk-input>
+</bk-field>
 ```
 
 ## Properties
 
 | Property       | Attribute      | Type                                                                                        | Default  | Notes                                                                                                                                                                                                 |
 | -------------- | -------------- | ------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `label`        | `label`        | `string`                                                                                    | `''`     | bound to the input with `for`/`id`; omitted when empty                                                                                                                                                |
-| `helper`       | `helper`       | `string`                                                                                    | `''`     | shown when there is no `error`                                                                                                                                                                        |
-| `error`        | `error`        | `string`                                                                                    | `''`     | wins over `helper` and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input`                                                                                  |
+| `error`        | `error`        | `string`                                                                                    | `''`     | wins over the description and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input`                                                                           |
 | `value`        | `value`        | `string`                                                                                    | `''`     |                                                                                                                                                                                                       |
 | `name`         | `name`         | `string`                                                                                    | `''`     |                                                                                                                                                                                                       |
 | `type`         | `type`         | `'text' \| 'email' \| 'password' \| 'search' \| 'tel' \| 'url'`                             | `'text'` |                                                                                                                                                                                                       |
@@ -25,6 +32,18 @@ and a `bk-change` event.
 | `inputMode`    | —              | `'text' \| 'tel' \| 'url' \| 'email' \| 'numeric' \| 'decimal' \| 'search' \| 'none' \| ''` | `''`     | sets `inputmode` on the field                                                                                                                                                                         |
 | `disabled`     | `disabled`     | `boolean`                                                                                   | `false`  | reflected; sets the native `disabled` attribute on the inner field ([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)) |
 | `required`     | `required`     | `boolean`                                                                                   | `false`  | reflected; announces the state and marks the label with a `*` when there is one                                                                                                                       |
+
+## Slots
+
+| Slot          | Content                | Notes                                                                                                                                    |
+| ------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`       | `bk-field-label`       | rendered inside the `<label>` bound to the input with `for`/`id`; the slot is the only label, and the field is unnamed while it is empty |
+| `description` | `bk-field-description` | the help text; `aria-describedby` names the region while it has content                                                                  |
+| `error`       | `bk-field-error`       | the problem, rendered in the `role="status"` region; the description is hidden while it has content                                      |
+
+What the description and the error slots hold is the consumer's text; `error` is
+the property that also makes the field invalid. The atoms need no `slot`
+attribute inside a `bk-field`, which assigns them by tag name.
 
 ## Events
 
@@ -142,7 +161,8 @@ values: theming the input means theming the roles, not the field.
 ## Accessibility
 
 - A real `<label>` bound by `for`/`id`; the id is generated once per instance so
-  re-renders never break the link.
+  re-renders never break the link, and the name comes from the `label` slot — a
+  field whose slot is empty stays unnamed rather than named by an attribute.
 - `aria-describedby` points at the error region while it has content, otherwise
   at the description region. `aria-invalid` follows what the error region
   displays, never what the field computes: an invalid field nobody has touched is

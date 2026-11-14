@@ -2,11 +2,12 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import type { BkInput, BkInputMode, BkInputType } from './bk-input.js';
 import '../bk-button/define.js';
+import '../bk-field/define.js';
 import './define.js';
 
 type Args = {
   label: string;
-  helper: string;
+  description: string;
   error: string;
   value: string;
   placeholder: string;
@@ -18,12 +19,17 @@ type Args = {
   required: boolean;
 };
 
+const parts = (label: string, description: string) => html`
+  <bk-field-label>${label}</bk-field-label>
+  ${description ? html`<bk-field-description>${description}</bk-field-description>` : ''}
+`;
+
 const meta: Meta<Args> = {
   title: 'Components/Input',
   component: 'bk-input',
   args: {
     label: 'Email',
-    helper: 'We never share it.',
+    description: 'We never share it.',
     error: '',
     value: '',
     placeholder: 'you@brick.dev',
@@ -36,7 +42,7 @@ const meta: Meta<Args> = {
   },
   argTypes: {
     label: { control: 'text' },
-    helper: { control: 'text' },
+    description: { control: 'text' },
     error: { control: 'text' },
     value: { control: 'text' },
     placeholder: { control: 'text' },
@@ -52,7 +58,7 @@ const meta: Meta<Args> = {
   },
   render: ({
     label,
-    helper,
+    description,
     error,
     value,
     placeholder,
@@ -64,19 +70,21 @@ const meta: Meta<Args> = {
     required,
   }) => html`
     <div style="width: 320px;">
-      <bk-input
-        label=${label}
-        helper=${helper}
-        error=${error}
-        value=${value}
-        placeholder=${placeholder}
-        name=${name}
-        type=${type}
-        autocomplete=${autocomplete}
-        .inputMode=${inputMode}
-        ?disabled=${disabled}
-        ?required=${required}
-      ></bk-input>
+      <bk-field>
+        <bk-input
+          error=${error}
+          value=${value}
+          placeholder=${placeholder}
+          name=${name}
+          type=${type}
+          autocomplete=${autocomplete}
+          .inputMode=${inputMode}
+          ?disabled=${disabled}
+          ?required=${required}
+        >
+          ${parts(label, description)}
+        </bk-input>
+      </bk-field>
     </div>
   `,
 };
@@ -90,14 +98,23 @@ export const Default: Story = {};
 export const States: Story = {
   render: () => html`
     <div style="display: flex; flex-direction: column; gap: 20px; width: 320px;">
-      <bk-input label="Email" helper="We never share it." placeholder="you@brick.dev"></bk-input>
-      <bk-input
-        label="Email"
-        helper="We never share it."
-        error="That address looks wrong."
-        value="you@brick"
-      ></bk-input>
-      <bk-input label="Email" value="you@brick.dev" disabled></bk-input>
+      <bk-field>
+        <bk-input name="email" placeholder="you@brick.dev">
+          <bk-field-label>Email</bk-field-label>
+          <bk-field-description>We never share it.</bk-field-description>
+        </bk-input>
+      </bk-field>
+      <bk-field>
+        <bk-input name="email" error="That address looks wrong." value="you@brick">
+          <bk-field-label>Email</bk-field-label>
+          <bk-field-description>We never share it.</bk-field-description>
+        </bk-input>
+      </bk-field>
+      <bk-field>
+        <bk-input name="email" value="you@brick.dev" disabled>
+          <bk-field-label>Email</bk-field-label>
+        </bk-input>
+      </bk-field>
     </div>
   `,
 };
@@ -116,13 +133,15 @@ export const NativeValidation: Story = {
   render: () => html`
     <div style="display: grid; gap: var(--bk-space-4);">
       <form style="display: grid; gap: var(--bk-space-3);">
-        <bk-input
-          label="Native channel"
-          name="native"
-          type="email"
-          required
-          helper="Leave it empty and blur or submit: the browser's own message shows."
-        ></bk-input>
+        <bk-field>
+          <bk-input name="native" type="email" required>
+            <bk-field-label>Native channel</bk-field-label>
+            <bk-field-description
+              >Leave it empty and blur or submit: the browser's own message
+              shows.</bk-field-description
+            >
+          </bk-input>
+        </bk-field>
         <bk-button type="submit">Submit</bk-button>
       </form>
       <form
@@ -136,13 +155,12 @@ export const NativeValidation: Story = {
           field.error = valid ? '' : 'That address needs an @.';
         }}
       >
-        <bk-input
-          label="novalidate, only error"
-          name="schema"
-          type="email"
-          required
-          helper="No native message ever shows here."
-        ></bk-input>
+        <bk-field>
+          <bk-input name="schema" type="email" required>
+            <bk-field-label>novalidate, only error</bk-field-label>
+            <bk-field-description>No native message ever shows here.</bk-field-description>
+          </bk-input>
+        </bk-field>
         <bk-button type="submit">Submit</bk-button>
       </form>
     </div>
@@ -162,23 +180,18 @@ export const InAForm: Story = {
         readout(event.currentTarget as HTMLFormElement, `bk-change ${event.detail.value}`);
       }}
     >
-      <bk-input
-        label="Email"
-        name="email"
-        type="email"
-        autocomplete="email"
-        required
-        value="you@brick.dev"
-        helper="Named for the form."
-      ></bk-input>
-      <bk-input
-        label="Phone"
-        name="phone"
-        type="tel"
-        autocomplete="tel"
-        inputMode="tel"
-        helper="A numeric keypad on a phone."
-      ></bk-input>
+      <bk-field>
+        <bk-input name="email" type="email" autocomplete="email" required value="you@brick.dev">
+          <bk-field-label>Email</bk-field-label>
+          <bk-field-description>Named for the form.</bk-field-description>
+        </bk-input>
+      </bk-field>
+      <bk-field>
+        <bk-input name="phone" type="tel" autocomplete="tel" inputMode="tel">
+          <bk-field-label>Phone</bk-field-label>
+          <bk-field-description>A numeric keypad on a phone.</bk-field-description>
+        </bk-input>
+      </bk-field>
       <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
         <bk-button type="reset" variant="secondary">Reset</bk-button>
       </div>

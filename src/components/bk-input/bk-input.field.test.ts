@@ -30,11 +30,6 @@ const projectedText = (node: Element | null) =>
     .map((assigned) => assigned.textContent!.trim())
     .filter(Boolean);
 
-const describedText = (el: BkInput) => {
-  const text = describedNode(el)?.textContent!.trim();
-  return text ? [text] : [];
-};
-
 const settle = async (el: BkField) => {
   await el.updateComplete;
   await new Promise((resolve) => setTimeout(resolve, 0));
@@ -65,7 +60,8 @@ describe('bk-input composed field parts', () => {
   it('should describe the control with a slotted description', async () => {
     const el = await fixture<BkField>(html`
       <bk-field>
-        <bk-input name="email" label="Email">
+        <bk-input name="email">
+          <bk-field-label>Email</bk-field-label>
           <bk-field-description>We only use it for the receipt.</bk-field-description>
         </bk-input>
       </bk-field>
@@ -84,7 +80,9 @@ describe('bk-input composed field parts', () => {
 
   it('should reference no description while there is no content', async () => {
     const el = await fixture<BkField>(html`
-      <bk-field><bk-input name="email" label="Email"></bk-input></bk-field>
+      <bk-field
+        ><bk-input name="email"><bk-field-label>Email</bk-field-label></bk-input></bk-field
+      >
     `);
     await settle(el);
     const input = el.querySelector('bk-input') as BkInput;
@@ -94,7 +92,9 @@ describe('bk-input composed field parts', () => {
 
   it('should keep the message region in the tree while it is empty', async () => {
     const el = await fixture<BkField>(html`
-      <bk-field><bk-input name="email" label="Email"></bk-input></bk-field>
+      <bk-field
+        ><bk-input name="email"><bk-field-label>Email</bk-field-label></bk-input></bk-field
+      >
     `);
     await settle(el);
     const input = el.querySelector('bk-input') as BkInput;
@@ -107,7 +107,8 @@ describe('bk-input composed field parts', () => {
   it('should prefer a slotted error over a slotted description', async () => {
     const el = await fixture<BkField>(html`
       <bk-field>
-        <bk-input name="email" label="Email">
+        <bk-input name="email">
+          <bk-field-label>Email</bk-field-label>
           <bk-field-description>We only use it for the receipt.</bk-field-description>
           <bk-field-error>Enter a valid address.</bk-field-error>
         </bk-input>
@@ -129,24 +130,11 @@ describe('bk-input composed field parts', () => {
     expect(region(input, 'description'), 'the description keeps its part').to.not.equal(null);
   });
 
-  it('should keep label and helper working as fallback content', async () => {
-    const el = await fixture<BkField>(html`
-      <bk-field>
-        <bk-input name="email" label="Email" helper="Only for receipts"></bk-input>
-      </bk-field>
-    `);
-    await settle(el);
-    const input = el.querySelector('bk-input') as BkInput;
-
-    expect(innerLabel(input)!.textContent!.trim(), 'the property still names the field').to.equal(
-      'Email',
-    );
-    expect(describedText(input)).to.deep.equal(['Only for receipts']);
-  });
-
   it('should follow a description added after connect', async () => {
     const el = await fixture<BkField>(html`
-      <bk-field><bk-input name="email" label="Email"></bk-input></bk-field>
+      <bk-field
+        ><bk-input name="email"><bk-field-label>Email</bk-field-label></bk-input></bk-field
+      >
     `);
     await settle(el);
     const input = el.querySelector('bk-input') as BkInput;
@@ -164,7 +152,9 @@ describe('bk-input composed field parts', () => {
   });
 
   it('should collapse an empty region and give it space once it has content', async () => {
-    const el = await fixture<BkInput>(html`<bk-input name="email" label="Email"></bk-input>`);
+    const el = await fixture<BkInput>(
+      html`<bk-input name="email"><bk-field-label slot="label">Email</bk-field-label></bk-input>`,
+    );
     await el.updateComplete;
     const error = region(el, 'error')!;
 
