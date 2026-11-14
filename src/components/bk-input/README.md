@@ -146,8 +146,8 @@ the only signal — the native `required` attribute is what announces the state.
 | `--bk-border-strong`                                                                                         | border on hover                              |
 | `--bk-border-danger`                                                                                         | border on error                              |
 | `--bk-text-default`                                                                                          | input text and label                         |
-| `--bk-text-danger`                                                                                           | message on error, label while invalid        |
-| `--bk-text-muted`                                                                                            | placeholder, message, disabled label, `*`    |
+| `--bk-text-danger`                                                                                           | message on error, label while invalid, `*`   |
+| `--bk-text-muted`                                                                                            | placeholder, message, disabled label         |
 | `--bk-bg-surface-muted`                                                                                      | background when disabled                     |
 | `--bk-border-width`                                                                                          | border width                                 |
 | `--bk-control-height`, `--bk-space-1`, `--bk-space-2`, `--bk-space-3`                                        | height, padding and the gap under the label  |
