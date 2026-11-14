@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 import '../bk-button/define.js';
+import '../bk-checkbox/define.js';
 import '../bk-input/define.js';
 import './define.js';
 
@@ -50,6 +51,20 @@ export const Default: Story = {};
 export const LabelOnly: Story = {
   name: 'Label only',
   args: { description: '' },
+};
+
+export const Checkbox: Story = {
+  name: 'A checkbox, its label beside the box',
+  render: () => html`
+    <div style="width: 360px;">
+      <bk-field>
+        <bk-checkbox name="terms" required>
+          <bk-field-label>Accept the terms</bk-field-label>
+          <bk-field-description>You can change this later.</bk-field-description>
+        </bk-checkbox>
+      </bk-field>
+    </div>
+  `,
 };
 
 export const LongDescription: Story = {
