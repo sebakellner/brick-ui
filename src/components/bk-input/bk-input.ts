@@ -54,7 +54,7 @@ export class BkInput extends FormControlMixin(LitElement) {
   }
 
   override render() {
-    const message = this.error || this.helper;
+    const message = this.error || this.fieldMessage || this.helper;
 
     return html`
       ${this.label
@@ -72,7 +72,7 @@ export class BkInput extends FormControlMixin(LitElement) {
         .value=${this.value}
         ?disabled=${this.fieldDisabled}
         ?required=${this.required}
-        aria-invalid=${this.error ? 'true' : nothing}
+        aria-invalid=${this.fieldInvalid ? 'true' : nothing}
         aria-describedby=${message ? this.messageId : nothing}
         @input=${this.handleInput}
         @change=${this.handleChange}
@@ -81,7 +81,7 @@ export class BkInput extends FormControlMixin(LitElement) {
         part="message"
         id=${this.messageId}
         class="message"
-        data-state=${this.error ? 'error' : nothing}
+        data-state=${this.fieldInvalid ? 'error' : nothing}
         role="status"
       >
         ${message || nothing}

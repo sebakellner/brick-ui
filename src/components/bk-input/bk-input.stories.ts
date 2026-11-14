@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
-import type { BkInputMode, BkInputType } from './bk-input.js';
+import type { BkInput, BkInputMode, BkInputType } from './bk-input.js';
 import '../bk-button/define.js';
 import './define.js';
 
@@ -109,6 +109,44 @@ const readout = (form: HTMLFormElement, prefix: string) => {
     ([key, value]) => `${key}=${String(value) || '(empty)'}`,
   );
   output.textContent = `${prefix}: ${entries.join(' · ') || 'no entries'}`;
+};
+
+export const NativeValidation: Story = {
+  name: 'Native message and error',
+  render: () => html`
+    <div style="display: grid; gap: var(--bk-space-4);">
+      <form style="display: grid; gap: var(--bk-space-3);">
+        <bk-input
+          label="Native channel"
+          name="native"
+          type="email"
+          required
+          helper="Leave it empty and blur or submit: the browser's own message shows."
+        ></bk-input>
+        <bk-button type="submit">Submit</bk-button>
+      </form>
+      <form
+        novalidate
+        style="display: grid; gap: var(--bk-space-3);"
+        @submit=${(event: Event) => {
+          event.preventDefault();
+          const form = event.currentTarget as HTMLFormElement;
+          const field = form.querySelector('bk-input') as BkInput;
+          const valid = /^[^@]+@[^@]+$/.test(field.value);
+          field.error = valid ? '' : 'That address needs an @.';
+        }}
+      >
+        <bk-input
+          label="novalidate, only error"
+          name="schema"
+          type="email"
+          required
+          helper="No native message ever shows here."
+        ></bk-input>
+        <bk-button type="submit">Submit</bk-button>
+      </form>
+    </div>
+  `,
 };
 
 export const InAForm: Story = {

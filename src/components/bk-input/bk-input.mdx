@@ -13,3 +13,11 @@ import readme from './README.md?raw';
 ## States
 
 <Canvas of={InputStories.States} />
+
+## Native message and error
+
+Two channels, one message slot: the browser's own message after a blur or a
+failed submit, `error` from a schema or a rejection. A `novalidate` form shows
+only `error`.
+
+<Canvas of={InputStories.NativeValidation} />

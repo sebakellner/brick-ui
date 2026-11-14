@@ -16,7 +16,7 @@ and a `bk-change` event.
 | --- | --- | --- | --- | --- |
 | `label` | `label` | `string` | `''` | bound to the input with `for`/`id`; omitted when empty |
 | `helper` | `helper` | `string` | `''` | shown when there is no `error` |
-| `error` | `error` | `string` | `''` | wins over `helper`; sets `aria-invalid="true"` |
+| `error` | `error` | `string` | `''` | wins over `helper` and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input` |
 | `value` | `value` | `string` | `''` | |
 | `name` | `name` | `string` | `''` | |
 | `type` | `type` | `'text' \| 'email' \| 'password' \| 'search' \| 'tel' \| 'url'` | `'text'` | |
@@ -47,10 +47,35 @@ Inherited from `FormControlMixin`, the same surface a native control offers:
 | `form` | the owning `<form>`, or `null` |
 | `validity`, `validationMessage` | the delegated validity state and its message |
 | `checkValidity()`, `reportValidity()` | the platform validation calls |
+| `showValidationMessage()` | marks the field touched, so the native message appears |
+| `fieldMessage` | the native message the field would show, or `''` |
+| `fieldInvalid` | whether the message region is currently reporting a problem |
 
 `error` wins over `required`: a field with a message is invalid because of it, and
 its validity carries `customError`. A `required` field with no value reports
 `valueMissing`.
+
+## The two channels
+
+The field shows one message at a time, from one of two sources:
+
+| Source | Produced by | Shows |
+| --- | --- | --- |
+| native constraints | the browser: `required`, `type=email`, `pattern`, `minlength` | after the field is touched, or after a failed submit |
+| `error` | the consumer, from a schema result or a rejection | immediately, and it wins while it is set |
+
+The native message is the browser's own, in the browser's locale.
+`showValidationMessage()` reports the native message explicitly, for the submits
+the browser cannot run: an intercepted submit, or a form with `novalidate`.
+
+```js
+const result = schema.safeParse({ email });
+emailInput.error = result.success ? '' : result.error.issues[0].message;
+```
+
+A form with `novalidate` never shows a native message, so only `error` appears
+there. The store stays the consumer's: the field does not call a schema, run an
+async rule, or translate a message.
 
 ## Parts
 
@@ -62,7 +87,8 @@ its validity carries `customError`. A `required` field with no value reports
 
 The message region always exists so screen readers announce an error when it
 appears, and collapses with `:empty` when it has nothing to say. It carries
-`data-state="error"` only while there is an error.
+`data-state="error"` while it is showing either channel; the native message is a
+problem too, so it is painted as one.
 
 ## Tokens
 
@@ -91,16 +117,20 @@ values: theming the input means theming the roles, not the field.
 - A real `<label>` bound by `for`/`id`; the id is generated once per instance so
   re-renders never break the link.
 - `aria-describedby` points at the message region only while it has content.
-- `error` sets `aria-invalid="true"`. The message region is `role="status"` and
-  stays in the accessibility tree while empty (visually collapsed instead of
-  `display: none`), so an announcement is not lost when the text appears.
+- `aria-invalid` follows what the message region displays, never what the field
+  computes: an invalid field nobody has touched is not marked. The message region
+  is `role="status"` and stays in the accessibility tree while empty (visually
+  collapsed instead of `display: none`), so an announcement is not lost when the
+  text appears.
 - `autocomplete` and `inputMode` are forwarded, so a field can identify its
   purpose (WCAG 1.3.5).
 - **Form-associated**: the element takes part in a `<form>` — its `value`
   submits under `name`, the form can disable it, and constraint validation
   reflects `required` and `error` through `ElementInternals`.
 - `reset()` restores the initial value synchronously, so a reset handler can read
-  `FormData` or submit immediately.
+  `FormData` or submit immediately. It also drops `error` and the touched state,
+  so a reset form does not come back red. A value the browser restores is not an
+  interaction, so it leaves the field untouched.
 - The author's `disabled` and a `<fieldset>` disabling the field are separate
   states: re-enabling the fieldset never clears an author-disabled field.
 - The field border clears 3:1 against a white surface (WCAG 1.4.11), which the
