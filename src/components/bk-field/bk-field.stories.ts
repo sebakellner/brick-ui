@@ -152,6 +152,12 @@ export const InAForm: Story = {
             <bk-field-description>Optional. It goes on the invoice.</bk-field-description>
           </bk-input>
         </bk-field>
+        <bk-field>
+          <bk-checkbox name="terms" value="accepted">
+            <bk-field-label>Accept the terms</bk-field-label>
+            <bk-field-description>You can change this later.</bk-field-description>
+          </bk-checkbox>
+        </bk-field>
         <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
           <bk-button type="submit">Submit</bk-button>
           <bk-button type="reset" variant="secondary">Reset</bk-button>
@@ -160,7 +166,7 @@ export const InAForm: Story = {
       <output
         style="font: var(--bk-font-size-sm) var(--bk-font-sans); color: var(--bk-text-muted);"
       >
-        Submit to read FormData.
+        Submit to read FormData. The checkbox submits only while it is checked.
       </output>
     </div>
   `,
