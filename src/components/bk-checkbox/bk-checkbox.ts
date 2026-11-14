@@ -1,7 +1,7 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import {
-  FieldMessagesController,
+  FieldPartsController,
   FormControlMixin,
   formControlStyles,
   type FieldMessageFallbacks,
@@ -112,7 +112,7 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
 
   private readonly controlId = nextInstanceId();
 
-  private readonly messages = new FieldMessagesController(this, this.controlId);
+  private readonly fieldParts = new FieldPartsController(this, this.controlId);
 
   override get formControlElement(): HTMLInputElement | undefined {
     return this.shadowRoot?.querySelector('input') ?? undefined;
@@ -122,16 +122,14 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
     return this.checked ? this.value || 'on' : null;
   }
 
-  override connectedCallback(): void {
-    super.connectedCallback();
-    this.messages.connect();
-  }
-
   override render() {
-    const describedBy = this.messages.update(this.messageSources());
-
     return html`
-      <label class="field label" part="label" for=${this.controlId}>
+      <label
+        class="field label"
+        part="label"
+        for=${this.controlId}
+        data-state=${this.fieldParts.labelState ?? nothing}
+      >
         <input
           part="input"
           class="native"
@@ -142,16 +140,17 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
           ?required=${this.required}
           aria-disabled=${this.fieldDisabled ? 'true' : nothing}
           aria-invalid=${this.fieldInvalid ? 'true' : nothing}
-          aria-describedby=${describedBy || nothing}
+          aria-describedby=${this.fieldParts.describedBy(this.messageSources()) || nothing}
           @click=${this.handleClick}
           @change=${this.handleChange}
         />
         <span part="box" class="box" aria-hidden="true"></span>
-        <slot name="label"
+        <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}
           >${this.label ? html`<span class="text">${this.label}</span>` : nothing}</slot
         >
+        ${this.fieldParts.glyph}
       </label>
-      ${this.messages.render()}
+      ${this.fieldParts.messages}
     `;
   }
 

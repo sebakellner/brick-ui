@@ -24,7 +24,7 @@ and a `bk-change` event.
 | `autocomplete` | `autocomplete` | `string`                                                                                    | `''`     | forwarded to the field (WCAG 1.3.5)                                                                                                                                                                   |
 | `inputMode`    | —              | `'text' \| 'tel' \| 'url' \| 'email' \| 'numeric' \| 'decimal' \| 'search' \| 'none' \| ''` | `''`     | sets `inputmode` on the field                                                                                                                                                                         |
 | `disabled`     | `disabled`     | `boolean`                                                                                   | `false`  | reflected; sets the native `disabled` attribute on the inner field ([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)) |
-| `required`     | `required`     | `boolean`                                                                                   | `false`  | reflected                                                                                                                                                                                             |
+| `required`     | `required`     | `boolean`                                                                                   | `false`  | reflected; announces the state and marks the label with a `*` when there is one                                                                                                                       |
 
 ## Events
 
@@ -80,13 +80,14 @@ async rule, or translate a message.
 
 ## Parts
 
-| Part          | Element                           |
-| ------------- | --------------------------------- |
-| `label`       | the `<label>`                     |
-| `input`       | the native `<input>`              |
-| `message`     | the container of the two regions  |
-| `description` | the help region                   |
-| `error`       | the error region, `role="status"` |
+| Part          | Element                                                                    |
+| ------------- | -------------------------------------------------------------------------- |
+| `label`       | the `<label>`, carrying `data-state` when the field is invalid or disabled |
+| `input`       | the native `<input>`                                                       |
+| `required`    | the `*` that marks a required field, `aria-hidden`                         |
+| `message`     | the container of the two regions                                           |
+| `description` | the help region                                                            |
+| `error`       | the error region, `role="status"`                                          |
 
 The two regions always exist so screen readers announce an error when it
 appears: the description is hidden while the error has text, and an empty region
@@ -94,6 +95,27 @@ is collapsed with `data-empty` instead of being removed, so it stays in the
 accessibility tree. The error region carries `data-state="error"` while it is
 showing either channel; the native message is a problem too, so it is painted as
 one.
+
+## Label state
+
+The control writes its state on its own label — this `<label>`, and a
+`bk-field-label` hosted through the `label` slot — as `data-state`:
+
+| Value      | When                                               | Paints             |
+| ---------- | -------------------------------------------------- | ------------------ |
+| `invalid`  | `error` is set, or the native message is showing   | `--bk-text-danger` |
+| `disabled` | `disabled`, or the field is inside a disabled form | `--bk-text-muted`  |
+
+The two never both apply: an invalid field is painted as invalid even when it is
+also disabled, because a broken field still needs a fix. A label with no state
+keeps `--bk-text-default`, and a standalone `bk-field-label` paints the same way
+from its own `data-state`.
+
+A `required` field marks its label with a `*` (`part="required"`,
+`aria-hidden="true"`) in `--bk-text-danger`, the same role as the error text. It
+sits on the label's line, so a slotted `bk-field-label` does not push it to its
+own row. The mark is not rendered while the field has no label, and it is never
+the only signal — the native `required` attribute is what announces the state.
 
 ## Tokens
 
@@ -105,11 +127,11 @@ one.
 | `--bk-border-strong`                                                                                         | border on hover                              |
 | `--bk-border-danger`                                                                                         | border on error                              |
 | `--bk-text-default`                                                                                          | input text and label                         |
-| `--bk-text-danger`                                                                                           | message on error                             |
-| `--bk-text-muted`                                                                                            | placeholder and message                      |
+| `--bk-text-danger`                                                                                           | message on error, label while invalid        |
+| `--bk-text-muted`                                                                                            | placeholder, message, disabled label, `*`    |
 | `--bk-bg-surface-muted`                                                                                      | background when disabled                     |
 | `--bk-border-width`                                                                                          | border width                                 |
-| `--bk-control-height`, `--bk-space-1`, `--bk-space-3`                                                        | height and padding                           |
+| `--bk-control-height`, `--bk-space-1`, `--bk-space-2`, `--bk-space-3`                                        | height, padding and the gap under the label  |
 | `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-size-md`, `--bk-line-height-md`, `--bk-font-weight-medium` | typography                                   |
 | `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset`                                         | focus ring                                   |
 | `--bk-transition`                                                                                            | border transition                            |
@@ -129,6 +151,9 @@ values: theming the input means theming the roles, not the field.
   announcement is not lost when the text appears.
 - `autocomplete` and `inputMode` are forwarded, so a field can identify its
   purpose (WCAG 1.3.5).
+- The label colour is reinforcement, never the signal (WCAG 1.4.1): the border,
+  `aria-invalid` and the message region carry the error, the native `required`
+  attribute carries "required", and the `*` is `aria-hidden` decoration.
 - **Form-associated**: the element takes part in a `<form>` — its `value`
   submits under `name`, the form can disable it, and constraint validation
   reflects `required` and `error` through `ElementInternals`.

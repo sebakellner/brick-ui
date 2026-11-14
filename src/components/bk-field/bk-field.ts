@@ -59,8 +59,15 @@ export class BkField extends LitElement {
   private syncPart(part: BkFieldPart): void {
     const entry = PART_SLOTS.find((candidate) => candidate.tag === part.localName);
     if (entry && part.slot !== entry.slot) part.slot = entry.slot;
+    if (!this.hosts(part)) return;
     if (this.invalid) part.setAttribute('data-state', 'invalid');
     else part.removeAttribute('data-state');
+  }
+
+  private hosts(part: BkFieldPart): boolean {
+    const assigned = part.assignedSlot;
+    if (assigned) return assigned.getRootNode() === this.shadowRoot;
+    return part.parentElement === this;
   }
 }
 

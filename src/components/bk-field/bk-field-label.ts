@@ -10,6 +10,14 @@ export class BkFieldLabel extends LitElement {
       font-weight: var(--bk-font-weight-medium);
       color: var(--bk-text-default);
     }
+
+    :host([data-state='invalid']) {
+      color: var(--bk-text-danger);
+    }
+
+    :host([data-state='disabled']) {
+      color: var(--bk-text-muted);
+    }
   `;
 
   override connectedCallback(): void {

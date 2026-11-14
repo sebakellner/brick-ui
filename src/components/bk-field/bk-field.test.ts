@@ -1,4 +1,5 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
+import '../bk-checkbox/define.js';
 import './define.js';
 import type { BkField } from './bk-field.js';
 import type { BkFieldDescription } from './bk-field-description.js';
@@ -150,5 +151,23 @@ describe('bk-field', () => {
 
     expect(labelGap, 'one --bk-space-1 under the label').to.equal(4);
     expect(descriptionGap, 'one --bk-space-1 above the description').to.equal(4);
+  });
+
+  it('should leave the state of a part a control hosts alone', async () => {
+    const el = await fixture<BkField>(html`
+      <bk-field invalid>
+        <bk-checkbox name="terms" disabled>
+          <bk-field-label>Accept the terms</bk-field-label>
+        </bk-checkbox>
+      </bk-field>
+    `);
+    await el.updateComplete;
+    await nextFrame();
+
+    const hosted = el.querySelector('bk-field-label')!;
+    expect(
+      hosted.getAttribute('data-state'),
+      'the control owns the state of the label it hosts, and invalid does not overwrite it',
+    ).to.equal('disabled');
   });
 });

@@ -15,11 +15,28 @@ export const formControlStyles = css`
 
   .label {
     display: block;
-    margin-block-end: var(--bk-space-1);
+    margin-block-end: var(--bk-space-2);
     font-family: var(--bk-font-sans);
     font-size: var(--bk-font-size-sm);
     font-weight: var(--bk-font-weight-medium);
     color: var(--bk-text-default);
+  }
+
+  .label[data-state='invalid'] {
+    color: var(--bk-text-danger);
+  }
+
+  .label[data-state='disabled'] {
+    color: var(--bk-text-muted);
+  }
+
+  slot[name='label']::slotted(*) {
+    display: inline-block;
+  }
+
+  .required {
+    margin-inline-start: var(--bk-space-1);
+    color: var(--bk-text-danger);
   }
 
   .control {

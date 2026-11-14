@@ -29,7 +29,7 @@ event. The label sits beside the box, never above it.
 | `value`    | `value`    | `string`  | `''`    | submits as `on` while checked, and submits nothing while unchecked                                                                                                                      |
 | `name`     | `name`     | `string`  | `''`    |                                                                                                                                                                                         |
 | `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner checkbox and blocks activation                                                                                                             |
-| `required` | `required` | `boolean` | `false` | reflected; the field is invalid until it is checked                                                                                                                                     |
+| `required` | `required` | `boolean` | `false` | reflected; announces the state and marks the label with a `*` when there is one                                                                                                         |
 
 ## Slots
 
@@ -61,14 +61,15 @@ document.querySelector('bk-checkbox').addEventListener('bk-change', (event) => {
 
 ## Parts
 
-| Part          | Element                                  |
-| ------------- | ---------------------------------------- |
-| `label`       | the `<label>` row: the box and the label |
-| `input`       | the native `<input type="checkbox">`     |
-| `box`         | the painted square                       |
-| `message`     | the container of the two message regions |
-| `description` | the help region                          |
-| `error`       | the error region, `role="status"`        |
+| Part          | Element                                                         |
+| ------------- | --------------------------------------------------------------- |
+| `label`       | the `<label>` row: the box and the label, carrying `data-state` |
+| `input`       | the native `<input type="checkbox">`                            |
+| `box`         | the painted square                                              |
+| `required`    | the `*` that marks a required box, `aria-hidden`                |
+| `message`     | the container of the two message regions                        |
+| `description` | the help region                                                 |
+| `error`       | the error region, `role="status"`                               |
 
 Both message regions always exist so screen readers announce an error when it
 appears. The description is hidden while the error has text, and an empty region
@@ -78,6 +79,28 @@ keeps its name while the error shows.
 
 The label is inline beside the box by design. The row is the checkbox's own
 layout, so no `orientation` decides it and the field never reaches into it.
+
+## Label state
+
+The control writes its state on its own label row — this `<label>`, and a
+`bk-field-label` hosted through the `label` slot — as `data-state`:
+
+| Value      | When                                               | Paints             |
+| ---------- | -------------------------------------------------- | ------------------ |
+| `invalid`  | `error` is set, or the native message is showing   | `--bk-text-danger` |
+| `disabled` | `disabled`, or the field is inside a disabled form | `--bk-text-muted`  |
+
+The two never both apply: an invalid box is painted as invalid even when it is
+also disabled, because a broken field still needs a fix. A label with no state
+keeps `--bk-text-default`, and a standalone `bk-field-label` paints the same way
+from its own `data-state`.
+
+A `required` box marks its label with a `*` (`part="required"`,
+`aria-hidden="true"`) in `--bk-text-danger`, the same role as the error text. It
+sits on the label's line, beside the box, so a slotted `bk-field-label` does not
+push it to its own row. The mark is not rendered while the box has no label, and
+it is never the only signal — the native `required` attribute is what announces
+the state.
 
 ## Override hooks
 
@@ -109,6 +132,10 @@ Set the two hooks above, not those.
 - The painted box is `aria-hidden` decoration. Everything the assistive
   technology reads — `checked`, `aria-invalid`, `aria-disabled`,
   `aria-describedby` — lives on the native input.
+- The label colour is reinforcement, never the signal (WCAG 1.4.1): the box
+  border, `aria-invalid` and the message region carry the error, the native
+  `required` attribute carries "required", and the `*` is `aria-hidden`
+  decoration.
 - The focus ring is drawn on the box through `:focus-visible` on the input, so it
   appears for keyboard focus and not for a mouse click.
 - The box boundary, the check — while checked, and while a checked box is
