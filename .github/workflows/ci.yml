@@ -26,6 +26,8 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: formatting is Prettier's
+        run: pnpm format:check
       - name: tokens are generated from tokens/*.json
         run: |
           pnpm build:tokens

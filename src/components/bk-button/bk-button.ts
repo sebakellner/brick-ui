@@ -40,8 +40,7 @@ export class BkButton extends LitElement {
       font-size: var(--bk-font-size-md);
       font-weight: var(--bk-font-weight-medium);
       line-height: var(--bk-line-height-md);
-      border: var(--bk-border-width) solid
-        var(--bk-button-border, var(--bk-button-variant-border));
+      border: var(--bk-border-width) solid var(--bk-button-border, var(--bk-button-variant-border));
       border-radius: var(--bk-button-radius, var(--bk-radius-md));
       background: var(--bk-button-bg, var(--bk-button-variant-bg));
       color: var(--bk-button-fg, var(--bk-button-variant-fg));
@@ -60,7 +59,6 @@ export class BkButton extends LitElement {
       );
     }
 
-    
     @media (hover: hover) {
       button:hover:not([aria-disabled='true']) {
         background: var(--bk-button-bg-hover, var(--bk-button-variant-bg-hover));
@@ -81,13 +79,11 @@ export class BkButton extends LitElement {
       opacity: var(--bk-button-disabled-opacity);
     }
 
-    
     @media (forced-colors: active) {
       button {
         border-color: ButtonText;
       }
 
-      
       button[aria-disabled='true'] {
         color: GrayText;
         border-color: GrayText;
@@ -111,7 +107,6 @@ export class BkButton extends LitElement {
 
   @property({ type: String, reflect: true }) variant: BkButtonVariant = 'primary';
 
-  
   @property({ type: String }) label = '';
 
   @property({ type: String, reflect: true }) type: BkButtonType = 'button';

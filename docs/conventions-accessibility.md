@@ -4,15 +4,15 @@ The bar every component has to clear before it ships. It is not a review
 aspiration: most of it is asserted by the suite, because the failure mode is
 invisible until someone cannot use the control.
 
-| # | Rule | Enforced by |
-| --- | --- | --- |
-| A1 | Native semantics first | the suite, and review |
-| A2 | Non-text contrast is asserted, not eyeballed | `src/test/helpers/contrast.ts` |
-| A3 | ARIA is wired in the component, never left to the host page | review |
-| A4 | Descriptions are referenced only while they have content | the suite |
-| A5 | Disabled is `aria-disabled`, with activation blocked | the suite |
-| A6 | Form controls are form-associated through `ElementInternals` | review |
-| A7 | A live region is never removed from the accessibility tree | review |
+| #   | Rule                                                         | Enforced by                    |
+| --- | ------------------------------------------------------------ | ------------------------------ |
+| A1  | Native semantics first                                       | the suite, and review          |
+| A2  | Non-text contrast is asserted, not eyeballed                 | `src/test/helpers/contrast.ts` |
+| A3  | ARIA is wired in the component, never left to the host page  | review                         |
+| A4  | Descriptions are referenced only while they have content     | the suite                      |
+| A5  | Disabled is `aria-disabled`, with activation blocked         | the suite                      |
+| A6  | Form controls are form-associated through `ElementInternals` | review                         |
+| A7  | A live region is never removed from the accessibility tree   | review                         |
 
 ## A1. Native semantics first
 

@@ -58,12 +58,12 @@ declared.
 
 ## Traps
 
-| Symptom | Cause | Fix |
-| --- | --- | --- |
-| The token exists in the JSON and appears in no CSS file | its group is not in a platform's filter list, and this failure is silent | add the group to `style-dictionary.config.mjs` |
-| `build:tokens` fails on an unresolvable reference | the alias points at a path that does not exist, e.g. `{palette.stone-100}` | check the palette; the build fails before writing anything, so nothing is half-generated |
-| A hook resolves to nothing in the browser | the name is neither declared in `tokens/` nor listed in the `hooks` map in the config | `pnpm check:tokens` names the offender |
-| A semantic role breaks CI | nothing reads it | either a component reads it, or it is not a role |
+| Symptom                                                 | Cause                                                                                 | Fix                                                                                      |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| The token exists in the JSON and appears in no CSS file | its group is not in a platform's filter list, and this failure is silent              | add the group to `style-dictionary.config.mjs`                                           |
+| `build:tokens` fails on an unresolvable reference       | the alias points at a path that does not exist, e.g. `{palette.stone-100}`            | check the palette; the build fails before writing anything, so nothing is half-generated |
+| A hook resolves to nothing in the browser               | the name is neither declared in `tokens/` nor listed in the `hooks` map in the config | `pnpm check:tokens` names the offender                                                   |
+| A semantic role breaks CI                               | nothing reads it                                                                      | either a component reads it, or it is not a role                                         |
 
 ## Related
 

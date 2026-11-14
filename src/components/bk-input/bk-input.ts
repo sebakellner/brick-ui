@@ -6,14 +6,7 @@ import { formControlStyles } from '../shared/form-control.styles.js';
 export type BkInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'url';
 
 export type BkInputMode =
-  | 'none'
-  | 'text'
-  | 'tel'
-  | 'url'
-  | 'email'
-  | 'numeric'
-  | 'decimal'
-  | 'search';
+  'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
 
 let instanceCount = 0;
 const nextInstanceId = () => `bk-input-${++instanceCount}`;
@@ -57,9 +50,11 @@ export class BkInput extends FormControlMixin(LitElement) {
     const message = this.error || this.fieldMessage || this.helper;
 
     return html`
-      ${this.label
-        ? html`<label class="label" part="label" for=${this.controlId}>${this.label}</label>`
-        : nothing}
+      ${
+        this.label
+          ? html`<label class="label" part="label" for=${this.controlId}>${this.label}</label>`
+          : nothing
+      }
       <input
         part="input"
         class="control"

@@ -5,29 +5,29 @@ internals lives in [`docs/`](docs/README.md); the [README](README.md) covers usa
 
 ## Where everything lives
 
-| You want | Go to |
-| --- | --- |
-| how a value travels from JSON to a pixel | [docs/architecture.md](docs/architecture.md) |
-| the rules the token layers obey | [docs/conventions-tokens.md](docs/conventions-tokens.md) |
-| the accessibility bar | [docs/conventions-accessibility.md](docs/conventions-accessibility.md) |
-| how to test, and what makes a test real | [docs/conventions-testing.md](docs/conventions-testing.md) |
-| TypeScript and tooling gotchas | [docs/conventions-code.md](docs/conventions-code.md) |
-| add a token | [docs/add-a-token.md](docs/add-a-token.md) |
-| add a component | [docs/add-a-component.md](docs/add-a-component.md) |
-| why the kit is arranged this way | [docs/adr/](docs/adr/) |
-| instructions for coding agents | [AGENTS.md](AGENTS.md) |
+| You want                                 | Go to                                                                  |
+| ---------------------------------------- | ---------------------------------------------------------------------- |
+| how a value travels from JSON to a pixel | [docs/architecture.md](docs/architecture.md)                           |
+| the rules the token layers obey          | [docs/conventions-tokens.md](docs/conventions-tokens.md)               |
+| the accessibility bar                    | [docs/conventions-accessibility.md](docs/conventions-accessibility.md) |
+| how to test, and what makes a test real  | [docs/conventions-testing.md](docs/conventions-testing.md)             |
+| TypeScript and tooling gotchas           | [docs/conventions-code.md](docs/conventions-code.md)                   |
+| add a token                              | [docs/add-a-token.md](docs/add-a-token.md)                             |
+| add a component                          | [docs/add-a-component.md](docs/add-a-component.md)                     |
+| why the kit is arranged this way         | [docs/adr/](docs/adr/)                                                 |
+| instructions for coding agents           | [AGENTS.md](AGENTS.md)                                                 |
 
 ## How a field is built
 
 A field is three layers, and only the last one is specific to it:
 
-| Layer | Where | What it owns |
-| --- | --- | --- |
-| behaviour | `src/components/shared/form-control.mixin.ts` | form association, the value in `FormData`, validity, reset, restore, and the disabling a `fieldset` imposes |
-| styles | `src/components/shared/form-control.styles.ts` | label, control wrapper, message and the collapsed error region, in logical properties |
-| the field | `src/components/bk-*/bk-*.ts` | the native control, its attributes, its render |
+| Layer     | Where                                          | What it owns                                                                                                |
+| --------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| behaviour | `src/components/shared/form-control.mixin.ts`  | form association, the value in `FormData`, validity, reset, restore, and the disabling a `fieldset` imposes |
+| styles    | `src/components/shared/form-control.styles.ts` | label, control wrapper, message and the collapsed error region, in logical properties                       |
+| the field | `src/components/bk-*/bk-*.ts`                  | the native control, its attributes, its render                                                              |
 
-A second field composes the first two — `class BkTextarea extends FormControlMixin(LitElement)` with `static styles = [formControlStyles, css\`…\`]` — and overrides `formControlElement` to return the native control inside its shadow root. Nothing about form participation is copied:
+A second field composes the first two — `class BkTextarea extends FormControlMixin(LitElement)` with `static styles = [formControlStyles, css\`…\`]`— and overrides`formControlElement` to return the native control inside its shadow root. Nothing about form participation is copied:
 
 Component modules carry **no side effects**. Registration lives in a `define.ts` beside the component, guarded so a second copy of the package cannot throw, and the package entry point exports without registering. `src/playground.ts` is the only module that registers for the dev server.
 
@@ -41,17 +41,19 @@ pnpm install
 
 ## Commands
 
-| Command | Use |
-| --- | --- |
-| `pnpm dev` | the playground |
-| `pnpm storybook` | component stories and the docs pages |
-| `pnpm test` | the suite, in real Chrome |
-| `pnpm test:watch` | the suite, watching |
-| `pnpm typecheck` | `tsc --noEmit` |
-| `pnpm build:tokens` | regenerate the CSS and `tokens.generated.ts`; commit the result |
-| `pnpm check:tokens` | every name a component reads exists, and every semantic role is read |
-| `pnpm build` | the bundle |
-| `pnpm build-storybook` | the static site |
+| Command                | Use                                                                  |
+| ---------------------- | -------------------------------------------------------------------- |
+| `pnpm dev`             | the playground                                                       |
+| `pnpm storybook`       | component stories and the docs pages                                 |
+| `pnpm test`            | the suite, in real Chrome                                            |
+| `pnpm test:watch`      | the suite, watching                                                  |
+| `pnpm typecheck`       | `tsc --noEmit`                                                       |
+| `pnpm build:tokens`    | regenerate the CSS and `tokens.generated.ts`; commit the result      |
+| `pnpm check:tokens`    | every name a component reads exists, and every semantic role is read |
+| `pnpm format`          | rewrite the files Prettier owns                                      |
+| `pnpm format:check`    | fail if any of them is not formatted                                 |
+| `pnpm build`           | the bundle                                                           |
+| `pnpm build-storybook` | the static site                                                      |
 
 Storybook starts in the light theme whatever the operating system says, and the
 **Theme** toolbar switches it to `dark` or `system`. The preview canvas paints
@@ -75,17 +77,18 @@ the other.
 - Name any limitation you are shipping with in the PR description. One written
   down is a limitation someone can fix; one kept quiet is a bug report six months
   late.
-- Before pushing: `pnpm test`, `pnpm typecheck`, `pnpm check:tokens`. If you
-  touched `tokens/`, also run `pnpm build:tokens` and commit the output.
+- Before pushing: `pnpm test`, `pnpm typecheck`, `pnpm check:tokens`,
+  `pnpm format:check`. If you touched `tokens/`, also run `pnpm build:tokens`
+  and commit the output.
 
 ## CI gates
 
 `ci.yml` runs on every PR and on `main`:
 
-| Job | Checks |
-| --- | --- |
-| `test` | tokens match the JSON (`git status --porcelain`, so untracked output counts), `check:tokens`, `typecheck`, the suite in real Chrome |
-| `storybook build` | regenerates the tokens and builds the site |
+| Job               | Checks                                                                                                                                                         |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test`            | Prettier's `format:check`, tokens match the JSON (`git status --porcelain`, so untracked output counts), `check:tokens`, `typecheck`, the suite in real Chrome |
+| `storybook build` | regenerates the tokens and builds the site                                                                                                                     |
 
 `storybook-pages.yml` publishes from `main` only, gated by the suite.
 

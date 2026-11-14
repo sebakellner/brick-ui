@@ -115,9 +115,7 @@ describe('theming', () => {
         "@import './tokens/color.dark.media.css';",
       );
       expect(theme, 'the page is told which way to paint').to.include('color-scheme: dark');
-      expect(block, 'the block is a media query').to.include(
-        '@media (prefers-color-scheme: dark)',
-      );
+      expect(block, 'the block is a media query').to.include('@media (prefers-color-scheme: dark)');
       expect(block, 'it yields to an explicit theme').to.include(':where(:root:not([data-theme]))');
     });
   });

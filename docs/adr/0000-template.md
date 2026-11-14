@@ -28,7 +28,7 @@ that makes it implementable.
 ### Alternatives considered
 
 | Alternative | Why it was rejected |
-| --- | --- |
+| ----------- | ------------------- |
 
 List the options that were genuinely on the table. An option nobody argued for
 is not an alternative, and an ADR that claims otherwise is worse than one with

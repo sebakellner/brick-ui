@@ -59,7 +59,9 @@ describe('bk-input error model', () => {
 
   it('should show the native message after a blur and never while typing', async () => {
     const form = await fixture<HTMLFormElement>(html`
-      <form><bk-input name="email" label="Email" type="email" value="you@brick.dev"></bk-input></form>
+      <form>
+        <bk-input name="email" label="Email" type="email" value="you@brick.dev"></bk-input>
+      </form>
     `);
     const el = form.querySelector('bk-input') as BkInput;
     await el.updateComplete;
@@ -188,7 +190,9 @@ describe('bk-input error model', () => {
 
   it('should block submission for an error a schema result set, until the user acts', async () => {
     const form = await fixture<HTMLFormElement>(html`
-      <form><bk-input name="email" label="Email" type="email" value="you@brick.dev"></bk-input></form>
+      <form>
+        <bk-input name="email" label="Email" type="email" value="you@brick.dev"></bk-input>
+      </form>
     `);
     const el = form.querySelector('bk-input') as BkInput;
     await el.updateComplete;

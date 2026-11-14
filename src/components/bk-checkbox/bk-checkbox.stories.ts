@@ -65,10 +65,7 @@ export const States: Story = {
     <div style="display: flex; flex-direction: column; gap: 20px; width: 320px;">
       <bk-checkbox label="Accept the terms"></bk-checkbox>
       <bk-checkbox label="Accept the terms" checked></bk-checkbox>
-      <bk-checkbox
-        label="Accept the terms"
-        error="You have to accept the terms."
-      ></bk-checkbox>
+      <bk-checkbox label="Accept the terms" error="You have to accept the terms."></bk-checkbox>
       <bk-checkbox label="Accept the terms" disabled></bk-checkbox>
       <bk-checkbox label="Accept the terms" checked disabled></bk-checkbox>
     </div>

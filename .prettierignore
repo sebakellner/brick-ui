@@ -1,0 +1,8 @@
+.atl/
+.codegraph/
+dist/
+node_modules/
+odd/
+pnpm-lock.yaml
+src/styles/
+storybook-static/

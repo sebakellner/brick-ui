@@ -4,12 +4,12 @@ Rules for the TypeScript, the stylesheets and the tooling. Token rules are in
 [conventions-tokens.md](conventions-tokens.md); testing is in
 [conventions-testing.md](conventions-testing.md).
 
-| # | Rule | Enforced by |
-| --- | --- | --- |
-| C1 | Imports of local modules carry `.js` | `pnpm typecheck` |
-| C2 | No comments in CSS | review |
-| C3 | `strict`, `noUnusedLocals`, `noUnusedParameters` stay on | `pnpm typecheck` |
-| C4 | Token names in component styles stay plain CSS strings | review |
+| #   | Rule                                                     | Enforced by      |
+| --- | -------------------------------------------------------- | ---------------- |
+| C1  | Imports of local modules carry `.js`                     | `pnpm typecheck` |
+| C2  | No comments in CSS                                       | review           |
+| C3  | `strict`, `noUnusedLocals`, `noUnusedParameters` stay on | `pnpm typecheck` |
+| C4  | Token names in component styles stay plain CSS strings   | review           |
 
 ## C1. Imports of local modules carry `.js`
 
@@ -89,7 +89,9 @@ background: var(--bk-bg-accent);
 **Don't**
 
 ```ts
-background: css`background: ${unsafeCSS(tokens.buttonPrimaryBg)};`;
+background: css`
+  background: ${unsafeCSS(tokens.buttonPrimaryBg)};
+`;
 ```
 
 **Enforced by.** Review — and `check:tokens` covers the failure this would

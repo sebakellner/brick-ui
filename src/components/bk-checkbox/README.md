@@ -13,21 +13,21 @@ A checkbox with a real `<label>`, a helper/error message region and a
 
 ## Attributes and properties
 
-| Property | Attribute | Type | Default | Notes |
-| --- | --- | --- | --- | --- |
-| `label` | `label` | `string` | `''` | the visible text, bound to the box with `for`/`id`; the box renders alone when empty |
-| `helper` | `helper` | `string` | `''` | shown when there is no `error` |
-| `error` | `error` | `string` | `''` | wins over `helper` and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input` |
-| `checked` | `checked` | `boolean` | `false` | the state. The attribute is the default the form returns to on reset, like the platform's `defaultChecked`; the property is not reflected, so the attribute stays what the author wrote |
-| `value` | `value` | `string` | `''` | submits as `on` while checked, and submits nothing while unchecked |
-| `name` | `name` | `string` | `''` | |
-| `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner checkbox and blocks activation |
-| `required` | `required` | `boolean` | `false` | reflected; the field is invalid until it is checked |
+| Property   | Attribute  | Type      | Default | Notes                                                                                                                                                                                   |
+| ---------- | ---------- | --------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`    | `label`    | `string`  | `''`    | the visible text, bound to the box with `for`/`id`; the box renders alone when empty                                                                                                    |
+| `helper`   | `helper`   | `string`  | `''`    | shown when there is no `error`                                                                                                                                                          |
+| `error`    | `error`    | `string`  | `''`    | wins over `helper` and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input`                                                                    |
+| `checked`  | `checked`  | `boolean` | `false` | the state. The attribute is the default the form returns to on reset, like the platform's `defaultChecked`; the property is not reflected, so the attribute stays what the author wrote |
+| `value`    | `value`    | `string`  | `''`    | submits as `on` while checked, and submits nothing while unchecked                                                                                                                      |
+| `name`     | `name`     | `string`  | `''`    |                                                                                                                                                                                         |
+| `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner checkbox and blocks activation                                                                                                             |
+| `required` | `required` | `boolean` | `false` | reflected; the field is invalid until it is checked                                                                                                                                     |
 
 ## Events
 
-| Event | Detail | Notes |
-| --- | --- | --- |
+| Event       | Detail                 | Notes                                                           |
+| ----------- | ---------------------- | --------------------------------------------------------------- |
 | `bk-change` | `{ checked: boolean }` | `bubbles: true`, `composed: true`; fires like a native `change` |
 
 ```js
@@ -38,22 +38,22 @@ document.querySelector('bk-checkbox').addEventListener('bk-change', (event) => {
 
 ## Parts
 
-| Part | Element |
-| --- | --- |
-| `label` | the `<label>` row: the box and the text |
-| `input` | the native `<input type="checkbox">` |
-| `box` | the painted square |
-| `message` | the helper/error region |
+| Part      | Element                                 |
+| --------- | --------------------------------------- |
+| `label`   | the `<label>` row: the box and the text |
+| `input`   | the native `<input type="checkbox">`    |
+| `box`     | the painted square                      |
+| `message` | the helper/error region                 |
 
 The message region always exists so screen readers announce an error when it
 appears, and collapses with `:empty` when it has nothing to say.
 
 ## Override hooks
 
-| Hook | Paints |
-| --- | --- |
-| `--bk-checkbox-size` | the edge of the painted box (defaults to `--bk-space-4`) |
-| `--bk-checkbox-radius` | corner radius (defaults to `--bk-radius-sm`) |
+| Hook                   | Paints                                                   |
+| ---------------------- | -------------------------------------------------------- |
+| `--bk-checkbox-size`   | the edge of the painted box (defaults to `--bk-space-4`) |
+| `--bk-checkbox-radius` | corner radius (defaults to `--bk-radius-sm`)             |
 
 Everything else the box paints is a shared role or base token: theming the
 checkbox means theming the roles, not the field.

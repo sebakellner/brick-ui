@@ -60,15 +60,17 @@ you are about to change, and never edit an accepted ADR — supersede it.
 
 ## Commands
 
-| Command | Use |
-| --- | --- |
-| `pnpm test` | the suite, in real Chrome |
-| `pnpm test:watch` | the suite, watching |
-| `pnpm typecheck` | `tsc --noEmit`, with `strict`, `noUnusedLocals`, `noUnusedParameters` |
-| `pnpm build:tokens` | regenerate the CSS and `tokens.generated.ts`; commit the result |
+| Command             | Use                                                                           |
+| ------------------- | ----------------------------------------------------------------------------- |
+| `pnpm test`         | the suite, in real Chrome                                                     |
+| `pnpm test:watch`   | the suite, watching                                                           |
+| `pnpm typecheck`    | `tsc --noEmit`, with `strict`, `noUnusedLocals`, `noUnusedParameters`         |
+| `pnpm build:tokens` | regenerate the CSS and `tokens.generated.ts`; commit the result               |
 | `pnpm check:tokens` | every `--bk-*` name a component reads exists, and every semantic role is read |
-| `pnpm dev` | the playground |
-| `pnpm storybook` | component stories |
+| `pnpm format`       | rewrite the files Prettier owns                                               |
+| `pnpm format:check` | fail if any of them is not formatted                                          |
+| `pnpm dev`          | the playground                                                                |
+| `pnpm storybook`    | component stories                                                             |
 
 ## Change workflow
 
@@ -82,13 +84,15 @@ you are about to change, and never edit an accepted ADR — supersede it.
    transitioned property, or you sample an interpolated color.
 5. Prove every fix by mutation: break the code, watch the test go red, restore
    it. If it stays green the test is decorative.
-6. Run `pnpm test`, `pnpm typecheck` and `pnpm check:tokens` before committing.
-   If you touched `tokens/`, run `pnpm build:tokens` and commit the output.
+6. Run `pnpm test`, `pnpm typecheck`, `pnpm check:tokens` and
+   `pnpm format:check` before committing. If you touched `tokens/`, run
+   `pnpm build:tokens` and commit the output.
 
 ## Definition of done
 
 - [ ] The new test fails without the change and passes with it.
-- [ ] `pnpm test`, `pnpm typecheck`, `pnpm check:tokens` all green.
+- [ ] `pnpm test`, `pnpm typecheck`, `pnpm check:tokens`, `pnpm format:check`
+      all green.
 - [ ] Token output regenerated and committed, if `tokens/` changed.
 - [ ] The component's `README.md` updated if its public surface changed:
       attributes, properties, events, `part`s or override hooks.

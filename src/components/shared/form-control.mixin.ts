@@ -3,10 +3,7 @@ import { property } from 'lit/decorators.js';
 
 export type Constructor<T = object> = new (...args: any[]) => T;
 
-export type NativeFormControl =
-  | HTMLInputElement
-  | HTMLTextAreaElement
-  | HTMLSelectElement;
+export type NativeFormControl = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
 export interface FormControlInterface {
   name: string;
@@ -111,12 +108,10 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       this.syncFormValue();
     }
 
-    
     get fieldDisabled(): boolean {
       return this.disabled || this.formDisabled;
     }
 
-    
     get formControlElement(): NativeFormControl | undefined {
       return undefined;
     }

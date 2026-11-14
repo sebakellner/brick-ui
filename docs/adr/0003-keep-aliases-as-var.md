@@ -75,9 +75,9 @@ semantic role earns its existence — live with the conventions, not here: see
 
 ### Alternatives considered
 
-| Alternative | Why it was rejected |
-| --- | --- |
-| Resolve references at build time | The emitted CSS becomes static values. Redefining a palette entry on an ancestor stops working, so every override hook the kit documents becomes a rebuild instead of a CSS rule. |
+| Alternative                                                                                    | Why it was rejected                                                                                                                                                                                 |
+| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Resolve references at build time                                                               | The emitted CSS becomes static values. Redefining a palette entry on an ancestor stops working, so every override hook the kit documents becomes a rebuild instead of a CSS rule.                   |
 | Emit the reference with the resolved value as a fallback: `var(--bk-palette-red-700, #b91c1c)` | Looks like a safer middle ground and is the same defect [0002](0002-require-the-theme.md) removed: a duplicated value that drifts silently the moment the palette changes, on every generated line. |
 
 ## Consequences

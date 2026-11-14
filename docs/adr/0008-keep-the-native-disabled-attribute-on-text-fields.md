@@ -27,14 +27,14 @@ buttons and widgets.
 The two states were measured in Chrome rather than argued about, on `main` and on
 the branch that tried the ARIA route:
 
-| | `disabled` on the inner input | `aria-disabled` + `readonly` |
-| --- | --- | --- |
-| Typed text | refused | refused, by `readonly` |
-| Tab order | left | kept |
-| Discovered by screen reader | by browse-mode navigation, announced as unavailable | by Tab, announced as unavailable |
-| Reads as | unavailable | read-only *and* unavailable |
-| Constraint validation | barred by the platform | barred only if the component says so |
-| Submitted | nothing | nothing, but because the host attribute bars the element, not because of the field |
+|                             | `disabled` on the inner input                       | `aria-disabled` + `readonly`                                                       |
+| --------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Typed text                  | refused                                             | refused, by `readonly`                                                             |
+| Tab order                   | left                                                | kept                                                                               |
+| Discovered by screen reader | by browse-mode navigation, announced as unavailable | by Tab, announced as unavailable                                                   |
+| Reads as                    | unavailable                                         | read-only _and_ unavailable                                                        |
+| Constraint validation       | barred by the platform                              | barred only if the component says so                                               |
+| Submitted                   | nothing                                             | nothing, but because the host attribute bars the element, not because of the field |
 
 ## Decision
 
@@ -54,11 +54,11 @@ page. What it loses is the claim that one mechanism serves both shapes.
 
 ### Alternatives considered
 
-| Alternative | Why it was rejected |
-| --- | --- |
+| Alternative                                                   | Why it was rejected                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `aria-disabled` + `readonly` on the field (#33, first commit) | Two mechanisms to reproduce one platform state. `readonly` is announced as read-only, so a field ends up described as both read-only and unavailable, and a component now has to cancel typing, pasting and dropping by hand to behave like the attribute it replaced. It also leaves the kit explaining two disabled models across three controls, with no rule saying which shape takes which. |
-| The native attribute on all three controls | Cheapest to reason about, and it is what the button would get for free. It removes `bk-button` and `bk-checkbox` from the tab order, which is the specific failure A5 was written for: a keyboard user cannot reach a disabled control, cannot have its state announced, and cannot learn why a form cannot be submitted. The cost is highest exactly where A5 was doing the most work. |
-| No disabled state at all, as GOV.UK advises | The right advice for a product team and the wrong one for a kit: a component library cannot refuse to ship a state its consumers will build anyway, and an app that reads "don't disable controls" from us and then needs one has no component to reach for. |
+| The native attribute on all three controls                    | Cheapest to reason about, and it is what the button would get for free. It removes `bk-button` and `bk-checkbox` from the tab order, which is the specific failure A5 was written for: a keyboard user cannot reach a disabled control, cannot have its state announced, and cannot learn why a form cannot be submitted. The cost is highest exactly where A5 was doing the most work.          |
+| No disabled state at all, as GOV.UK advises                   | The right advice for a product team and the wrong one for a kit: a component library cannot refuse to ship a state its consumers will build anyway, and an app that reads "don't disable controls" from us and then needs one has no component to reach for.                                                                                                                                     |
 
 ## Consequences
 

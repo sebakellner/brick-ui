@@ -48,7 +48,9 @@ export const Themed: Story = {
       <section
         style="--bk-bg-accent: var(--bk-palette-green-600); display: grid; gap: var(--bk-space-2); justify-items: start;"
       >
-        <p style="margin: 0; color: var(--bk-text-muted); font: var(--bk-font-size-sm) var(--bk-font-sans);">
+        <p
+          style="margin: 0; color: var(--bk-text-muted); font: var(--bk-font-size-sm) var(--bk-font-sans);"
+        >
           Role: every control that reads it follows
         </p>
         <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
@@ -58,7 +60,9 @@ export const Themed: Story = {
       </section>
 
       <section style="display: grid; gap: var(--bk-space-2); justify-items: start;">
-        <p style="margin: 0; color: var(--bk-text-muted); font: var(--bk-font-size-sm) var(--bk-font-sans);">
+        <p
+          style="margin: 0; color: var(--bk-text-muted); font: var(--bk-font-size-sm) var(--bk-font-sans);"
+        >
           Hook: one control beats its variant default, and a background carries its foreground
         </p>
         <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
@@ -77,10 +81,14 @@ export const Themed: Story = {
       </section>
 
       <section style="display: grid; gap: var(--bk-space-2); justify-items: start;">
-        <p style="margin: 0; color: var(--bk-text-muted); font: var(--bk-font-size-sm) var(--bk-font-sans);">
+        <p
+          style="margin: 0; color: var(--bk-text-muted); font: var(--bk-font-size-sm) var(--bk-font-sans);"
+        >
           Radius is a hook too: inherited from an ancestor, not only set on the element
         </p>
-        <div style="--bk-button-radius: var(--bk-radius-sm); display: flex; gap: var(--bk-space-3);">
+        <div
+          style="--bk-button-radius: var(--bk-radius-sm); display: flex; gap: var(--bk-space-3);"
+        >
           <bk-button>Inherits the radius</bk-button>
         </div>
       </section>

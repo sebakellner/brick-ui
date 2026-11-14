@@ -122,9 +122,7 @@ const blankHtmlComments = (source) =>
   source.replace(/<!--[\s\S]*?-->/g, (block) => block.replace(/[^\n]/g, ' '));
 
 for (const file of walk(STORYBOOK_DIR).filter((path) => STORYBOOK_FILE.test(path))) {
-  const source = file.endsWith('.html')
-    ? blankHtmlComments(read(file))
-    : stripComments(read(file));
+  const source = file.endsWith('.html') ? blankHtmlComments(read(file)) : stripComments(read(file));
 
   for (const [, name] of source.matchAll(REFERENCES)) {
     if (!declared.has(name) && !hooks.has(name)) {

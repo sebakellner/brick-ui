@@ -4,14 +4,14 @@ Rules for the token source in `tokens/*.json` and for the layers it generates.
 The pipeline is explained in [ADR 0001](adr/0001-generate-token-css-from-json.md);
 why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 
-| # | Rule | Enforced by |
-| --- | --- | --- |
-| R1 | A semantic role exists only while a component reads it directly | `pnpm check:tokens` |
-| R2 | References point downwards, one hop, never at a role | review |
-| R3 | The palette is a reference ramp, not a usage list | review |
-| R4 | The token path is the public name | review |
-| R5 | A role is read under the property it belongs to | `pnpm check:tokens` |
-| R6 | A component reads a role for colour and a primitive for everything else | `pnpm check:tokens` |
+| #   | Rule                                                                    | Enforced by         |
+| --- | ----------------------------------------------------------------------- | ------------------- |
+| R1  | A semantic role exists only while a component reads it directly         | `pnpm check:tokens` |
+| R2  | References point downwards, one hop, never at a role                    | review              |
+| R3  | The palette is a reference ramp, not a usage list                       | review              |
+| R4  | The token path is the public name                                       | review              |
+| R5  | A role is read under the property it belongs to                         | `pnpm check:tokens` |
+| R6  | A component reads a role for colour and a primitive for everything else | `pnpm check:tokens` |
 
 Before any of these rules, `pnpm check:tokens` asserts **existence**: every
 `--bk-*` name read inside a CSS string must be a declared token or a hook. No

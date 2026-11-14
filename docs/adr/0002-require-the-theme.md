@@ -64,9 +64,9 @@ Two supporting decisions came with this one:
 
 ### Alternatives considered
 
-| Alternative | Why it was rejected |
-| --- | --- |
-| Keep the fallbacks as a safety net for pages that forget the theme | They never ran — no consumer in the repo omitted the theme — so they were untested code duplicating the source of truth. The value they guaranteed was already wrong the moment a token changed. |
+| Alternative                                                                   | Why it was rejected                                                                                                                                                                                                                                          |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Keep the fallbacks as a safety net for pages that forget the theme            | They never ran — no consumer in the repo omitted the theme — so they were untested code duplicating the source of truth. The value they guaranteed was already wrong the moment a token changed.                                                             |
 | Ship the defaults inside each component instead, so the element themes itself | Every component would carry its own copy of the token declarations; two components on a page would duplicate them twice, and per-subtree theming through an ancestor override would stop working, because a value set on the element beats an inherited one. |
 
 ## Consequences

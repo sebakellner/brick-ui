@@ -67,14 +67,14 @@ component does not re-decide any of it.
 
 A component's `README.md` states, in this order:
 
-| Section | Content |
-| --- | --- |
-| Summary | one sentence, what it is for |
-| Attributes and properties | each one, its type, its default |
-| Events | what fires, when, with what detail |
-| Parts | every `::part()` escape hatch and what it reaches |
-| Override hooks | every public custom property, read from `style-dictionary.config.mjs` |
-| Limitations | what it does not do yet |
+| Section                   | Content                                                               |
+| ------------------------- | --------------------------------------------------------------------- |
+| Summary                   | one sentence, what it is for                                          |
+| Attributes and properties | each one, its type, its default                                       |
+| Events                    | what fires, when, with what detail                                    |
+| Parts                     | every `::part()` escape hatch and what it reaches                     |
+| Override hooks            | every public custom property, read from `style-dictionary.config.mjs` |
+| Limitations               | what it does not do yet                                               |
 
 The Storybook page is the same document, rendered live. It is not a second place
 to maintain the API: it reads this file.
