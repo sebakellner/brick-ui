@@ -24,10 +24,6 @@ export class BkInput extends FormControlMixin(LitElement) {
   static override styles = [
     formControlStyles,
     css`
-      slot[name='label']::slotted(*) {
-        display: inline-block;
-      }
-
       .control {
         border-radius: var(--bk-input-radius, var(--bk-radius-md));
       }

@@ -30,6 +30,10 @@ export const formControlStyles = css`
     color: var(--bk-text-muted);
   }
 
+  slot[name='label']::slotted(*) {
+    display: inline-block;
+  }
+
   .required {
     margin-inline-start: var(--bk-space-1);
     color: var(--bk-text-danger);
