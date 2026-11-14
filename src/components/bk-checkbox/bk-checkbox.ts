@@ -1,7 +1,7 @@
-import { LitElement, css, html, nothing, type PropertyValues } from 'lit';
+import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import {
-  FieldMessagesController,
+  FieldPartsController,
   FormControlMixin,
   formControlStyles,
   type FieldMessageFallbacks,
@@ -112,14 +112,7 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
 
   private readonly controlId = nextInstanceId();
 
-  private readonly messages = new FieldMessagesController(this, this.controlId);
-
-  private hasSlottedLabel = false;
-
-  private get labelState(): 'invalid' | 'disabled' | undefined {
-    if (this.fieldInvalid) return 'invalid';
-    return this.fieldDisabled ? 'disabled' : undefined;
-  }
+  private readonly fieldParts = new FieldPartsController(this, this.controlId);
 
   override get formControlElement(): HTMLInputElement | undefined {
     return this.shadowRoot?.querySelector('input') ?? undefined;
@@ -129,27 +122,13 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
     return this.checked ? this.value || 'on' : null;
   }
 
-  override connectedCallback(): void {
-    super.connectedCallback();
-    this.hasSlottedLabel = this.readSlottedLabel();
-    this.messages.connect();
-  }
-
-  override updated(changed: PropertyValues): void {
-    super.updated(changed);
-    this.syncHostedLabelState();
-  }
-
   override render() {
-    const describedBy = this.messages.update(this.messageSources());
-    const labelled = this.label !== '' || this.hasSlottedLabel;
-
     return html`
       <label
         class="field label"
         part="label"
         for=${this.controlId}
-        data-state=${this.labelState ?? nothing}
+        data-state=${this.fieldParts.labelState ?? nothing}
       >
         <input
           part="input"
@@ -161,44 +140,19 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
           ?required=${this.required}
           aria-disabled=${this.fieldDisabled ? 'true' : nothing}
           aria-invalid=${this.fieldInvalid ? 'true' : nothing}
-          aria-describedby=${describedBy || nothing}
+          aria-describedby=${this.fieldParts.describedBy(this.messageSources()) || nothing}
           @click=${this.handleClick}
           @change=${this.handleChange}
         />
         <span part="box" class="box" aria-hidden="true"></span>
-        <slot name="label" @slotchange=${this.handleLabelSlotChange}
+        <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}
           >${this.label ? html`<span class="text">${this.label}</span>` : nothing}</slot
         >
-        ${
-          this.required && labelled
-            ? html`<span class="required" part="required" aria-hidden="true">*</span>`
-            : nothing
-        }
+        ${this.fieldParts.glyph}
       </label>
-      ${this.messages.render()}
+      ${this.fieldParts.messages}
     `;
   }
-
-  private readSlottedLabel(): boolean {
-    return Array.from(this.children).some((child) => child.slot === 'label');
-  }
-
-  private syncHostedLabelState(): void {
-    const state = this.labelState;
-    for (const child of this.children) {
-      if (child.slot !== 'label') continue;
-      if (state) child.setAttribute('data-state', state);
-      else child.removeAttribute('data-state');
-    }
-  }
-
-  private readonly handleLabelSlotChange = (event: Event): void => {
-    const slotted = (event.target as HTMLSlotElement).assignedNodes({ flatten: false }).length > 0;
-    this.syncHostedLabelState();
-    if (slotted === this.hasSlottedLabel) return;
-    this.hasSlottedLabel = slotted;
-    this.requestUpdate();
-  };
 
   private messageSources(): FieldMessageFallbacks {
     return {

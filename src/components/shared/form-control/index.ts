@@ -9,3 +9,8 @@ export {
   FieldMessagesController,
   type FieldMessageFallbacks,
 } from './field-messages.controller.js';
+export {
+  FieldPartsController,
+  type FieldLabelState,
+  type FieldPartsHost,
+} from './field-parts.controller.js';

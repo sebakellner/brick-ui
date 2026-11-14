@@ -1,7 +1,7 @@
-import { LitElement, css, html, nothing, type PropertyValues } from 'lit';
+import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import {
-  FieldMessagesController,
+  FieldPartsController,
   FormControlMixin,
   formControlStyles,
   type FieldMessageFallbacks,
@@ -44,50 +44,25 @@ export class BkInput extends FormControlMixin(LitElement) {
 
   private readonly controlId = nextInstanceId();
 
-  private readonly messages = new FieldMessagesController(this, this.controlId);
-
-  private hasSlottedLabel = false;
-
-  private get labelState(): 'invalid' | 'disabled' | undefined {
-    if (this.fieldInvalid) return 'invalid';
-    return this.fieldDisabled ? 'disabled' : undefined;
-  }
+  private readonly fieldParts = new FieldPartsController(this, this.controlId);
 
   override get formControlElement(): HTMLInputElement | undefined {
     return this.shadowRoot?.querySelector('input') ?? undefined;
   }
 
-  override connectedCallback(): void {
-    super.connectedCallback();
-    this.hasSlottedLabel = this.readSlottedLabel();
-    this.messages.connect();
-  }
-
-  override updated(changed: PropertyValues): void {
-    super.updated(changed);
-    this.syncHostedLabelState();
-  }
-
   override render() {
-    const describedBy = this.messages.update(this.messageSources());
-    const labelled = this.label !== '' || this.hasSlottedLabel;
-
     return html`
       <label
         class="label"
         part="label"
         for=${this.controlId}
-        data-state=${this.labelState ?? nothing}
-        ?hidden=${!labelled}
+        data-state=${this.fieldParts.labelState ?? nothing}
+        ?hidden=${!this.fieldParts.labelled}
       >
-        <slot name="label" @slotchange=${this.handleLabelSlotChange}>
-          ${this.hasSlottedLabel ? nothing : this.label}
+        <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}>
+          ${this.fieldParts.slottedLabel ? nothing : this.label}
         </slot>
-        ${
-          this.required && labelled
-            ? html`<span class="required" part="required" aria-hidden="true">*</span>`
-            : nothing
-        }
+        ${this.fieldParts.glyph}
       </label>
       <input
         part="input"
@@ -102,11 +77,11 @@ export class BkInput extends FormControlMixin(LitElement) {
         ?disabled=${this.fieldDisabled}
         ?required=${this.required}
         aria-invalid=${this.fieldInvalid ? 'true' : nothing}
-        aria-describedby=${describedBy || nothing}
+        aria-describedby=${this.fieldParts.describedBy(this.messageSources()) || nothing}
         @input=${this.handleInput}
         @change=${this.handleChange}
       />
-      ${this.messages.render()}
+      ${this.fieldParts.messages}
     `;
   }
 
@@ -116,27 +91,6 @@ export class BkInput extends FormControlMixin(LitElement) {
       error: this.error || this.fieldMessage,
     };
   }
-
-  private readSlottedLabel(): boolean {
-    return Array.from(this.children).some((child) => child.slot === 'label');
-  }
-
-  private syncHostedLabelState(): void {
-    const state = this.labelState;
-    for (const child of this.children) {
-      if (child.slot !== 'label') continue;
-      if (state) child.setAttribute('data-state', state);
-      else child.removeAttribute('data-state');
-    }
-  }
-
-  private readonly handleLabelSlotChange = (event: Event): void => {
-    const slotted = (event.target as HTMLSlotElement).assignedNodes({ flatten: false }).length > 0;
-    this.syncHostedLabelState();
-    if (slotted === this.hasSlottedLabel) return;
-    this.hasSlottedLabel = slotted;
-    this.requestUpdate();
-  };
 
   private readonly handleInput = (event: Event) => {
     this.value = (event.target as HTMLInputElement).value;
