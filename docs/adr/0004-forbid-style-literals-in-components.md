@@ -47,10 +47,10 @@ A value that needs to vary gets a `part` or a public hook, never an inline value
 The rule was bent by three declarations when this was recorded. Each was closed
 with a token rather than an exception, in the same change:
 
-| Declaration | Where | Why it was a literal | Token added |
-| --- | --- | --- | --- |
-| `font-weight: 500` | `bk-button.ts`, `bk-input.ts` | `tokens/typography.json` had no `font-weight` group, and the typography platform filtered only `font`, `font-size` and `line-height` | `--bk-font-weight-medium`, read by both components |
-| `opacity: 0.55` | `bk-button.ts` | no `opacity` group existed | `--bk-button-disabled-opacity`, a button control token, because only the button paints it |
+| Declaration        | Where                         | Why it was a literal                                                                                                                 | Token added                                                                               |
+| ------------------ | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| `font-weight: 500` | `bk-button.ts`, `bk-input.ts` | `tokens/typography.json` had no `font-weight` group, and the typography platform filtered only `font`, `font-size` and `line-height` | `--bk-font-weight-medium`, read by both components                                        |
+| `opacity: 0.55`    | `bk-button.ts`                | no `opacity` group existed                                                                                                           | `--bk-button-disabled-opacity`, a button control token, because only the button paints it |
 
 The literals that do comply are resets and techniques: the `0` in `padding: 0
 var(--bk-space-4)`, `width: 100%`, and the `1px` box in the visually-hidden
@@ -63,11 +63,11 @@ was never true; it is corrected here.
 
 ### Alternatives considered
 
-| Alternative | Why it was rejected |
-| --- | --- |
-| Leave it to review without writing the rule | That was the status quo, and it failed: the inline `2px` outline survived next to a tokenized color for the whole life of the focus ring. A review rule with no vocabulary for "is this value design or technique?" is not a rule. |
-| Add a check that scans component styles for literals | Feasible, and it would have to allowlist `0`, `100%`, the `1px` clip and the three un-tokenized values — an allowlist that grows until it names files, at which point it enforces nothing. The three exceptions belong in a token group, not in a guard. |
-| Tokenize every literal, including the visually-hidden box | Adds a public name (`--bk-visually-hidden-size`) for a private technique. A host that themed it would silently break the accessibility pattern. |
+| Alternative                                               | Why it was rejected                                                                                                                                                                                                                                      |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Leave it to review without writing the rule               | That was the status quo, and it failed: the inline `2px` outline survived next to a tokenized color for the whole life of the focus ring. A review rule with no vocabulary for "is this value design or technique?" is not a rule.                       |
+| Add a check that scans component styles for literals      | Feasible, and it would have to allowlist `0`, `100%`, the `1px` clip and the three un-tokenized values — an allowlist that grows until it names files, at which point it enforces nothing. The three exceptions belong in a token group, not in a guard. |
+| Tokenize every literal, including the visually-hidden box | Adds a public name (`--bk-visually-hidden-size`) for a private technique. A host that themed it would silently break the accessibility pattern.                                                                                                          |
 
 ## Consequences
 
@@ -87,8 +87,8 @@ Harder:
   the next component will find its own.
 - Enforcement is review-only. `pnpm check:tokens` validates the `--bk-*` names a
   component reads; it does not look at literals, so a new `2px` fails nothing.
-- The rule needs a distinction the repo did not have before: *design value*
-  versus *technique geometry*. Without it, every `1px` becomes an argument.
+- The rule needs a distinction the repo did not have before: _design value_
+  versus _technique geometry_. Without it, every `1px` becomes an argument.
 
 No debt recorded: the three design values read tokens, and three tests assert
 that the components follow them. Revisit when a new literal appears that is

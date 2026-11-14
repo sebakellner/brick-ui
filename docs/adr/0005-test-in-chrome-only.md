@@ -48,11 +48,11 @@ fail this suite, and no test would tell us. That sentence belongs in
 
 ### Alternatives considered
 
-| Alternative | Why it was rejected |
-| --- | --- |
+| Alternative                                                               | Why it was rejected                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Run Chromium, WebKit and Firefox through Playwright from the first commit | Three browser downloads in CI, roughly three times the suite duration, and a different launcher plugin — to catch a defect class that has not been observed once, on two components. The cost starts on day one; the benefit is contingent on a bug that may never arrive. |
-| Keep Chrome in the PR gate and add a nightly cross-engine job | The most plausible next step, and the shape a published kit should have. Rejected for now because a nightly failure with no release and no consumer is a notification nobody acts on. It becomes worth its cost the moment there is an outside consumer. |
-| Skip the browser and run the suite in jsdom | The suite exists to assert computed styles, real `:focus-visible`, real hover through `sendMouse`, and real form association. jsdom implements none of them, so the tests would assert the mock instead of the kit. |
+| Keep Chrome in the PR gate and add a nightly cross-engine job             | The most plausible next step, and the shape a published kit should have. Rejected for now because a nightly failure with no release and no consumer is a notification nobody acts on. It becomes worth its cost the moment there is an outside consumer.                   |
+| Skip the browser and run the suite in jsdom                               | The suite exists to assert computed styles, real `:focus-visible`, real hover through `sendMouse`, and real form association. jsdom implements none of them, so the tests would assert the mock instead of the kit.                                                        |
 
 ## Consequences
 

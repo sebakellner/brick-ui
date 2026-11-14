@@ -50,10 +50,10 @@ How it is wired:
 
 ### Alternatives considered
 
-| Alternative | Why it was rejected |
-| --- | --- |
+| Alternative                                                         | Why it was rejected                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Keep the CSS hand-written and add a script that validates the names | The script has to hold its own idea of what is declared, which is the duplication it was meant to prevent. A broken reference stays a review catch until someone runs it, and the validation cannot produce a second output format. |
-| Generate at build time only, and stop committing the output | Consumers load `/src/styles/theme.css` straight from the repository; there is no publish step that could run the token build first. A generated-but-untracked stylesheet would leave the README's instructions broken. |
+| Generate at build time only, and stop committing the output         | Consumers load `/src/styles/theme.css` straight from the repository; there is no publish step that could run the token build first. A generated-but-untracked stylesheet would leave the README's instructions broken.              |
 
 ## Consequences
 

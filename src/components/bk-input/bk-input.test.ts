@@ -85,9 +85,7 @@ describe('bk-input', () => {
   });
 
   it('should take the error border and message from the danger roles', async () => {
-    const el = await fixture<BkInput>(
-      html`<bk-input label="Email" error="Required"></bk-input>`,
-    );
+    const el = await fixture<BkInput>(html`<bk-input label="Email" error="Required"></bk-input>`);
     el.style.setProperty('--bk-border-danger', 'rgb(6, 6, 6)');
     el.style.setProperty('--bk-text-danger', 'rgb(7, 7, 7)');
 
@@ -99,7 +97,10 @@ describe('bk-input', () => {
     const el = await fixture<BkInput>(html`<bk-input label="Email" error="Required"></bk-input>`);
     const field = innerInput(el);
     const { x, y, width, height } = field.getBoundingClientRect();
-    await sendMouse({ type: 'move', position: [Math.round(x + width / 2), Math.round(y + height / 2)] });
+    await sendMouse({
+      type: 'move',
+      position: [Math.round(x + width / 2), Math.round(y + height / 2)],
+    });
     await nextFrame();
     await new Promise((resolve) => setTimeout(resolve, 250));
 

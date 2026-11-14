@@ -5,13 +5,13 @@ picks up `src/**/*.test.ts`, keeps tests next to the element, and registers the
 `sendMouse` plugin that the hover and focus tests need. One engine is a decision,
 not an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 
-| # | Rule | Enforced by |
-| --- | --- | --- |
-| T1 | Load the theme in every test file | the suite — an unstyled read fails |
-| T2 | Assert computed styles, not markup | review |
-| T3 | Drive hover and focus with real input | review |
-| T4 | Wait past the transition before asserting it | review |
-| T5 | Every fix is provable by mutation | review |
+| #   | Rule                                         | Enforced by                        |
+| --- | -------------------------------------------- | ---------------------------------- |
+| T1  | Load the theme in every test file            | the suite — an unstyled read fails |
+| T2  | Assert computed styles, not markup           | review                             |
+| T3  | Drive hover and focus with real input        | review                             |
+| T4  | Wait past the transition before asserting it | review                             |
+| T5  | Every fix is provable by mutation            | review                             |
 
 ## T1. Load the theme in every test file
 
@@ -95,9 +95,9 @@ way to tell the two apart.
 
 ## Commands
 
-| Command | Use |
-| --- | --- |
-| `pnpm test` | one run, in Chrome |
+| Command           | Use                |
+| ----------------- | ------------------ |
+| `pnpm test`       | one run, in Chrome |
 | `pnpm test:watch` | the same, watching |
 
 `browserLogs: true` puts the browser console in the output, which is how a Lit

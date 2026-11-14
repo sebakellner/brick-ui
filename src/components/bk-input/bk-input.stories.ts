@@ -182,7 +182,9 @@ export const InAForm: Story = {
       <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
         <bk-button type="reset" variant="secondary">Reset</bk-button>
       </div>
-      <output style="font: var(--bk-font-size-sm) var(--bk-font-sans); color: var(--bk-text-muted);">
+      <output
+        style="font: var(--bk-font-size-sm) var(--bk-font-sans); color: var(--bk-text-muted);"
+      >
         Change a field or reset to read FormData.
       </output>
     </form>

@@ -150,7 +150,12 @@ describe('bk-input form integration', () => {
     it('should block submission with an error only while it is enabled', async () => {
       const form = await fixture<HTMLFormElement>(html`
         <form>
-          <bk-input name="email" label="Email" error="That address looks wrong." disabled></bk-input>
+          <bk-input
+            name="email"
+            label="Email"
+            error="That address looks wrong."
+            disabled
+          ></bk-input>
         </form>
       `);
       const el = form.querySelector('bk-input') as BkInput;

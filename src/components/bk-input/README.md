@@ -12,24 +12,24 @@ and a `bk-change` event.
 
 ## Properties
 
-| Property | Attribute | Type | Default | Notes |
-| --- | --- | --- | --- | --- |
-| `label` | `label` | `string` | `''` | bound to the input with `for`/`id`; omitted when empty |
-| `helper` | `helper` | `string` | `''` | shown when there is no `error` |
-| `error` | `error` | `string` | `''` | wins over `helper` and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input` |
-| `value` | `value` | `string` | `''` | |
-| `name` | `name` | `string` | `''` | |
-| `type` | `type` | `'text' \| 'email' \| 'password' \| 'search' \| 'tel' \| 'url'` | `'text'` | |
-| `placeholder` | `placeholder` | `string` | `''` | |
-| `autocomplete` | `autocomplete` | `string` | `''` | forwarded to the field (WCAG 1.3.5) |
-| `inputMode` | — | `'text' \| 'tel' \| 'url' \| 'email' \| 'numeric' \| 'decimal' \| 'search' \| 'none' \| ''` | `''` | sets `inputmode` on the field |
-| `disabled` | `disabled` | `boolean` | `false` | reflected; sets the native `disabled` attribute on the inner field ([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)) |
-| `required` | `required` | `boolean` | `false` | reflected |
+| Property       | Attribute      | Type                                                                                        | Default  | Notes                                                                                                                                                                                                 |
+| -------------- | -------------- | ------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`        | `label`        | `string`                                                                                    | `''`     | bound to the input with `for`/`id`; omitted when empty                                                                                                                                                |
+| `helper`       | `helper`       | `string`                                                                                    | `''`     | shown when there is no `error`                                                                                                                                                                        |
+| `error`        | `error`        | `string`                                                                                    | `''`     | wins over `helper` and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input`                                                                                  |
+| `value`        | `value`        | `string`                                                                                    | `''`     |                                                                                                                                                                                                       |
+| `name`         | `name`         | `string`                                                                                    | `''`     |                                                                                                                                                                                                       |
+| `type`         | `type`         | `'text' \| 'email' \| 'password' \| 'search' \| 'tel' \| 'url'`                             | `'text'` |                                                                                                                                                                                                       |
+| `placeholder`  | `placeholder`  | `string`                                                                                    | `''`     |                                                                                                                                                                                                       |
+| `autocomplete` | `autocomplete` | `string`                                                                                    | `''`     | forwarded to the field (WCAG 1.3.5)                                                                                                                                                                   |
+| `inputMode`    | —              | `'text' \| 'tel' \| 'url' \| 'email' \| 'numeric' \| 'decimal' \| 'search' \| 'none' \| ''` | `''`     | sets `inputmode` on the field                                                                                                                                                                         |
+| `disabled`     | `disabled`     | `boolean`                                                                                   | `false`  | reflected; sets the native `disabled` attribute on the inner field ([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)) |
+| `required`     | `required`     | `boolean`                                                                                   | `false`  | reflected                                                                                                                                                                                             |
 
 ## Events
 
-| Event | Detail | Notes |
-| --- | --- | --- |
+| Event       | Detail              | Notes                                                           |
+| ----------- | ------------------- | --------------------------------------------------------------- |
 | `bk-change` | `{ value: string }` | `bubbles: true`, `composed: true`; fires like a native `change` |
 
 ```js
@@ -42,15 +42,15 @@ document.querySelector('bk-input').addEventListener('bk-change', (event) => {
 
 Inherited from `FormControlMixin`, the same surface a native control offers:
 
-| Member | What it does |
-| --- | --- |
-| `form` | the owning `<form>`, or `null` |
-| `validity`, `validationMessage` | the delegated validity state and its message |
-| `checkValidity()`, `reportValidity()` | the platform validation calls |
-| `showValidationMessage()` | marks the field touched, so the native message appears |
-| `fieldMessage` | the native message the field would show, or `''` |
-| `fieldInvalid` | whether the message region is currently reporting a problem |
-| `submittedValue` | what `setFormValue` submits; `value` by default, overridden by `bk-checkbox` to submit only while it is checked |
+| Member                                | What it does                                                                                                    |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `form`                                | the owning `<form>`, or `null`                                                                                  |
+| `validity`, `validationMessage`       | the delegated validity state and its message                                                                    |
+| `checkValidity()`, `reportValidity()` | the platform validation calls                                                                                   |
+| `showValidationMessage()`             | marks the field touched, so the native message appears                                                          |
+| `fieldMessage`                        | the native message the field would show, or `''`                                                                |
+| `fieldInvalid`                        | whether the message region is currently reporting a problem                                                     |
+| `submittedValue`                      | what `setFormValue` submits; `value` by default, overridden by `bk-checkbox` to submit only while it is checked |
 
 `error` wins over `required`: a field with a message is invalid because of it, and
 its validity carries `customError`. A `required` field with no value reports
@@ -60,10 +60,10 @@ its validity carries `customError`. A `required` field with no value reports
 
 The field shows one message at a time, from one of two sources:
 
-| Source | Produced by | Shows |
-| --- | --- | --- |
+| Source             | Produced by                                                   | Shows                                                |
+| ------------------ | ------------------------------------------------------------- | ---------------------------------------------------- |
 | native constraints | the browser: `required`, `type=email`, `pattern`, `minlength` | after the field is touched, or after a failed submit |
-| `error` | the consumer, from a schema result or a rejection | immediately, and it wins while it is set |
+| `error`            | the consumer, from a schema result or a rejection             | immediately, and it wins while it is set             |
 
 The native message is the browser's own, in the browser's locale.
 `showValidationMessage()` reports the native message explicitly, for the submits
@@ -80,10 +80,10 @@ async rule, or translate a message.
 
 ## Parts
 
-| Part | Element |
-| --- | --- |
-| `label` | the `<label>` |
-| `input` | the native `<input>` |
+| Part      | Element                 |
+| --------- | ----------------------- |
+| `label`   | the `<label>`           |
+| `input`   | the native `<input>`    |
 | `message` | the helper/error region |
 
 The message region always exists so screen readers announce an error when it
@@ -93,22 +93,22 @@ problem too, so it is painted as one.
 
 ## Tokens
 
-| Token | Paints |
-| --- | --- |
-| `--bk-input-radius` | corner radius (defaults to `--bk-radius-md`) |
-| `--bk-bg-surface` | field surface |
-| `--bk-border-default` | field border |
-| `--bk-border-strong` | border on hover |
-| `--bk-border-danger` | border on error |
-| `--bk-text-default` | input text and label |
-| `--bk-text-danger` | message on error |
-| `--bk-text-muted` | placeholder and message |
-| `--bk-bg-surface-muted` | background when disabled |
-| `--bk-border-width` | border width |
-| `--bk-control-height`, `--bk-space-1`, `--bk-space-3` | height and padding |
-| `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-size-md`, `--bk-line-height-md`, `--bk-font-weight-medium` | typography |
-| `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset` | focus ring |
-| `--bk-transition` | border transition |
+| Token                                                                                                        | Paints                                       |
+| ------------------------------------------------------------------------------------------------------------ | -------------------------------------------- |
+| `--bk-input-radius`                                                                                          | corner radius (defaults to `--bk-radius-md`) |
+| `--bk-bg-surface`                                                                                            | field surface                                |
+| `--bk-border-default`                                                                                        | field border                                 |
+| `--bk-border-strong`                                                                                         | border on hover                              |
+| `--bk-border-danger`                                                                                         | border on error                              |
+| `--bk-text-default`                                                                                          | input text and label                         |
+| `--bk-text-danger`                                                                                           | message on error                             |
+| `--bk-text-muted`                                                                                            | placeholder and message                      |
+| `--bk-bg-surface-muted`                                                                                      | background when disabled                     |
+| `--bk-border-width`                                                                                          | border width                                 |
+| `--bk-control-height`, `--bk-space-1`, `--bk-space-3`                                                        | height and padding                           |
+| `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-size-md`, `--bk-line-height-md`, `--bk-font-weight-medium` | typography                                   |
+| `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset`                                         | focus ring                                   |
+| `--bk-transition`                                                                                            | border transition                            |
 
 `--bk-input-radius` is the only override hook. The rest are shared roles or base
 values: theming the input means theming the roles, not the field.

@@ -48,21 +48,21 @@ theme is active.
 **Thirteen roles**, named `<family>-<role>` with four families — `bg`, `text`,
 `border`, `focus`:
 
-| Role | Light | Dark |
-| --- | --- | --- |
-| `bg-surface` | `white` | `neutral-900` |
+| Role               | Light         | Dark          |
+| ------------------ | ------------- | ------------- |
+| `bg-surface`       | `white`       | `neutral-900` |
 | `bg-surface-muted` | `neutral-100` | `neutral-800` |
 | `bg-surface-hover` | `neutral-200` | `neutral-700` |
-| `bg-accent` | `blue-600` | `blue-600` |
-| `bg-accent-hover` | `blue-700` | `blue-700` |
-| `text-default` | `neutral-900` | `neutral-100` |
-| `text-muted` | `neutral-600` | `neutral-400` |
-| `text-on-accent` | `white` | `white` |
-| `text-danger` | `red-700` | `red-400` |
-| `border-default` | `neutral-500` | `neutral-500` |
-| `border-strong` | `neutral-600` | `neutral-400` |
-| `border-danger` | `red-700` | `red-400` |
-| `focus-ring` | `sky-600` | `sky-400` |
+| `bg-accent`        | `blue-600`    | `blue-600`    |
+| `bg-accent-hover`  | `blue-700`    | `blue-700`    |
+| `text-default`     | `neutral-900` | `neutral-100` |
+| `text-muted`       | `neutral-600` | `neutral-400` |
+| `text-on-accent`   | `white`       | `white`       |
+| `text-danger`      | `red-700`     | `red-400`     |
+| `border-default`   | `neutral-500` | `neutral-500` |
+| `border-strong`    | `neutral-600` | `neutral-400` |
+| `border-danger`    | `red-700`     | `red-400`     |
+| `focus-ring`       | `sky-600`     | `sky-400`     |
 
 The dark column is not a guess: it is the column the contrast assertions rewrote.
 Four values were proposed here first and failed when the suite ran in both themes —
@@ -111,15 +111,15 @@ not a color and no role can carry it.
 
 ### Alternatives considered
 
-| Alternative | Why it was rejected |
-| --- | --- |
-| Two tiers — palette directly to components, no role layer | No place to express "the same meaning, a different value per theme". Every control token would need a definition per theme, which is the problem being solved. |
-| Keep the layers as peers and add a second palette per theme | Inverting a palette does not produce a dark theme: the accent does not invert, danger stays red, and inverted neutrals read as washed-out grey. The role layer is exactly the place where "invert this, keep that" is decided. |
-| Numbered role names, as Carbon does (`ui01`, `text02`) | Carbon has 91 components and its numbering keeps the namespace finite. With two components, a descriptive name documents itself in the CSS and needs no lookup table. |
-| Keep `palette` as a prefix on primitives | `palette` is a kind of color, not a tier — Material places it *inside* the tier (`md.ref.palette`). Promoted to a tier it only exists for one of the five primitive families, and the asymmetry is what makes it read wrong. |
-| An `inverse` role family, as Carbon has | Needed when a component must render inverted regardless of context. Subtree theming already gives the component the right context through inheritance, including across the shadow boundary. If the case appears, it is a component variant, not a second set of thirteen roles. |
-| Declare `info`, `success` and `warning` roles now | No component reads them. R1 would fail the build, and the ten roles removed in `d9dfacd` are the precedent. The ramps exist now; the roles arrive with the first alert, badge or toast that reads them. |
-| A curated spacing ramp in the role layer, aliasing the primitive steps — as Primer does with `xxs` through `xl` | A role over four steps that never differ between themes is a rename with a maintenance cost and no behavior. Carbon keeps a numeric ramp read directly; neither has per-component spacing roles. Revisit when a density mode makes one name need two values. |
+| Alternative                                                                                                     | Why it was rejected                                                                                                                                                                                                                                                              |
+| --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Two tiers — palette directly to components, no role layer                                                       | No place to express "the same meaning, a different value per theme". Every control token would need a definition per theme, which is the problem being solved.                                                                                                                   |
+| Keep the layers as peers and add a second palette per theme                                                     | Inverting a palette does not produce a dark theme: the accent does not invert, danger stays red, and inverted neutrals read as washed-out grey. The role layer is exactly the place where "invert this, keep that" is decided.                                                   |
+| Numbered role names, as Carbon does (`ui01`, `text02`)                                                          | Carbon has 91 components and its numbering keeps the namespace finite. With two components, a descriptive name documents itself in the CSS and needs no lookup table.                                                                                                            |
+| Keep `palette` as a prefix on primitives                                                                        | `palette` is a kind of color, not a tier — Material places it _inside_ the tier (`md.ref.palette`). Promoted to a tier it only exists for one of the five primitive families, and the asymmetry is what makes it read wrong.                                                     |
+| An `inverse` role family, as Carbon has                                                                         | Needed when a component must render inverted regardless of context. Subtree theming already gives the component the right context through inheritance, including across the shadow boundary. If the case appears, it is a component variant, not a second set of thirteen roles. |
+| Declare `info`, `success` and `warning` roles now                                                               | No component reads them. R1 would fail the build, and the ten roles removed in `d9dfacd` are the precedent. The ramps exist now; the roles arrive with the first alert, badge or toast that reads them.                                                                          |
+| A curated spacing ramp in the role layer, aliasing the primitive steps — as Primer does with `xxs` through `xl` | A role over four steps that never differ between themes is a rename with a maintenance cost and no behavior. Carbon keeps a numeric ramp read directly; neither has per-component spacing roles. Revisit when a density mode makes one name need two values.                     |
 
 ## Consequences
 
@@ -145,7 +145,7 @@ Harder:
 - Renaming token surfaces is a breaking change: sixteen public names disappear and
   five are renamed. Cheap while the package is private and unpublished, expensive
   after the first outside consumer.
-- A role exists per theme but the *values* are unvalidated. The dark column above
+- A role exists per theme but the _values_ are unvalidated. The dark column above
   is a proposal until the contrast assertions pass in both themes.
 
 **No aliases.** The sixteen removed names and the four renames have no

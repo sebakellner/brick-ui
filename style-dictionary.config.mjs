@@ -1,6 +1,9 @@
 import { formattedVariables } from 'style-dictionary/utils';
 
-const only = (...groups) => (token) => groups.includes(token.path[0]);
+const only =
+  (...groups) =>
+  (token) =>
+    groups.includes(token.path[0]);
 
 const cssFile = (destination, filter, selector = ':root') => ({
   destination,
@@ -140,7 +143,13 @@ export default {
     base: platform([
       cssFile(
         'base.css',
-        only('border-width', 'control-height', 'transition', 'focus-ring-width', 'focus-ring-offset'),
+        only(
+          'border-width',
+          'control-height',
+          'transition',
+          'focus-ring-width',
+          'focus-ring-offset',
+        ),
       ),
     ]),
   },

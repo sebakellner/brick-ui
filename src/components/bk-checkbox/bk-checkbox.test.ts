@@ -8,7 +8,8 @@ import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 const innerInput = (el: BkCheckbox) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkCheckbox) => el.shadowRoot!.querySelector('label')!;
 const innerBox = (el: BkCheckbox) => el.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
-const innerMessage = (el: BkCheckbox) => el.shadowRoot!.querySelector<HTMLElement>('[part="message"]')!;
+const innerMessage = (el: BkCheckbox) =>
+  el.shadowRoot!.querySelector<HTMLElement>('[part="message"]')!;
 
 const pastTransition = async () => {
   await nextFrame();
@@ -174,9 +175,7 @@ describe('bk-checkbox', () => {
 
     await hover(innerLabel(el));
 
-    expect(getComputedStyle(box).borderTopColor).to.equal(
-      await colorOf('var(--bk-border-strong)'),
-    );
+    expect(getComputedStyle(box).borderTopColor).to.equal(await colorOf('var(--bk-border-strong)'));
   });
 
   it('should draw the focus ring on the box when the field is reached by keyboard', async () => {
@@ -255,7 +254,9 @@ describe('bk-checkbox', () => {
 
     expect(innerMessage(el).textContent!.trim()).to.equal('You have to accept the terms.');
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
-    expect(getComputedStyle(innerMessage(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
+    expect(getComputedStyle(innerMessage(el)).color).to.equal(
+      await colorOf('var(--bk-text-danger)'),
+    );
     expect(getComputedStyle(innerBox(el)).borderTopColor).to.equal(
       await colorOf('var(--bk-border-danger)'),
     );
@@ -267,7 +268,9 @@ describe('bk-checkbox', () => {
     el.helper = 'We never share it.';
     await el.updateComplete;
 
-    expect(getComputedStyle(innerMessage(el)).color).to.equal(await colorOf('var(--bk-text-muted)'));
+    expect(getComputedStyle(innerMessage(el)).color).to.equal(
+      await colorOf('var(--bk-text-muted)'),
+    );
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
   });
 

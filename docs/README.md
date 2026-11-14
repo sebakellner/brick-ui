@@ -18,16 +18,16 @@ coding agents.
 
 ## Documents
 
-| Document | Type | Answers |
-| --- | --- | --- |
-| [architecture.md](architecture.md) | explanation | how a value travels from a JSON file to a pixel, and what is out of scope |
-| [conventions-tokens.md](conventions-tokens.md) | reference | which token rules apply, and what enforces each |
-| [conventions-accessibility.md](conventions-accessibility.md) | reference | the bar a component clears before it ships |
-| [conventions-testing.md](conventions-testing.md) | reference | how to write a test that proves something |
-| [conventions-code.md](conventions-code.md) | reference | TypeScript, stylesheets and tooling |
-| [add-a-token.md](add-a-token.md) | how-to | a new design value, without breaking the build |
-| [add-a-component.md](add-a-component.md) | how-to | the next element, without re-deciding anything |
-| [adr/](adr/) | explanation | why the kit is arranged this way, and what was rejected |
+| Document                                                     | Type        | Answers                                                                   |
+| ------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------- |
+| [architecture.md](architecture.md)                           | explanation | how a value travels from a JSON file to a pixel, and what is out of scope |
+| [conventions-tokens.md](conventions-tokens.md)               | reference   | which token rules apply, and what enforces each                           |
+| [conventions-accessibility.md](conventions-accessibility.md) | reference   | the bar a component clears before it ships                                |
+| [conventions-testing.md](conventions-testing.md)             | reference   | how to write a test that proves something                                 |
+| [conventions-code.md](conventions-code.md)                   | reference   | TypeScript, stylesheets and tooling                                       |
+| [add-a-token.md](add-a-token.md)                             | how-to      | a new design value, without breaking the build                            |
+| [add-a-component.md](add-a-component.md)                     | how-to      | the next element, without re-deciding anything                            |
+| [adr/](adr/)                                                 | explanation | why the kit is arranged this way, and what was rejected                   |
 
 `Type` is one of tutorial, how-to, reference and explanation — the
 [Diátaxis](https://diataxis.fr/start-here/) split. There is no tutorial, and none
@@ -59,12 +59,12 @@ alternatives that lost. The rules of the folder:
 
 ## When to update what
 
-| If you change… | Update |
-| --- | --- |
-| a token, a layer or the pipeline | [architecture.md](architecture.md) and [conventions-tokens.md](conventions-tokens.md); a new ADR if it is a decision |
-| a component's public surface | its `README.md` and its Storybook page |
-| a check, a CI gate or a command | [CONTRIBUTING.md](../CONTRIBUTING.md) |
-| something that makes a past decision false | not that ADR — a new one that supersedes it |
+| If you change…                             | Update                                                                                                               |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| a token, a layer or the pipeline           | [architecture.md](architecture.md) and [conventions-tokens.md](conventions-tokens.md); a new ADR if it is a decision |
+| a component's public surface               | its `README.md` and its Storybook page                                                                               |
+| a check, a CI gate or a command            | [CONTRIBUTING.md](../CONTRIBUTING.md)                                                                                |
+| something that makes a past decision false | not that ADR — a new one that supersedes it                                                                          |
 
 ## Rules for these documents
 
@@ -77,12 +77,12 @@ alternatives that lost. The rules of the folder:
 
 ## Glossary
 
-| Term | Meaning |
-| --- | --- |
-| primitive / palette | a raw declared value (`--bk-palette-blue-600`). A reference ramp, not a usage list |
-| semantic role | a role in `color.json` read **directly** by a component (`--bk-text-danger`). See R1 in [conventions-tokens.md](conventions-tokens.md) |
-| control token | what one component paints, when no role can carry it (`--bk-button-disabled-opacity`) |
-| hook | a public custom property a consumer may override (`--bk-button-bg`), declared in `style-dictionary.config.mjs` |
-| part | a styling escape hatch exposed through `::part()` |
-| invariant | a rule that holds across the codebase and has something enforcing it |
-| ADR | architecture decision record — one decision, one file, in [adr/](adr/) |
+| Term                | Meaning                                                                                                                                |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| primitive / palette | a raw declared value (`--bk-palette-blue-600`). A reference ramp, not a usage list                                                     |
+| semantic role       | a role in `color.json` read **directly** by a component (`--bk-text-danger`). See R1 in [conventions-tokens.md](conventions-tokens.md) |
+| control token       | what one component paints, when no role can carry it (`--bk-button-disabled-opacity`)                                                  |
+| hook                | a public custom property a consumer may override (`--bk-button-bg`), declared in `style-dictionary.config.mjs`                         |
+| part                | a styling escape hatch exposed through `::part()`                                                                                      |
+| invariant           | a rule that holds across the codebase and has something enforcing it                                                                   |
+| ADR                 | architecture decision record — one decision, one file, in [adr/](adr/)                                                                 |
