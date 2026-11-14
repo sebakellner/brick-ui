@@ -101,14 +101,14 @@ describe('bk-input form integration', () => {
       await nextFrame();
       await el.updateComplete;
 
-      expect(innerInput(el).getAttribute('aria-disabled')).to.equal('true');
-      expect(innerInput(el).hasAttribute('disabled')).to.equal(false);
+      expect(innerInput(el).disabled).to.equal(true);
+      expect(innerInput(el).getAttribute('aria-disabled')).to.equal(null);
 
       fieldset.disabled = false;
       await nextFrame();
       await el.updateComplete;
 
-      expect(innerInput(el).getAttribute('aria-disabled')).to.equal(null);
+      expect(innerInput(el).disabled).to.equal(false);
     });
 
     it('should keep an author-disabled field disabled when its fieldset re-enables', async () => {
@@ -129,8 +129,8 @@ describe('bk-input form integration', () => {
       await el.updateComplete;
 
       expect(el.disabled).to.equal(true);
-      expect(innerInput(el).getAttribute('aria-disabled')).to.equal('true');
-      expect(innerInput(el).hasAttribute('disabled')).to.equal(false);
+      expect(innerInput(el).disabled).to.equal(true);
+      expect(innerInput(el).getAttribute('aria-disabled')).to.equal(null);
     });
 
     it('should submit nothing and report valid while disabled', async () => {

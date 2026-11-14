@@ -53,8 +53,10 @@ you are about to change, and never edit an accepted ADR — supersede it.
   fails on it — R1.
 - Import `'./x'` from a `.ts` file. The imports carry `.js`
   (`verbatimModuleSyntax`).
-- Use `disabled` on an inner control. Disabled is `aria-disabled`, blocked in the
-  component, so the control stays focusable and discoverable.
+- Use `disabled` on an inner widget. A button or a checkbox is blocked with
+  `aria-disabled` and cancels its own activation, so it stays focusable and
+  discoverable; a text field keeps the native `disabled` attribute —
+  [ADR 0008](docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md).
 
 ## Commands
 

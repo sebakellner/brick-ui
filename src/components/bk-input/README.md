@@ -23,7 +23,7 @@ and a `bk-change` event.
 | `placeholder` | `placeholder` | `string` | `''` | |
 | `autocomplete` | `autocomplete` | `string` | `''` | forwarded to the field (WCAG 1.3.5) |
 | `inputMode` | — | `'text' \| 'tel' \| 'url' \| 'email' \| 'numeric' \| 'decimal' \| 'search' \| 'none' \| ''` | `''` | sets `inputmode` on the field |
-| `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner field and makes it `readonly`, so it stays focusable, announced as unavailable, and inert |
+| `disabled` | `disabled` | `boolean` | `false` | reflected; sets the native `disabled` attribute on the inner field ([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)) |
 | `required` | `required` | `boolean` | `false` | reflected |
 
 ## Events
@@ -128,11 +128,13 @@ values: theming the input means theming the roles, not the field.
 - **Form-associated**: the element takes part in a `<form>` — its `value`
   submits under `name`, the form can disable it, and constraint validation
   reflects `required` and `error` through `ElementInternals`.
-- `disabled` is `aria-disabled` plus `readonly`, never the native attribute: the
-  field keeps its place in the tab order, is announced as unavailable, and its
-  value stays readable and selectable, while typing, pasting and dropping text
-  do nothing. A disabled field also submits nothing and reports no error, so a
-  disabled field never blocks a submit it cannot take part in.
+- `disabled` uses the native attribute on the inner field: typed text, autofill,
+  the pointer and constraint validation are the browser's to refuse, and the field
+  leaves the tab order. That is unlike `bk-button` and `bk-checkbox`, which keep
+  `aria-disabled` so a keyboard user can still reach them and be told why they are
+  unavailable — [ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)
+  records why the two shapes differ. A disabled field also submits nothing and
+  reports no error, so it never blocks a submit it cannot take part in.
 - `reset()` restores the initial value synchronously, so a reset handler can read
   `FormData` or submit immediately. It also drops `error` and the touched state,
   so a reset form does not come back red. A value the browser restores is not an
