@@ -112,8 +112,9 @@ keeps `--bk-text-default`, and a standalone `bk-field-label` paints the same way
 from its own `data-state`.
 
 A `required` field marks its label with a `*` (`part="required"`,
-`aria-hidden="true"`) in `--bk-text-muted`: red means one thing, "this needs
-fixing". The mark is not rendered while the field has no label, and it is never
+`aria-hidden="true"`) in `--bk-text-danger`, the same role as the error text. It
+sits on the label's line, so a slotted `bk-field-label` does not push it to its
+own row. The mark is not rendered while the field has no label, and it is never
 the only signal — the native `required` attribute is what announces the state.
 
 ## Tokens

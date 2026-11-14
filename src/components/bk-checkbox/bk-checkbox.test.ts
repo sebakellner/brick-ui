@@ -352,14 +352,26 @@ describe('bk-checkbox', () => {
     expect(innerRequired(el), 'an asterisk beside nothing marks nothing').to.equal(null);
   });
 
-  it('should paint the required glyph muted, not danger', async () => {
+  it('should paint the required glyph with the danger role', async () => {
     const el = await fixture<BkCheckbox>(
       html`<bk-checkbox label="Accept terms" required></bk-checkbox>`,
     );
 
     expect(getComputedStyle(innerRequired(el)!).color).to.equal(
-      await colorOf('var(--bk-text-muted)'),
+      await colorOf('var(--bk-text-danger)'),
     );
+  });
+
+  it('should keep the glyph on the label line when the label is slotted', async () => {
+    const el = await fixture<BkCheckbox>(html`
+      <bk-checkbox required><bk-field-label slot="label">Accept terms</bk-field-label></bk-checkbox>
+    `);
+    const atom = el.querySelector('bk-field-label')!.getBoundingClientRect();
+    const glyph = innerRequired(el)!.getBoundingClientRect();
+    const box = el.shadowRoot!.querySelector('[part="box"]')!.getBoundingClientRect();
+
+    expect(glyph.left, 'the glyph follows the slotted label').to.be.at.least(atom.right - 1);
+    expect(glyph.top, 'the glyph sits on the row beside the box').to.be.lessThan(box.bottom);
   });
 
   it('should paint the label danger while the box is invalid', async () => {

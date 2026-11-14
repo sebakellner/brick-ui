@@ -32,7 +32,7 @@ export const formControlStyles = css`
 
   .required {
     margin-inline-start: var(--bk-space-1);
-    color: var(--bk-text-muted);
+    color: var(--bk-text-danger);
   }
 
   .control {

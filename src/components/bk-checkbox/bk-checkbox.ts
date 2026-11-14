@@ -19,6 +19,10 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
   static override styles = [
     formControlStyles,
     css`
+      slot[name='label']::slotted(*) {
+        display: inline-block;
+      }
+
       :host {
         --bk-checkbox-variant-size: var(--bk-space-4);
         --bk-checkbox-variant-radius: var(--bk-radius-sm);
