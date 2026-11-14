@@ -1,0 +1,43 @@
+import { Meta, Canvas, Markdown } from '@storybook/addon-docs/blocks';
+import * as FieldStories from './bk-field.stories';
+import readme from './README.md?raw';
+
+<Meta of={FieldStories} />
+
+<Markdown>{readme}</Markdown>
+
+## Default
+
+<Canvas of={FieldStories.Default} />
+
+## Label only
+
+The description slot may be empty; the field still stacks what is there.
+
+<Canvas of={FieldStories.LabelOnly} />
+
+## A description that wraps
+
+<Canvas of={FieldStories.LongDescription} />
+
+## Invalid, with the error atom
+
+`invalid` is the field's, and the atom only paints the text. The control's
+`error` property is what makes the input invalid, so the two are written
+together until the form-error model gives the atom a validity source.
+
+<Canvas of={FieldStories.Invalid} />
+
+## Atoms, and the properties they replace
+
+The `label` and `helper` properties are the fallback content of the slots, so
+both spellings produce the same field.
+
+<Canvas of={FieldStories.PropsSideBySide} />
+
+## In a form
+
+The nesting changes nothing about form association: the control still submits
+under its `name`, and `FormData` reads the same entries.
+
+<Canvas of={FieldStories.InAForm} />

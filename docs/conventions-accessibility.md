@@ -51,7 +51,11 @@ who forgets is the consumer who gets a broken form, and they have no way to know
 ## A4. Reference a description only while it has content
 
 **Rule.** `aria-describedby` points at the message region only while that region
-has text. An empty helper or error removes the reference.
+has text. An empty helper or error removes the reference. The text is not always
+the region's own: content that arrives through a slot is not in its
+`textContent`, so a control with slotted descriptions decides from `slotchange`
+and `assignedNodes()`, never from the rendered string
+([0009](adr/0009-nest-the-field-parts-inside-the-control.md)).
 
 **Why.** A reference to an empty element is announced as an empty description by
 some screen readers, and it is the kind of detail that only surfaces by using the
@@ -95,13 +99,19 @@ being wrong about reset, about validity, and about submission order.
 ## A7. Never hide a live region from the accessibility tree
 
 **Rule.** A live region that must not be visible is collapsed visually —
-`clip-path`, a 1px box, `white-space: nowrap` — and keeps `role="status"`.
+`clip-path`, a 1px box, `white-space: nowrap` — and keeps `role="status"` on the
+region itself, never on the content slotted into it: a slotted atom is a child
+node, and a region whose assigned nodes change is the node that stays in the tree.
 
 **Why.** `display: none` or `visibility: hidden` removes it from the tree, so the
 region stops being announced and the visual hiding also silenced it.
 
-**Do** — the `.message:empty` block in `bk-input` is the reference implementation.
-`1px` there is the geometry the technique requires, not a design value
+**Do** — the `.message` blocks in
+`src/components/shared/form-control/form-control.styles.ts` are the reference
+implementation. `:empty` cannot see slotted content, so the region is collapsed
+from `data-empty` as well, which `FieldMessagesController` sets from
+`assignedNodes()`. `1px` there is the geometry the technique requires, not a
+design value
 ([ADR 0004](adr/0004-forbid-style-literals-in-components.md)).
 
 **Enforced by.** Review.
