@@ -81,7 +81,6 @@ export class BkInput extends FormControlMixin(LitElement) {
 
   private messageSources(): FieldMessageFallbacks {
     return {
-      description: '',
       error: this.error || this.fieldMessage,
     };
   }

@@ -25,7 +25,11 @@ Load the theme once, then use the elements:
 <bk-button>Save changes</bk-button>
 <bk-button variant="secondary">Cancel</bk-button>
 
-<bk-checkbox label="Accept the terms"></bk-checkbox>
+<bk-field>
+  <bk-checkbox name="terms">
+    <bk-field-label>Accept the terms</bk-field-label>
+  </bk-checkbox>
+</bk-field>
 
 <bk-field>
   <bk-input name="email">

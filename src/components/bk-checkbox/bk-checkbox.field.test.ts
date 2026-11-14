@@ -32,11 +32,6 @@ const projectedText = (node: Element | null) =>
     .map((assignedText) => assignedText.textContent!.trim())
     .filter(Boolean);
 
-const describedText = (el: BkCheckbox) => {
-  const text = describedNode(el)?.textContent!.trim();
-  return text ? [text] : [];
-};
-
 const settle = async (el: BkField) => {
   await el.updateComplete;
   await new Promise((resolve) => setTimeout(resolve, 0));
@@ -179,23 +174,6 @@ describe('bk-checkbox composed field parts', () => {
     ).to.equal(true);
     expect(region(checkbox, 'description'), 'the description keeps its part').to.not.equal(null);
     expect(region(checkbox, 'error'), 'the error keeps its part').to.not.equal(null);
-  });
-
-  it('should keep label and helper working as fallback content', async () => {
-    const el = await fixture<BkField>(html`
-      <bk-field>
-        <bk-checkbox name="terms" label="Accept the terms" helper="You can change this later.">
-        </bk-checkbox>
-      </bk-field>
-    `);
-    await settle(el);
-    const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
-
-    expect(
-      innerLabel(checkbox)!.textContent!.trim(),
-      'the property still names the field',
-    ).to.equal('Accept the terms');
-    expect(describedText(checkbox)).to.deep.equal(['You can change this later.']);
   });
 
   it('should follow a description added after connect', async () => {

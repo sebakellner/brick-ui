@@ -58,12 +58,12 @@ never crosses a root.
 | Slot          | Rendered in                       | Falls back to                                 |
 | ------------- | --------------------------------- | --------------------------------------------- |
 | `label`       | the `<label>` bound with `for`    | nothing: the slot is the label                |
-| `description` | the description region            | the `helper` property, on `bk-checkbox`       |
+| `description` | the description region            | nothing: the slot is the description          |
 | `error`       | the error region, `role="status"` | the `error` property, then the native message |
 
-There is no attribute a field can be labelled with. The slot is the label, so the
-control's name is the text the consumer puts in it; `bk-checkbox` still falls back
-to its `label` and `helper` properties when its slots are empty. While the error
+There is no attribute a field can be labelled with or described by. The slots
+are the label and the description, so the control's name is the text the consumer
+puts in `label` and its description is the text in `description`. While the error
 region has content the description region is hidden; neither is deleted.
 
 ## Properties

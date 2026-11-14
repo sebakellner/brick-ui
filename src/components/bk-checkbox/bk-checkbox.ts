@@ -78,10 +78,6 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
         background: var(--bk-bg-surface-muted);
       }
 
-      .native[aria-disabled='true'] ~ slot > .text {
-        color: var(--bk-text-muted);
-      }
-
       .box::after {
         content: '';
         box-sizing: border-box;
@@ -105,10 +101,6 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
   ];
 
   @property({ type: Boolean }) checked = false;
-
-  @property({ type: String }) label = '';
-
-  @property({ type: String }) helper = '';
 
   private readonly controlId = nextInstanceId();
 
@@ -145,9 +137,7 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
           @change=${this.handleChange}
         />
         <span part="box" class="box" aria-hidden="true"></span>
-        <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}
-          >${this.label ? html`<span class="text">${this.label}</span>` : nothing}</slot
-        >
+        <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}></slot>
         ${this.fieldParts.glyph}
       </label>
       ${this.fieldParts.messages}
@@ -156,7 +146,6 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
 
   private messageSources(): FieldMessageFallbacks {
     return {
-      description: this.helper,
       error: this.error || this.fieldMessage,
     };
   }

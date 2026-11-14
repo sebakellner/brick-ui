@@ -17,8 +17,8 @@ describe('bk-checkbox form participation', () => {
   it('should submit the platform default while checked and nothing while unchecked', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-checkbox name="accept" label="Accept terms"></bk-checkbox>
-        <bk-checkbox name="other" label="Other" checked></bk-checkbox>
+        <bk-checkbox name="accept"></bk-checkbox>
+        <bk-checkbox name="other" checked></bk-checkbox>
       </form>
     `);
     const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
@@ -35,7 +35,7 @@ describe('bk-checkbox form participation', () => {
   it('should submit the value property instead of the default', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-checkbox name="terms" value="v2" label="Accept terms" checked></bk-checkbox>
+        <bk-checkbox name="terms" value="v2" checked></bk-checkbox>
       </form>
     `);
 
@@ -45,7 +45,7 @@ describe('bk-checkbox form participation', () => {
   it('should expose the form and refuse to validate while required and unchecked', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-checkbox name="accept" label="Accept terms" required></bk-checkbox>
+        <bk-checkbox name="accept" required></bk-checkbox>
       </form>
     `);
     const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
@@ -63,7 +63,7 @@ describe('bk-checkbox form participation', () => {
   it('should block submission while the error is set', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-checkbox name="accept" label="Accept terms" checked></bk-checkbox>
+        <bk-checkbox name="accept" checked></bk-checkbox>
       </form>
     `);
     const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
@@ -78,7 +78,7 @@ describe('bk-checkbox form participation', () => {
   it('should restore the authored checked attribute on reset and clear the error', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-checkbox name="accept" label="Accept terms" checked></bk-checkbox>
+        <bk-checkbox name="accept" checked></bk-checkbox>
       </form>
     `);
     const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
@@ -121,8 +121,8 @@ describe('bk-checkbox form participation', () => {
   it('should submit nothing and report valid while it is disabled', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-checkbox name="accept" label="Accept" checked disabled></bk-checkbox>
-        <bk-checkbox name="terms" label="Terms" required disabled></bk-checkbox>
+        <bk-checkbox name="accept" checked disabled></bk-checkbox>
+        <bk-checkbox name="terms" required disabled></bk-checkbox>
       </form>
     `);
 
@@ -134,7 +134,7 @@ describe('bk-checkbox form participation', () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
         <fieldset disabled>
-          <bk-checkbox name="accept" label="Accept terms"></bk-checkbox>
+          <bk-checkbox name="accept"></bk-checkbox>
         </fieldset>
       </form>
     `);

@@ -1,17 +1,18 @@
 # `bk-checkbox`
 
-A checkbox with a real `<label>`, helper and error slots, and a `bk-change`
-event. The label sits beside the box, never above it.
+A checkbox with a real `<label>`, a description and an error slot, and a
+`bk-change` event. The label sits beside the box, never above it.
 
 [Docs page](https://sebakellner.github.io/brick-ui/?path=/docs/components-checkbox--docs)
 
 ```html
-<bk-checkbox label="Accept the terms" helper="You can change this later."></bk-checkbox>
-<bk-checkbox label="Accept the terms" checked></bk-checkbox>
-<bk-checkbox label="Accept the terms" error="You have to accept the terms."></bk-checkbox>
-
 <bk-field>
   <bk-checkbox name="terms" required>
+    <bk-field-label>Accept the terms</bk-field-label>
+  </bk-checkbox>
+</bk-field>
+<bk-field>
+  <bk-checkbox name="terms" checked error="You have to accept the terms.">
     <bk-field-label>Accept the terms</bk-field-label>
     <bk-field-description>You can change this later.</bk-field-description>
   </bk-checkbox>
@@ -22,9 +23,7 @@ event. The label sits beside the box, never above it.
 
 | Property   | Attribute  | Type      | Default | Notes                                                                                                                                                                                   |
 | ---------- | ---------- | --------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `label`    | `label`    | `string`  | `''`    | fallback for the `label` slot; the box renders alone when neither is present                                                                                                            |
-| `helper`   | `helper`   | `string`  | `''`    | fallback for the `description` slot; shown when there is no `error`                                                                                                                     |
-| `error`    | `error`    | `string`  | `''`    | fallback for the `error` slot; wins over `helper` and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input`                                     |
+| `error`    | `error`    | `string`  | `''`    | fallback for the `error` slot; wins over the description and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input`                              |
 | `checked`  | `checked`  | `boolean` | `false` | the state. The attribute is the default the form returns to on reset, like the platform's `defaultChecked`; the property is not reflected, so the attribute stays what the author wrote |
 | `value`    | `value`    | `string`  | `''`    | submits as `on` while checked, and submits nothing while unchecked                                                                                                                      |
 | `name`     | `name`     | `string`  | `''`    |                                                                                                                                                                                         |
@@ -33,14 +32,15 @@ event. The label sits beside the box, never above it.
 
 ## Slots
 
-| Slot          | Receives                                                      | Fallback property |
-| ------------- | ------------------------------------------------------------- | ----------------- |
-| `label`       | the name of the box, beside the box                           | `label`           |
-| `description` | the help text, under the label row                            | `helper`          |
-| `error`       | the error message; replaces the description while it has text | `error`           |
+| Slot          | Content                | Notes                                                                                                                           |
+| ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `label`       | `bk-field-label`       | rendered inside the `<label>` that wraps the native input; the slot is the only label, and the box is unnamed while it is empty |
+| `description` | `bk-field-description` | the help text, under the label row; `aria-describedby` names the region while it has content                                    |
+| `error`       | `bk-field-error`       | the problem, rendered outside the label; the description is hidden while it has content                                         |
 
-The slot content wins; the property is what the slot falls back to when nothing
-is assigned, so both shapes work at once and no public surface was removed.
+The atoms need no `slot` attribute inside a `bk-field`, which assigns them by
+tag name. Rendered straight as a child of the control they do, because the
+control is not a field.
 
 The `label` goes inside the `<label>` that wraps the native input, so the
 association stays implicit by containment. The description and the error are
@@ -129,6 +129,9 @@ Set the two hooks above, not those.
 - A real `<label for>` wraps a real `<input type="checkbox">`, and focus is
   delegated to that input: the accessible name, the Space key, the form
   participation and the announced state are the platform's.
+- The accessible name is the text of the `label` slot and nothing else. There is
+  no attribute a box can be labelled with, so a box whose slot is empty stays
+  unnamed rather than named by one.
 - The painted box is `aria-hidden` decoration. Everything the assistive
   technology reads — `checked`, `aria-invalid`, `aria-disabled`,
   `aria-describedby` — lives on the native input.
