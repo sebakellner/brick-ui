@@ -28,7 +28,7 @@ describe('bk-input error model', () => {
   it('should show the error instead of the native message when both exist', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-input name="email" label="Email" required error="We need this address."></bk-input>
+        <bk-input name="email" required error="We need this address."></bk-input>
       </form>
     `);
     const el = form.querySelector('bk-input') as BkInput;
@@ -44,7 +44,7 @@ describe('bk-input error model', () => {
 
   it('should show nothing and stay out of aria-invalid while an invalid field is untouched', async () => {
     const form = await fixture<HTMLFormElement>(html`
-      <form><bk-input name="email" label="Email" required></bk-input></form>
+      <form><bk-input name="email" required></bk-input></form>
     `);
     const el = form.querySelector('bk-input') as BkInput;
     await el.updateComplete;
@@ -60,7 +60,7 @@ describe('bk-input error model', () => {
   it('should show the native message after a blur and never while typing', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-input name="email" label="Email" type="email" value="you@brick.dev"></bk-input>
+        <bk-input name="email" type="email" value="you@brick.dev"></bk-input>
       </form>
     `);
     const el = form.querySelector('bk-input') as BkInput;
@@ -83,7 +83,7 @@ describe('bk-input error model', () => {
 
   it('should never show a native message under novalidate', async () => {
     const form = await fixture<HTMLFormElement>(html`
-      <form novalidate><bk-input name="email" label="Email" required></bk-input></form>
+      <form novalidate><bk-input name="email" required></bk-input></form>
     `);
     const el = form.querySelector('bk-input') as BkInput;
     await el.updateComplete;
@@ -111,8 +111,8 @@ describe('bk-input error model', () => {
   it('should show the native message only on the fields a failed submit rejected', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-input name="email" label="Email" required></bk-input>
-        <bk-input name="other" label="Other" value="ok" required></bk-input>
+        <bk-input name="email" required></bk-input>
+        <bk-input name="other" value="ok" required></bk-input>
       </form>
     `);
     const el = form.querySelector('bk-input') as BkInput;
@@ -138,7 +138,7 @@ describe('bk-input error model', () => {
 
   it('should show the native message when a consumer reports the field explicitly', async () => {
     const form = await fixture<HTMLFormElement>(html`
-      <form><bk-input name="email" label="Email" required></bk-input></form>
+      <form><bk-input name="email" required></bk-input></form>
     `);
     const el = form.querySelector('bk-input') as BkInput;
     await el.updateComplete;
@@ -152,7 +152,7 @@ describe('bk-input error model', () => {
 
   it('should clear the error, the touched state and aria-invalid on reset', async () => {
     const form = await fixture<HTMLFormElement>(html`
-      <form><bk-input name="email" label="Email" required></bk-input></form>
+      <form><bk-input name="email" required></bk-input></form>
     `);
     const el = form.querySelector('bk-input') as BkInput;
     el.error = 'That address is taken.';
@@ -173,7 +173,7 @@ describe('bk-input error model', () => {
 
   it('should not mark the field touched when the browser restores a value', async () => {
     const form = await fixture<HTMLFormElement>(html`
-      <form><bk-input name="email" label="Email" type="email"></bk-input></form>
+      <form><bk-input name="email" type="email"></bk-input></form>
     `);
     const el = form.querySelector('bk-input') as BkInput;
 
@@ -191,7 +191,7 @@ describe('bk-input error model', () => {
   it('should block submission for an error a schema result set, until the user acts', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-input name="email" label="Email" type="email" value="you@brick.dev"></bk-input>
+        <bk-input name="email" type="email" value="you@brick.dev"></bk-input>
       </form>
     `);
     const el = form.querySelector('bk-input') as BkInput;

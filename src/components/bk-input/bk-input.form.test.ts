@@ -1,5 +1,6 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import './define.js';
+import '../bk-field/define.js';
 import type { BkInput } from './bk-input.js';
 import { loadTheme } from '../../test/helpers/theme.js';
 
@@ -19,7 +20,7 @@ describe('bk-input form integration', () => {
   describe('form participation', () => {
     it('should enter FormData under its name without a wrapper', async () => {
       const form = await fixture<HTMLFormElement>(
-        html`<form><bk-input name="email" value="a@b.c" label="Email"></bk-input></form>`,
+        html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
       );
 
       expect(new FormData(form).get('email')).to.equal('a@b.c');
@@ -27,7 +28,7 @@ describe('bk-input form integration', () => {
 
     it('should follow the typed value into FormData', async () => {
       const form = await fixture<HTMLFormElement>(
-        html`<form><bk-input name="email" label="Email"></bk-input></form>`,
+        html`<form><bk-input name="email"></bk-input></form>`,
       );
       const el = form.querySelector('bk-input') as BkInput;
 
@@ -38,7 +39,7 @@ describe('bk-input form integration', () => {
 
     it('should submit its value with the form', async () => {
       const form = await fixture<HTMLFormElement>(
-        html`<form><bk-input name="email" value="a@b.c" label="Email"></bk-input></form>`,
+        html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
       );
       let submitted: FormData | undefined;
       form.addEventListener('submit', (event) => {
@@ -53,7 +54,7 @@ describe('bk-input form integration', () => {
 
     it('should not enter FormData when it has no name', async () => {
       const form = await fixture<HTMLFormElement>(
-        html`<form><bk-input value="a@b.c" label="Email"></bk-input></form>`,
+        html`<form><bk-input value="a@b.c"></bk-input></form>`,
       );
 
       expect([...new FormData(form).keys()]).to.deep.equal([]);
@@ -63,7 +64,7 @@ describe('bk-input form integration', () => {
   describe('reset', () => {
     it('should restore the initial value on reset', async () => {
       const form = await fixture<HTMLFormElement>(
-        html`<form><bk-input name="email" value="a@b.c" label="Email"></bk-input></form>`,
+        html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
       );
       const el = form.querySelector('bk-input') as BkInput;
       await type(el, 'changed@b.c');
@@ -77,7 +78,7 @@ describe('bk-input form integration', () => {
 
     it('should restore FormData and the field synchronously, before a render', async () => {
       const form = await fixture<HTMLFormElement>(
-        html`<form><bk-input name="email" value="a@b.c" label="Email"></bk-input></form>`,
+        html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
       );
       const el = form.querySelector('bk-input') as BkInput;
       await type(el, 'changed@b.c');
@@ -93,7 +94,7 @@ describe('bk-input form integration', () => {
     it('should disable the field with its fieldset and re-enable it', async () => {
       const form = await fixture<HTMLFormElement>(html`
         <form>
-          <fieldset disabled><bk-input name="email" label="Email"></bk-input></fieldset>
+          <fieldset disabled><bk-input name="email"></bk-input></fieldset>
         </form>
       `);
       const fieldset = form.querySelector('fieldset')!;
@@ -115,7 +116,7 @@ describe('bk-input form integration', () => {
       const form = await fixture<HTMLFormElement>(html`
         <form>
           <fieldset disabled>
-            <bk-input name="email" label="Email" disabled></bk-input>
+            <bk-input name="email" disabled></bk-input>
           </fieldset>
         </form>
       `);
@@ -136,7 +137,7 @@ describe('bk-input form integration', () => {
     it('should submit nothing and report valid while disabled', async () => {
       const form = await fixture<HTMLFormElement>(html`
         <form>
-          <bk-input name="email" label="Email" value="a@b.c" required disabled></bk-input>
+          <bk-input name="email" value="a@b.c" required disabled></bk-input>
         </form>
       `);
       const el = form.querySelector('bk-input') as BkInput;
@@ -150,12 +151,7 @@ describe('bk-input form integration', () => {
     it('should block submission with an error only while it is enabled', async () => {
       const form = await fixture<HTMLFormElement>(html`
         <form>
-          <bk-input
-            name="email"
-            label="Email"
-            error="That address looks wrong."
-            disabled
-          ></bk-input>
+          <bk-input name="email" error="That address looks wrong." disabled></bk-input>
         </form>
       `);
       const el = form.querySelector('bk-input') as BkInput;
@@ -199,7 +195,7 @@ describe('bk-input form integration', () => {
 
     it('should announce a missing required value and clear it when filled', async () => {
       const form = await fixture<HTMLFormElement>(
-        html`<form><bk-input name="email" label="Email" required></bk-input></form>`,
+        html`<form><bk-input name="email" required></bk-input></form>`,
       );
       const el = form.querySelector('bk-input') as BkInput;
       await el.updateComplete;
@@ -211,10 +207,14 @@ describe('bk-input form integration', () => {
       expect(form.checkValidity()).to.equal(true);
     });
 
-    it('should stay valid while it only has a helper', async () => {
+    it('should stay valid while it only has a description', async () => {
       const form = await fixture<HTMLFormElement>(
         html`<form>
-          <bk-input name="email" value="a@b.c" helper="We never share it."></bk-input>
+          <bk-input name="email" value="a@b.c"
+            ><bk-field-description slot="description"
+              >We never share it.</bk-field-description
+            ></bk-input
+          >
         </form>`,
       );
       const el = form.querySelector('bk-input') as BkInput;
@@ -228,7 +228,7 @@ describe('bk-input form integration', () => {
   describe('the public form API', () => {
     it('should expose the form it belongs to', async () => {
       const form = await fixture<HTMLFormElement>(
-        html`<form><bk-input name="email" label="Email"></bk-input></form>`,
+        html`<form><bk-input name="email"></bk-input></form>`,
       );
       const el = form.querySelector('bk-input') as BkInput;
 
@@ -237,7 +237,7 @@ describe('bk-input form integration', () => {
 
     it('should expose its validity and validation message', async () => {
       const el = await fixture<BkInput>(
-        html`<bk-input name="email" label="Email" error="That address looks wrong."></bk-input>`,
+        html`<bk-input name="email" error="That address looks wrong."></bk-input>`,
       );
 
       expect(el.validity.valid).to.equal(false);
@@ -262,7 +262,7 @@ describe('bk-input form integration', () => {
 
     it('should restore its value from the browser state', async () => {
       const form = await fixture<HTMLFormElement>(
-        html`<form><bk-input name="email" value="a@b.c" label="Email"></bk-input></form>`,
+        html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
       );
       const el = form.querySelector('bk-input') as BkInput;
 
@@ -295,7 +295,7 @@ describe('bk-input reset semantics', () => {
 describe('bk-input platform validity', () => {
   it('should reject a value the native control rejects', async () => {
     const form = await fixture<HTMLFormElement>(
-      html`<form><bk-input name="email" label="Email" type="email" value="nope"></bk-input></form>`,
+      html`<form><bk-input name="email" type="email" value="nope"></bk-input></form>`,
     );
     const el = form.querySelector('bk-input') as BkInput;
 
@@ -305,7 +305,7 @@ describe('bk-input platform validity', () => {
 
   it('should use the message the platform already localised', async () => {
     const form = await fixture<HTMLFormElement>(
-      html`<form><bk-input name="email" label="Email" type="email" value="nope"></bk-input></form>`,
+      html`<form><bk-input name="email" type="email" value="nope"></bk-input></form>`,
     );
     const el = form.querySelector('bk-input') as BkInput;
     const control = el.shadowRoot!.querySelector('input')!;
@@ -316,7 +316,7 @@ describe('bk-input platform validity', () => {
 
   it('should clear a server error on reset, so the form is not stuck invalid', async () => {
     const form = await fixture<HTMLFormElement>(
-      html`<form><bk-input name="email" label="Email" value="a@b.c"></bk-input></form>`,
+      html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
     );
     const el = form.querySelector('bk-input') as BkInput;
     el.error = 'That address is taken.';
@@ -333,7 +333,7 @@ describe('bk-input platform validity', () => {
 describe('bk-input required', () => {
   it('should report a required empty field as invalid, with the platform message', async () => {
     const form = await fixture<HTMLFormElement>(
-      html`<form><bk-input name="email" label="Email" required></bk-input></form>`,
+      html`<form><bk-input name="email" required></bk-input></form>`,
     );
     const el = form.querySelector('bk-input') as BkInput;
 

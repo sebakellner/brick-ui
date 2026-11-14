@@ -57,14 +57,14 @@ never crosses a root.
 
 | Slot          | Rendered in                       | Falls back to                                 |
 | ------------- | --------------------------------- | --------------------------------------------- |
-| `label`       | the `<label>` bound with `for`    | the `label` property                          |
-| `description` | the description region            | the `helper` property                         |
+| `label`       | the `<label>` bound with `for`    | nothing: the slot is the label                |
+| `description` | the description region            | the `helper` property, on `bk-checkbox`       |
 | `error`       | the error region, `role="status"` | the `error` property, then the native message |
 
-`label`, `helper` and `error` keep working on `bk-input`: each is the fallback
-content of its slot, so a field written with attributes is still a field with a
-label. While the error region has content the description region is hidden;
-neither is deleted.
+There is no attribute a field can be labelled with. The slot is the label, so the
+control's name is the text the consumer puts in it; `bk-checkbox` still falls back
+to its `label` and `helper` properties when its slots are empty. While the error
+region has content the description region is hidden; neither is deleted.
 
 ## Properties
 

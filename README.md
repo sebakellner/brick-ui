@@ -25,7 +25,6 @@ Load the theme once, then use the elements:
 <bk-button>Save changes</bk-button>
 <bk-button variant="secondary">Cancel</bk-button>
 
-<bk-input label="Email" helper="We never share it." placeholder="you@brick.dev"></bk-input>
 <bk-checkbox label="Accept the terms"></bk-checkbox>
 
 <bk-field>

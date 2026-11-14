@@ -15,6 +15,16 @@ const innerError = (el: BkInput) => el.shadowRoot!.querySelector<HTMLElement>('[
 const innerRequired = (el: BkInput) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="required"]');
 
+const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
+
+const descriptionAtom = (text: string) =>
+  html`<bk-field-description slot="description">${text}</bk-field-description>`;
+
+const projectedText = (region: HTMLElement) =>
+  Array.from(region.querySelector('slot')!.assignedNodes({ flatten: true }))
+    .map((node) => node.textContent!.trim())
+    .join('');
+
 const colorOf = async (value: string): Promise<string> => {
   const probe = await fixture<HTMLElement>(html`<span style="color: ${value}"></span>`);
 
@@ -30,34 +40,60 @@ describe('bk-input', () => {
   });
 
   it('should label the input with a real label element', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
 
-    expect(innerLabel(el).textContent!.trim()).to.equal('Email');
+    expect(projectedText(innerLabel(el))).to.equal('Email');
     expect(innerLabel(el).htmlFor).to.equal(innerInput(el).id);
     expect(innerInput(el).id).to.not.equal('');
   });
 
+  it('should take the label only from the label slot, never from a label attribute', async () => {
+    const el = await fixture<BkInput>(html`<bk-input name="email" label="Email"></bk-input>`);
+    await el.updateComplete;
+
+    expect(innerLabel(el).textContent!.trim(), 'the attribute names nothing').to.equal('');
+    expect(
+      innerLabel(el).hasAttribute('hidden'),
+      'a label with no text keeps its place and takes none',
+    ).to.equal(true);
+  });
+
+  it('should take a description only from the description slot, never from a helper attribute', async () => {
+    const el = await fixture<BkInput>(
+      html`<bk-input name="email" helper="We never share it."></bk-input>`,
+    );
+    await el.updateComplete;
+
+    expect(innerDescription(el).textContent!.trim(), 'the attribute describes nothing').to.equal(
+      '',
+    );
+    expect(
+      innerInput(el).getAttribute('aria-describedby'),
+      'a region with no content is not referenced',
+    ).to.equal(null);
+  });
+
   it('should take the label weight from the shared typography token', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
     document.documentElement.style.setProperty('--bk-font-weight-medium', '700');
 
     expect(getComputedStyle(innerLabel(el)).fontWeight).to.equal('700');
   });
 
-  it('should describe the input with the helper text and stay valid', async () => {
+  it('should describe the input with the slotted description and stay valid', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input label="Email" helper="We never share it"></bk-input>`,
+      html`<bk-input>${labelAtom}${descriptionAtom('We never share it')}</bk-input>`,
     );
 
-    expect(innerDescription(el).textContent!.trim()).to.equal('We never share it');
+    expect(projectedText(innerDescription(el))).to.equal('We never share it');
     expect(innerDescription(el).getAttribute('data-state')).to.equal(null);
     expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerDescription(el).id);
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
   });
 
-  it('should show the error instead of the helper and mark the field invalid', async () => {
+  it('should show the error instead of the description and mark the field invalid', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input label="Email" helper="Helper" error="Required"></bk-input>`,
+      html`<bk-input error="Required">${labelAtom}${descriptionAtom('Helper')}</bk-input>`,
     );
 
     expect(innerError(el).textContent!.trim()).to.equal('Required');
@@ -68,10 +104,9 @@ describe('bk-input', () => {
 
   it('should paint its field from the roles', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input
-        label="Email"
-        style="--bk-bg-surface: rgb(7, 8, 9); --bk-border-default: rgb(1, 2, 3)"
-      ></bk-input>`,
+      html`<bk-input style="--bk-bg-surface: rgb(7, 8, 9); --bk-border-default: rgb(1, 2, 3)"
+        >${labelAtom}</bk-input
+      >`,
     );
     const style = getComputedStyle(innerInput(el));
 
@@ -80,14 +115,14 @@ describe('bk-input', () => {
   });
 
   it('should take the label colour from the text role', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
     el.style.setProperty('--bk-text-default', 'rgb(3, 3, 3)');
 
     expect(getComputedStyle(innerLabel(el)).color).to.equal('rgb(3, 3, 3)');
   });
 
   it('should take the disabled field from the muted roles', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email" disabled></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
     el.style.setProperty('--bk-bg-surface-muted', 'rgb(4, 4, 4)');
     el.style.setProperty('--bk-text-muted', 'rgb(5, 5, 5)');
     const style = getComputedStyle(innerInput(el));
@@ -97,7 +132,7 @@ describe('bk-input', () => {
   });
 
   it('should take the error border and message from the danger roles', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email" error="Required"></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input error="Required">${labelAtom}</bk-input>`);
     el.style.setProperty('--bk-border-danger', 'rgb(6, 6, 6)');
     el.style.setProperty('--bk-text-danger', 'rgb(7, 7, 7)');
 
@@ -106,7 +141,7 @@ describe('bk-input', () => {
   });
 
   it('should keep the danger border while the invalid field is hovered', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email" error="Required"></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input error="Required">${labelAtom}</bk-input>`);
     const field = innerInput(el);
     const { x, y, width, height } = field.getBoundingClientRect();
     await sendMouse({
@@ -122,7 +157,7 @@ describe('bk-input', () => {
 
   it('should pass autocomplete and inputmode through to the field', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input label="Email" autocomplete="email" inputmode="email"></bk-input>`,
+      html`<bk-input autocomplete="email" inputmode="email">${labelAtom}</bk-input>`,
     );
 
     expect(innerInput(el).getAttribute('autocomplete')).to.equal('email');
@@ -130,7 +165,7 @@ describe('bk-input', () => {
   });
 
   it('should keep the message region available to assistive tech while empty', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
     const message = innerError(el);
 
     expect(message.getAttribute('role')).to.equal('status');
@@ -140,7 +175,7 @@ describe('bk-input', () => {
 
   it('should submit with the form and restore the initial value on reset', async () => {
     const form = await fixture<HTMLFormElement>(
-      html`<form><bk-input name="email" value="a@b.c" label="Email"></bk-input></form>`,
+      html`<form><bk-input name="email" value="a@b.c">${labelAtom}</bk-input></form>`,
     );
     const field = form.querySelector('bk-input') as BkInput;
     await field.updateComplete;
@@ -158,7 +193,7 @@ describe('bk-input', () => {
 
   it('should clear the submitted value on reset without waiting a render', async () => {
     const form = await fixture<HTMLFormElement>(
-      html`<form><bk-input name="email" value="a@b.c" label="Email"></bk-input></form>`,
+      html`<form><bk-input name="email" value="a@b.c">${labelAtom}</bk-input></form>`,
     );
     const field = form.querySelector('bk-input') as BkInput;
     field.value = 'changed@b.c';
@@ -173,8 +208,8 @@ describe('bk-input', () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
         <fieldset disabled>
-          <bk-input name="email" label="Email" disabled></bk-input>
-          <bk-input name="other" label="Other"></bk-input>
+          <bk-input name="email" disabled>${labelAtom}</bk-input>
+          <bk-input name="other"></bk-input>
         </fieldset>
       </form>
     `);
@@ -194,7 +229,7 @@ describe('bk-input', () => {
   });
 
   it('should disable the inner field with the native attribute, not aria-disabled', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email" disabled></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
     const input = innerInput(el);
 
     expect(input.disabled).to.equal(true);
@@ -204,7 +239,7 @@ describe('bk-input', () => {
 
   it('should refuse typed input while disabled', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input label="Email" value="a@b.c" disabled></bk-input>`,
+      html`<bk-input value="a@b.c" disabled>${labelAtom}</bk-input>`,
     );
 
     el.focus();
@@ -218,7 +253,7 @@ describe('bk-input', () => {
   for (const theme of ['light', 'dark'] as const) {
     it(`should keep the field border at 3:1 against its own surface (${theme})`, async () => {
       await loadTheme(theme);
-      const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+      const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
       const style = getComputedStyle(innerInput(el));
 
       expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
@@ -226,13 +261,13 @@ describe('bk-input', () => {
   }
 
   it('should render no required glyph on an optional field', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
 
     expect(innerRequired(el), 'an optional field marks nothing').to.equal(null);
   });
 
   it('should mark a required field that has a label', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email" required></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom}</bk-input>`);
 
     expect(innerRequired(el), 'the label carries the mark').to.not.equal(null);
     expect(innerRequired(el)!.textContent).to.equal('*');
@@ -242,13 +277,13 @@ describe('bk-input', () => {
   });
 
   it('should keep the required glyph out of the accessible name', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email" required></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom}</bk-input>`);
 
     expect(innerRequired(el)!.getAttribute('aria-hidden')).to.equal('true');
   });
 
   it('should keep the native required attribute as what announces the state', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email" required></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom}</bk-input>`);
 
     expect(innerInput(el).hasAttribute('required')).to.equal(true);
     expect(innerInput(el).required).to.equal(true);
@@ -269,7 +304,7 @@ describe('bk-input', () => {
   });
 
   it('should leave two steps of the space scale under the label', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
 
     expect(
       getComputedStyle(innerLabel(el)).marginBlockEnd,
@@ -278,7 +313,7 @@ describe('bk-input', () => {
   });
 
   it('should paint the required glyph with the danger role', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email" required></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom}</bk-input>`);
 
     expect(getComputedStyle(innerRequired(el)!).color).to.equal(
       await colorOf('var(--bk-text-danger)'),
@@ -299,20 +334,20 @@ describe('bk-input', () => {
   });
 
   it('should paint the label danger while the field is invalid', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email" error="Required"></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input error="Required">${labelAtom}</bk-input>`);
 
     expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
   });
 
   it('should paint the label muted while the field is disabled', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email" disabled></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
 
     expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-muted)'));
   });
 
   it('should let invalid win over disabled on the label', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input label="Email" error="Required" disabled></bk-input>`,
+      html`<bk-input error="Required" disabled>${labelAtom}</bk-input>`,
     );
 
     expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
@@ -343,7 +378,7 @@ describe('bk-input', () => {
   });
 
   it('should emit bk-change with the value, bubbling out of the shadow root', async () => {
-    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
     let received: CustomEvent<{ value: string }> | undefined;
     el.addEventListener('bk-change', (event) => {
       received = event as CustomEvent<{ value: string }>;

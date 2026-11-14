@@ -51,7 +51,7 @@ who forgets is the consumer who gets a broken form, and they have no way to know
 ## A4. Reference a description only while it has content
 
 **Rule.** `aria-describedby` points at the message region only while that region
-has text. An empty helper or error removes the reference. The text is not always
+has text. An empty description or error removes the reference. The text is not always
 the region's own: content that arrives through a slot is not in its
 `textContent`, so a control with slotted descriptions decides from `slotchange`
 and `assignedNodes()`, never from the rendered string

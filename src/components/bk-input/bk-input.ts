@@ -30,10 +30,6 @@ export class BkInput extends FormControlMixin(LitElement) {
     `,
   ];
 
-  @property({ type: String }) label = '';
-
-  @property({ type: String }) helper = '';
-
   @property({ type: String }) type: BkInputType = 'text';
 
   @property({ type: String }) placeholder = '';
@@ -59,9 +55,7 @@ export class BkInput extends FormControlMixin(LitElement) {
         data-state=${this.fieldParts.labelState ?? nothing}
         ?hidden=${!this.fieldParts.labelled}
       >
-        <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}>
-          ${this.fieldParts.slottedLabel ? nothing : this.label}
-        </slot>
+        <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}></slot>
         ${this.fieldParts.glyph}
       </label>
       <input
@@ -87,7 +81,7 @@ export class BkInput extends FormControlMixin(LitElement) {
 
   private messageSources(): FieldMessageFallbacks {
     return {
-      description: this.helper,
+      description: '',
       error: this.error || this.fieldMessage,
     };
   }
