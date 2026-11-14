@@ -93,6 +93,10 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
       .native:checked + .box::after {
         visibility: visible;
       }
+
+      .native[aria-disabled='true'] + .box::after {
+        color: var(--bk-text-muted);
+      }
     `,
   ];
 

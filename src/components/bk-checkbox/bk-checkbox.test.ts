@@ -34,6 +34,8 @@ describe('bk-checkbox', () => {
   before(loadTheme);
 
   afterEach(() => {
+    document.documentElement.style.removeProperty('--bk-checkbox-size');
+    document.documentElement.style.removeProperty('--bk-checkbox-radius');
     setTheme('light');
   });
 
@@ -124,6 +126,42 @@ describe('bk-checkbox', () => {
     await el.updateComplete;
 
     expect(getComputedStyle(innerBox(el), '::after').visibility).to.equal('visible');
+  });
+
+  it('should draw the check with a stroke, not only colour it', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox label="Accept terms"></bk-checkbox>`);
+
+    el.checked = true;
+    await el.updateComplete;
+
+    const check = getComputedStyle(innerBox(el), '::after');
+
+    expect(check.borderInlineEndWidth).to.not.equal('0px');
+    expect(check.borderBlockEndWidth).to.not.equal('0px');
+  });
+
+  it('should let the host override the box size and radius', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox label="Accept terms"></bk-checkbox>`);
+    document.documentElement.style.setProperty('--bk-checkbox-size', '24px');
+    document.documentElement.style.setProperty('--bk-checkbox-radius', '0');
+    await el.updateComplete;
+
+    const box = getComputedStyle(innerBox(el));
+
+    expect(box.width).to.equal('24px');
+    expect(box.borderTopLeftRadius).to.equal('0px');
+  });
+
+  it('should clear the error when the box is toggled', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox label="Accept terms"></bk-checkbox>`);
+
+    el.error = 'You have to accept the terms.';
+    await el.updateComplete;
+
+    innerInput(el).click();
+    await el.updateComplete;
+
+    expect(el.error).to.equal('');
   });
 
   it('should keep the box border strong while the field is hovered', async () => {
@@ -278,12 +316,40 @@ describe('bk-checkbox', () => {
       expect(contrastRatio(check.color, box.backgroundColor)).to.be.at.least(3);
     });
 
-    it(`should keep the focus ring at 3:1 against the page (${theme})`, async () => {
+    it(`should keep the check at 3:1 against a disabled box (${theme})`, async () => {
       await loadTheme(theme);
+      const el = await fixture<BkCheckbox>(
+        html`<bk-checkbox label="Accept terms" checked disabled></bk-checkbox>`,
+      );
+      await pastTransition();
 
-      expect(
-        contrastRatio(await colorOf('var(--bk-focus-ring)'), await colorOf('var(--bk-bg-surface)')),
-      ).to.be.at.least(3);
+      const box = getComputedStyle(innerBox(el));
+      const check = getComputedStyle(innerBox(el), '::after');
+
+      expect(check.visibility).to.equal('visible');
+      expect(contrastRatio(check.color, box.backgroundColor)).to.be.at.least(3);
+    });
+
+    it(`should put the focus ring on the box and keep it at 3:1 (${theme})`, async () => {
+      await loadTheme(theme);
+      const host = await fixture<HTMLElement>(html`
+        <div>
+          <button type="button">before</button>
+          <bk-checkbox label="Accept terms"></bk-checkbox>
+        </div>
+      `);
+      const el = host.querySelector<BkCheckbox>('bk-checkbox')!;
+
+      host.querySelector<HTMLElement>('button')!.focus();
+      await sendKeys({ press: 'Tab' });
+      await nextFrame();
+
+      const box = getComputedStyle(innerBox(el));
+
+      expect(box.outlineStyle).to.equal('solid');
+      expect(contrastRatio(box.outlineColor, await colorOf('var(--bk-bg-surface)'))).to.be.at.least(
+        3,
+      );
     });
   }
 });

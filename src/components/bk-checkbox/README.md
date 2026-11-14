@@ -58,6 +58,11 @@ appears, and collapses with `:empty` when it has nothing to say.
 Everything else the box paints is a shared role or base token: theming the
 checkbox means theming the roles, not the field.
 
+`--bk-checkbox-variant-size` and `--bk-checkbox-variant-radius` are the internal
+defaults the two hooks fall back to, so an override set on an ancestor still
+wins ([ADR 0002](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0002-require-the-theme.md)).
+Set the two hooks above, not those.
+
 ```css
 .checkout {
   --bk-checkbox-size: var(--bk-space-3);
@@ -75,8 +80,9 @@ checkbox means theming the roles, not the field.
   `aria-describedby` — lives on the native input.
 - The focus ring is drawn on the box through `:focus-visible` on the input, so it
   appears for keyboard focus and not for a mouse click.
-- The box boundary, the check and the focus ring each clear 3:1 against what they
-  sit on (WCAG 1.4.11). The suite asserts all three, in both themes.
+- The box boundary, the check — while checked, and while a checked box is
+  disabled — and the focus ring each clear 3:1 against what they sit on
+  (WCAG 1.4.11). The suite asserts all three, in both themes.
 - `disabled` sets `aria-disabled` on the inner checkbox and cancels the click:
   the control stays in the tab order and is announced as unavailable, while
   Space and the label stop changing it. A native `disabled` input would be
