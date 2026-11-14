@@ -1,6 +1,8 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, sendMouse } from '@web/test-runner-commands';
 import './define.js';
+import '../bk-field/define.js';
+import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
 import type { BkCheckbox } from './bk-checkbox.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
@@ -8,6 +10,8 @@ import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 const innerInput = (el: BkCheckbox) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkCheckbox) => el.shadowRoot!.querySelector('label')!;
 const innerBox = (el: BkCheckbox) => el.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
+const innerRequired = (el: BkCheckbox) =>
+  el.shadowRoot!.querySelector<HTMLElement>('[part="required"]');
 const innerText = (el: BkCheckbox) => el.shadowRoot!.querySelector<HTMLElement>('.text')!;
 const innerDescription = (el: BkCheckbox) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="description"]')!;
@@ -297,6 +301,114 @@ describe('bk-checkbox', () => {
     await el.updateComplete;
 
     expect(el.checkValidity()).to.equal(true);
+  });
+
+  it('should render no required glyph on an optional box', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox label="Accept terms"></bk-checkbox>`);
+
+    expect(innerRequired(el), 'an optional box marks nothing').to.equal(null);
+  });
+
+  it('should mark a required box that has a label', async () => {
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox label="Accept terms" required></bk-checkbox>`,
+    );
+
+    expect(innerRequired(el), 'the label carries the mark').to.not.equal(null);
+    expect(innerRequired(el)!.textContent).to.equal('*');
+    expect(innerRequired(el)!.closest('label'), 'the mark lives inside the label').to.equal(
+      innerLabel(el),
+    );
+  });
+
+  it('should keep the required glyph out of the accessible name', async () => {
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox label="Accept terms" required></bk-checkbox>`,
+    );
+
+    expect(innerRequired(el)!.getAttribute('aria-hidden')).to.equal('true');
+  });
+
+  it('should keep the native required attribute as what announces the state', async () => {
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox label="Accept terms" required></bk-checkbox>`,
+    );
+
+    expect(innerInput(el).hasAttribute('required')).to.equal(true);
+    expect(innerInput(el).required).to.equal(true);
+  });
+
+  it('should mark a required box whose label is a slotted atom', async () => {
+    const el = await fixture<BkCheckbox>(html`
+      <bk-checkbox required><bk-field-label slot="label">Accept terms</bk-field-label></bk-checkbox>
+    `);
+
+    expect(innerRequired(el), 'the slotted label is a label to mark').to.not.equal(null);
+  });
+
+  it('should render no glyph for a required box with no label at all', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox required></bk-checkbox>`);
+
+    expect(innerRequired(el), 'an asterisk beside nothing marks nothing').to.equal(null);
+  });
+
+  it('should paint the required glyph muted, not danger', async () => {
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox label="Accept terms" required></bk-checkbox>`,
+    );
+
+    expect(getComputedStyle(innerRequired(el)!).color).to.equal(
+      await colorOf('var(--bk-text-muted)'),
+    );
+  });
+
+  it('should paint the label danger while the box is invalid', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox label="Accept terms"></bk-checkbox>`);
+
+    el.error = 'You have to accept the terms.';
+    await el.updateComplete;
+
+    expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
+  });
+
+  it('should paint the label muted while the box is disabled', async () => {
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox label="Accept terms" disabled></bk-checkbox>`,
+    );
+
+    expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-muted)'));
+  });
+
+  it('should let invalid win over disabled on the label', async () => {
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox label="Accept terms" disabled></bk-checkbox>`,
+    );
+
+    el.error = 'You have to accept the terms.';
+    await el.updateComplete;
+
+    expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
+  });
+
+  it('should paint a hosted label atom with the box state', async () => {
+    const el = await fixture<BkCheckbox>(html`
+      <bk-checkbox><bk-field-label slot="label">Accept terms</bk-field-label></bk-checkbox>
+    `);
+    const atom = el.querySelector<BkFieldLabel>('bk-field-label')!;
+
+    el.error = 'You have to accept the terms.';
+    await el.updateComplete;
+
+    expect(getComputedStyle(atom).color).to.equal(await colorOf('var(--bk-text-danger)'));
+  });
+
+  it('should paint a hosted label atom muted while the box is disabled', async () => {
+    const el = await fixture<BkCheckbox>(html`
+      <bk-checkbox disabled><bk-field-label slot="label">Accept terms</bk-field-label></bk-checkbox>
+    `);
+    const atom = el.querySelector<BkFieldLabel>('bk-field-label')!;
+
+    expect(getComputedStyle(atom).color).to.equal(await colorOf('var(--bk-text-muted)'));
   });
 
   for (const theme of ['light', 'dark'] as const) {

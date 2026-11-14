@@ -1,4 +1,4 @@
-import { LitElement, css, html, nothing } from 'lit';
+import { LitElement, css, html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import {
   FieldMessagesController,
@@ -48,6 +48,11 @@ export class BkInput extends FormControlMixin(LitElement) {
 
   private hasSlottedLabel = false;
 
+  private get labelState(): 'invalid' | 'disabled' | undefined {
+    if (this.fieldInvalid) return 'invalid';
+    return this.fieldDisabled ? 'disabled' : undefined;
+  }
+
   override get formControlElement(): HTMLInputElement | undefined {
     return this.shadowRoot?.querySelector('input') ?? undefined;
   }
@@ -58,15 +63,31 @@ export class BkInput extends FormControlMixin(LitElement) {
     this.messages.connect();
   }
 
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    this.syncHostedLabelState();
+  }
+
   override render() {
     const describedBy = this.messages.update(this.messageSources());
     const labelled = this.label !== '' || this.hasSlottedLabel;
 
     return html`
-      <label class="label" part="label" for=${this.controlId} ?hidden=${!labelled}>
+      <label
+        class="label"
+        part="label"
+        for=${this.controlId}
+        data-state=${this.labelState ?? nothing}
+        ?hidden=${!labelled}
+      >
         <slot name="label" @slotchange=${this.handleLabelSlotChange}>
           ${this.hasSlottedLabel ? nothing : this.label}
         </slot>
+        ${
+          this.required && labelled
+            ? html`<span class="required" part="required" aria-hidden="true">*</span>`
+            : nothing
+        }
       </label>
       <input
         part="input"
@@ -100,8 +121,18 @@ export class BkInput extends FormControlMixin(LitElement) {
     return Array.from(this.children).some((child) => child.slot === 'label');
   }
 
+  private syncHostedLabelState(): void {
+    const state = this.labelState;
+    for (const child of this.children) {
+      if (child.slot !== 'label') continue;
+      if (state) child.setAttribute('data-state', state);
+      else child.removeAttribute('data-state');
+    }
+  }
+
   private readonly handleLabelSlotChange = (event: Event): void => {
     const slotted = (event.target as HTMLSlotElement).assignedNodes({ flatten: false }).length > 0;
+    this.syncHostedLabelState();
     if (slotted === this.hasSlottedLabel) return;
     this.hasSlottedLabel = slotted;
     this.requestUpdate();

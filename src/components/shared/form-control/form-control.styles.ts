@@ -22,6 +22,19 @@ export const formControlStyles = css`
     color: var(--bk-text-default);
   }
 
+  .label[data-state='invalid'] {
+    color: var(--bk-text-danger);
+  }
+
+  .label[data-state='disabled'] {
+    color: var(--bk-text-muted);
+  }
+
+  .required {
+    margin-inline-start: var(--bk-space-1);
+    color: var(--bk-text-muted);
+  }
+
   .control {
     box-sizing: border-box;
     inline-size: 100%;

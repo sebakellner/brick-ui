@@ -1,4 +1,4 @@
-import { LitElement, css, html, nothing } from 'lit';
+import { LitElement, css, html, nothing, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
 import {
   FieldMessagesController,
@@ -114,6 +114,13 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
 
   private readonly messages = new FieldMessagesController(this, this.controlId);
 
+  private hasSlottedLabel = false;
+
+  private get labelState(): 'invalid' | 'disabled' | undefined {
+    if (this.fieldInvalid) return 'invalid';
+    return this.fieldDisabled ? 'disabled' : undefined;
+  }
+
   override get formControlElement(): HTMLInputElement | undefined {
     return this.shadowRoot?.querySelector('input') ?? undefined;
   }
@@ -124,14 +131,26 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
 
   override connectedCallback(): void {
     super.connectedCallback();
+    this.hasSlottedLabel = this.readSlottedLabel();
     this.messages.connect();
+  }
+
+  override updated(changed: PropertyValues): void {
+    super.updated(changed);
+    this.syncHostedLabelState();
   }
 
   override render() {
     const describedBy = this.messages.update(this.messageSources());
+    const labelled = this.label !== '' || this.hasSlottedLabel;
 
     return html`
-      <label class="field label" part="label" for=${this.controlId}>
+      <label
+        class="field label"
+        part="label"
+        for=${this.controlId}
+        data-state=${this.labelState ?? nothing}
+      >
         <input
           part="input"
           class="native"
@@ -147,13 +166,39 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
           @change=${this.handleChange}
         />
         <span part="box" class="box" aria-hidden="true"></span>
-        <slot name="label"
+        <slot name="label" @slotchange=${this.handleLabelSlotChange}
           >${this.label ? html`<span class="text">${this.label}</span>` : nothing}</slot
         >
+        ${
+          this.required && labelled
+            ? html`<span class="required" part="required" aria-hidden="true">*</span>`
+            : nothing
+        }
       </label>
       ${this.messages.render()}
     `;
   }
+
+  private readSlottedLabel(): boolean {
+    return Array.from(this.children).some((child) => child.slot === 'label');
+  }
+
+  private syncHostedLabelState(): void {
+    const state = this.labelState;
+    for (const child of this.children) {
+      if (child.slot !== 'label') continue;
+      if (state) child.setAttribute('data-state', state);
+      else child.removeAttribute('data-state');
+    }
+  }
+
+  private readonly handleLabelSlotChange = (event: Event): void => {
+    const slotted = (event.target as HTMLSlotElement).assignedNodes({ flatten: false }).length > 0;
+    this.syncHostedLabelState();
+    if (slotted === this.hasSlottedLabel) return;
+    this.hasSlottedLabel = slotted;
+    this.requestUpdate();
+  };
 
   private messageSources(): FieldMessageFallbacks {
     return {

@@ -1,6 +1,8 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, sendMouse } from '@web/test-runner-commands';
 import './define.js';
+import '../bk-field/define.js';
+import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
 import type { BkInput } from './bk-input.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
@@ -10,6 +12,14 @@ const innerLabel = (el: BkInput) => el.shadowRoot!.querySelector('label')!;
 const innerDescription = (el: BkInput) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="description"]')!;
 const innerError = (el: BkInput) => el.shadowRoot!.querySelector<HTMLElement>('[part="error"]')!;
+const innerRequired = (el: BkInput) =>
+  el.shadowRoot!.querySelector<HTMLElement>('[part="required"]');
+
+const colorOf = async (value: string): Promise<string> => {
+  const probe = await fixture<HTMLElement>(html`<span style="color: ${value}"></span>`);
+
+  return getComputedStyle(probe).color;
+};
 
 describe('bk-input', () => {
   before(loadTheme);
@@ -214,6 +224,101 @@ describe('bk-input', () => {
       expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
     });
   }
+
+  it('should render no required glyph on an optional field', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+
+    expect(innerRequired(el), 'an optional field marks nothing').to.equal(null);
+  });
+
+  it('should mark a required field that has a label', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email" required></bk-input>`);
+
+    expect(innerRequired(el), 'the label carries the mark').to.not.equal(null);
+    expect(innerRequired(el)!.textContent).to.equal('*');
+    expect(innerRequired(el)!.closest('label'), 'the mark lives inside the label').to.equal(
+      innerLabel(el),
+    );
+  });
+
+  it('should keep the required glyph out of the accessible name', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email" required></bk-input>`);
+
+    expect(innerRequired(el)!.getAttribute('aria-hidden')).to.equal('true');
+  });
+
+  it('should keep the native required attribute as what announces the state', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email" required></bk-input>`);
+
+    expect(innerInput(el).hasAttribute('required')).to.equal(true);
+    expect(innerInput(el).required).to.equal(true);
+  });
+
+  it('should mark a required field whose label is a slotted atom', async () => {
+    const el = await fixture<BkInput>(html`
+      <bk-input required><bk-field-label slot="label">Email</bk-field-label></bk-input>
+    `);
+
+    expect(innerRequired(el), 'the slotted label is a label to mark').to.not.equal(null);
+  });
+
+  it('should render no glyph for a required field with no label at all', async () => {
+    const el = await fixture<BkInput>(html`<bk-input required></bk-input>`);
+
+    expect(innerRequired(el), 'an asterisk beside nothing marks nothing').to.equal(null);
+  });
+
+  it('should paint the required glyph muted, not danger', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email" required></bk-input>`);
+
+    expect(getComputedStyle(innerRequired(el)!).color).to.equal(
+      await colorOf('var(--bk-text-muted)'),
+    );
+  });
+
+  it('should paint the label danger while the field is invalid', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email" error="Required"></bk-input>`);
+
+    expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
+  });
+
+  it('should paint the label muted while the field is disabled', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email" disabled></bk-input>`);
+
+    expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-muted)'));
+  });
+
+  it('should let invalid win over disabled on the label', async () => {
+    const el = await fixture<BkInput>(
+      html`<bk-input label="Email" error="Required" disabled></bk-input>`,
+    );
+
+    expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
+  });
+
+  it('should paint a hosted label atom with the field state', async () => {
+    const el = await fixture<BkInput>(html`
+      <bk-input error="Required"><bk-field-label slot="label">Email</bk-field-label></bk-input>
+    `);
+    const atom = el.querySelector<BkFieldLabel>('bk-field-label')!;
+
+    expect(getComputedStyle(atom).color).to.equal(await colorOf('var(--bk-text-danger)'));
+  });
+
+  it('should paint a hosted label atom muted while the field is disabled', async () => {
+    const el = await fixture<BkInput>(html`
+      <bk-input disabled><bk-field-label slot="label">Email</bk-field-label></bk-input>
+    `);
+    const atom = el.querySelector<BkFieldLabel>('bk-field-label')!;
+
+    expect(getComputedStyle(atom).color).to.equal(await colorOf('var(--bk-text-muted)'));
+  });
+
+  it('should leave a standalone label atom unpainted', async () => {
+    const atom = await fixture<BkFieldLabel>(html`<bk-field-label>Email</bk-field-label>`);
+
+    expect(getComputedStyle(atom).color).to.equal(await colorOf('var(--bk-text-default)'));
+  });
 
   it('should emit bk-change with the value, bubbling out of the shadow root', async () => {
     const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
