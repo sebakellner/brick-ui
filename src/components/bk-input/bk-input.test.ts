@@ -268,6 +268,15 @@ describe('bk-input', () => {
     expect(innerRequired(el), 'an asterisk beside nothing marks nothing').to.equal(null);
   });
 
+  it('should leave two steps of the space scale under the label', async () => {
+    const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
+
+    expect(
+      getComputedStyle(innerLabel(el)).marginBlockEnd,
+      '--bk-space-2 under the label',
+    ).to.equal('8px');
+  });
+
   it('should paint the required glyph with the danger role', async () => {
     const el = await fixture<BkInput>(html`<bk-input label="Email" required></bk-input>`);
 

@@ -15,7 +15,7 @@ export const formControlStyles = css`
 
   .label {
     display: block;
-    margin-block-end: var(--bk-space-1);
+    margin-block-end: var(--bk-space-2);
     font-family: var(--bk-font-sans);
     font-size: var(--bk-font-size-sm);
     font-weight: var(--bk-font-weight-medium);

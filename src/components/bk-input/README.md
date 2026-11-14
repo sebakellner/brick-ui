@@ -131,7 +131,7 @@ the only signal — the native `required` attribute is what announces the state.
 | `--bk-text-muted`                                                                                            | placeholder, message, disabled label, `*`    |
 | `--bk-bg-surface-muted`                                                                                      | background when disabled                     |
 | `--bk-border-width`                                                                                          | border width                                 |
-| `--bk-control-height`, `--bk-space-1`, `--bk-space-3`                                                        | height and padding                           |
+| `--bk-control-height`, `--bk-space-1`, `--bk-space-2`, `--bk-space-3`                                        | height, padding and the gap under the label  |
 | `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-size-md`, `--bk-line-height-md`, `--bk-font-weight-medium` | typography                                   |
 | `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset`                                         | focus ring                                   |
 | `--bk-transition`                                                                                            | border transition                            |
