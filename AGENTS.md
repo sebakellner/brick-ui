@@ -14,6 +14,7 @@ tokens/base/           primitives, theme-invariant
 tokens/role/light.json semantic roles, one file per theme
 tokens/component/      what one component paints
 src/components/bk-*/   element, stories, docs page, test, README
+src/components/shared/ contract: mixins, controllers, styles; no tag, no define, no shadow root
 src/styles/tokens/     generated CSS — never edit by hand
 src/styles/theme.css   the theming entry point, imports the generated files
 src/test/helpers/      loadTheme and the contrast assertions

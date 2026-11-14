@@ -28,6 +28,13 @@ Load the theme once, then use the elements:
 <bk-input label="Email" helper="We never share it." placeholder="you@brick.dev"></bk-input>
 <bk-checkbox label="Accept the terms"></bk-checkbox>
 
+<bk-field>
+  <bk-input name="email">
+    <bk-field-label>Email</bk-field-label>
+    <bk-field-description>We only use it for the receipt.</bk-field-description>
+  </bk-input>
+</bk-field>
+
 <script type="module" src="/src/index.ts"></script>
 ```
 

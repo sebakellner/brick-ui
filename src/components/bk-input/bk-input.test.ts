@@ -7,7 +7,9 @@ import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkInput) => el.shadowRoot!.querySelector('label')!;
-const innerMessage = (el: BkInput) => el.shadowRoot!.querySelector('[part="message"]')!;
+const innerDescription = (el: BkInput) =>
+  el.shadowRoot!.querySelector<HTMLElement>('[part="description"]')!;
+const innerError = (el: BkInput) => el.shadowRoot!.querySelector<HTMLElement>('[part="error"]')!;
 
 describe('bk-input', () => {
   before(loadTheme);
@@ -37,9 +39,9 @@ describe('bk-input', () => {
       html`<bk-input label="Email" helper="We never share it"></bk-input>`,
     );
 
-    expect(innerMessage(el).textContent!.trim()).to.equal('We never share it');
-    expect(innerMessage(el).getAttribute('data-state')).to.equal(null);
-    expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerMessage(el).id);
+    expect(innerDescription(el).textContent!.trim()).to.equal('We never share it');
+    expect(innerDescription(el).getAttribute('data-state')).to.equal(null);
+    expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerDescription(el).id);
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
   });
 
@@ -48,10 +50,10 @@ describe('bk-input', () => {
       html`<bk-input label="Email" helper="Helper" error="Required"></bk-input>`,
     );
 
-    expect(innerMessage(el).textContent!.trim()).to.equal('Required');
-    expect(innerMessage(el).getAttribute('data-state')).to.equal('error');
+    expect(innerError(el).textContent!.trim()).to.equal('Required');
+    expect(innerError(el).getAttribute('data-state')).to.equal('error');
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
-    expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerMessage(el).id);
+    expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerError(el).id);
   });
 
   it('should paint its field from the roles', async () => {
@@ -90,7 +92,7 @@ describe('bk-input', () => {
     el.style.setProperty('--bk-text-danger', 'rgb(7, 7, 7)');
 
     expect(getComputedStyle(innerInput(el)).borderTopColor).to.equal('rgb(6, 6, 6)');
-    expect(getComputedStyle(innerMessage(el)).color).to.equal('rgb(7, 7, 7)');
+    expect(getComputedStyle(innerError(el)).color).to.equal('rgb(7, 7, 7)');
   });
 
   it('should keep the danger border while the invalid field is hovered', async () => {
@@ -119,7 +121,7 @@ describe('bk-input', () => {
 
   it('should keep the message region available to assistive tech while empty', async () => {
     const el = await fixture<BkInput>(html`<bk-input label="Email"></bk-input>`);
-    const message = innerMessage(el);
+    const message = innerError(el);
 
     expect(message.getAttribute('role')).to.equal('status');
     expect(message.textContent!.trim()).to.equal('');

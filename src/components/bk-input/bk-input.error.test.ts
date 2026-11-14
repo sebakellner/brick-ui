@@ -4,9 +4,9 @@ import type { BkInput } from './bk-input.js';
 import { loadTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
-const innerMessage = (el: BkInput) => el.shadowRoot!.querySelector('[part="message"]')!;
+const innerError = (el: BkInput) => el.shadowRoot!.querySelector<HTMLElement>('[part="error"]')!;
 
-const message = (el: BkInput) => innerMessage(el).textContent!.trim();
+const message = (el: BkInput) => innerError(el).textContent!.trim();
 
 const type = async (el: BkInput, value: string) => {
   const field = innerInput(el);
@@ -38,7 +38,7 @@ describe('bk-input error model', () => {
     expect(innerInput(el).validity.valueMissing, 'the native control is invalid').to.equal(true);
     expect(innerInput(el).validationMessage).to.not.equal('');
     expect(message(el)).to.equal('We need this address.');
-    expect(innerMessage(el).getAttribute('data-state')).to.equal('error');
+    expect(innerError(el).getAttribute('data-state')).to.equal('error');
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
   });
 
@@ -77,7 +77,7 @@ describe('bk-input error model', () => {
     await touch(el);
 
     expect(message(el)).to.equal(native);
-    expect(innerMessage(el).getAttribute('data-state')).to.equal('error');
+    expect(innerError(el).getAttribute('data-state')).to.equal('error');
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
   });
 

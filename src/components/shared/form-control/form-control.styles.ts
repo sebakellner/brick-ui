@@ -9,6 +9,10 @@ export const formControlStyles = css`
     display: none;
   }
 
+  .label[hidden] {
+    display: none;
+  }
+
   .label {
     display: block;
     margin-block-end: var(--bk-space-1);
@@ -72,6 +76,16 @@ export const formControlStyles = css`
   }
 
   .message:empty {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .message[data-empty] {
     position: absolute;
     inline-size: 1px;
     block-size: 1px;
