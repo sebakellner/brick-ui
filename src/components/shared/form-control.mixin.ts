@@ -160,6 +160,11 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
     private syncFormValue(): void {
       this.internals.setFormValue(this.submittedValue);
 
+      if (this.fieldDisabled) {
+        this.internals.setValidity({});
+        return;
+      }
+
       const control = this.formControlElement;
 
       if (this.error) {

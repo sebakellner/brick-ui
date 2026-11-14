@@ -118,6 +118,18 @@ describe('bk-checkbox form participation', () => {
     expect(innerInput(el).checked).to.equal(false);
   });
 
+  it('should submit nothing and report valid while it is disabled', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-checkbox name="accept" label="Accept" checked disabled></bk-checkbox>
+        <bk-checkbox name="terms" label="Terms" required disabled></bk-checkbox>
+      </form>
+    `);
+
+    expect(new FormData(form).get('accept')).to.equal(null);
+    expect(form.checkValidity()).to.equal(true);
+  });
+
   it('should be disabled and still focusable inside a disabled fieldset', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>

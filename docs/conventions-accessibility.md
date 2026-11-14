@@ -59,17 +59,28 @@ thing.
 
 **Enforced by.** The suite.
 
-## A5. Disabled is `aria-disabled`
+## A5. Disabled is announced, and blocked in the component
 
-**Rule.** A disabled control sets `aria-disabled="true"` on the inner element and
-blocks activation in the component. It does not set the `disabled` attribute.
+**Rule.** A disabled control is announced as unavailable and its block lives in
+the component, never in the host page. The mechanism follows what is blocked. A
+**widget** — a button, a checkbox — sets `aria-disabled="true"` on its inner
+element and cancels the activation, so it keeps its place in the tab order. A
+**text field** sets the native `disabled` attribute, which already refuses typed
+text, autofill, pointer interaction, submission and constraint validation, and
+leaves the tab order as the platform means it to — [0008](adr/0008-keep-the-native-disabled-attribute-on-text-fields.md).
 
-**Why.** `disabled` removes the control from the tab order, so a keyboard user
-cannot reach it to find out why it is unavailable. `aria-disabled` keeps it
-focusable and discoverable while still refusing the action.
+**Why.** On a widget, what is blocked is an action the user has not decided on
+yet, so they have to be able to reach the control to find out why it is
+unavailable: `disabled` removes it from the tab order, `aria-disabled` keeps it
+focusable. On a field, nothing is activated — the state to block is "editable" —
+and the native attribute blocks it completely, with one meaning across browsers,
+where the ARIA recipe needs a second mechanism (`readonly`) to stop typing and
+still reads as read-only to a screen reader.
 
-**Enforced by.** The suite: it asserts the attribute, that the inner control is
-still focusable, and that a click does nothing.
+**Enforced by.** The suite, per shape: for a widget, that the attribute is set,
+that the inner control is still focusable and that a click changes nothing; for a
+field, that the native attribute is set, that no `aria-disabled` is written, and
+that typing changes nothing.
 
 ## A6. Form controls are form-associated
 
