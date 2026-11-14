@@ -21,6 +21,7 @@ export interface FormControlInterface {
   readonly fieldInvalid: boolean;
   readonly fieldDisabled: boolean;
   readonly formControlElement: NativeFormControl | undefined;
+  readonly submittedValue: File | string | FormData | null;
   checkValidity(): boolean;
   reportValidity(): boolean;
   showValidationMessage(): void;
@@ -120,6 +121,10 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       return undefined;
     }
 
+    get submittedValue(): File | string | FormData | null {
+      return this.value;
+    }
+
     override updated(changed: PropertyValues): void {
       super.updated(changed);
       this.syncFormValue();
@@ -153,7 +158,7 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
     };
 
     private syncFormValue(): void {
-      this.internals.setFormValue(this.value);
+      this.internals.setFormValue(this.submittedValue);
 
       const control = this.formControlElement;
 

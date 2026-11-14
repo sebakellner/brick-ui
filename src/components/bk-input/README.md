@@ -50,6 +50,7 @@ Inherited from `FormControlMixin`, the same surface a native control offers:
 | `showValidationMessage()` | marks the field touched, so the native message appears |
 | `fieldMessage` | the native message the field would show, or `''` |
 | `fieldInvalid` | whether the message region is currently reporting a problem |
+| `submittedValue` | what `setFormValue` submits; `value` by default, overridden by `bk-checkbox` to submit only while it is checked |
 
 `error` wins over `required`: a field with a message is invalid because of it, and
 its validity carries `customError`. A `required` field with no value reports

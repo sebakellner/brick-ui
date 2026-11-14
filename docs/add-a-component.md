@@ -1,6 +1,6 @@
 # Add a component
 
-Use this to add a third element to the kit. It assumes the token layers are
+Use this to add the next element to the kit. It assumes the token layers are
 familiar — read [architecture.md](architecture.md) and
 [conventions-tokens.md](conventions-tokens.md) first — and it exists so the next
 component does not re-decide any of it.
@@ -56,10 +56,10 @@ component does not re-decide any of it.
    Stories are the only place where a raw `px` is acceptable — scaffolding, not
    design.
 
-7. **Docs.** `bk-<name>/README.md` plus its Storybook page, then add the element to
-   the components table in the root `README.md`. Name any limitation you are
-   shipping with in the PR description: a limitation written down is a limitation
-   someone can fix, and one kept quiet is a bug report six months late.
+7. **Docs.** `bk-<name>/README.md` plus its Storybook page. Name any limitation
+   you are shipping with in the PR description: a limitation written down is a
+   limitation someone can fix, and one kept quiet is a bug report six months
+   late.
 
 8. **Check the definition of done** in [AGENTS.md](../AGENTS.md).
 
@@ -82,7 +82,8 @@ to maintain the API: it reads this file.
 ## Verify
 
 - `pnpm test`, `pnpm typecheck`, `pnpm check:tokens` all green.
-- The new element appears in the root README table and in Storybook.
+- The new element has a `README.md` and a Storybook page, and the documentation
+  table in the root README reaches it.
 - A keyboard-only pass: tab to it, focus ring visible, `aria-disabled` controls
   reachable and inert.
 - Every new token is read by the component, and every new name resolves: the suite
