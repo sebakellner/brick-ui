@@ -17,10 +17,13 @@ export interface FormControlInterface {
   readonly form: HTMLFormElement | null;
   readonly validity: ValidityState;
   readonly validationMessage: string;
+  readonly fieldMessage: string;
+  readonly fieldInvalid: boolean;
   readonly fieldDisabled: boolean;
   readonly formControlElement: NativeFormControl | undefined;
   checkValidity(): boolean;
   reportValidity(): boolean;
+  showValidationMessage(): void;
   formResetCallback(): void;
   formDisabledCallback(disabled: boolean): void;
   formStateRestoreCallback(
@@ -36,6 +39,8 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
     private readonly internals = this.attachInternals();
 
     private formDisabled = false;
+
+    private touched = false;
 
     @property({ type: String }) name = '';
 
@@ -59,6 +64,17 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       return this.internals.validationMessage;
     }
 
+    get fieldMessage(): string {
+      if (!this.touched || this.form?.noValidate) return '';
+      const control = this.formControlElement;
+      if (!control || control.validity.valid) return '';
+      return control.validationMessage;
+    }
+
+    get fieldInvalid(): boolean {
+      return Boolean(this.error || this.fieldMessage);
+    }
+
     checkValidity(): boolean {
       return this.internals.checkValidity();
     }
@@ -67,13 +83,20 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       return this.internals.reportValidity();
     }
 
+    showValidationMessage(): void {
+      this.touched = true;
+      this.requestUpdate();
+    }
+
     formResetCallback(): void {
       const initial = this.getAttribute('value') ?? '';
       this.error = '';
+      this.touched = false;
       this.value = initial;
       this.syncFormValue();
       const control = this.formControlElement;
       if (control) control.value = initial;
+      this.requestUpdate();
     }
 
     formDisabledCallback(disabled: boolean): void {
@@ -101,6 +124,33 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       super.updated(changed);
       this.syncFormValue();
     }
+
+    override connectedCallback(): void {
+      super.connectedCallback();
+      // focusout is composed and invalid fires at this element without bubbling.
+      this.addEventListener('input', this.handleFieldInput);
+      this.addEventListener('focusout', this.handleFieldFocusOut);
+      this.addEventListener('invalid', this.handleFieldInvalid);
+    }
+
+    override disconnectedCallback(): void {
+      this.removeEventListener('input', this.handleFieldInput);
+      this.removeEventListener('focusout', this.handleFieldFocusOut);
+      this.removeEventListener('invalid', this.handleFieldInvalid);
+      super.disconnectedCallback();
+    }
+
+    private readonly handleFieldInput = (): void => {
+      if (this.error) this.error = '';
+    };
+
+    private readonly handleFieldFocusOut = (): void => {
+      this.showValidationMessage();
+    };
+
+    private readonly handleFieldInvalid = (): void => {
+      this.showValidationMessage();
+    };
 
     private syncFormValue(): void {
       this.internals.setFormValue(this.value);
