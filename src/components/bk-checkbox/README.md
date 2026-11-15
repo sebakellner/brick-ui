@@ -163,7 +163,8 @@ Set the two hooks above, not those.
 
 - No `indeterminate`. A tri-state box needs a decision on what it submits, and
   that decision is not made yet.
-- No group. Several boxes sharing a `name` are several elements plus the
-  consumer's mapping, not a `bk-checkbox-group`.
+- No group here. Wrapping several boxes is `bk-checkbox-group`: this component is
+  one box with its own label, message and validity, and it never reads an
+  ancestor.
 - A value the browser restores after a navigation comes back as the submitted
   `value`, not as `checked`, so a restored box can render unchecked.

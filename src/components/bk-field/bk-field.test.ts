@@ -125,6 +125,38 @@ describe('bk-field', () => {
     }
   });
 
+  it('should collapse a description atom while it is marked empty', async () => {
+    const el = await fixture<BkFieldDescription>(
+      html`<bk-field-description data-empty>We only use it for the receipt.</bk-field-description>`,
+    );
+    const style = getComputedStyle(el);
+
+    expect(style.position, 'an empty description is clipped, not removed').to.equal('absolute');
+    expect(style.width).to.equal('1px');
+    expect(style.height).to.equal('1px');
+    expect(Boolean(el.isConnected), 'the empty description stays in the tree').to.equal(true);
+    expect(
+      el.shadowRoot!.querySelector('slot')!.assignedNodes({ flatten: true }).length,
+      'the empty description still projects its content',
+    ).to.be.greaterThan(0);
+  });
+
+  it('should collapse an error atom while it is marked empty', async () => {
+    const el = await fixture<BkFieldError>(
+      html`<bk-field-error data-empty>Enter a valid address.</bk-field-error>`,
+    );
+    const style = getComputedStyle(el);
+
+    expect(style.position, 'an empty error is clipped, not removed').to.equal('absolute');
+    expect(style.width).to.equal('1px');
+    expect(style.height).to.equal('1px');
+    expect(Boolean(el.isConnected), 'the empty error stays in the tree').to.equal(true);
+    expect(
+      el.shadowRoot!.querySelector('slot')!.assignedNodes({ flatten: true }).length,
+      'the empty error still projects its content',
+    ).to.be.greaterThan(0);
+  });
+
   it('should space the parts from the field and not from the atoms', async () => {
     const el = await fixture<BkField>(html`
       <bk-field>

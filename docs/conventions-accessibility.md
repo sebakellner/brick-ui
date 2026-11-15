@@ -115,3 +115,29 @@ design value
 ([ADR 0004](adr/0004-forbid-style-literals-in-components.md)).
 
 **Enforced by.** Review.
+
+## A7a. A container of controls is named on its host
+
+**Rule.** An element that groups several controls carries `role="group"` on
+itself and takes its accessible name from the label the consumer wrote, assigned
+with `ariaLabelledByElements`; its description and error text are the consumer's
+own atoms, referenced by IDREF from the host, which puts `role="status"` and the
+empty-state mark on them. It never renders a region into its own shadow root and
+references it.
+
+**Why.** An IDREF is resolved in the tree of the element that carries it, and
+element reflection keeps that rule: a host cannot name or describe a node in its
+own shadow root. A container that renders its own regions looks finished and
+announces nothing. The alternative — `referenceTarget` — is Chromium-only, and the
+suite runs in Chrome alone ([0005](adr/0005-test-in-chrome-only.md)), so it would
+be green and broken everywhere else.
+
+**This is the one place A7 is relaxed**: the live region is the slotted error
+atom, not a region the component owns, because a container has no same-tree region
+to offer. It is still never removed and still collapsed rather than
+`display: none`d while empty
+([ADR 0010](adr/0010-name-a-group-on-its-host-and-let-its-atoms-be-the-regions.md)).
+
+**Enforced by.** The suite: every reference is asserted by resolving it
+(`document.getElementById` on the host's `aria-describedby`), never by comparing
+the attribute string.
