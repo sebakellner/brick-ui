@@ -7,7 +7,6 @@ import {
 export type FieldLabelState = 'invalid' | 'disabled';
 
 export type FieldPartsHost = LitElement & {
-  readonly label?: string;
   readonly required: boolean;
   readonly fieldInvalid: boolean;
   readonly fieldDisabled: boolean;
@@ -18,7 +17,7 @@ export class FieldPartsController implements ReactiveController {
 
   private readonly regions: FieldMessagesController;
 
-  private slotted = false;
+  labelled = false;
 
   constructor(host: FieldPartsHost, idPrefix: string) {
     this.host = host;
@@ -29,10 +28,6 @@ export class FieldPartsController implements ReactiveController {
   get labelState(): FieldLabelState | undefined {
     if (this.host.fieldInvalid) return 'invalid';
     return this.host.fieldDisabled ? 'disabled' : undefined;
-  }
-
-  get labelled(): boolean {
-    return (this.host.label ?? '') !== '' || this.slotted;
   }
 
   get glyph(): TemplateResult | typeof nothing {
@@ -49,7 +44,7 @@ export class FieldPartsController implements ReactiveController {
   }
 
   hostConnected(): void {
-    this.slotted = this.readSlottedLabel();
+    this.labelled = this.readSlottedLabel();
     this.regions.connect();
   }
 
@@ -58,10 +53,10 @@ export class FieldPartsController implements ReactiveController {
   }
 
   readonly handleLabelSlot = (event: Event): void => {
-    const slotted = (event.target as HTMLSlotElement).assignedNodes({ flatten: false }).length > 0;
+    const labelled = (event.target as HTMLSlotElement).assignedNodes({ flatten: false }).length > 0;
     this.syncHostedLabel();
-    if (slotted === this.slotted) return;
-    this.slotted = slotted;
+    if (labelled === this.labelled) return;
+    this.labelled = labelled;
     this.host.requestUpdate();
   };
 

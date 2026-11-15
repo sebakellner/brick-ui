@@ -3,7 +3,6 @@ import { html, type LitElement, type TemplateResult } from 'lit';
 export type FieldRegion = 'description' | 'error';
 
 export interface FieldMessageFallbacks {
-  description: string;
   error: string;
 }
 
@@ -18,7 +17,7 @@ export class FieldMessagesController {
 
   private assigned: Record<FieldRegion, boolean> = { description: false, error: false };
 
-  private fallbacks: FieldMessageFallbacks = { description: '', error: '' };
+  private fallbacks: FieldMessageFallbacks = { error: '' };
 
   constructor(host: LitElement, baseId: string) {
     this.host = host;
@@ -55,9 +54,7 @@ export class FieldMessagesController {
           ?hidden=${error}
           ?data-empty=${!description}
         >
-          <slot name="description" @slotchange=${this.handleSlotChange}>
-            ${this.fallbacks.description}
-          </slot>
+          <slot name="description" @slotchange=${this.handleSlotChange}></slot>
         </div>
         <div
           class="message"
@@ -74,7 +71,8 @@ export class FieldMessagesController {
   }
 
   private hasContent(region: FieldRegion): boolean {
-    return this.assigned[region] || this.fallbacks[region].trim() !== '';
+    if (region === 'description') return this.assigned.description;
+    return this.assigned.error || this.fallbacks.error.trim() !== '';
   }
 
   private readLightDom(): void {
