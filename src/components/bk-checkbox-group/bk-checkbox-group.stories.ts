@@ -64,24 +64,3 @@ export const Horizontal: Story = {
 export const Invalid: Story = {
   args: { invalid: true, error: 'Pick at least one channel.', description: '' },
 };
-
-export const InAForm: Story = {
-  render: () => html`
-    <form style="display: flex; flex-direction: column; gap: 16px; max-inline-size: 320px;">
-      <bk-checkbox-group>
-        <bk-field-label>Notifications</bk-field-label>
-        <bk-checkbox name="notifications" value="email" checked>
-          <bk-field-label slot="label">Email</bk-field-label>
-        </bk-checkbox>
-        <bk-checkbox name="notifications" value="sms">
-          <bk-field-label slot="label">SMS</bk-field-label>
-        </bk-checkbox>
-        <bk-checkbox name="notifications" value="push">
-          <bk-field-label slot="label">Push</bk-field-label>
-        </bk-checkbox>
-        <bk-field-description>The boxes submit under one name.</bk-field-description>
-      </bk-checkbox-group>
-      <button type="submit">Save</button>
-    </form>
-  `,
-};
