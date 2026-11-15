@@ -10,6 +10,20 @@ export class BkFieldError extends LitElement {
       line-height: var(--bk-line-height-md);
       color: var(--bk-text-danger);
     }
+
+    :host([hidden]) {
+      display: none;
+    }
+
+    :host([data-empty]) {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      margin: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
   `;
 
   override connectedCallback(): void {

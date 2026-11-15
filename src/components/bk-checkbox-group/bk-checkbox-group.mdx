@@ -1,0 +1,32 @@
+import { Meta, Canvas, Markdown } from '@storybook/addon-docs/blocks';
+import * as CheckboxGroupStories from './bk-checkbox-group.stories';
+import readme from './README.md?raw';
+
+<Meta of={CheckboxGroupStories} />
+
+<Markdown>{readme}</Markdown>
+
+## Default
+
+<Canvas of={CheckboxGroupStories.Default} />
+
+## Horizontal
+
+`orientation="horizontal"` flows the boxes in a row. Nothing else in the group's
+layout changes with it.
+
+<Canvas of={CheckboxGroupStories.Horizontal} />
+
+## Invalid
+
+`invalid` paints the group's own label and leaves every box untouched: validity
+is each box's, and the group reports nothing it cannot enforce.
+
+<Canvas of={CheckboxGroupStories.Invalid} />
+
+## In a form
+
+The group is not form-associated. Each box submits its own `name`/`value` pair,
+and the group adds nothing to the payload.
+
+<Canvas of={CheckboxGroupStories.InAForm} />
