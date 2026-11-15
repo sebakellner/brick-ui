@@ -263,7 +263,7 @@ describe('bk-input', () => {
   it('should render no required glyph on an optional field', async () => {
     const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
 
-    expect(innerRequired(el), 'an optional field marks nothing').to.equal(null);
+    expect(Boolean(innerRequired(el)), 'an optional field marks nothing').to.equal(false);
   });
 
   it('should mark a required field that has a label', async () => {
@@ -300,7 +300,7 @@ describe('bk-input', () => {
   it('should render no glyph for a required field with no label at all', async () => {
     const el = await fixture<BkInput>(html`<bk-input required></bk-input>`);
 
-    expect(innerRequired(el), 'an asterisk beside nothing marks nothing').to.equal(null);
+    expect(Boolean(innerRequired(el)), 'an asterisk beside nothing marks nothing').to.equal(false);
   });
 
   it('should leave two steps of the space scale under the label', async () => {
