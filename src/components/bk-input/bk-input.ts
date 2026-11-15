@@ -46,6 +46,13 @@ export class BkInput extends FormControlMixin(LitElement) {
     return this.shadowRoot?.querySelector('input') ?? undefined;
   }
 
+  /* A slotted `bk-field-error` with text is this field's error: it is what the
+   * region shows, and markup is the more specific statement, so it wins over
+   * the property. An atom with no text is not content and says nothing. */
+  override get fieldError(): string {
+    return this.fieldParts.slotError || this.error;
+  }
+
   override render() {
     return html`
       <label
@@ -81,7 +88,7 @@ export class BkInput extends FormControlMixin(LitElement) {
 
   private messageSources(): FieldMessageFallbacks {
     return {
-      error: this.error || this.fieldMessage,
+      error: this.fieldError || this.fieldMessage,
     };
   }
 

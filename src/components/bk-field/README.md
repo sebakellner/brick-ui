@@ -112,9 +112,11 @@ theming the roles.
   `aria-invalid`.
 - There is one live region, on the error region. A description is context that
   was already there; an error is an update, and only the update is announced.
-- A4: `aria-describedby` names a region only while that region has content.
-  Slotted content is not in the region's `textContent`, so the control decides
-  from `slotchange` and `assignedNodes()`. [Conventions A4](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-accessibility.md)
+- A4: `aria-describedby` names a region only while that region has content. A
+  slotted atom is not in the region's `textContent` and an edit to its text fires
+  no `slotchange`, so the control decides from the nodes assigned to the slot,
+  re-read on `slotchange` and watched by a `MutationObserver` while it has them.
+  [Conventions A4](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-accessibility.md)
 - A7: the live region is never removed from the accessibility tree. It is clipped
   to a 1px box while empty, so the announcement is not lost when the text
   appears. [Conventions A7](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-accessibility.md)
@@ -123,10 +125,15 @@ theming the roles.
 
 ## Limitations
 
-- `bk-field-error` is a caption, not a validity source. Its text does not reach
-  the control, so the control's `aria-invalid`, its border and the native message
-  know nothing about it. An invalid field is written today with the atom _and_
-  the control's `error` property: the property drives the state, the atom wins the
-  visible text.
-- That duplicate is the seam with the form-error model. Which of the two owns the
-  message is decided there, not here.
+- `bk-field-error` is the control's error, not this field's. The control reads
+  the text of the atom assigned to its `error` slot, marks itself `aria-invalid`
+  and reports that text as `customError`, so the atom alone writes an invalid
+  field: no `error` property, no duplicate
+  ([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
+  An atom with no text is not content — nothing is referenced and the field stays
+  valid — and a `bk-field-error` is never decorative for a control: writing one is
+  a declaration that the field has a problem.
+- The field's own `invalid` is still not derived from any of that. It is the
+  consumer's attribute, so `bk-field invalid` can paint the atoms of a field whose
+  control is valid, and a control can be invalid while `bk-field` reports
+  nothing. Two statements, two owners.

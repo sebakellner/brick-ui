@@ -15,6 +15,7 @@ export interface FormControlInterface {
   readonly validity: ValidityState;
   readonly validationMessage: string;
   readonly fieldMessage: string;
+  readonly fieldError: string;
   readonly fieldInvalid: boolean;
   readonly fieldDisabled: boolean;
   readonly formControlElement: NativeFormControl | undefined;
@@ -69,8 +70,15 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       return control.validationMessage;
     }
 
+    /* The message the field owns, as opposed to the one the browser reports.
+     * A control that can carry an error in its markup (a slotted atom) widens
+     * this; the property is the whole story for every other control. */
+    get fieldError(): string {
+      return this.error;
+    }
+
     get fieldInvalid(): boolean {
-      return Boolean(this.error || this.fieldMessage);
+      return Boolean(this.fieldError || this.fieldMessage);
     }
 
     checkValidity(): boolean {
@@ -161,9 +169,10 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       }
 
       const control = this.formControlElement;
+      const error = this.fieldError;
 
-      if (this.error) {
-        this.internals.setValidity({ customError: true }, this.error, control);
+      if (error) {
+        this.internals.setValidity({ customError: true }, error, control);
       } else if (control && !control.validity.valid) {
         this.internals.setValidity(control.validity, control.validationMessage, control);
       } else {

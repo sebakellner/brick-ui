@@ -298,6 +298,56 @@ describe('bk-checkbox', () => {
     );
   });
 
+  it('should show the error instead of the native message when both exist', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-checkbox name="terms" required error="You have to accept the terms."></bk-checkbox>
+      </form>
+    `);
+    const el = form.querySelector('bk-checkbox') as BkCheckbox;
+    await el.updateComplete;
+    el.showValidationMessage();
+    await el.updateComplete;
+
+    expect(innerInput(el).validity.valueMissing, 'the native control is invalid').to.equal(true);
+    expect(innerInput(el).validationMessage).to.not.equal('');
+    expect(innerError(el).textContent!.trim()).to.equal('You have to accept the terms.');
+    expect(innerError(el).getAttribute('data-state')).to.equal('error');
+    expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+  });
+
+  it('should show the native message on the boxes a failed submit rejected', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-checkbox name="terms" required></bk-checkbox>
+        <bk-checkbox name="news" required checked></bk-checkbox>
+      </form>
+    `);
+    const el = form.querySelector('bk-checkbox') as BkCheckbox;
+    const other = form.querySelectorAll('bk-checkbox')[1] as BkCheckbox;
+    await el.updateComplete;
+    await other.updateComplete;
+    let submitted = false;
+    let invalidOn: EventTarget | null = null;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      submitted = true;
+    });
+    form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+
+    form.requestSubmit();
+    await el.updateComplete;
+    await other.updateComplete;
+
+    expect(invalidOn, 'the invalid event fires on the box that failed').to.equal(el);
+    expect(submitted).to.equal(false);
+    expect(innerError(el).textContent!.trim(), 'the native message is what shows').to.equal(
+      innerInput(el).validationMessage,
+    );
+    expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+    expect(innerError(other).textContent!.trim(), 'the box that passed shows nothing').to.equal('');
+  });
+
   it('should colour the slotted description muted and keep the field valid', async () => {
     const el = await fixture<BkCheckbox>(html`
       <bk-checkbox>

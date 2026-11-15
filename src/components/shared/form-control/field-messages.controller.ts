@@ -15,7 +15,9 @@ export class FieldMessagesController {
 
   private readonly host: LitElement;
 
-  private assigned: Record<FieldRegion, boolean> = { description: false, error: false };
+  /* A consumer edits the text of a slotted atom in place, without assigning a
+   * node again, so `slotchange` never fires. Content has to be observed. */
+  private readonly mutations = new MutationObserver(() => this.host.requestUpdate());
 
   private fallbacks: FieldMessageFallbacks = { error: '' };
 
@@ -25,6 +27,12 @@ export class FieldMessagesController {
     this.errorId = `${baseId}-error`;
   }
 
+  /* The text of the nodes assigned to the error slot: the slotted atom is the
+   * field's error, not decoration, and the control reads it as one. */
+  get slotError(): string {
+    return this.textFor('error');
+  }
+
   get describedBy(): string | undefined {
     if (this.hasContent('error')) return this.errorId;
     if (this.hasContent('description')) return this.descriptionId;
@@ -32,12 +40,15 @@ export class FieldMessagesController {
   }
 
   connect(): void {
-    this.readLightDom();
+    this.observe();
+  }
+
+  disconnect(): void {
+    this.mutations.disconnect();
   }
 
   update(fallbacks: FieldMessageFallbacks): string | undefined {
     this.fallbacks = fallbacks;
-    this.readLightDom();
     return this.describedBy;
   }
 
@@ -70,14 +81,26 @@ export class FieldMessagesController {
     `;
   }
 
+  /* Content means text, not assignment: a region whose atom is empty is not
+   * named by `aria-describedby` (A4). */
   private hasContent(region: FieldRegion): boolean {
-    if (region === 'description') return this.assigned.description;
-    return this.assigned.error || this.fallbacks.error.trim() !== '';
+    if (this.textFor(region) !== '') return true;
+    return region === 'error' && this.fallbacks.error.trim() !== '';
   }
 
-  private readLightDom(): void {
+  private textFor(region: FieldRegion): string {
+    return this.nodesFor(region)
+      .map((node) => node.textContent ?? '')
+      .join(' ')
+      .trim();
+  }
+
+  private observe(): void {
+    this.mutations.disconnect();
     for (const region of REGIONS) {
-      this.assigned[region] = this.nodesFor(region).length > 0;
+      for (const node of this.nodesFor(region)) {
+        this.mutations.observe(node, { characterData: true, childList: true, subtree: true });
+      }
     }
   }
 
@@ -88,7 +111,7 @@ export class FieldMessagesController {
   }
 
   private readonly handleSlotChange = (): void => {
-    this.readLightDom();
+    this.observe();
     this.host.requestUpdate();
   };
 }
