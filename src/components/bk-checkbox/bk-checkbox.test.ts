@@ -69,7 +69,9 @@ describe('bk-checkbox', () => {
     await el.updateComplete;
 
     expect(innerLabel(el).textContent!.trim(), 'the attribute names nothing').to.equal('');
-    expect(innerLabel(el).querySelector('.text'), 'no fallback is rendered').to.equal(null);
+    expect(Boolean(innerLabel(el).querySelector('.text')), 'no fallback is rendered').to.equal(
+      false,
+    );
   });
 
   it('should take a description only from the description slot, never from a helper attribute', async () => {
@@ -332,7 +334,7 @@ describe('bk-checkbox', () => {
   it('should render no required glyph on an optional box', async () => {
     const el = await fixture<BkCheckbox>(html`<bk-checkbox></bk-checkbox>`);
 
-    expect(innerRequired(el), 'an optional box marks nothing').to.equal(null);
+    expect(Boolean(innerRequired(el)), 'an optional box marks nothing').to.equal(false);
   });
 
   it('should mark a required box that has a label', async () => {
@@ -369,7 +371,7 @@ describe('bk-checkbox', () => {
   it('should render no glyph for a required box with no label at all', async () => {
     const el = await fixture<BkCheckbox>(html`<bk-checkbox required></bk-checkbox>`);
 
-    expect(innerRequired(el), 'an asterisk beside nothing marks nothing').to.equal(null);
+    expect(Boolean(innerRequired(el)), 'an asterisk beside nothing marks nothing').to.equal(false);
   });
 
   it('should paint the required glyph with the danger role', async () => {

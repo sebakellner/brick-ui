@@ -93,6 +93,41 @@ way to tell the two apart.
 
 **Enforced by.** Review — and it is the reason the suite is trusted at all.
 
+## T6. Never put a DOM element on the tested side of a failed assertion
+
+**Rule.** When the expected value is not an element, compare a derived primitive —
+`Boolean(el)`, `el?.id ?? null`, `el?.textContent ?? ''` — never the element
+itself. An assertion may hold two DOM nodes only when both sides are nodes.
+
+**Why.** The failure message inspects both values. With a live element on one side
+and a primitive on the other, the browser thread never finishes: the assertion
+does not throw, the per-test timeout does not fire, and the runner kills the whole
+file at `testsFinishTimeout` reporting `0 passed, 0 failed`. Such a test cannot
+fail — it can only pass or hang, which is worse than a decorative test, because a
+hang reads as infrastructure trouble and hides the regression behind it.
+
+**Do**
+
+```ts
+expect(Boolean(innerRequired(el)), 'an optional field marks nothing').to.equal(false);
+```
+
+**Don't**
+
+```ts
+expect(innerRequired(el), 'an optional field marks nothing').to.equal(null);
+```
+
+Measured in this repository, one probe each: `expect(el).to.equal(null)`,
+`expect(el, 'a message').to.equal(null)`, `expect(el).to.be.null` and
+`expect(el).to.equal('x')` all hang the file; `expect(el).to.equal(otherEl)`,
+`expect({ a: 1 }).to.equal(null)` and `expect(el === null).to.equal(true)` all
+report. The rule costs one `Boolean()` and buys back the ability to see a
+regression.
+
+**Enforced by.** The suite — a violation here is a hang, so this is the one rule
+that has to be read rather than observed.
+
 ## Commands
 
 | Command           | Use                |
