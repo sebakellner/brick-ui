@@ -8,6 +8,7 @@ import {
   slottedText,
 } from '../../../test/helpers/dom.js';
 import { descriptionAtom, labelAtom } from '../../../test/helpers/atoms.js';
+import { watchSubmit } from '../../../test/helpers/form.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import '.././define.js';
@@ -846,17 +847,13 @@ describe('bk-input', () => {
       `);
       const el = form.querySelector('bk-input') as BkInput;
       await el.updateComplete;
-      let submitted = false;
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        submitted = true;
-      });
+      const watch = watchSubmit(form);
 
       await touch(el);
       form.requestSubmit();
       await el.updateComplete;
 
-      expect(submitted, 'novalidate lets the submit through').to.equal(true);
+      expect(watch.count, 'novalidate lets the submit through').to.equal(1);
       expect(message(el)).to.equal('');
       expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
 
@@ -878,17 +875,13 @@ describe('bk-input', () => {
       const other = form.querySelectorAll('bk-input')[1] as BkInput;
       await el.updateComplete;
       await other.updateComplete;
-      let submitted = false;
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        submitted = true;
-      });
+      const watch = watchSubmit(form);
 
       form.requestSubmit();
       await el.updateComplete;
       await other.updateComplete;
 
-      expect(submitted).to.equal(false);
+      expect(watch.count).to.equal(0);
       expect(message(el)).to.equal(innerInput(el).validationMessage);
       expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
       expect(message(other)).to.equal('');
@@ -957,11 +950,7 @@ describe('bk-input', () => {
       `);
       const el = form.querySelector('bk-input') as BkInput;
       await settle(el);
-      let submitted = false;
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        submitted = true;
-      });
+      const watch = watchSubmit(form);
 
       expect(projectedMessage(el), 'the region shows the text of the atom').to.equal(
         'That address looks wrong.',
@@ -980,9 +969,10 @@ describe('bk-input', () => {
 
       form.requestSubmit();
 
-      expect(submitted, 'and the submit is blocked like an error property would block it').to.equal(
-        false,
-      );
+      expect(
+        watch.count,
+        'and the submit is blocked like an error property would block it',
+      ).to.equal(0);
     });
 
     it('should let the slotted atom win over the error property, and give it back', async () => {
@@ -1085,11 +1075,7 @@ describe('bk-input', () => {
       `);
       const el = form.querySelector('bk-input') as BkInput;
       await el.updateComplete;
-      let submitted = false;
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        submitted = true;
-      });
+      const watch = watchSubmit(form);
 
       const result = { success: false as const, message: 'That address looks wrong.' };
       el.error = result.success ? '' : result.message;
@@ -1100,7 +1086,7 @@ describe('bk-input', () => {
       expect(message(el)).to.equal('That address looks wrong.');
       expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
       form.requestSubmit();
-      expect(submitted).to.equal(false);
+      expect(watch.count).to.equal(0);
 
       el.value = 'changed@brick.dev';
       await el.updateComplete;
@@ -1275,21 +1261,15 @@ describe('bk-input', () => {
           </form>`,
         );
         const el = form.querySelector('bk-input') as BkInput;
-        let submitted = false;
-        let invalidOn: EventTarget | null = null;
-        form.addEventListener('submit', (event) => {
-          event.preventDefault();
-          submitted = true;
-        });
-        form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+        const watch = watchSubmit(form);
 
         form.requestSubmit();
 
         expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
         expect(innerError(el).textContent!.trim()).to.equal('That address looks wrong.');
         expect(form.checkValidity()).to.equal(false);
-        expect(invalidOn).to.equal(el);
-        expect(submitted).to.equal(false);
+        expect(watch.invalidOn).to.equal(el);
+        expect(watch.count).to.equal(0);
       });
 
       it('should announce a missing required value and clear it when filled', async () => {

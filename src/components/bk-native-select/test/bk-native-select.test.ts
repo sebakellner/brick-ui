@@ -1,6 +1,7 @@
 import { settle } from '../../../test/helpers/settle.js';
 import { colorOf } from '../../../test/helpers/style.js';
 import { labelAtom } from '../../../test/helpers/atoms.js';
+import { watchSubmit } from '../../../test/helpers/form.js';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
@@ -357,13 +358,7 @@ describe('bk-native-select', () => {
     `);
     const el = form.querySelector('bk-native-select')!;
     await settle(el);
-    let submitted = false;
-    let invalidOn: EventTarget | null = null;
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      submitted = true;
-    });
-    form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+    const watch = watchSubmit(form);
 
     expect(innerSelect(el).value, 'nothing is chosen').to.equal('');
     expect(el.validity.valueMissing, 'an empty placeholder is a missing answer').to.equal(true);
@@ -372,8 +367,8 @@ describe('bk-native-select', () => {
     form.requestSubmit();
     await settle(el);
 
-    expect(submitted, 'the submit never runs').to.equal(false);
-    expect(invalidOn === el, 'the select is what the submit rejected').to.equal(true);
+    expect(watch.count, 'the submit never runs').to.equal(0);
+    expect(watch.invalidOn === el, 'the select is what the submit rejected').to.equal(true);
 
     await choose(el, 'email');
 

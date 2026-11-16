@@ -9,6 +9,7 @@ import {
   slottedText,
 } from '../../../test/helpers/dom.js';
 import { labelAtom } from '../../../test/helpers/atoms.js';
+import { watchSubmit } from '../../../test/helpers/form.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import '.././define.js';
@@ -486,20 +487,14 @@ describe('bk-checkbox', () => {
     const other = form.querySelectorAll('bk-checkbox')[1] as BkCheckbox;
     await el.updateComplete;
     await other.updateComplete;
-    let submitted = false;
-    let invalidOn: EventTarget | null = null;
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      submitted = true;
-    });
-    form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+    const watch = watchSubmit(form);
 
     form.requestSubmit();
     await el.updateComplete;
     await other.updateComplete;
 
-    expect(invalidOn, 'the invalid event fires on the box that failed').to.equal(el);
-    expect(submitted).to.equal(false);
+    expect(watch.invalidOn, 'the invalid event fires on the box that failed').to.equal(el);
+    expect(watch.count).to.equal(0);
     expect(innerError(el).textContent!.trim(), 'the native message is what shows').to.equal(
       innerInput(el).validationMessage,
     );
@@ -1092,13 +1087,7 @@ describe('bk-checkbox', () => {
         </form>
       `);
       const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
-      let submitted = false;
-      let invalidOn: EventTarget | null = null;
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        submitted = true;
-      });
-      form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+      const watch = watchSubmit(form);
 
       expect(el.validity.valueMissing, 'nothing is submitted, so the box is missing').to.equal(
         true,
@@ -1110,8 +1099,8 @@ describe('bk-checkbox', () => {
       form.requestSubmit();
       await el.updateComplete;
 
-      expect(submitted).to.equal(false);
-      expect(invalidOn).to.equal(el);
+      expect(watch.count).to.equal(0);
+      expect(watch.invalidOn).to.equal(el);
 
       el.indeterminate = false;
       el.checked = true;

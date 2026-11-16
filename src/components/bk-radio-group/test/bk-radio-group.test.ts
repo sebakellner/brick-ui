@@ -1,6 +1,7 @@
 import { settle as settleHost } from '../../../test/helpers/settle.js';
 import { opacityOf } from '../../../test/helpers/style.js';
 import { describedNode } from '../../../test/helpers/dom.js';
+import { watchSubmit } from '../../../test/helpers/form.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import '.././define.js';
@@ -261,13 +262,7 @@ describe('bk-radio-group', () => {
     `);
     const el = form.querySelector<BkRadioGroup>('bk-radio-group')!;
     await settle(el);
-    let submitted = false;
-    let invalidOn: EventTarget | null = null;
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      submitted = true;
-    });
-    form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+    const watch = watchSubmit(form);
 
     expect(el.validity.valueMissing).to.equal(true);
     expect(el.validationMessage, 'the fixed English default').to.equal('Please select an option.');
@@ -276,8 +271,8 @@ describe('bk-radio-group', () => {
     form.requestSubmit();
     await settle(el);
 
-    expect(submitted).to.equal(false);
-    expect(invalidOn === el, 'the group is what the submit rejected').to.equal(true);
+    expect(watch.count).to.equal(0);
+    expect(watch.invalidOn === el, 'the group is what the submit rejected').to.equal(true);
 
     const error = document.createElement('bk-field-error');
     error.textContent = 'Pick a size.';

@@ -1,6 +1,7 @@
 import { settle } from '../../../test/helpers/settle.js';
 import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { describedNode, region } from '../../../test/helpers/dom.js';
+import { watchSubmit } from '../../../test/helpers/form.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import '.././define.js';
 import '../../bk-checkbox/define.js';
@@ -353,13 +354,7 @@ describe('bk-checkbox-group', () => {
     const form = await fixture<HTMLFormElement>(requiredForm);
     const el = form.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
     await settle(el);
-    let submitted = false;
-    let invalidOn: EventTarget | null = null;
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      submitted = true;
-    });
-    form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+    const watch = watchSubmit(form);
 
     expect(el.validity.valueMissing, 'nothing checked is a missing answer').to.equal(true);
     expect(el.validity.valid).to.equal(false);
@@ -368,8 +363,8 @@ describe('bk-checkbox-group', () => {
     form.requestSubmit();
     await settle(el);
 
-    expect(submitted, 'the submit never runs').to.equal(false);
-    expect(invalidOn === el, 'the group is what the submit rejected').to.equal(true);
+    expect(watch.count, 'the submit never runs').to.equal(0);
+    expect(watch.invalidOn === el, 'the group is what the submit rejected').to.equal(true);
     expect(el.validationMessage, 'the fixed English default').to.equal(
       'Please select at least one option.',
     );
@@ -672,13 +667,7 @@ describe('bk-checkbox-group', () => {
     const el = form.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
     await settleBoxes(el);
     const [email] = boxesOf(el);
-    let submitted = false;
-    let invalidOn: EventTarget | null = null;
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      submitted = true;
-    });
-    form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+    const watch = watchSubmit(form);
 
     expect(email.checked, 'the box is checked').to.equal(true);
     expect(email.indeterminate, 'and mixed').to.equal(true);
@@ -692,8 +681,8 @@ describe('bk-checkbox-group', () => {
     form.requestSubmit();
     await settleBoxes(el);
 
-    expect(submitted, 'the submit never runs').to.equal(false);
-    expect(invalidOn === el, 'the group is what the submit rejected').to.equal(true);
+    expect(watch.count, 'the submit never runs').to.equal(0);
+    expect(watch.invalidOn === el, 'the group is what the submit rejected').to.equal(true);
     expect(new FormData(form).get('email'), 'the mixed box submitted nothing').to.equal(null);
 
     await toggle(el, email);
