@@ -6,16 +6,22 @@ several widgets lives under `src/test/integration/`, and the `sendMouse` plugin 
 the hover and focus tests need. One engine is a decision, not an accident: see
 [ADR 0005](adr/0005-test-in-chrome-only.md).
 
-| #   | Rule                                                        | Enforced by                          |
-| --- | ----------------------------------------------------------- | ------------------------------------ |
-| T1  | Load the theme in every test file                           | the suite — an unstyled read fails   |
-| T2  | Assert computed styles, not markup                          | review                               |
-| T3  | Drive hover and focus with real input                       | review                               |
-| T4  | Wait past the transition before asserting it                | review                               |
-| T5  | Every fix is provable by mutation                           | review                               |
-| T6  | Never put a DOM element on the tested side of a failure     | the suite — a violation is a hang    |
-| T7  | The runner claims a pointer, and the suite proves it        | `src/test/browser.test.ts`           |
-| T8  | Two suites per component, a part only when it has behaviour | the suites, visible in the inventory |
+The eight numbered rules follow, each with what enforces it. The **three levels** after
+them are the frame the rules sit in: where a suite lives and what it is allowed to assert.
+They are not numbered because they are judged as a whole — a misplaced suite is caught by
+reading a diff, not by one assertion going red — while a rule is something a single test
+can name.
+
+| #   | Rule                                                        | Enforced by                             |
+| --- | ----------------------------------------------------------- | --------------------------------------- |
+| T1  | Load the theme in every test file                           | the suite — an unstyled read fails      |
+| T2  | Assert computed styles, not markup                          | review                                  |
+| T3  | Drive hover and focus with real input                       | review                                  |
+| T4  | Wait past the transition before asserting it                | review                                  |
+| T5  | Every fix is provable by mutation                           | review                                  |
+| T6  | Never put a DOM element on the tested side of a failure     | the suite — a violation is a hang       |
+| T7  | The runner claims a pointer, and the suite proves it        | `browser.test.ts` + the enabled sibling |
+| T8  | Two suites per component, a part only when it has behaviour | the suites, visible in the inventory    |
 
 ## The three levels, and who decides the composition
 
