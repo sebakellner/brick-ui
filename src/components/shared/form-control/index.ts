@@ -15,3 +15,4 @@ export {
   type FieldLabelState,
   type FieldPartsHost,
 } from './field-parts.controller.js';
+export { FieldRegionsController, type FieldRegionsOptions } from './field-regions.controller.js';
