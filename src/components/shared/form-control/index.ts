@@ -17,3 +17,4 @@ export {
   type FieldPartsHost,
 } from './field-parts.controller.js';
 export { FieldRegionsController, type FieldRegionsOptions } from './field-regions.controller.js';
+export { SlottedTextController } from './slotted-text.controller.js';

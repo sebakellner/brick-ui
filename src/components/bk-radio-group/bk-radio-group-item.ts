@@ -1,14 +1,12 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import { formControlStyles } from '../shared/form-control/index.js';
+import { SlottedTextController, formControlStyles } from '../shared/form-control/index.js';
 
 let instanceCount = 0;
 const nextInstanceId = () => `bk-radio-group-item-${++instanceCount}`;
 
-/* The box of one option, and a private part of the group: it is a custom element
- * so that each box owns a shadow root and its own slotted label atom, and it is
- * not exported, because a radio that only works inside its group is not a
- * component a consumer imports. */
+/* An element because each box needs its own shadow root and its own slotted
+ * label; private because a radio alone is not a component: ADR 0012. */
 export class BkRadioGroupItem extends LitElement {
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
@@ -106,25 +104,16 @@ export class BkRadioGroupItem extends LitElement {
 
   private readonly controlId = nextInstanceId();
 
+  private readonly text = new SlottedTextController(this);
+
   private hasDescription = false;
 
-  /* A consumer edits the text of its atom in place, without assigning a node
-   * again, so `slotchange` never fires for it; content has to be observed. */
-  private readonly descriptionMutations = new MutationObserver(() => this.syncDescription());
-
+  /* The item's atoms arrive in its own light DOM, so that is what it hands
+   * over: an atom is the item's before it carries a slot, and the item is the
+   * one that gives it one. */
   override connectedCallback(): void {
     super.connectedCallback();
-    this.descriptionMutations.observe(this, {
-      childList: true,
-      characterData: true,
-      subtree: true,
-    });
-    this.syncDescription();
-  }
-
-  override disconnectedCallback(): void {
-    this.descriptionMutations.disconnect();
-    super.disconnectedCallback();
+    this.text.watchNodes([this]);
   }
 
   override render() {
@@ -151,9 +140,15 @@ export class BkRadioGroupItem extends LitElement {
         id=${`${this.controlId}-description`}
         ?hidden=${!this.hasDescription}
       >
-        <slot name="description" @slotchange=${this.syncDescription}></slot>
+        <slot name="description" @slotchange=${this.handleSlotChange}></slot>
       </div>
     `;
+  }
+
+  /* The atoms are routed before the render that reads them, so a hint that
+   * arrived or was emptied is the region's state in one pass. */
+  protected override willUpdate(): void {
+    this.syncDescription();
   }
 
   protected override updated(): void {
@@ -176,14 +171,16 @@ export class BkRadioGroupItem extends LitElement {
    * item assigns the slot, because the surrounding group must not adopt an
    * option's hint as a message about the set. It takes no space while it holds
    * no text, so a column of options stays tight. */
-  private readonly syncDescription = (): void => {
-    let describes = false;
+  private syncDescription(): void {
     for (const atom of this.descriptions()) {
       if (atom.slot !== 'description') atom.slot = 'description';
-      if ((atom.textContent ?? '').trim() !== '') describes = true;
     }
-    if (describes === this.hasDescription) return;
-    this.hasDescription = describes;
+    this.hasDescription = this.text.slotHasText('description');
+  }
+
+  /* Routing is the item's own promise, so a consumer who moves an atom off the
+   * description slot is answered by the next update rather than ignored. */
+  private readonly handleSlotChange = (): void => {
     this.requestUpdate();
   };
 

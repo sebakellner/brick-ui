@@ -37,6 +37,23 @@ points at a control token. See R2 in
 | Every design value in a component reads a token                            | review, and `check:tokens` for the names | [0004](adr/0004-forbid-style-literals-in-components.md) |
 | Every semantic role is read by a component                                 | `check:tokens`                           | R1 in [conventions-tokens.md](conventions-tokens.md)    |
 
+## Slotted text
+
+A component cannot see the text of the nodes slotted into it: `textContent` does
+not include assigned nodes, and `slotchange` fires when the _set_ of assigned
+nodes changes — never when the text of an assigned node is edited. Every message
+in this kit is an atom ([0009](adr/0009-nest-the-field-parts-inside-the-control.md),
+[0010](adr/0010-name-a-group-on-its-host-and-let-its-atoms-be-the-regions.md))
+rather than a `help-text` property, so something has to observe them:
+`SlottedTextController` in
+`src/components/shared/form-control/slotted-text.controller.ts`. One
+`MutationObserver` per host, re-targeted when the assignment changes, and two
+entry points — a slot of the host's own shadow root, and a set of nodes a
+container hands over for the atoms that live in its light DOM. Presence means
+text, so an empty atom is not content. It is written here rather than taken from
+`@lit-labs/observers`: the wiring is a few lines, and the kit does not add a
+dependency for wiring it can own.
+
 ## Boundaries
 
 What this system deliberately does not do. Recorded so a well-meant change does
