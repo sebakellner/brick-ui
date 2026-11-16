@@ -279,7 +279,9 @@ way to tell the two apart.
 
 **Rule.** When the expected value is not an element, compare a derived primitive —
 `Boolean(el)`, `el?.id ?? null`, `el?.textContent ?? ''` — never the element
-itself. An assertion may hold two DOM nodes only when both sides are nodes.
+itself. Two DOM nodes may be compared only when each is **guaranteed to exist by the
+fixture**; a node measured against a sibling that may be `null` is the same violation one
+mutation away, so compare the identity — `a === b` — and assert the boolean.
 
 **Why.** The failure message inspects both values. With a live element on one side
 and a primitive on the other, the browser thread never finishes: the assertion
