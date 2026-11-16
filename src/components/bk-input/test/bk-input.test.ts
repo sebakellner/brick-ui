@@ -94,6 +94,10 @@ describe('bk-input', () => {
       innerLabel(el).hasAttribute('hidden'),
       'a label with no text keeps its place and takes none',
     ).to.equal(true);
+    expect(
+      getComputedStyle(innerLabel(el)).display,
+      'and the hidden label is collapsed, not only marked',
+    ).to.equal('none');
   });
 
   it('should take a description only from the description slot, never from a helper attribute', async () => {
@@ -125,6 +129,10 @@ describe('bk-input', () => {
 
     expect(projectedText(innerDescription(el))).to.equal('We never share it');
     expect(innerDescription(el).getAttribute('data-state')).to.equal(null);
+    expect(
+      getComputedStyle(innerDescription(el)).color,
+      'a region with no state paints the muted role',
+    ).to.equal(await colorOf('var(--bk-text-muted)'));
     expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerDescription(el).id);
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
   });
@@ -136,6 +144,10 @@ describe('bk-input', () => {
 
     expect(innerError(el).textContent!.trim()).to.equal('Required');
     expect(innerError(el).getAttribute('data-state')).to.equal('error');
+    expect(
+      getComputedStyle(innerError(el)).color,
+      'the error state is the danger role the region paints',
+    ).to.equal(await colorOf('var(--bk-text-danger)'));
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
     expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerError(el).id);
   });
@@ -778,6 +790,10 @@ describe('bk-input', () => {
       expect(innerInput(el).validationMessage).to.not.equal('');
       expect(message(el)).to.equal('We need this address.');
       expect(innerError(el).getAttribute('data-state')).to.equal('error');
+      expect(
+        getComputedStyle(innerError(el)).color,
+        'the error state is the danger role the region paints',
+      ).to.equal(await colorOf('var(--bk-text-danger)'));
       expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
     });
 
@@ -817,6 +833,10 @@ describe('bk-input', () => {
 
       expect(message(el)).to.equal(native);
       expect(innerError(el).getAttribute('data-state')).to.equal('error');
+      expect(
+        getComputedStyle(innerError(el)).color,
+        'the error state is the danger role the region paints',
+      ).to.equal(await colorOf('var(--bk-text-danger)'));
       expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
     });
 
