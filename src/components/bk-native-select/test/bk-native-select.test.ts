@@ -1,5 +1,6 @@
 import { settle } from '../../../test/helpers/settle.js';
 import { colorOf } from '../../../test/helpers/style.js';
+import { labelAtom } from '../../../test/helpers/atoms.js';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
@@ -40,8 +41,6 @@ const atom = (value: string, label: string) => {
   return element;
 };
 
-const labelAtom = html`<bk-field-label slot="label">Channel</bk-field-label>`;
-
 const choose = async (el: BkNativeSelect, value: string) => {
   const select = innerSelect(el);
   select.value = value;
@@ -55,7 +54,7 @@ describe('bk-native-select', () => {
       setTheme(theme);
       const el = await fixture<BkNativeSelect>(html`
         <bk-native-select
-          >${labelAtom}
+          >${labelAtom('Channel')}
           <bk-native-select-opt value="email">Email</bk-native-select-opt>
           <bk-native-select-opt value="sms">SMS</bk-native-select-opt>
         </bk-native-select>
@@ -72,7 +71,7 @@ describe('bk-native-select', () => {
     it(`should keep the field border at 3:1 against its own surface (${theme})`, async () => {
       setTheme(theme);
       const el = await fixture<BkNativeSelect>(html`
-        <bk-native-select>${labelAtom}</bk-native-select>
+        <bk-native-select>${labelAtom('Channel')}</bk-native-select>
       `);
       const style = getComputedStyle(innerSelect(el));
 
@@ -82,7 +81,7 @@ describe('bk-native-select', () => {
     it(`should keep the caret at 3:1 against its own surface (${theme})`, async () => {
       setTheme(theme);
       const el = await fixture<BkNativeSelect>(html`
-        <bk-native-select>${labelAtom}</bk-native-select>
+        <bk-native-select>${labelAtom('Channel')}</bk-native-select>
       `);
       const caret = getComputedStyle(el.shadowRoot!.querySelector<HTMLElement>('[part="caret"]')!);
       const style = getComputedStyle(innerSelect(el));
@@ -95,7 +94,7 @@ describe('bk-native-select', () => {
       const host = await fixture<HTMLElement>(html`
         <div>
           <button type="button">before</button>
-          <bk-native-select>${labelAtom}</bk-native-select>
+          <bk-native-select>${labelAtom('Channel')}</bk-native-select>
         </div>
       `);
       const el = host.querySelector<BkNativeSelect>('bk-native-select')!;
@@ -112,7 +111,7 @@ describe('bk-native-select', () => {
 
   it('should point its label at the select it names', async () => {
     const el = await fixture<BkNativeSelect>(html`
-      <bk-native-select>${labelAtom}</bk-native-select>
+      <bk-native-select>${labelAtom('Channel')}</bk-native-select>
     `);
 
     expect(innerLabel(el).htmlFor).to.equal(innerSelect(el).id);
@@ -121,7 +120,7 @@ describe('bk-native-select', () => {
 
   it('should delegate focus to the real select', async () => {
     const el = await fixture<BkNativeSelect>(html`
-      <bk-native-select>${labelAtom}</bk-native-select>
+      <bk-native-select>${labelAtom('Channel')}</bk-native-select>
     `);
 
     el.focus();
@@ -134,7 +133,7 @@ describe('bk-native-select', () => {
 
   it('should reference no description while the region is empty', async () => {
     const el = await fixture<BkNativeSelect>(html`
-      <bk-native-select>${labelAtom}</bk-native-select>
+      <bk-native-select>${labelAtom('Channel')}</bk-native-select>
     `);
     await settle(el);
 
@@ -147,7 +146,7 @@ describe('bk-native-select', () => {
 
   it('should describe the select while the atom has text, and drop the reference when it empties', async () => {
     const el = await fixture<BkNativeSelect>(html`
-      <bk-native-select>${labelAtom}</bk-native-select>
+      <bk-native-select>${labelAtom('Channel')}</bk-native-select>
     `);
     const description = descriptionNode('We only use it for the receipt.');
     el.appendChild(description);
@@ -348,7 +347,7 @@ describe('bk-native-select', () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
         <bk-native-select name="channel" placeholder="Choose a channel" required>
-          ${labelAtom}
+          ${labelAtom('Channel')}
           <bk-native-select-opt value="email">Email</bk-native-select-opt>
         </bk-native-select>
       </form>
@@ -410,7 +409,7 @@ describe('bk-native-select', () => {
   it('should paint the label and show the error region when the field has an error', async () => {
     const el = await fixture<BkNativeSelect>(html`
       <bk-native-select name="channel" error="Pick a channel">
-        ${labelAtom}
+        ${labelAtom('Channel')}
         <bk-native-select-opt value="email">Email</bk-native-select-opt>
       </bk-native-select>
     `);

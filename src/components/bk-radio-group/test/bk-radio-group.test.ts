@@ -1,5 +1,6 @@
 import { settle as settleHost } from '../../../test/helpers/settle.js';
 import { opacityOf } from '../../../test/helpers/style.js';
+import { describedNode } from '../../../test/helpers/dom.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import '.././define.js';
@@ -19,12 +20,6 @@ const box = (radio: BkRadioGroupItem) =>
   radio.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
 
 const tabIndex = (radio: BkRadioGroupItem) => innerInput(radio).getAttribute('tabindex');
-
-/* The id the host points at, resolved in the document tree: never a string. */
-const describedNode = (el: BkRadioGroup): Element | null => {
-  const id = el.getAttribute('aria-describedby');
-  return id ? document.getElementById(id) : null;
-};
 
 /* The group writes on its item, so each item's own update has to commit too. */
 const settle = async (el: BkRadioGroup) => {
