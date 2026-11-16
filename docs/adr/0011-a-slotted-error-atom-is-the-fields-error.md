@@ -4,7 +4,8 @@ Date: 2026-11-15
 
 ## Status
 
-accepted
+accepted; superseded in part by
+[0013](0013-a-group-enforces-at-least-one-and-nothing-else.md)
 
 ## Context
 

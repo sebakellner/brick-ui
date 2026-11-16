@@ -17,9 +17,20 @@ layout changes with it.
 
 <Canvas of={CheckboxGroupStories.Horizontal} />
 
+## Required
+
+`required` means **at least one box checked**. With nothing checked the group
+reports `valueMissing` and the form refuses the submit; checking one box clears it
+and unchecking the last one brings it back. The `*` is the mark; the requirement a
+screen reader reads is the description text, because `role="group"` has no
+`aria-required` — see the accessibility notes in the README.
+
+<Canvas of={CheckboxGroupStories.Required} />
+
 ## Invalid
 
 `invalid` paints the group's own label and leaves every box untouched: validity
-is each box's, and the group reports nothing it cannot enforce.
+stays each box's, and `required` on the group is the one constraint the group
+itself enforces.
 
 <Canvas of={CheckboxGroupStories.Invalid} />

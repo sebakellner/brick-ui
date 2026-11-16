@@ -2,6 +2,7 @@ import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import '../bk-checkbox/define.js';
 import '../bk-field/define.js';
+import type { BkCheckbox } from '../bk-checkbox/bk-checkbox.js';
 import type { BkCheckboxGroup } from './bk-checkbox-group.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
@@ -42,6 +43,44 @@ const settle = async (el: BkCheckboxGroup) => {
   await new Promise((resolve) => setTimeout(resolve, 0));
   await el.updateComplete;
 };
+
+const boxesOf = (el: BkCheckboxGroup) => Array.from(el.querySelectorAll<BkCheckbox>('bk-checkbox'));
+
+const inputOf = (box: BkCheckbox) => box.shadowRoot!.querySelector('input')!;
+
+/* The group writes on the boxes, so their own update has to commit too. */
+const settleBoxes = async (el: BkCheckboxGroup) => {
+  await settle(el);
+  for (const box of boxesOf(el)) await box.updateComplete;
+  await settle(el);
+};
+
+/* A real activation: the platform's click on the inner input, which is what
+ * makes a box emit `bk-change`. Nothing is written by hand. */
+const toggle = async (el: BkCheckboxGroup, box: BkCheckbox) => {
+  inputOf(box).click();
+  await settleBoxes(el);
+};
+
+const opacityOf = async (value: string): Promise<string> => {
+  const probe = await fixture<HTMLElement>(html`<span style="opacity: ${value}"></span>`);
+
+  return getComputedStyle(probe).opacity;
+};
+
+const requiredForm = html`
+  <form>
+    <bk-checkbox-group name="channels" required>
+      <bk-field-label>Notifications</bk-field-label>
+      <bk-checkbox name="email" value="email"
+        ><bk-field-label slot="label">Email</bk-field-label></bk-checkbox
+      >
+      <bk-checkbox name="sms" value="sms"
+        ><bk-field-label slot="label">SMS</bk-field-label></bk-checkbox
+      >
+    </bk-checkbox-group>
+  </form>
+`;
 
 const twoBoxes = html`
   <bk-checkbox-group>
@@ -313,11 +352,253 @@ describe('bk-checkbox-group', () => {
     expect(atomState(label), 'the state leaves with the property').to.equal(null);
   });
 
-  it('should expose neither required nor disabled', async () => {
-    const el = await fixture<BkCheckboxGroup>(html`<bk-checkbox-group></bk-checkbox-group>`);
+  it('should report valueMissing while required has nothing checked, and block the submit', async () => {
+    const form = await fixture<HTMLFormElement>(requiredForm);
+    const el = form.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
+    await settle(el);
+    let submitted = false;
+    let invalidOn: EventTarget | null = null;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      submitted = true;
+    });
+    form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
 
-    expect('required' in el, 'the group cannot enforce required').to.equal(false);
-    expect('disabled' in el, 'the group cannot honour disabled').to.equal(false);
+    expect(el.validity.valueMissing, 'nothing checked is a missing answer').to.equal(true);
+    expect(el.validity.valid).to.equal(false);
+    expect(form.checkValidity()).to.equal(false);
+
+    form.requestSubmit();
+    await settle(el);
+
+    expect(submitted, 'the submit never runs').to.equal(false);
+    expect(invalidOn === el, 'the group is what the submit rejected').to.equal(true);
+    expect(el.validationMessage, 'the fixed English default').to.equal(
+      'Please select at least one option.',
+    );
+  });
+
+  it('should clear valueMissing as soon as one box is checked, with no manual call', async () => {
+    const form = await fixture<HTMLFormElement>(requiredForm);
+    const el = form.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
+    await settle(el);
+    const [email] = boxesOf(el);
+
+    expect(el.validity.valueMissing).to.equal(true);
+
+    await toggle(el, email);
+
+    expect(email.checked, 'the box took the click').to.equal(true);
+    expect(el.validity.valueMissing, 'the constraint follows the box').to.equal(false);
+    expect(form.checkValidity(), 'the form now validates').to.equal(true);
+  });
+
+  it('should bring valueMissing back when the last checked box is unchecked', async () => {
+    const form = await fixture<HTMLFormElement>(requiredForm);
+    const el = form.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
+    await settle(el);
+    const [email, sms] = boxesOf(el);
+
+    await toggle(el, email);
+    expect(el.validity.valueMissing).to.equal(false);
+
+    await toggle(el, email);
+
+    expect(email.checked).to.equal(false);
+    expect(el.validity.valueMissing, 'the last box left, so the answer is missing again').to.equal(
+      true,
+    );
+    expect(form.checkValidity()).to.equal(false);
+
+    await toggle(el, sms);
+
+    expect(el.validity.valueMissing, 'another box carries the answer').to.equal(false);
+  });
+
+  it('should submit the boxes and no entry of its own', async () => {
+    const form = await fixture<HTMLFormElement>(requiredForm);
+    const el = form.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
+    await settle(el);
+    const [email, sms] = boxesOf(el);
+
+    expect(
+      new FormData(form).get('channels'),
+      'a group with nothing checked submits nothing',
+    ).to.equal(null);
+
+    await toggle(el, email);
+
+    const data = new FormData(form);
+
+    expect(data.get('email'), 'the box submits its own value').to.equal('email');
+    expect(data.get('sms'), 'an unchecked box submits nothing').to.equal(null);
+    expect(data.get('channels'), 'the group is a constraint, not a payload entry').to.equal(null);
+    expect(data.getAll('channels').length, 'not even an empty one').to.equal(0);
+
+    await toggle(el, sms);
+
+    expect(new FormData(form).get('sms')).to.equal('sms');
+    expect(
+      new FormData(form).getAll('channels').length,
+      'two boxes checked still make no group entry',
+    ).to.equal(0);
+  });
+
+  it('should report the consumer error atom as its message, and the fixed default without one', async () => {
+    const form = await fixture<HTMLFormElement>(requiredForm);
+    const el = form.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
+    await settle(el);
+
+    expect(el.validationMessage, 'no atom and no error: the fixed default').to.equal(
+      'Please select at least one option.',
+    );
+
+    const error = document.createElement('bk-field-error');
+    error.textContent = 'Pick at least one channel.';
+    el.append(error);
+    await settle(el);
+
+    expect(el.validity.valueMissing, 'the constraint is still the missing answer').to.equal(true);
+    expect(el.validationMessage, 'the atom text is the message').to.equal(
+      'Pick at least one channel.',
+    );
+
+    error.remove();
+    el.error = 'Pick one.';
+    await settle(el);
+
+    expect(el.validationMessage, 'the property is the message while no atom is').to.equal(
+      'Pick one.',
+    );
+
+    el.error = '';
+    await settle(el);
+
+    expect(el.validationMessage, 'and the default is back').to.equal(
+      'Please select at least one option.',
+    );
+  });
+
+  it('should disable every box it owns and give back only what it wrote', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-checkbox-group name="channels">
+          <bk-field-label>Notifications</bk-field-label>
+          <bk-checkbox name="email" value="email"
+            ><bk-field-label slot="label">Email</bk-field-label></bk-checkbox
+          >
+          <bk-checkbox name="sms" value="sms" disabled
+            ><bk-field-label slot="label">SMS</bk-field-label></bk-checkbox
+          >
+        </bk-checkbox-group>
+      </form>
+    `);
+    const el = form.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
+    await settleBoxes(el);
+    const [email, sms] = boxesOf(el);
+    const row = el.shadowRoot!.querySelector<HTMLElement>('[part="label"]')!;
+
+    expect(email.disabled).to.equal(false);
+    expect(sms.disabled, 'a box disabled in its markup').to.equal(true);
+    expect(getComputedStyle(row).opacity, 'an enabled group paints its row fully').to.equal('1');
+
+    el.disabled = true;
+    await settleBoxes(el);
+
+    expect(el.hasAttribute('disabled'), 'the attribute reflects').to.equal(true);
+    expect(
+      boxesOf(el).every((box) => box.disabled),
+      'every box the group owns is disabled',
+    ).to.equal(true);
+    expect(inputOf(email).getAttribute('aria-disabled'), 'and announces it').to.equal('true');
+    expect(getComputedStyle(row).opacity, 'the group label dims with the primitive').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
+
+    inputOf(email).click();
+    await settleBoxes(el);
+
+    expect(email.checked, 'a disabled group leaves its boxes inert').to.equal(false);
+
+    el.disabled = false;
+    await settleBoxes(el);
+
+    expect(email.disabled, 'the group gives back what it took').to.equal(false);
+    expect(sms.disabled, 'a box disabled on its own stays disabled').to.equal(true);
+
+    inputOf(email).click();
+    await settleBoxes(el);
+
+    expect(email.checked, 'and the box responds again').to.equal(true);
+
+    const fieldset = await fixture<HTMLFormElement>(html`
+      <form>
+        <fieldset disabled>
+          <bk-checkbox-group name="channels" required>
+            <bk-field-label>Notifications</bk-field-label>
+            <bk-checkbox name="email" value="email"
+              ><bk-field-label slot="label">Email</bk-field-label></bk-checkbox
+            >
+          </bk-checkbox-group>
+        </fieldset>
+      </form>
+    `);
+    const inherited = fieldset.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
+    await settleBoxes(inherited);
+
+    expect(inherited.fieldDisabled, 'a disabled fieldset reaches the group').to.equal(true);
+    expect(boxesOf(inherited)[0].disabled, 'and flows on to the boxes the group owns').to.equal(
+      true,
+    );
+    expect(inherited.validity.valueMissing, 'a disabled group reports no error').to.equal(false);
+  });
+
+  it('should write nothing on the boxes but disabled', async () => {
+    const el = await fixture<BkCheckboxGroup>(html`
+      <bk-checkbox-group required>
+        <bk-field-label>Notifications</bk-field-label>
+        <bk-checkbox name="email" value="email"
+          ><bk-field-label slot="label">Email</bk-field-label></bk-checkbox
+        >
+        <bk-checkbox name="sms" value="sms"
+          ><bk-field-label slot="label">SMS</bk-field-label></bk-checkbox
+        >
+      </bk-checkbox-group>
+    `);
+    await settleBoxes(el);
+    const [email] = boxesOf(el);
+    const before = boxAttributes(email);
+
+    expect(el.validity.valueMissing, 'the constraint is on the group').to.equal(true);
+    expect(
+      email.hasAttribute('required'),
+      'the group never marks a box required: the constraint is its own',
+    ).to.equal(false);
+    expect(email.hasAttribute('aria-invalid')).to.equal(false);
+    expect(boxAttributes(email), 'a missing answer writes nothing on a box').to.deep.equal(before);
+
+    await toggle(el, email);
+
+    expect(email.checked).to.equal(true);
+    expect(
+      boxAttributes(email),
+      'nor with an answer: no required, no aria-invalid on a box',
+    ).to.deep.equal(before);
+
+    el.invalid = true;
+    el.error = 'Pick one.';
+    await settleBoxes(el);
+
+    expect(boxAttributes(email), 'the group paints its own label, never a box').to.deep.equal(
+      before,
+    );
+
+    el.disabled = true;
+    await settleBoxes(el);
+
+    expect(boxAttributes(email), 'disabled is the only attribute the group writes').to.deep.equal(
+      [...before, 'disabled'].sort(),
+    );
   });
 
   it('should clear the name when the label atom is removed', async () => {

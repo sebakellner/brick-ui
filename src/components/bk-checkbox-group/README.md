@@ -1,13 +1,14 @@
 # `bk-checkbox-group`
 
 A container that names and arranges several `bk-checkbox` elements. It is a
-`role="group"` with its own label, description and error regions, and it holds no
-value and no validity of its own.
+`role="group"` with its own label, description and error regions, and it enforces
+one thing: with `required`, at least one of its boxes must be checked. It submits
+no value of its own — every box submits its own.
 
 [Docs page](https://sebakellner.github.io/brick-ui/?path=/docs/components-checkbox-group--docs)
 
 ```html
-<bk-checkbox-group>
+<bk-checkbox-group required>
   <bk-field-label>Notifications</bk-field-label>
   <bk-checkbox name="email" value="email">
     <bk-field-label slot="label">Email</bk-field-label>
@@ -16,29 +17,75 @@ value and no validity of its own.
     <bk-field-label slot="label">SMS</bk-field-label>
   </bk-checkbox>
   <bk-field-description>Pick at least one.</bk-field-description>
+  <bk-field-error>Pick at least one channel.</bk-field-error>
 </bk-checkbox-group>
 ```
 
 ## Attributes and properties
 
-| Property      | Attribute     | Type                         | Default    | Notes                                                                                                                                    |
-| ------------- | ------------- | ---------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `invalid`     | `invalid`     | `boolean`                    | `false`    | reflected; paints the group's own `bk-field-label` with `data-state="invalid"`. Sets nothing on the boxes and adds no message of its own |
-| `orientation` | `orientation` | `'vertical' \| 'horizontal'` | `vertical` | reflected; the direction the boxes flow in. The only layout difference                                                                   |
+| Property      | Attribute     | Type                         | Default    | Notes                                                                                                                                                                              |
+| ------------- | ------------- | ---------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`        | `name`        | `string`                     | `''`       | carried by the shared form API. The group submits nothing, so the name adds no entry to the form data                                                                              |
+| `required`    | `required`    | `boolean`                    | `false`    | reflected; with nothing checked it reports `valueMissing` and blocks the submit, and marks its label with a `*` while it has one                                                   |
+| `disabled`    | `disabled`    | `boolean`                    | `false`    | reflected; disables every `bk-checkbox` it owns, submits nothing and reports no error. It takes back only the `disabled` it wrote itself                                           |
+| `error`       | `error`       | `string`                     | `''`       | the message from JavaScript; a slotted `bk-field-error` with text wins over it; reports `customError` with that text                                                               |
+| `invalid`     | `invalid`     | `boolean`                    | `false`    | reflected; the consumer's own statement, beside the invalid state the field derives from its error. Either one paints the group's own `bk-field-label` and writes nothing on a box |
+| `orientation` | `orientation` | `'vertical' \| 'horizontal'` | `vertical` | reflected; the direction the boxes flow in. The only layout difference                                                                                                             |
 
-The group declares **no `required` and no `disabled`**. An asterisk promises an
-enforcement the group does not have, because "at least one checked" is a
-constraint no attribute expresses and no single native control carries; and a
-`disabled` the group cannot honour is worse than none. Validity stays on each
-`bk-checkbox`, and the group never writes to one.
+The rest of the form API is the shared contract, inherited from
+`FieldControlMixin`:
 
-To disable every box, wrap the group in a disabled `fieldset`. Each control
-already honours it through `FormControlMixin`, so the boxes stop responding and
-stay announced as unavailable without any group-level attribute:
+| Member                                                                                                 | Notes                                                                       |
+| ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| `form`, `validity`, `validationMessage`, `fieldMessage`, `fieldError`, `fieldInvalid`, `fieldDisabled` | read-only views of the internals                                            |
+| `checkValidity()`, `reportValidity()`, `showValidationMessage()`                                       | the platform's constraint validation, and the message a touched field shows |
+| `formResetCallback()`, `formDisabledCallback()`, `formStateRestoreCallback()`                          | driven by the `<form>`, not by the consumer                                 |
+
+## What it enforces
+
+`required` means **at least one box checked**, and it is the only constraint the
+group carries. With `required` and nothing checked the group reports
+`valueMissing` and the form refuses the submit; the moment one box it owns is
+checked the constraint clears, and it comes back when the last one is unchecked.
+
+There is no manual call: the group reads the boxes' `checked` property and
+re-evaluates on the `bk-change` every box already emits. The boxes stay
+independent — the group writes nothing on them except `disabled` (see
+[Disabled](#disabled)), an unchecked box submits nothing, and no box knows it is
+in a group.
+
+**It submits no value of its own.** The boxes submit theirs under their own
+`name`s; the group adds no entry to the form data. `new FormData(form)` has the
+checked boxes and no row for the group: it is a constraint in the payload, not a
+key.
+
+The message is the consumer's. The `error` property, or a `bk-field-error` atom
+with text, reports `customError` with that text, exactly as in any field
+([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
+With neither, the group falls back to a fixed English sentence — `Please select
+at least one option.` — which only the platform surfaces, through
+`validationMessage` and the browser's own validation UI on submit. A component
+does not translate; a consumer who wants text on the page writes it.
+
+## Disabled
+
+`disabled` flows to the boxes. The group writes `disabled` on every `bk-checkbox`
+it owns, and takes back only what it wrote: leaving `disabled` re-enables those
+boxes and leaves a box authored `disabled` disabled. Each box then refuses the
+pointer and reports `aria-disabled` on its own inner input, which is the disabled
+they already carry
+([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)).
+A group that looks unavailable while its boxes still respond is the lie
+[Conventions C5](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-code.md#c5-a-disabled-control-keeps-its-muted-text-loses-its-hover-and-carries-one-dim)
+exists to prevent.
+
+A disabled `<fieldset>` reaches the group too, through `formDisabledCallback`, and
+the group flows it to the boxes the same way. Each box also honours the fieldset
+on its own, so both routes leave the set inert:
 
 ```html
 <fieldset disabled>
-  <bk-checkbox-group>
+  <bk-checkbox-group required>
     <bk-field-label>Notifications</bk-field-label>
     <bk-checkbox name="email" value="email">
       <bk-field-label slot="label">Email</bk-field-label>
@@ -101,10 +148,11 @@ own. It writes only these four facts, never text, never state a box reads.
 
 ## Parts
 
-| Part    | Element                                                           |
-| ------- | ----------------------------------------------------------------- |
-| `label` | the row holding the label slot, hidden while the group is unnamed |
-| `boxes` | the flow container of the default slot, `part="boxes"`            |
+| Part       | Element                                                                                 |
+| ---------- | --------------------------------------------------------------------------------------- |
+| `label`    | the row holding the label slot and the required mark, hidden while the group is unnamed |
+| `boxes`    | the flow container of the default slot, `part="boxes"`                                  |
+| `required` | the `*` that marks a required group, `aria-hidden`                                      |
 
 There is no `message`, `description` or `error` part: those regions are the
 consumer's own atoms, styled by the atoms and by the group's `::slotted` rules.
@@ -112,23 +160,33 @@ They are always there, because the group never removes them.
 
 ## Label state
 
-`invalid` is written as `data-state="invalid"` on the `bk-field-label` the group
-hosts, never on a box and never on the label of one:
+The group writes its state on the `bk-field-label` it hosts, as `data-state`, and
+`data-disabled` on its own label row; it writes neither on a box, nor on the
+label of one:
 
-| Value     | When              | Paints             |
-| --------- | ----------------- | ------------------ |
-| `invalid` | `invalid` is true | `--bk-text-danger` |
+| Value      | When                                                     | Paints                  |
+| ---------- | -------------------------------------------------------- | ----------------------- |
+| `invalid`  | `invalid` is set, or the field derives it from its error | `--bk-text-danger`      |
+| `disabled` | the group is disabled, or is inside a disabled form      | `--bk-opacity-disabled` |
 
 A label with no state keeps `--bk-text-default`, which is what the atom paints
-from its own `:host` rules. The group declares no `disabled` state.
+from its own `:host` rules. The dim is written once, on the row: the hosted atom
+is dimmed by the row it sits in and not a second time on its own.
+
+A missing answer with no message on screen is **not** painted invalid: `data-state`
+follows what is displayed, so a required empty group with no error atom shows the
+`*` and the platform's message and nothing red
+([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
 
 ## Tokens
 
 No new token tier. The group reads the roles and primitives the atoms already
 read — `--bk-space-2` for the gap between the boxes, and the atoms' own
-`--bk-text-muted`, `--bk-text-danger` and `--bk-text-default` — and declares **no
-override hook**: there is no `--bk-checkbox-group-*` name, and layout is the
-only thing `orientation` decides.
+`--bk-text-muted`, `--bk-text-danger` and `--bk-text-default` — plus the ones the
+shared label styles paint with now that the group has a label state: the
+`*`'s `--bk-text-danger` and the row's `--bk-opacity-disabled` while disabled. It
+declares **no override hook**: there is no `--bk-checkbox-group-*` name, and
+layout is the only thing `orientation` decides.
 
 ```css
 /* theming a group means theming the role, not the group */
@@ -160,19 +218,53 @@ only thing `orientation` decides.
 - `invalid` is reinforcement of the group's own label. It is never the only
   signal for a box: each box carries its own `aria-invalid`, its own message and
   its own native constraint, and the group cannot mark a box valid or invalid.
-- **Not form-associated.** The group has no value, no `name` and no
-  `ElementInternals`. Each box submits under its own `name`, and a required box
-  reports `valueMissing` on its own — the group neither adds to nor blocks the
-  form payload.
+- **Form-associated, and it submits no entry.** The group composes the shared
+  field contract, so it carries `name`, `required`, `disabled`, `error` and the
+  validity surface: a required empty group reports `valueMissing` and the submit
+  is refused at the group. `submittedValue` is `null`: the boxes submit their own
+  values under their own names, and the group exists in the payload as a
+  constraint, not as a key.
+- **There is no `aria-required` for a group of checkboxes, and the group does not
+  pretend there is.** `aria-required` belongs to `combobox`, `gridcell`,
+  `listbox`, `radiogroup`, `spinbutton`, `textbox` and `tree`; `role="group"` is
+  not among them, and an attribute no assistive technology maps is the same
+  mistake as a decorative asterisk. The requirement is announced by the
+  consumer's `bk-field-description` ("Pick at least one") and enforced by the
+  constraint; the message is the consumer's `bk-field-error`. `radiogroup` **is**
+  in that list, which is why `bk-radio-group` can say more with less.
+- The `*` is `aria-hidden="true"` and `part="required"`: it is decoration for the
+  eye, and the requirement a screen reader reads is the description text.
+- The host carries no `aria-invalid` of its own: the user does not interact with
+  the container, the invalid state is painted on its label, and the error is the
+  consumer's atom. The boxes keep their own `aria-invalid`.
 - No focus, key handling or tab order of its own: the boxes are the controls, and
   the group is a container around them.
 
 ## Limitations
 
-- No group-level validity: no "at least one checked", no `required`, no `error`
-  property. A cross-control constraint is a new contract and it is not this
-  component.
-- No `disabled`. Use `<fieldset disabled>`, which every control honours.
-- No reaching into the boxes: the group never sets an attribute on a
-  `bk-checkbox`, never reads its state, never calls its methods, and no box knows
-  it is inside a group.
+- **Only "at least one".** There is no `min`, no `max` and no count, so a group
+  that needs "two of these" is a different decision with its own message and its
+  own suite.
+- **The group cannot display a message it does not own.** A required group with
+  nothing checked blocks the submit and reports `valueMissing`, but the visible
+  sentence is the consumer's: the `error` property or a `bk-field-error` atom. The
+  built-in default — `Please select at least one option.` — is English, fixed, and
+  only the platform surfaces it.
+- **A box that is `indeterminate` is not checked.** The constraint counts
+  `checked` only, and a mixed box submits no value of its own, so it does not
+  satisfy the group.
+- **No `aria-required`.** `role="group"` has no such attribute, so the
+  requirement lives in the consumer's description text and in the constraint. See
+  [Accessibility](#accessibility).
+- **The label is not painted invalid for a missing answer.** `data-state` and
+  `invalid` follow what is displayed
+  ([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)),
+  so a required empty group with no error atom is not red, before an interaction
+  or after it. Write an error atom, or set `error`, to mark the set and keep it
+  marked.
+- **The group reads and writes as little as it can.** It reads the boxes'
+  `checked` property — never into a box's shadow root — and writes only
+  `disabled` on them. It never sets a box's `checked`, its `required` or its
+  message, and an unchecked box still submits nothing.
+- **The inherited `value` is inert.** The group has no value of its own, so
+  assigning `value` changes nothing it submits.
