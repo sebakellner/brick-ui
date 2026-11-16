@@ -9,7 +9,7 @@ an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 The **three levels** come first, because they are the frame the rules sit in: where a
 suite lives and what it is allowed to assert. They are not numbered because they are judged
 as a whole — a misplaced suite is caught by reading a diff, not by one assertion going red
-— while a rule is something a single test can name. The eighteen numbered rules follow as a
+— while a rule is something a single test can name. The seventeen numbered rules follow as a
 checklist, each with what enforces it, and each explained in turn after it.
 
 ## The three levels, and who decides the composition
@@ -115,7 +115,6 @@ suite reaches nobody; an undefined token reaches a consumer in runtime, which is
 | T15 | Accessibility is asserted by rule and by audit                       | `a11y.test.ts`, then every component suite |
 | T16 | A suite proves its subject rendered                                  | review                                     |
 | T17 | Every documented name has a case                                     | review against the README tables           |
-| T18 | The artifact is tested, not only built                               | the CI step after `build-storybook`        |
 
 The explanations below are **grouped by theme, not by number**. The numbers are stable
 identifiers: other documents, commit messages and reviews cite `T6` and `T15` by name, so
@@ -323,8 +322,9 @@ used. **The packaging contract is not a test**: `package.json` declares
 and `CONTRIBUTING.md` states both. Both extensions are listed because two bundlers read
 that field against two different graphs: a consumer's build sees the compiled `define.js`,
 and any build that reads the sources sees `define.ts`. A field that names only the first
-lets the second drop every registration, so the CI job that builds Storybook asserts the
-bundle registers something before it uploads anything. A concern is a `describe`, never a file: only a change of
+lets the second drop every registration — which is what happened, silently, until the build
+started being inspected: **a job that builds an artifact also asserts the artifact**, because a
+build exiting zero proves the sources compile and says nothing about what the bundle carries. A concern is a `describe`, never a file: only a change of
 level changes a file's home.
 
 **Why.** Two claims were being tested that do not need it. "`define.js` registers its tags" is
@@ -538,26 +538,6 @@ limitation the README declares.
 **Don't** — a test per README sentence. The rule counts names, not paragraphs.
 
 **Enforced by.** Review against the `README.md` tables.
-
-## T18. The artifact is tested, not only built
-
-**Rule.** What ships is exercised, not only produced: after a build, the artifact is asserted
-against what the sources define — the registrations the bundle must carry, the entry's
-behaviour, the theme reaching a page. A green build job is not evidence that the artifact
-works.
-
-**Why.** `sideEffects` named the compiled `define.js` while Storybook built from the TypeScript
-sources, so Rollup dropped every `customElements.define()` from the bundle. The build
-succeeded, the site served bare text, and the playground build was broken the same way. A
-source-only suite cannot see it: the sources are complete and the artifact is not.
-
-**Do** — assert on the built output before it is uploaded: the job that builds Storybook
-checks that the bundle registers the elements the sources define.
-
-**Don't** — read "the build command exited 0" as proof the artifact runs.
-
-**Enforced by.** The step after `build-storybook` in `ci.yml` and `storybook-pages.yml`; a
-Playwright run against the built site when the e2e level exists.
 
 ## Commands
 
