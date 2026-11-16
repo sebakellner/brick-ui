@@ -1,16 +1,8 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import {
-  FieldPartsController,
-  FormControlMixin,
-  formControlStyles,
-  type FieldMessageFallbacks,
-} from '../shared/form-control/index.js';
+import { FieldControlMixin, formControlStyles } from '../shared/form-control/index.js';
 
-let instanceCount = 0;
-const nextInstanceId = () => `bk-checkbox-${++instanceCount}`;
-
-export class BkCheckbox extends FormControlMixin(LitElement) {
+export class BkCheckbox extends FieldControlMixin(LitElement) {
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
     delegatesFocus: true,
@@ -102,19 +94,8 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
 
   @property({ type: Boolean }) checked = false;
 
-  private readonly controlId = nextInstanceId();
-
-  private readonly fieldParts = new FieldPartsController(this, this.controlId);
-
   override get formControlElement(): HTMLInputElement | undefined {
     return this.shadowRoot?.querySelector('input') ?? undefined;
-  }
-
-  /* A slotted `bk-field-error` with text is this field's error: it is what the
-   * region shows, and markup is the more specific statement, so it wins over
-   * the property. An atom with no text is not content and says nothing. */
-  override get fieldError(): string {
-    return this.fieldParts.slotError || this.error;
   }
 
   override get submittedValue(): string | null {
@@ -149,12 +130,6 @@ export class BkCheckbox extends FormControlMixin(LitElement) {
       </label>
       ${this.fieldParts.messages}
     `;
-  }
-
-  private messageSources(): FieldMessageFallbacks {
-    return {
-      error: this.fieldError || this.fieldMessage,
-    };
   }
 
   override formResetCallback(): void {

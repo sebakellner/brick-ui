@@ -1,21 +1,13 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
-import {
-  FieldPartsController,
-  FormControlMixin,
-  formControlStyles,
-  type FieldMessageFallbacks,
-} from '../shared/form-control/index.js';
+import { FieldControlMixin, formControlStyles } from '../shared/form-control/index.js';
 
 export type BkInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'url';
 
 export type BkInputMode =
   'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
 
-let instanceCount = 0;
-const nextInstanceId = () => `bk-input-${++instanceCount}`;
-
-export class BkInput extends FormControlMixin(LitElement) {
+export class BkInput extends FieldControlMixin(LitElement) {
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
     delegatesFocus: true,
@@ -38,19 +30,8 @@ export class BkInput extends FormControlMixin(LitElement) {
 
   @property({ type: String }) override inputMode: BkInputMode | '' = '';
 
-  private readonly controlId = nextInstanceId();
-
-  private readonly fieldParts = new FieldPartsController(this, this.controlId);
-
   override get formControlElement(): HTMLInputElement | undefined {
     return this.shadowRoot?.querySelector('input') ?? undefined;
-  }
-
-  /* A slotted `bk-field-error` with text is this field's error: it is what the
-   * region shows, and markup is the more specific statement, so it wins over
-   * the property. An atom with no text is not content and says nothing. */
-  override get fieldError(): string {
-    return this.fieldParts.slotError || this.error;
   }
 
   override render() {
@@ -84,12 +65,6 @@ export class BkInput extends FormControlMixin(LitElement) {
       />
       ${this.fieldParts.messages}
     `;
-  }
-
-  private messageSources(): FieldMessageFallbacks {
-    return {
-      error: this.fieldError || this.fieldMessage,
-    };
   }
 
   private readonly handleInput = (event: Event) => {

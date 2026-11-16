@@ -5,6 +5,7 @@ export {
   type NativeFormControl,
 } from './form-control.mixin.js';
 export { formControlStyles } from './form-control.styles.js';
+export { FieldControlMixin } from './field-control.mixin.js';
 export {
   FieldMessagesController,
   type FieldMessageFallbacks,
