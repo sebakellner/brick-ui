@@ -72,8 +72,11 @@ export class BkNativeSelect extends FieldControlMixin(LitElement) {
         position: absolute;
         inset-block-start: 50%;
         inset-inline-end: var(--bk-space-4);
-        inline-size: var(--bk-space-1);
-        block-size: var(--bk-space-1);
+        box-sizing: border-box;
+        /* The rotated box shows its diagonal, so the side is 8 / sqrt(2) to put the
+         * visible chevron on the 8px step. */
+        inline-size: calc(var(--bk-space-2) / 1.4142);
+        block-size: calc(var(--bk-space-2) / 1.4142);
         color: var(--bk-text-muted);
         border-inline-end: var(--bk-border-width) solid currentColor;
         border-block-end: var(--bk-border-width) solid currentColor;
