@@ -38,6 +38,14 @@ Load the theme once, then use the elements:
   </bk-input>
 </bk-field>
 
+<bk-field>
+  <bk-native-select name="channel" placeholder="Choose a channel">
+    <bk-field-label>Channel</bk-field-label>
+    <bk-native-select-opt value="email">Email</bk-native-select-opt>
+    <bk-native-select-opt value="sms">SMS</bk-native-select-opt>
+  </bk-native-select>
+</bk-field>
+
 <bk-radio-group name="shipping">
   <bk-field-label>Shipping</bk-field-label>
   <bk-radio-group-item value="standard" checked>
