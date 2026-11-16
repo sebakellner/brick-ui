@@ -54,8 +54,8 @@ component does not re-decide any of it.
 
 6. **Stories.** `bk-<name>.stories.ts` with one story per variant and per state, and a
    `title` that states the kind of component it is: `Form/<Name>` for anything that takes
-   part in a form, in sentence case (`Form/Checkbox group`, `Form/Native select`). The
-   sidebar groups by that first segment and sorts inside it.
+   part in a form, with the component's own name in Title Case (`Form/Checkbox Group`,
+   `Form/Native Select`). The sidebar groups by that first segment and sorts inside it.
    Stories are the only place where a raw `px` is acceptable — scaffolding, not
    design.
 
