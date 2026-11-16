@@ -4,6 +4,7 @@ import type { BkButton } from '.././bk-button.js';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
 import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.js';
 import { colorOf } from '../../../test/helpers/style.js';
+import { watchSubmit } from '../../../test/helpers/form.js';
 import { hover, hoverCapable } from '../../../test/helpers/pointer.js';
 import { setTheme } from '../../../test/helpers/theme.js';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
@@ -269,28 +270,20 @@ describe('bk-button in a form', () => {
 
   it('should not submit the form it sits in unless asked to', async () => {
     const form = await inForm(html`<bk-button>Save</bk-button>`);
-    let submits = 0;
-    form.addEventListener('submit', (event) => {
-      submits += 1;
-      event.preventDefault();
-    });
+    const watch = watchSubmit(form);
 
     innerButton(form.querySelector('bk-button')!).click();
 
-    expect(submits).to.equal(0);
+    expect(watch.count).to.equal(0);
   });
 
   it('should submit the form when type is submit', async () => {
     const form = await inForm(html`<bk-button type="submit">Save</bk-button>`);
-    let submits = 0;
-    form.addEventListener('submit', (event) => {
-      submits += 1;
-      event.preventDefault();
-    });
+    const watch = watchSubmit(form);
 
     innerButton(form.querySelector('bk-button')!).click();
 
-    expect(submits).to.equal(1);
+    expect(watch.count).to.equal(1);
   });
 
   it('should reset the form when type is reset', async () => {
@@ -365,15 +358,11 @@ describe('bk-button as a form control', () => {
       html`<form><bk-button type="submit">Save</bk-button></form>`,
     );
     const button = form.querySelector('bk-button') as BkButton;
-    let submits = 0;
-    form.addEventListener('submit', (event) => {
-      submits += 1;
-      event.preventDefault();
-    });
+    const watch = watchSubmit(form);
 
     button.click();
 
-    expect(submits).to.equal(1);
+    expect(watch.count).to.equal(1);
   });
 
   it('should be disabled by the fieldset that contains it', async () => {
@@ -383,16 +372,12 @@ describe('bk-button as a form control', () => {
       </form>
     `);
     const button = form.querySelector('bk-button') as BkButton;
-    let submits = 0;
-    form.addEventListener('submit', (event) => {
-      submits += 1;
-      event.preventDefault();
-    });
+    const watch = watchSubmit(form);
     await button.updateComplete;
 
     expect(innerButton(button).getAttribute('aria-disabled')).to.equal('true');
     innerButton(button).click();
-    expect(submits).to.equal(0);
+    expect(watch.count).to.equal(0);
   });
 
   it('should act on the form named by the form attribute', async () => {
@@ -404,14 +389,10 @@ describe('bk-button as a form control', () => {
     `);
     const form = wrapper.querySelector('form') as HTMLFormElement;
     const button = wrapper.querySelector('bk-button') as BkButton;
-    let submits = 0;
-    form.addEventListener('submit', (event) => {
-      submits += 1;
-      event.preventDefault();
-    });
+    const watch = watchSubmit(form);
 
     innerButton(button).click();
 
-    expect(submits).to.equal(1);
+    expect(watch.count).to.equal(1);
   });
 });
