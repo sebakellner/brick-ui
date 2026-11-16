@@ -84,6 +84,17 @@ describe('bk-native-select', () => {
       expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
     });
 
+    it(`should keep the caret at 3:1 against its own surface (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkNativeSelect>(html`
+        <bk-native-select>${labelAtom}</bk-native-select>
+      `);
+      const caret = getComputedStyle(el.shadowRoot!.querySelector<HTMLElement>('[part="caret"]')!);
+      const style = getComputedStyle(innerSelect(el));
+
+      expect(contrastRatio(caret.borderInlineEndColor, style.backgroundColor)).to.be.at.least(3);
+    });
+
     it(`should keep the focus ring at 3:1 against its own surface (${theme})`, async () => {
       setTheme(theme);
       const host = await fixture<HTMLElement>(html`
@@ -99,6 +110,7 @@ describe('bk-native-select', () => {
       const style = getComputedStyle(innerSelect(el));
 
       expect(style.outlineStyle, 'the ring is drawn').to.equal('solid');
+      expect(style.outlineWidth, 'the ring has a width').to.not.equal('0px');
       expect(contrastRatio(style.outlineColor, style.backgroundColor)).to.be.at.least(3);
     });
   }

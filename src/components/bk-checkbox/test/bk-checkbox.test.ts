@@ -339,6 +339,7 @@ describe('bk-checkbox', () => {
 
     expect(el.shadowRoot!.activeElement).to.equal(innerInput(el));
     expect(getComputedStyle(box).outlineStyle).to.equal('solid');
+    expect(getComputedStyle(box).outlineWidth, 'the ring has a width').to.not.equal('0px');
     expect(getComputedStyle(box).outlineColor).to.equal(await colorOf('var(--bk-focus-ring)'));
   });
 
@@ -742,6 +743,18 @@ describe('bk-checkbox', () => {
       expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
     });
 
+    it(`should keep the invalid box border at 3:1 against its own surface (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkCheckbox>(html`<bk-checkbox></bk-checkbox>`);
+
+      el.error = 'You have to accept the terms.';
+      await el.updateComplete;
+
+      const box = getComputedStyle(innerBox(el));
+
+      expect(contrastRatio(box.borderTopColor, box.backgroundColor)).to.be.at.least(3);
+    });
+
     it(`should keep the check at 3:1 against the checked box (${theme})`, async () => {
       setTheme(theme);
       const el = await fixture<BkCheckbox>(html`<bk-checkbox></bk-checkbox>`);
@@ -783,6 +796,7 @@ describe('bk-checkbox', () => {
       const box = getComputedStyle(innerBox(el));
 
       expect(box.outlineStyle).to.equal('solid');
+      expect(box.outlineWidth, 'the ring has a width').to.not.equal('0px');
       expect(contrastRatio(box.outlineColor, await colorOf('var(--bk-bg-surface)'))).to.be.at.least(
         3,
       );

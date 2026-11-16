@@ -406,7 +406,31 @@ describe('bk-input', () => {
       const style = getComputedStyle(innerInput(el));
 
       expect(style.outlineStyle, 'the ring is drawn').to.equal('solid');
+      expect(style.outlineWidth, 'the ring has a width').to.not.equal('0px');
       expect(contrastRatio(style.outlineColor, style.backgroundColor)).to.be.at.least(3);
+    });
+
+    it(`should keep the invalid border at 3:1 against its own surface (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkInput>(html`<bk-input error="Required">${labelAtom}</bk-input>`);
+      const style = getComputedStyle(innerInput(el));
+
+      expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
+    });
+
+    it(`should keep the hover border at 3:1 against its own surface (${theme})`, async function () {
+      if (!hoverCapable()) this.skip();
+
+      setTheme(theme);
+      const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+      const field = innerInput(el);
+
+      await hover(field);
+
+      expect(field.matches(':hover'), 'the pointer reaches the field').to.equal(true);
+      const style = getComputedStyle(field);
+
+      expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
     });
   }
 

@@ -106,6 +106,7 @@ describe('bk-button', () => {
       const style = getComputedStyle(innerButton(el));
 
       expect(style.outlineStyle, 'the ring is drawn').to.equal('solid');
+      expect(style.outlineWidth, 'the ring has a width').to.not.equal('0px');
       expect(
         contrastRatio(style.outlineColor, await colorOf('var(--bk-bg-surface)')),
       ).to.be.at.least(3);

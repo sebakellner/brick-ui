@@ -75,6 +75,7 @@ describe('bk-radio-group-item', () => {
       const box = getComputedStyle(innerBox(el));
 
       expect(box.outlineStyle, 'the ring is drawn').to.equal('solid');
+      expect(box.outlineWidth, 'the ring has a width').to.not.equal('0px');
       expect(contrastRatio(box.outlineColor, await colorOf('var(--bk-bg-surface)'))).to.be.at.least(
         3,
       );

@@ -1,14 +1,12 @@
 /* axe arrives as a UMD bundle: importing it for its side effect is how the browser
- * gets `window.axe`, and there is no ESM build to import a value from. */
+ * gets `window.axe`, and there is no ESM build to import a value from. The global's type
+ * is axe's own, so `run` and `RunOptions` are checked rather than restated. */
 import 'axe-core/axe.js';
-import type * as axe from 'axe-core';
 import { expect } from '@open-wc/testing';
 
 declare global {
   interface Window {
-    axe: {
-      run(context: Element, options: unknown): Promise<axe.AxeResults>;
-    };
+    axe: typeof import('axe-core');
   }
 }
 
