@@ -73,6 +73,7 @@ not have to reopen the question.
 tokens/base/           primitives: palette, space, radius, typography, structure
 tokens/role/light.json semantic roles, one file per theme
 tokens/component/      what one component paints, one file per component
+src/components/shared/form-control/  the contract every field composes: mixins, controllers, styles
 src/components/bk-*/   element, stories, Storybook docs page, test/, README
 src/styles/theme.css   imports the generated token files; the consumer entry point
 src/index.ts           public entry point

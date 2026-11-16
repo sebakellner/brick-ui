@@ -19,7 +19,7 @@ internals lives in [`docs/`](docs/README.md); the [README](README.md) covers usa
 
 ## How a field is built
 
-A field is up to four layers, and only the last one is specific to it:
+A field is the layers below, and only the last one is specific to it:
 
 | Layer     | Where                                                             | What it owns                                                                                                                               |
 | --------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -27,9 +27,14 @@ A field is up to four layers, and only the last one is specific to it:
 | styles    | `src/components/shared/form-control/form-control.styles.ts`       | label, control wrapper, message and the collapsed error region, in logical properties                                                      |
 | anatomy   | `src/components/shared/form-control/field-control.mixin.ts`       | the per-instance id, the parts controller, and the one definition of "the error the field owns" — the `error` property or the slotted atom |
 | messages  | `src/components/shared/form-control/field-messages.controller.ts` | the description and error regions, their ids, and the `aria-describedby` a field announces                                                 |
+| regions   | `src/components/shared/form-control/field-regions.controller.ts`  | a container: the name on its host, the consumer's atoms adopted as its regions, and one observer for the text                              |
 | the field | `src/components/bk-*/bk-*.ts`                                     | the native control, its attributes, its render                                                                                             |
 
-A second field composes them — `class BkTextarea extends FieldControlMixin(LitElement)` with `static styles = [formControlStyles, css\`…\`]`— and overrides `formControlElement` to return the native control inside its shadow root. Nothing about form participation is copied:
+A second field composes them — `class BkTextarea extends FieldControlMixin(LitElement)`, with
+`static styles = [formControlStyles, css…]` — and overrides `formControlElement` to return the
+native control inside its shadow root. A container composes `FieldRegionsController` instead,
+and both rely on `SlottedTextController` for the one question neither can answer alone: whether
+slotted content has text. Nothing about form participation is copied:
 
 Component modules carry **no side effects**. Registration lives in a `define.ts` beside the component, guarded so a second copy of the package cannot throw, and the package entry point exports without registering. `package.json` declares `"sideEffects": ["**/define.js"]`, which is what makes a bundler enforce the split instead of a test. `src/playground.ts` is the only module that registers for the dev server.
 
