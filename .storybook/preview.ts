@@ -8,6 +8,14 @@ type Theme = 'light' | 'dark' | 'system';
 const preview: Preview = {
   parameters: {
     layout: 'centered',
+    /* Stories are grouped by the kind of component they show, not by folder. The
+     * order is declared here so a new category lands where it is placed and the
+     * sidebar does not drift with the alphabet. */
+    options: {
+      storySort: {
+        order: ['Form', ['Field', 'Input', 'Checkbox', 'Checkbox group', 'Radio group', 'Button']],
+      },
+    },
   },
   globalTypes: {
     theme: {

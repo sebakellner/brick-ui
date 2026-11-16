@@ -14,7 +14,7 @@ type Args = {
 };
 
 const meta: Meta<Args> = {
-  title: 'Components/Field',
+  title: 'Form/Field',
   component: 'bk-field',
   args: {
     label: 'Email',
