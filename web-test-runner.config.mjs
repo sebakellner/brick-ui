@@ -1,4 +1,5 @@
 import { esbuildPlugin } from '@web/dev-server-esbuild';
+import { chromeLauncher } from '@web/test-runner-chrome';
 import { sendMousePlugin } from '@web/test-runner-commands/plugins';
 
 export default {
@@ -14,6 +15,13 @@ export default {
     sendMousePlugin(),
   ],
   browserLogs: true,
+  /* 2 is hover, 1 is none. Why the flag exists, and the two ways it breaks:
+   * docs/conventions-testing.md, T7. */
+  browsers: [
+    chromeLauncher({
+      launchOptions: { args: ['--blink-settings=primaryHoverType=2'] },
+    }),
+  ],
   testFramework: {
     config: { timeout: 5000 },
   },
