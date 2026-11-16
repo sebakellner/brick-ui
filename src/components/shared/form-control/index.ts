@@ -1,6 +1,7 @@
 export {
   FormControlMixin,
   type Constructor,
+  type FieldConstraint,
   type FormControlInterface,
   type NativeFormControl,
 } from './form-control.mixin.js';
