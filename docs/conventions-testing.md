@@ -9,7 +9,7 @@ an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 The **three levels** come first, because they are the frame the rules sit in: where a
 suite lives and what it is allowed to assert. They are not numbered because they are judged
 as a whole — a misplaced suite is caught by reading a diff, not by one assertion going red
-— while a rule is something a single test can name. The sixteen numbered rules follow as a
+— while a rule is something a single test can name. Each numbered rule follows as a
 checklist, each with what enforces it, and each explained in turn after it.
 
 ## The three levels, and who decides the composition
@@ -22,7 +22,7 @@ the kit's vocabulary. The line is **who decides the composition**:
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | --------------------------------------------------------------- |
 | **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/test/bk-x.test.ts`, `describe` per concern |
 | **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                |
-| **e2e**         | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/`, Playwright. No such suite exists today                  |
+| **e2e**         | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/`, Playwright                                              |
 
 **Where exactly the line falls: the level names whose contract the test writes down, not
 how many elements sit in the fixture.** That is the test of every doubtful case, and it
@@ -54,9 +54,9 @@ its component, in one file broken into `describe` blocks per concern (`form
 participation`, `error channel`, `label state`) instead of `.form` and `.error` files —
 one file per subject is what Shoelace and Material Web do, and a concern is a paragraph
 of a suite, not a module. Integration gets its own directory, the way Spectrum keeps its
-accessibility specs apart from its unit tests and the runner itself separates kinds. There is no
-integration suite today, and the directory is named here so that the first one has a home
-instead of a debate.
+accessibility specs apart from its unit tests and the runner itself separates kinds, and
+the location is what makes the level legible: a failure under `src/test/integration/` is
+never a component's regression.
 
 Three rules make the levels useful instead of decorative:
 
@@ -67,11 +67,10 @@ Three rules make the levels useful instead of decorative:
 - **Share the mechanics, not the rules.** Mounting a field with its atoms, typing a
   value, submitting and settling are the same four lines in every suite, so they belong
   in `src/test/helpers/`. A mechanic that has already been copied into more than one
-  suite moves there, and the zero-delay settle is the case in hand: eight files write
-  their own flush today, some once and some twice, and a copied settle is how a suite
+  suite moves there — a zero-delay settle copied into several suites is how a suite
   samples a half-rendered state and reports a failure that names nothing. The rules stay
-  with the component that owns them: a shared rule
-  suite reports a failure without saying which component drifted, and it grows options and
+  with the component that owns them: a shared rule suite reports a failure without saying
+  which component drifted, and it grows options and
   conditionals the moment two controls differ — the input keeps the native `disabled` and
   the checkbox does not, the checkbox submits only while checked. Shoelace's
   `runFormControlBaseTests` and Material's `createFormTests` exist because their controls
@@ -130,11 +129,11 @@ itself; when it needs the other theme it calls `setTheme('dark')` and nothing el
 
 **Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)), so
 a suite without the theme asserts against nothing — but that is a property of the page, not
-of sixteen files. ADR 0002 still decides that the theme is required; the loader it
+of every file. ADR 0002 still decides that the theme is required; the loader it
 mentions (`before(loadTheme)`) is gone, and
 [0015](adr/0015-the-page-loads-the-theme-the-suite-does-not.md) supersedes that part of
-it. Fetching the same stylesheet from each suite was sixteen chances
-to forget, and the copy that forgot failed with an unrelated-looking assertion.
+it. Fetching the same stylesheet from each suite gave every file its own chance to forget,
+and the copy that forgot failed with an unrelated-looking assertion.
 
 **Do** — switch the theme when the test is about the theme, and nothing otherwise:
 
@@ -344,12 +343,11 @@ src/components/bk-field/
 the suite; there is no list to extend and no second file to remember.
 
 **Accessibility is a concern, not a part.** The audit and the A-rule cases live inside the
-component's suite, under a `describe('accessibility')`, and not in a
-`bk-<name>.a11y.test.ts`. It was considered as an exception on 2026-11-16 and rejected: the
-whole suite runs in 5.2 s with the audit inside it, a failing case already prints the
-component's name, and a second file per component repeats verbatim the argument this rule
-exists to refuse for `.form` and `.error` files. A hang is the one thing that would reopen
-it — a hang in a shared file costs that file's whole signal, and axe has not produced one.
+component's suite, under a `describe('accessibility')`, never in a `bk-<name>.a11y.test.ts`:
+a failing case already prints the component's name, and a second file per component repeats
+verbatim the argument this rule exists to refuse for `.form` and `.error` files. The
+exception would be earned by a hang, which costs a shared file its whole signal — the audit
+has not caused one.
 
 **Enforced by.** The suites themselves; `sideEffects` for a bundler; review for the entry.
 
@@ -489,7 +487,7 @@ multiple tests for one feature into describe blocks".
 
 **Don't** — `it('works')`, `it('test 3')`, `it('can be disabled and also focused')`.
 
-**Enforced by.** Review; the suites follow it today.
+**Enforced by.** Review; the suites follow it.
 
 ## T15. Accessibility is asserted by rule and by audit
 

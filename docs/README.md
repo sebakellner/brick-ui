@@ -77,6 +77,13 @@ alternatives that lost. The rules of the folder:
 - No frontmatter and no hand-numbered sections: the reading order is here.
 - Rationale belongs in an ADR. A convention states the rule and links the reason;
   it does not argue.
+- **These documents describe the repository as it is, never as it is going to be.** No
+  pending task, no "not yet", no "will land", no roadmap, no to-do list — not even as a
+  helpful note. A reference or a convention is state-agnostic: a rule in force, a fact
+  about the code, or the reason behind either. What changes a document is the thing it
+  describes changing, in the same change, per the table above; a plan is not a change.
+  An ADR is the one deliberate exception, and not a contradiction of this rule: it
+  records a decision and its date, which is history by design, never a status report.
 
 ## Glossary
 
