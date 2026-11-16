@@ -5,6 +5,7 @@ import { sendKeys } from '@web/test-runner-commands';
 import '.././define.js';
 import '../../bk-field/define.js';
 import type { BkNativeSelect } from '.././bk-native-select.js';
+import { expectNoViolations } from '../../../test/helpers/a11y.js';
 import { setTheme } from '../../../test/helpers/theme.js';
 
 const innerSelect = (el: BkNativeSelect) => el.shadowRoot!.querySelector('select')!;
@@ -54,6 +55,20 @@ const choose = async (el: BkNativeSelect, value: string) => {
 };
 
 describe('bk-native-select', () => {
+  for (const theme of ['light', 'dark'] as const) {
+    it(`should have no accessibility violations (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkNativeSelect>(html`
+        <bk-native-select
+          >${labelAtom}
+          <bk-native-select-opt value="email">Email</bk-native-select-opt>
+          <bk-native-select-opt value="sms">SMS</bk-native-select-opt>
+        </bk-native-select>
+      `);
+
+      await expectNoViolations(el);
+    });
+  }
   afterEach(() => {
     setTheme('light');
   });

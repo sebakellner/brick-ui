@@ -236,6 +236,9 @@ importers:
       '@web/test-runner-commands':
         specifier: ^1.0.2
         version: 1.0.2(supports-color@7.2.0)
+      axe-core:
+        specifier: ^4.14.0
+        version: 4.14.0
       prettier:
         specifier: ^3.10.1
         version: 3.10.1

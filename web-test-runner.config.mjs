@@ -29,6 +29,13 @@ export default {
       :root {
         --bk-transition: 0s;
       }
+      /* axe grades text against the page's canvas. An unpainted canvas is white to
+       * axe even when the browser reports a dark colour scheme, so the dark theme was
+       * measured as dark text on white: 1.09:1 on a pair the kit paints at 8:1. The
+       * theme paints the page, and the page is where the theme belongs. */
+      body {
+        background: var(--bk-bg-surface);
+      }
     </style>
   </head>
   <body>

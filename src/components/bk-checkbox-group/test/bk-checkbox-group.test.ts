@@ -6,6 +6,7 @@ import '../../bk-field/define.js';
 import type { BkCheckbox } from '../../bk-checkbox/bk-checkbox.js';
 import type { BkCheckboxGroup } from '.././bk-checkbox-group.js';
 import { setTheme } from '../../../test/helpers/theme.js';
+import { expectNoViolations } from '../../../test/helpers/a11y.js';
 
 const part = (el: BkCheckboxGroup, name: string) =>
   el.shadowRoot!.querySelector<HTMLElement>(`[part="${name}"]`);
@@ -80,6 +81,24 @@ const twoBoxes = html`
 `;
 
 describe('bk-checkbox-group', () => {
+  for (const theme of ['light', 'dark'] as const) {
+    it(`should have no accessibility violations (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkCheckboxGroup>(html`
+        <bk-checkbox-group>
+          <bk-field-label slot="label">Channels</bk-field-label>
+          <bk-checkbox name="email" value="email"
+            ><bk-field-label slot="label">Email</bk-field-label></bk-checkbox
+          >
+          <bk-checkbox name="sms" value="sms"
+            ><bk-field-label slot="label">SMS</bk-field-label></bk-checkbox
+          >
+        </bk-checkbox-group>
+      `);
+
+      await expectNoViolations(el);
+    });
+  }
   afterEach(() => {
     setTheme('light');
   });

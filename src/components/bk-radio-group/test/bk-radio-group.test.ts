@@ -5,6 +5,7 @@ import '.././define.js';
 import '../../bk-field/define.js';
 import type { BkRadioGroupItem } from '.././bk-radio-group-item.js';
 import type { BkRadioGroup } from '.././bk-radio-group.js';
+import { expectNoViolations } from '../../../test/helpers/a11y.js';
 import { clickAt } from '../../../test/helpers/pointer.js';
 import { setTheme } from '../../../test/helpers/theme.js';
 
@@ -47,6 +48,24 @@ const threeRadios = html`
 `;
 
 describe('bk-radio-group', () => {
+  for (const theme of ['light', 'dark'] as const) {
+    it(`should have no accessibility violations (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<HTMLElement>(html`
+        <bk-radio-group value="m">
+          <bk-field-label slot="label">Size</bk-field-label>
+          <bk-radio-group-item value="s"
+            ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+          >
+          <bk-radio-group-item value="m"
+            ><bk-field-label slot="label">Medium</bk-field-label></bk-radio-group-item
+          >
+        </bk-radio-group>
+      `);
+
+      await expectNoViolations(el);
+    });
+  }
   afterEach(async () => {
     await resetMouse();
   });
