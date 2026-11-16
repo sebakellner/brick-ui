@@ -599,7 +599,7 @@ describe('bk-checkbox', () => {
   it('should mark a required box that has a label', async () => {
     const el = await fixture<BkCheckbox>(html`<bk-checkbox required>${labelAtom}</bk-checkbox>`);
 
-    expect(innerRequired(el), 'the label carries the mark').to.not.equal(null);
+    expect(Boolean(innerRequired(el)), 'the label carries the mark').to.equal(true);
     expect(innerRequired(el)!.textContent).to.equal('*');
     expect(innerRequired(el)!.closest('label'), 'the mark lives inside the label').to.equal(
       innerLabel(el),
@@ -624,7 +624,7 @@ describe('bk-checkbox', () => {
       <bk-checkbox required><bk-field-label slot="label">Accept terms</bk-field-label></bk-checkbox>
     `);
 
-    expect(innerRequired(el), 'the slotted label is a label to mark').to.not.equal(null);
+    expect(Boolean(innerRequired(el)), 'the slotted label is a label to mark').to.equal(true);
   });
 
   it('should render no glyph for a required box with no label at all', async () => {
@@ -816,14 +816,14 @@ describe('bk-checkbox', () => {
       await settle(el);
       const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
 
-      expect(innerLabel(checkbox), 'the control renders a label').to.not.equal(null);
+      expect(Boolean(innerLabel(checkbox)), 'the control renders a label').to.equal(true);
       expect(innerLabel(checkbox)!.htmlFor, 'the label points at the inner control').to.equal(
         innerInput(checkbox).id,
       );
       expect(
-        innerLabel(checkbox)!.querySelector('slot[name="label"]'),
+        Boolean(innerLabel(checkbox)!.querySelector('slot[name="label"]')),
         'the label slot lives inside the label, so the association stays implicit',
-      ).to.not.equal(null);
+      ).to.equal(true);
       expect(assigned(checkbox, 'label')[0].localName, 'the consumer node is the atom').to.equal(
         'bk-field-label',
       );
@@ -905,7 +905,7 @@ describe('bk-checkbox', () => {
       await settle(el);
       const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
 
-      expect(region(checkbox, 'message'), 'the region stays').to.not.equal(null);
+      expect(Boolean(region(checkbox, 'message')), 'the region stays').to.equal(true);
       expect(
         region(checkbox, 'error')!.getAttribute('role'),
         'the live region keeps its role while it is empty',
@@ -936,8 +936,10 @@ describe('bk-checkbox', () => {
         region(checkbox, 'description')!.hasAttribute('hidden'),
         'the description is not rendered while the error is',
       ).to.equal(true);
-      expect(region(checkbox, 'description'), 'the description keeps its part').to.not.equal(null);
-      expect(region(checkbox, 'error'), 'the error keeps its part').to.not.equal(null);
+      expect(Boolean(region(checkbox, 'description')), 'the description keeps its part').to.equal(
+        true,
+      );
+      expect(Boolean(region(checkbox, 'error')), 'the error keeps its part').to.equal(true);
     });
 
     it('should follow a description added after connect', async () => {
