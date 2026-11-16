@@ -128,6 +128,29 @@ regression.
 **Enforced by.** The suite — a violation here is a hang, so this is the one rule
 that has to be read rather than observed.
 
+## T7. The runner claims a pointer, and the suite proves it
+
+**Rule.** `web-test-runner.config.mjs` launches Chrome with
+`--blink-settings=primaryHoverType=2`, and `src/test/browser.test.ts` asserts that
+`matchMedia('(hover: hover)')` is true. A hover test that skips is a hover test that
+proves nothing, so the environment is a test like any other.
+
+**Why.** Headless Chrome has no pointer device and reports `(hover: none)`, so every
+`@media (hover: hover)` rule stays out of the cascade — tests asserting "nothing
+changed on hover" pass without ever hovering. It happened here: three suites went
+green that way and only the button's own positive control caught it. `2` is hover
+(`1` is none); emulating the feature through `emulateMedia` is not possible, which is
+why the flag is at the launch layer.
+
+**Two caveats, both learned from other projects the hard way.** Any viewport
+emulation — `setViewport` — rewrites the pointer and hover types and silently undoes
+the flag, so a test that resizes the viewport must not expect hover afterwards. And
+the flag is Blink-only: on an engine with no pointer the hover tests still declare
+`this.skip()` rather than assert anything.
+
+**Enforced by.** `src/test/browser.test.ts`, plus the enabled-sibling control inside
+each hover test: the assertion cannot pass unless a hovered sibling really changed.
+
 ## Commands
 
 | Command           | Use                |
