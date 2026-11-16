@@ -1,25 +1,12 @@
-import { expect, fixture, html, nextFrame } from '@open-wc/testing';
+import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import type { BkButton } from './bk-button.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
+import { hover } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
-import { sendKeys, sendMouse } from '@web/test-runner-commands';
+import { sendKeys } from '@web/test-runner-commands';
 
 const innerButton = (el: BkButton) => el.shadowRoot!.querySelector('button')!;
-
-const pastTransition = async () => {
-  await nextFrame();
-  await new Promise((resolve) => setTimeout(resolve, 250));
-};
-
-const hover = async (element: Element) => {
-  const { x, y, width, height } = element.getBoundingClientRect();
-  await sendMouse({
-    type: 'move',
-    position: [Math.round(x + width / 2), Math.round(y + height / 2)],
-  });
-  await pastTransition();
-};
 
 const mount = (variant?: string) =>
   fixture<BkButton>(

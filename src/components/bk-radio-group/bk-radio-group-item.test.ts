@@ -1,8 +1,8 @@
-import { expect, fixture, html, nextFrame } from '@open-wc/testing';
-import { sendMouse } from '@web/test-runner-commands';
+import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkRadioGroupItem } from './bk-radio-group-item.js';
+import { clickAt, hover } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('input')!;
@@ -10,29 +10,7 @@ const innerLabel = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('label
 const innerBox = (el: BkRadioGroupItem) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
 
-const clickAt = async (element: Element) => {
-  const { x, y, width, height } = element.getBoundingClientRect();
-  await sendMouse({
-    type: 'click',
-    position: [Math.round(x + width / 2), Math.round(y + height / 2)],
-  });
-};
-
 const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
-
-const pastTransition = async () => {
-  await nextFrame();
-  await new Promise((resolve) => setTimeout(resolve, 250));
-};
-
-const hover = async (element: Element) => {
-  const { x, y, width, height } = element.getBoundingClientRect();
-  await sendMouse({
-    type: 'move',
-    position: [Math.round(x + width / 2), Math.round(y + height / 2)],
-  });
-  await pastTransition();
-};
 
 const colorOf = async (value: string): Promise<string> => {
   const probe = await fixture<HTMLElement>(html`<span style="color: ${value}"></span>`);

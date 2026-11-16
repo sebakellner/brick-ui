@@ -1,10 +1,11 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
-import { sendKeys, sendMouse } from '@web/test-runner-commands';
+import { sendKeys } from '@web/test-runner-commands';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
 import type { BkCheckbox } from './bk-checkbox.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
+import { clickAt, hover, pastTransition } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkCheckbox) => el.shadowRoot!.querySelector('input')!;
@@ -22,20 +23,6 @@ const projectedText = (region: HTMLElement) =>
   Array.from(region.querySelector('slot')!.assignedNodes({ flatten: true }))
     .map((node) => node.textContent!.trim())
     .join('');
-
-const pastTransition = async () => {
-  await nextFrame();
-  await new Promise((resolve) => setTimeout(resolve, 250));
-};
-
-const hover = async (element: Element) => {
-  const { x, y, width, height } = element.getBoundingClientRect();
-  await sendMouse({
-    type: 'move',
-    position: [Math.round(x + width / 2), Math.round(y + height / 2)],
-  });
-  await pastTransition();
-};
 
 const colorOf = async (value: string): Promise<string> => {
   const probe = await fixture<HTMLElement>(html`<span style="color: ${value}"></span>`);
@@ -163,12 +150,7 @@ describe('bk-checkbox', () => {
     el.addEventListener('bk-change', (event) => {
       details.push((event as CustomEvent).detail);
     });
-    const box = innerBox(el).getBoundingClientRect();
-
-    await sendMouse({
-      type: 'click',
-      position: [Math.round(box.x + box.width / 2), Math.round(box.y + box.height / 2)],
-    });
+    await clickAt(innerBox(el));
     await el.updateComplete;
 
     expect(el.checked, 'the click resolves the mixed state to checked').to.equal(true);

@@ -1,9 +1,10 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { sendKeys, sendMouse } from '@web/test-runner-commands';
+import { sendKeys } from '@web/test-runner-commands';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkRadioGroupItem } from './bk-radio-group-item.js';
 import type { BkRadioGroup } from './bk-radio-group.js';
+import { clickAt } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const radios = (el: BkRadioGroup) =>
@@ -20,14 +21,6 @@ const tabIndex = (radio: BkRadioGroupItem) => innerInput(radio).getAttribute('ta
 const describedNode = (el: BkRadioGroup): Element | null => {
   const id = el.getAttribute('aria-describedby');
   return id ? document.getElementById(id) : null;
-};
-
-const click = async (element: Element) => {
-  const { x, y, width, height } = element.getBoundingClientRect();
-  await sendMouse({
-    type: 'click',
-    position: [Math.round(x + width / 2), Math.round(y + height / 2)],
-  });
 };
 
 const opacityOf = async (value: string): Promise<string> => {
@@ -138,7 +131,7 @@ describe('bk-radio-group', () => {
     await settle(el);
     const [small, medium] = radios(el);
 
-    await click(box(medium));
+    await clickAt(box(medium));
     await settle(el);
 
     expect(el.value).to.equal('m');
@@ -146,7 +139,7 @@ describe('bk-radio-group', () => {
     expect(innerInput(medium).checked, 'and so is its inner input').to.equal(true);
     expect(small.checked).to.equal(false);
 
-    await click(box(small));
+    await clickAt(box(small));
     await settle(el);
 
     expect(el.value).to.equal('s');
@@ -184,7 +177,7 @@ describe('bk-radio-group', () => {
     expect(new FormData(form).get('size'), 'an unselected group submits nothing').to.equal(null);
     expect(new FormData(form).get('other')).to.equal(null);
 
-    await click(box(radios(second)[0]));
+    await clickAt(box(radios(second)[0]));
     await settle(second);
 
     expect(new FormData(form).get('other')).to.equal('x');
@@ -233,7 +226,7 @@ describe('bk-radio-group', () => {
     expect(describedNode(el) === error, 'and it is what the host points at').to.equal(true);
     expect(el.getAttribute('aria-invalid')).to.equal('true');
 
-    await click(box(radios(el)[0]));
+    await clickAt(box(radios(el)[0]));
     await settle(el);
 
     expect(el.validity.valueMissing, 'a selection satisfies the constraint').to.equal(false);
@@ -340,7 +333,7 @@ describe('bk-radio-group', () => {
     expect(tabIndex(medium), 'nothing selected, so the first enabled radio').to.equal('0');
     expect(tabIndex(large)).to.equal('-1');
 
-    await click(box(large));
+    await clickAt(box(large));
     await settle(el);
 
     expect(tabIndex(large), 'the selection takes the tab stop with it').to.equal('0');
@@ -374,7 +367,7 @@ describe('bk-radio-group', () => {
     await settle(el);
     const [small, medium, large] = radios(el);
 
-    await click(box(medium));
+    await clickAt(box(medium));
     await settle(el);
 
     expect(new FormData(form).get('size')).to.equal('m');
@@ -479,7 +472,7 @@ describe('bk-radio-group', () => {
     expect(innerInput(medium).checked).to.equal(true);
     expect(tabIndex(medium)).to.equal('0');
 
-    await click(box(large));
+    await clickAt(box(large));
     await settle(el);
     el.error = 'Pick a size.';
     await settle(el);

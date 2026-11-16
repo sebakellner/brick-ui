@@ -1,10 +1,11 @@
-import { expect, fixture, html, nextFrame } from '@open-wc/testing';
-import { sendKeys, sendMouse } from '@web/test-runner-commands';
+import { expect, fixture, html } from '@open-wc/testing';
+import { sendKeys } from '@web/test-runner-commands';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
 import type { BkInput } from './bk-input.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
+import { hover } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
@@ -35,20 +36,6 @@ const opacityOf = async (value: string): Promise<string> => {
   const probe = await fixture<HTMLElement>(html`<span style="opacity: ${value}"></span>`);
 
   return getComputedStyle(probe).opacity;
-};
-
-const pastTransition = async () => {
-  await nextFrame();
-  await new Promise((resolve) => setTimeout(resolve, 250));
-};
-
-const hover = async (element: Element) => {
-  const { x, y, width, height } = element.getBoundingClientRect();
-  await sendMouse({
-    type: 'move',
-    position: [Math.round(x + width / 2), Math.round(y + height / 2)],
-  });
-  await pastTransition();
 };
 
 describe('bk-input', () => {
@@ -170,13 +157,7 @@ describe('bk-input', () => {
   it('should keep the danger border while the invalid field is hovered', async () => {
     const el = await fixture<BkInput>(html`<bk-input error="Required">${labelAtom}</bk-input>`);
     const field = innerInput(el);
-    const { x, y, width, height } = field.getBoundingClientRect();
-    await sendMouse({
-      type: 'move',
-      position: [Math.round(x + width / 2), Math.round(y + height / 2)],
-    });
-    await nextFrame();
-    await new Promise((resolve) => setTimeout(resolve, 250));
+    await hover(field);
 
     expect(field.matches(':hover')).to.equal(true);
     expect(getComputedStyle(field).borderTopColor).to.equal('rgb(185, 28, 28)');
