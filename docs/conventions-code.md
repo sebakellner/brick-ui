@@ -161,3 +161,34 @@ the value's colour against the muted role, the background against the surface
 role, and that hovering a disabled control leaves its border and background where
 they were — with a hovered enabled sibling as the positive control, so the
 assertion cannot pass in a browser that never applies the hover rule.
+
+## C6. A comment records a constraint the code cannot show
+
+**Rule.** A comment earns its place only if deleting it would let a future reader
+reintroduce a bug: a platform limit, an ordering requirement, a trap whose mutation
+would stay green, or a reading that differs from the obvious one. Nothing else.
+What the code does belongs in its names; why the kit is shaped a certain way belongs
+in an ADR or in `docs/architecture.md`; CSS carries no comments at all
+([C2](#c2-no-comments-in-css)). One line is the budget; a header that needs more
+than about five is not a comment, it is a decision record that lives in the wrong
+file.
+
+**Why.** A comment that restates the code decays silently — nobody notices it stops
+being true. A comment that argues a decision forks it: the ADR says one thing and
+the file says a slightly different one, and the next reader keeps whichever they met
+first. The header this rule was written after had thirty lines retelling
+`docs/architecture.md`, and the code it described fitted in four.
+
+**Do** — the constraint, in a line or two, pointing at the record:
+
+```ts
+/* Read unflattened: flattening answers with the slot's fallback, which is the
+ * field's own message. Why the kit needs an observer: architecture.md. */
+```
+
+**Don't** — a doc block that retells a decision, or a paragraph the ADR already
+owns.
+
+**Enforced by.** Review, with one question as the measure: if the comment were
+deleted, would a test still catch the mistake? If a test would, the comment is
+explaining; if it would not, the comment is load-bearing and stays.

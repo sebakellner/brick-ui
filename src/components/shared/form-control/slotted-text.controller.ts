@@ -8,45 +8,18 @@ const OBSERVE: MutationObserverInit = {
   subtree: true,
 };
 
-/* Does this slot have text, and what text is it?
- *
- * A component cannot see the text of the nodes slotted into it: `textContent`
- * does not include assigned nodes, and `slotchange` fires only when the *set*
- * of assigned nodes changes — never when the text of an assigned node is
- * edited. A library that keeps a message in a property (`help-text`) never
- * needs either; this kit keeps it in atoms on purpose (ADR 0009, ADR 0010), and
- * the observer is the price of that decision. Without it a message a consumer
- * edits in place stays stale until the next assignment.
- *
- * The slots it answers about are fixed at construction, because a control's
- * regions never change; the nodes it watches are handed over, because a
- * container decides what it owns while it runs.
- *
- * Two entry points, because the kit asks the question in two shapes:
- *
- * - `slotText` / `slotHasText` read a slot of the host's own shadow root, from
- *   the nodes assigned to it. A control's message region is a slot.
- * - `nodeHasText` reads a node the caller owns, and `watchNodes` keeps the
- *   observer on the set the caller hands over. A container adopts atoms that
- *   live in its light DOM, where no slot is involved.
- *
- * Presence means text, not assignment: a node with no text is not content
- * (A4), so every answer is trimmed.
- *
- * One `MutationObserver` per host, registered on it, re-targeted when the
- * assignment changes — `slotchange` is the only report a slot makes about
- * which nodes it now holds. It asks the host for an update rather than
- * answering on its own: what the text means belongs to the consumer.
- */
+/* The text a slot holds, which its host cannot read: `textContent` ignores
+ * assigned nodes, and `slotchange` reports only a change of assignment, never an
+ * atom edited in place. Read unflattened — flattening answers with the slot's
+ * fallback, which is the field's own message.
+ * Why the kit needs an observer at all: docs/architecture.md, "Slotted text". */
 export class SlottedTextController implements ReactiveController {
   private readonly host: LitElement;
 
-  /* The slots of the host's shadow root this controller answers about. Their
-   * assigned nodes are what the observer follows. */
+  /* Fixed at construction: a control's regions never change. */
   private readonly slots: readonly string[];
 
-  /* Nodes the caller hands over, outside any slot: a container's own light
-   * DOM. Observed wherever the caller watches them. */
+  /* Handed over at connect: a container decides what it owns while it runs. */
   private readonly watched = new Set<Node>();
 
   private readonly mutations = new MutationObserver(() => this.host.requestUpdate());

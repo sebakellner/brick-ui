@@ -5,10 +5,8 @@ import { SlottedTextController, formControlStyles } from '../shared/form-control
 let instanceCount = 0;
 const nextInstanceId = () => `bk-radio-group-item-${++instanceCount}`;
 
-/* The box of one option, and a private part of the group: it is a custom element
- * so that each box owns a shadow root and its own slotted label atom, and it is
- * not exported, because a radio that only works inside its group is not a
- * component a consumer imports. */
+/* An element because each box needs its own shadow root and its own slotted
+ * label; private because a radio alone is not a component: ADR 0012. */
 export class BkRadioGroupItem extends LitElement {
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,

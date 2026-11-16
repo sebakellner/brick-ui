@@ -6,8 +6,7 @@ export interface FieldRegionsOptions {
   idPrefix: string;
   /* The role the container claims on its host, unless the consumer set one. */
   role: string;
-  /* The nested controls that may host atoms of their own; the container leaves
-   * those alone. */
+  /* The nested controls whose atoms the container leaves alone. */
   controlSelector: string;
 }
 
@@ -35,9 +34,7 @@ type LabelledByHost = { ariaLabelledByElements?: readonly Element[] | null };
 
 const labelledBy = (host: HTMLElement): LabelledByHost => host;
 
-/* A container is named on its host and its regions are the consumer's own
- * atoms, because an IDREF cannot cross a shadow root (ADR 0010). This is that
- * behaviour, shared by every container that has to be announced as a set. */
+/* Why a container names its host and adopts the consumer's atoms: ADR 0010. */
 export class FieldRegionsController implements ReactiveController {
   private readonly host: LitElement;
 
