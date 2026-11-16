@@ -49,7 +49,8 @@ component does not re-decide any of it.
    [conventions-accessibility.md](conventions-accessibility.md), and most of it is
    asserted by the suite.
 
-5. **Tests.** `bk-<name>.test.ts` next to the element and assertions on computed
+5. **Tests.** `test/bk-<name>.test.ts` (the component's `test/` folder holds every suite it
+   ships) and assertions on computed
    styles (the runner page already carries the theme) — plus
    `bk-<name>.register.test.ts` for the packaging
    contract (the entry registers none of its tags, `define.js` registers all of them).

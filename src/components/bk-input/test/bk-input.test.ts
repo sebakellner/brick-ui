@@ -1,15 +1,15 @@
-import { colorOf, opacityOf } from '../../test/helpers/style.js';
+import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import type { LitElement } from 'lit';
-import './define.js';
-import '../bk-field/define.js';
-import type { BkField } from '../bk-field/bk-field.js';
-import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
-import type { BkInput } from './bk-input.js';
-import { contrastRatio } from '../../test/helpers/contrast.js';
-import { hover, hoverCapable } from '../../test/helpers/pointer.js';
-import { setTheme } from '../../test/helpers/theme.js';
+import '.././define.js';
+import '../../bk-field/define.js';
+import type { BkField } from '../../bk-field/bk-field.js';
+import type { BkFieldLabel } from '../../bk-field/bk-field-label.js';
+import type { BkInput } from '.././bk-input.js';
+import { contrastRatio } from '../../../test/helpers/contrast.js';
+import { hover, hoverCapable } from '../../../test/helpers/pointer.js';
+import { setTheme } from '../../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkInput) => el.shadowRoot!.querySelector('label')!;

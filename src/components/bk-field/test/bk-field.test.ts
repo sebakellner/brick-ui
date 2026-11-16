@@ -1,10 +1,10 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
-import '../bk-checkbox/define.js';
-import './define.js';
-import type { BkField } from './bk-field.js';
-import type { BkFieldDescription } from './bk-field-description.js';
-import type { BkFieldError } from './bk-field-error.js';
-import type { BkFieldLabel } from './bk-field-label.js';
+import '../../bk-checkbox/define.js';
+import '.././define.js';
+import type { BkField } from '.././bk-field.js';
+import type { BkFieldDescription } from '.././bk-field-description.js';
+import type { BkFieldError } from '.././bk-field-error.js';
+import type { BkFieldLabel } from '.././bk-field-label.js';
 
 const part = <T extends Element>(el: BkField, tag: string) => el.querySelector<T>(tag)!;
 

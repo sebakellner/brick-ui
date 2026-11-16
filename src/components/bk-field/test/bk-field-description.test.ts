@@ -1,7 +1,7 @@
-import { colorOf } from '../../test/helpers/style.js';
+import { colorOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
-import './define.js';
-import type { BkFieldDescription } from './bk-field-description.js';
+import '.././define.js';
+import type { BkFieldDescription } from '.././bk-field-description.js';
 
 describe('bk-field-description', () => {
   it('should paint the muted text role outside a field', async () => {

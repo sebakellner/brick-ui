@@ -1,12 +1,12 @@
-import { opacityOf } from '../../test/helpers/style.js';
+import { opacityOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
-import './define.js';
-import '../bk-field/define.js';
-import type { BkRadioGroupItem } from './bk-radio-group-item.js';
-import type { BkRadioGroup } from './bk-radio-group.js';
-import { clickAt } from '../../test/helpers/pointer.js';
-import { setTheme } from '../../test/helpers/theme.js';
+import '.././define.js';
+import '../../bk-field/define.js';
+import type { BkRadioGroupItem } from '.././bk-radio-group-item.js';
+import type { BkRadioGroup } from '.././bk-radio-group.js';
+import { clickAt } from '../../../test/helpers/pointer.js';
+import { setTheme } from '../../../test/helpers/theme.js';
 
 const radios = (el: BkRadioGroup) =>
   Array.from(el.querySelectorAll<BkRadioGroupItem>('bk-radio-group-item'));

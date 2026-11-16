@@ -1,11 +1,11 @@
-import { colorOf, opacityOf } from '../../test/helpers/style.js';
+import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
-import './define.js';
-import '../bk-checkbox/define.js';
-import '../bk-field/define.js';
-import type { BkCheckbox } from '../bk-checkbox/bk-checkbox.js';
-import type { BkCheckboxGroup } from './bk-checkbox-group.js';
-import { setTheme } from '../../test/helpers/theme.js';
+import '.././define.js';
+import '../../bk-checkbox/define.js';
+import '../../bk-field/define.js';
+import type { BkCheckbox } from '../../bk-checkbox/bk-checkbox.js';
+import type { BkCheckboxGroup } from '.././bk-checkbox-group.js';
+import { setTheme } from '../../../test/helpers/theme.js';
 
 const part = (el: BkCheckboxGroup, name: string) =>
   el.shadowRoot!.querySelector<HTMLElement>(`[part="${name}"]`);

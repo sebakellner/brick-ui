@@ -1,7 +1,7 @@
-import { colorOf } from '../../test/helpers/style.js';
+import { colorOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
-import './define.js';
-import type { BkFieldLabel } from './bk-field-label.js';
+import '.././define.js';
+import type { BkFieldLabel } from '.././bk-field-label.js';
 
 describe('bk-field-label', () => {
   it('should paint the default text role while it carries no state', async () => {

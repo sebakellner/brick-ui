@@ -1,9 +1,9 @@
-import { colorOf } from '../../test/helpers/style.js';
+import { colorOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
-import './define.js';
-import '../bk-field/define.js';
-import type { BkNativeSelect } from './bk-native-select.js';
-import { setTheme } from '../../test/helpers/theme.js';
+import '.././define.js';
+import '../../bk-field/define.js';
+import type { BkNativeSelect } from '.././bk-native-select.js';
+import { setTheme } from '../../../test/helpers/theme.js';
 
 const innerSelect = (el: BkNativeSelect) => el.shadowRoot!.querySelector('select')!;
 const innerLabel = (el: BkNativeSelect) =>

@@ -1,9 +1,9 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import './define.js';
-import type { BkButton } from './bk-button.js';
-import { contrastRatio } from '../../test/helpers/contrast.js';
-import { hover, hoverCapable } from '../../test/helpers/pointer.js';
-import { setTheme } from '../../test/helpers/theme.js';
+import '.././define.js';
+import type { BkButton } from '.././bk-button.js';
+import { contrastRatio } from '../../../test/helpers/contrast.js';
+import { hover, hoverCapable } from '../../../test/helpers/pointer.js';
+import { setTheme } from '../../../test/helpers/theme.js';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 
 const innerButton = (el: BkButton) => el.shadowRoot!.querySelector('button')!;

@@ -1,7 +1,7 @@
 # Testing Conventions
 
 The suite runs in real Chrome through Web Test Runner. `web-test-runner.config.mjs`
-picks up `src/**/*.test.ts`: a component's rule suites live next to it, an assembly of two
+picks up `src/**/*.test.ts`: a component's rule suites live in its `test/` folder, an assembly of two
 or more widgets that the test composes lives under `src/test/integration/`, and the
 `sendMouse` plugin is what the hover and focus tests need. One engine is a decision, not
 an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
@@ -30,11 +30,11 @@ The line between a unit test and an integration test is not "how many elements i
 imports" — almost every suite here imports an atom's `define.js`, because the atoms are
 the kit's vocabulary. The line is **who decides the composition**:
 
-| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                                |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | -------------------------------------------------------------------- |
-| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/bk-x.test.ts`, one file, `describe` per concern |
-| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                     |
-| **e2e** (later) | **the package on a real page**: entry, registration, `theme.css`, bundler                                                                                                        | the application | `e2e/` with Playwright, once the kit is consumed by an app           |
+| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                                                                |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------- |
+| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/test/bk-x.test.ts` (and its `register` suite beside it), `describe` per concern |
+| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                                                     |
+| **e2e** (later) | **the package on a real page**: entry, registration, `theme.css`, bundler                                                                                                        | the application | `e2e/` with Playwright, once the kit is consumed by an app                                           |
 
 **Where exactly the line falls: the level names whose contract the test writes down, not
 how many elements sit in the fixture.** That is the test of every doubtful case, and it
@@ -104,7 +104,7 @@ itself; when it needs the other theme it calls `setTheme('dark')` and nothing el
 
 **Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)), so
 a suite without the theme asserts against nothing — but that is a property of the page, not
-of twenty-one files. ADR 0002 still decides that the theme is required; only the loader it
+of twenty-two files. ADR 0002 still decides that the theme is required; only the loader it
 mentions (`before(loadTheme)`) is gone, and an accepted record is superseded, never edited. Fetching the same stylesheet from each of them was twenty-two chances
 to forget, and the copy that forgot failed with an unrelated-looking assertion.
 
@@ -254,8 +254,8 @@ each hover test: the assertion cannot pass unless a hovered sibling really chang
 
 ## T8. Every component ships the same two suites, and a part only when it has behaviour
 
-**Rule.** A component ships `bk-<name>.test.ts` for its rules and
-`bk-<name>.register.test.ts` for the packaging contract — the package entry registers
+**Rule.** A component ships `test/bk-<name>.test.ts` for its rules and
+`test/bk-<name>.register.test.ts` for the packaging contract — the package entry registers
 **none** of its tags, and its `define.js` registers **all** of them, which for a
 component with atoms is the whole list. A part gets a suite of its own when it has
 behaviour (the radio item's activation and tab stop, the select atoms' reflection, the field

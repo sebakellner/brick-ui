@@ -1,7 +1,7 @@
-import { colorOf } from '../../test/helpers/style.js';
+import { colorOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
-import './define.js';
-import type { BkFieldError } from './bk-field-error.js';
+import '.././define.js';
+import type { BkFieldError } from '.././bk-field-error.js';
 
 describe('bk-field-error', () => {
   it('should paint the danger text role outside a field', async () => {
