@@ -17,7 +17,7 @@ type Args = {
 };
 
 const meta: Meta<Args> = {
-  title: 'Form/Checkbox group',
+  title: 'Form/Checkbox Group',
   component: 'bk-checkbox-group',
   args: {
     label: 'Notifications',
