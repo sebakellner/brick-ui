@@ -56,11 +56,29 @@ export class BkNativeSelect extends FieldControlMixin(LitElement) {
   static override styles = [
     formControlStyles,
     css`
+      .select {
+        position: relative;
+      }
+
       .control {
         border-radius: var(--bk-radius-md);
-        /* The native caret is drawn inside the end padding, so it needs more room
-         * than the text does or it sits against the border. */
-        padding-inline-end: calc(var(--bk-space-3) + var(--bk-space-2));
+        appearance: none;
+        padding-inline-end: calc(var(--bk-space-4) + var(--bk-space-4));
+      }
+
+      /* Chrome anchors the native caret to the control's edge, so no padding can
+       * move it: the arrow is drawn here instead, and this is what fixes the gap. */
+      .caret {
+        position: absolute;
+        inset-block-start: 50%;
+        inset-inline-end: var(--bk-space-4);
+        inline-size: var(--bk-space-2);
+        block-size: var(--bk-space-2);
+        color: var(--bk-text-muted);
+        border-inline-end: calc(var(--bk-border-width) * 2) solid currentColor;
+        border-block-end: calc(var(--bk-border-width) * 2) solid currentColor;
+        transform: translateY(-50%) rotate(45deg);
+        pointer-events: none;
       }
     `,
   ];
@@ -114,29 +132,32 @@ export class BkNativeSelect extends FieldControlMixin(LitElement) {
         <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}></slot>
         ${this.fieldParts.glyph}
       </label>
-      <select
-        part="input"
-        class="control"
-        id=${this.controlId}
-        ?disabled=${this.fieldDisabled}
-        ?required=${this.required}
-        aria-invalid=${this.fieldInvalid ? 'true' : nothing}
-        aria-describedby=${this.fieldParts.describedBy(this.messageSources()) || nothing}
-        @change=${this.handleChange}
-      >
-        ${
-          this.placeholder
-            ? html`<option value="" disabled hidden>${this.placeholder}</option>`
-            : nothing
-        }
-        ${this.mirror.map((entry) =>
-          entry.kind === 'group'
-            ? html`<optgroup label=${entry.label} ?disabled=${entry.disabled}>
-                ${entry.options.map((option) => renderOption(option))}
-              </optgroup>`
-            : renderOption(entry.option),
-        )}
-      </select>
+      <div class="select">
+        <select
+          part="input"
+          class="control"
+          id=${this.controlId}
+          ?disabled=${this.fieldDisabled}
+          ?required=${this.required}
+          aria-invalid=${this.fieldInvalid ? 'true' : nothing}
+          aria-describedby=${this.fieldParts.describedBy(this.messageSources()) || nothing}
+          @change=${this.handleChange}
+        >
+          ${
+            this.placeholder
+              ? html`<option value="" disabled hidden>${this.placeholder}</option>`
+              : nothing
+          }
+          ${this.mirror.map((entry) =>
+            entry.kind === 'group'
+              ? html`<optgroup label=${entry.label} ?disabled=${entry.disabled}>
+                  ${entry.options.map((option) => renderOption(option))}
+                </optgroup>`
+              : renderOption(entry.option),
+          )}
+        </select>
+        <span class="caret" part="caret" aria-hidden="true"></span>
+      </div>
       ${this.fieldParts.messages}
     `;
   }

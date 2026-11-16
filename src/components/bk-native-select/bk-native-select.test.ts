@@ -341,19 +341,24 @@ describe('bk-native-select', () => {
     ).to.equal(0);
   });
 
-  it('should leave the native caret more air than the text on the end side', async () => {
+  it('should draw the caret away from the end edge, and let the click through', async () => {
     const el = await fixture<BkNativeSelect>(html`
       <bk-native-select name="channel" placeholder="Choose a channel">
         <bk-native-select-opt value="email">Email</bk-native-select-opt>
       </bk-native-select>
     `);
+    el.style.setProperty('--bk-space-3', '12px');
     await el.updateComplete;
     const select = el.shadowRoot!.querySelector('select')!;
-    const style = getComputedStyle(select);
+    const caret = el.shadowRoot!.querySelector<HTMLElement>('[part="caret"]')!;
 
-    expect(
-      parseFloat(style.paddingInlineEnd),
-      'the caret sits inside the end padding, so that side is wider',
-    ).to.be.greaterThan(parseFloat(style.paddingInlineStart));
+    expect(getComputedStyle(select).appearance, 'the native arrow is off').to.equal('none');
+
+    const gap = select.getBoundingClientRect().right - caret.getBoundingClientRect().right;
+    expect(gap, 'the caret keeps a gap from the border').to.be.at.least(13);
+
+    const box = caret.getBoundingClientRect();
+    const hit = el.shadowRoot!.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
+    expect(hit === select, 'the decoration does not steal the click').to.equal(true);
   });
 });
