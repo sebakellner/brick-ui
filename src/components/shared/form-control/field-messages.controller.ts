@@ -1,4 +1,5 @@
 import { html, type LitElement, type TemplateResult } from 'lit';
+import { SlottedTextController } from './slotted-text.controller.js';
 
 export type FieldRegion = 'description' | 'error';
 
@@ -13,16 +14,14 @@ export class FieldMessagesController {
 
   readonly errorId: string;
 
-  private readonly host: LitElement;
-
-  /* A consumer edits the text of a slotted atom in place, without assigning a
-   * node again, so `slotchange` never fires. Content has to be observed. */
-  private readonly mutations = new MutationObserver(() => this.host.requestUpdate());
+  /* The slotted text of the two regions, observed once for both: a consumer
+   * edits the text of an atom in place, which no `slotchange` reports. */
+  private readonly text: SlottedTextController;
 
   private fallbacks: FieldMessageFallbacks = { error: '' };
 
   constructor(host: LitElement, baseId: string) {
-    this.host = host;
+    this.text = new SlottedTextController(host, ...REGIONS);
     this.descriptionId = `${baseId}-description`;
     this.errorId = `${baseId}-error`;
   }
@@ -30,7 +29,7 @@ export class FieldMessagesController {
   /* The text of the nodes assigned to the error slot: the slotted atom is the
    * field's error, not decoration, and the control reads it as one. */
   get slotError(): string {
-    return this.textFor('error');
+    return this.text.slotText('error');
   }
 
   get describedBy(): string | undefined {
@@ -39,22 +38,9 @@ export class FieldMessagesController {
     return undefined;
   }
 
-  connect(): void {
-    this.observe();
-  }
-
-  disconnect(): void {
-    this.mutations.disconnect();
-  }
-
-  update(fallbacks: FieldMessageFallbacks): string | undefined {
-    this.fallbacks = fallbacks;
-    return this.describedBy;
-  }
-
   render(): TemplateResult {
-    const description = this.hasContent('description');
-    const error = this.hasContent('error');
+    const description = this.text.slotHasText('description');
+    const error = this.text.slotHasText('error');
 
     return html`
       <div part="message">
@@ -65,7 +51,7 @@ export class FieldMessagesController {
           ?hidden=${error}
           ?data-empty=${!description}
         >
-          <slot name="description" @slotchange=${this.handleSlotChange}></slot>
+          <slot name="description"></slot>
         </div>
         <div
           class="message"
@@ -75,43 +61,21 @@ export class FieldMessagesController {
           data-state="error"
           ?data-empty=${!error}
         >
-          <slot name="error" @slotchange=${this.handleSlotChange}>${this.fallbacks.error}</slot>
+          <slot name="error">${this.fallbacks.error}</slot>
         </div>
       </div>
     `;
   }
 
+  update(fallbacks: FieldMessageFallbacks): string | undefined {
+    this.fallbacks = fallbacks;
+    return this.describedBy;
+  }
+
   /* Content means text, not assignment: a region whose atom is empty is not
    * named by `aria-describedby` (A4). */
   private hasContent(region: FieldRegion): boolean {
-    if (this.textFor(region) !== '') return true;
+    if (this.text.slotHasText(region)) return true;
     return region === 'error' && this.fallbacks.error.trim() !== '';
   }
-
-  private textFor(region: FieldRegion): string {
-    return this.nodesFor(region)
-      .map((node) => node.textContent ?? '')
-      .join(' ')
-      .trim();
-  }
-
-  private observe(): void {
-    this.mutations.disconnect();
-    for (const region of REGIONS) {
-      for (const node of this.nodesFor(region)) {
-        this.mutations.observe(node, { characterData: true, childList: true, subtree: true });
-      }
-    }
-  }
-
-  private nodesFor(region: FieldRegion): Node[] {
-    const slot = this.host.shadowRoot?.querySelector<HTMLSlotElement>(`slot[name="${region}"]`);
-    if (slot) return slot.assignedNodes();
-    return Array.from(this.host.children).filter((child) => child.slot === region);
-  }
-
-  private readonly handleSlotChange = (): void => {
-    this.observe();
-    this.host.requestUpdate();
-  };
 }

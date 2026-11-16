@@ -1,4 +1,5 @@
 import type { LitElement, ReactiveController } from 'lit';
+import { SlottedTextController } from './slotted-text.controller.js';
 
 export interface FieldRegionsOptions {
   /* The prefix an atom's id is built from when the atom has none. */
@@ -34,8 +35,6 @@ type LabelledByHost = { ariaLabelledByElements?: readonly Element[] | null };
 
 const labelledBy = (host: HTMLElement): LabelledByHost => host;
 
-const isEmptyAtom = (atom: HTMLElement): boolean => (atom.textContent ?? '').trim() === '';
-
 /* A container is named on its host and its regions are the consumer's own
  * atoms, because an IDREF cannot cross a shadow root (ADR 0010). This is that
  * behaviour, shared by every container that has to be announced as a set. */
@@ -44,23 +43,22 @@ export class FieldRegionsController implements ReactiveController {
 
   private readonly options: FieldRegionsOptions;
 
-  private readonly mutations = new MutationObserver(() => this.host.requestUpdate());
+  private readonly text: SlottedTextController;
 
   private adopted: HTMLElement[] = [];
 
   constructor(host: LitElement, options: FieldRegionsOptions) {
     this.host = host;
     this.options = options;
+    this.text = new SlottedTextController(host);
+    /* The atoms are the container's own light DOM, outside its shadow root:
+     * there is no slot to ask, so it hands its subtree over as it stands. */
+    this.text.watchNodes([host]);
     host.addController(this);
   }
 
   hostConnected(): void {
     if (!this.host.hasAttribute('role')) this.host.setAttribute('role', this.options.role);
-    this.mutations.observe(this.host, { childList: true, characterData: true, subtree: true });
-  }
-
-  hostDisconnected(): void {
-    this.mutations.disconnect();
   }
 
   hostUpdated(): void {
@@ -97,7 +95,7 @@ export class FieldRegionsController implements ReactiveController {
     }
     this.adopted = next;
 
-    const errorShows = atoms.error !== null && !isEmptyAtom(atoms.error);
+    const errorShows = atoms.error !== null && this.text.nodeHasText(atoms.error);
 
     for (const name of Object.keys(atoms) as RegionName[]) {
       const atom = atoms[name];
@@ -118,8 +116,8 @@ export class FieldRegionsController implements ReactiveController {
 
   private adopt(atom: HTMLElement, name: RegionName): void {
     if (!atom.id) atom.id = `${this.options.idPrefix}-${name}`;
-    if (isEmptyAtom(atom)) atom.setAttribute('data-empty', '');
-    else atom.removeAttribute('data-empty');
+    if (this.text.nodeHasText(atom)) atom.removeAttribute('data-empty');
+    else atom.setAttribute('data-empty', '');
     if (name !== 'error' || atom.hasAttribute('role')) return;
     atom.setAttribute('role', 'status');
     liveRegions.add(atom);
@@ -139,9 +137,9 @@ export class FieldRegionsController implements ReactiveController {
 
   private describedBy(atoms: Record<RegionName, HTMLElement | null>): string | undefined {
     const error = atoms.error;
-    if (error && !isEmptyAtom(error)) return error.id;
+    if (error && this.text.nodeHasText(error)) return error.id;
     const description = atoms.description;
-    if (description && !isEmptyAtom(description)) return description.id;
+    if (description && this.text.nodeHasText(description)) return description.id;
     return undefined;
   }
 

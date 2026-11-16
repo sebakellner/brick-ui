@@ -50,15 +50,10 @@ export class FieldPartsController implements ReactiveController {
 
   hostConnected(): void {
     this.labelled = this.readSlottedLabel();
-    this.regions.connect();
   }
 
   hostUpdated(): void {
     this.syncHostedLabel();
-  }
-
-  hostDisconnected(): void {
-    this.regions.disconnect();
   }
 
   readonly handleLabelSlot = (event: Event): void => {
