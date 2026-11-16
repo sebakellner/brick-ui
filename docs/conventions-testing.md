@@ -396,8 +396,7 @@ anyone wrote it down.
 **Don't** — `await new Promise((resolve) => setTimeout(resolve, 0));` in a test file, or a
 hand-picked duration anywhere (T4, T13).
 
-**Enforced by.** Review; the helper lands with the component-by-component refactor recorded
-in `odd/tasks/backlog.md` (D3).
+**Enforced by.** Review; the helper lands with the component-by-component test refactor.
 
 ### The cases a rule earns
 
@@ -456,14 +455,14 @@ cost.
 request. A suite is judged by whether each rule a component documents has a case, not by how
 much of a file it executes.
 
-**Why.** Google's testing chapter names the failure mode: engineers treat the number "like a
-ceiling … changes begin landing with no more than 80% coverage", and recommends measuring
-coverage from small tests only. Fowler: "test coverage is of little use as a numeric statement
-of how good your tests are". Shoelace's maintainer: "I don't care about the number of tests or
-even coverage — I care about sensibility". The counter-example is real and named honestly:
-Spectrum Web Components keeps 99% with an auto-ratchet, and also runs visual regression and a
-Playwright accessibility suite. This repository has neither, so a threshold here would be a
-target for a number no one reads, guarding rules the audit in T15 already reaches.
+**Why.** The full record, including the position this reverses, is
+[0017](adr/0017-coverage-is-not-measured.md). Briefly: Google's testing chapter names the
+failure mode — engineers treat the number "like a ceiling … changes begin landing with no
+more than 80% coverage" — and Fowler calls it "of little use as a numeric statement of how
+good your tests are". The counter-example is real and named there: Spectrum Web Components
+keeps 99% with an auto-ratchet, and also runs visual regression and a Playwright
+accessibility suite. This repository has neither, so a threshold here would be a target for
+a number no one reads, guarding rules the audit in T15 already reaches.
 
 **Do** — ask which documented rule has no case, and add that case.
 

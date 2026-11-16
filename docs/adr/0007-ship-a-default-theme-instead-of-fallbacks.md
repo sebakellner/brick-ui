@@ -4,7 +4,11 @@ Date: 2026-11-13
 
 ## Status
 
-proposed
+accepted; superseded in part by
+[0015](0015-the-page-loads-the-theme-the-suite-does-not.md), which supersedes the sentence
+below that "the suite imports `theme.css` directly": the page links it and no suite does.
+The `sideEffects` field this record describes was settled differently when the packaging
+contract moved to `["**/define.js"]` (`docs/conventions-testing.md` T8).
 
 ## Context
 
@@ -80,8 +84,7 @@ The package ships a default theme from its entry point.
 - Splitting `color-scheme` out means `theme.css` no longer does everything: a
   component on a dark page needs the opt-in file or it looks like a light island
   on a dark page.
-- The suite imports `theme.css` directly and is unaffected.
-- **0002 becomes `superseded in part`.** What holds is that an alias stays a
+- The suite imports `theme.css` directly and is unaffected.- **0002 becomes `superseded in part`.** What holds is that an alias stays a
   `var()` and no read carries a literal default. What falls is that loading the
   theme is the consumer's responsibility.
 - Not implemented. It needs `exports`, `sideEffects`, an entry that imports the

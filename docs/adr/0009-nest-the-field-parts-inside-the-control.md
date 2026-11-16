@@ -4,7 +4,11 @@ Date: 2026-11-14
 
 ## Status
 
-accepted
+accepted; superseded in part by the accessibility audit. The sentence below that
+"nothing in the suite can either" is false since
+[0015](0015-the-page-loads-the-theme-the-suite-does-not.md)'s audit half landed: every
+component suite runs axe with the `label` rule, which reports a control nothing names
+(`docs/conventions-testing.md` T15). The decision — nest the parts — is untouched.
 
 ## Context
 
