@@ -237,6 +237,34 @@ describe('bk-input', () => {
     expect(innerInput(el).getAttribute('inputmode')).to.equal('email');
   });
 
+  it('should pass its type through to the inner field', async () => {
+    const el = await fixture<BkInput>(
+      html`<bk-input type="email">${labelAtom('Email')}</bk-input>`,
+    );
+
+    expect(innerInput(el).getAttribute('type')).to.equal('email');
+    expect(innerInput(el).type, 'the platform resolved the type it was given').to.equal('email');
+  });
+
+  it('should pass its placeholder through to the inner field', async () => {
+    const el = await fixture<BkInput>(
+      html`<bk-input placeholder="you@brick.dev">${labelAtom('Email')}</bk-input>`,
+    );
+
+    expect(innerInput(el).getAttribute('placeholder')).to.equal('you@brick.dev');
+    expect(innerInput(el).placeholder).to.equal('you@brick.dev');
+  });
+
+  it('should expose the documented parts on the field it renders', async () => {
+    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom('Email')}</bk-input>`);
+
+    for (const name of ['label', 'input', 'required', 'message', 'description', 'error']) {
+      const node = region(el, name);
+      expect(Boolean(node), `the ${name} part is exposed`).to.equal(true);
+      expect(node!.getAttribute('part')).to.equal(name);
+    }
+  });
+
   it('should keep the message region available to assistive tech while empty', async () => {
     const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
     const message = innerError(el);
@@ -1110,6 +1138,16 @@ describe('bk-input', () => {
       );
 
       expect(new FormData(form).get('email')).to.equal('a@b.c');
+    });
+
+    it('should submit the value its submittedValue holds', async () => {
+      const form = await fixture<HTMLFormElement>(
+        html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
+      );
+      const el = form.querySelector('bk-input') as BkInput;
+
+      expect(el.submittedValue, 'the field submits what its value holds').to.equal('a@b.c');
+      expect(new FormData(form).get('email')).to.equal(el.submittedValue as string);
     });
 
     it('should follow the typed value into FormData', async () => {

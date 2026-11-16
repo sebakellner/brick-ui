@@ -182,6 +182,23 @@ describe('bk-native-select', () => {
     ]);
   });
 
+  it('should lose an element written inside an option atom', async () => {
+    const el = await fixture<BkNativeSelect>(html`
+      <bk-native-select name="channel">
+        ${labelAtom('Channel')}
+        <bk-native-select-opt value="email"
+          >Email <span class="chip">primary</span></bk-native-select-opt
+        >
+      </bk-native-select>
+    `);
+    await settle(el);
+    const [option] = builtOptions(el);
+
+    expect(option.textContent, 'the atom text is the label, flattened').to.equal('Email primary');
+    expect(option.childElementCount, 'the element inside the atom is lost').to.equal(0);
+    expect(Boolean(option.querySelector('span')), 'nothing of it is rendered').to.equal(false);
+  });
+
   it('should mirror a group as an optgroup with its label, and render no group inside a group', async () => {
     const el = await fixture<BkNativeSelect>(html`
       <bk-native-select name="channel">
@@ -374,6 +391,35 @@ describe('bk-native-select', () => {
 
     expect(el.validity.valueMissing, 'a real choice is the answer').to.equal(false);
     expect(form.checkValidity()).to.equal(true);
+  });
+
+  it('should put the native required attribute on the inner select', async () => {
+    const el = await fixture<BkNativeSelect>(html`
+      <bk-native-select required>
+        ${labelAtom('Channel')}
+        <bk-native-select-opt value="email">Email</bk-native-select-opt>
+      </bk-native-select>
+    `);
+    await settle(el);
+
+    expect(innerSelect(el).hasAttribute('required')).to.equal(true);
+    expect(innerSelect(el).required, 'the platform is what refuses the empty answer').to.equal(
+      true,
+    );
+  });
+
+  it('should mark its label with a star while required', async () => {
+    const el = await fixture<BkNativeSelect>(html`
+      <bk-native-select required>${labelAtom('Channel')}</bk-native-select>
+    `);
+    const mark = el.shadowRoot!.querySelector<HTMLElement>('[part="required"]');
+
+    expect(Boolean(mark), 'a required select marks its label').to.equal(true);
+    expect(mark!.textContent, 'the mark is a star').to.equal('*');
+    expect(mark!.getAttribute('aria-hidden'), 'and decoration for the eye').to.equal('true');
+    expect(getComputedStyle(mark!).color, 'painted with the danger role').to.equal(
+      await colorOf('var(--bk-text-danger)'),
+    );
   });
 
   it('should disable the inner select with the native attribute, and let a disabled fieldset reach it', async () => {

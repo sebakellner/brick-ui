@@ -9,7 +9,7 @@ an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 The **three levels** come first, because they are the frame the rules sit in: where a
 suite lives and what it is allowed to assert. They are not numbered because they are judged
 as a whole — a misplaced suite is caught by reading a diff, not by one assertion going red
-— while a rule is something a single test can name. Each numbered rule follows as a
+— while a rule is something a single test can name. The seventeen numbered rules follow as a
 checklist, each with what enforces it, and each explained in turn after it.
 
 ## The three levels, and who decides the composition
@@ -114,6 +114,7 @@ suite reaches nobody; an undefined token reaches a consumer in runtime, which is
 | T14 | A suite is named after its element, and a case says what should hold | review                                     |
 | T15 | Accessibility is asserted by rule and by audit                       | `a11y.test.ts`, then every component suite |
 | T16 | A suite proves its subject rendered                                  | review                                     |
+| T17 | Every documented name has a case                                     | review against the README tables           |
 
 The explanations below are **grouped by theme, not by number**. The numbers are stable
 identifiers: other documents, commit messages and reviews cite `T6` and `T15` by name, so
@@ -516,6 +517,26 @@ skipped because axe runs.
 
 **Enforced by.** `src/test/helpers/a11y.test.ts` proves the gate fails on a violation and
 passes an empty fixture; the component suites run it in both themes.
+
+## T17. Every documented name has a case
+
+**Rule.** Each attribute, property, event, `part` and public hook a component's `README.md`
+documents gets at least one case that proves it exists and behaves as the document says, and
+so does a limitation the document declares. Prose earns nothing — a name does.
+
+**Why.** A `README.md` is the consumer's contract, and a name in it with no case behind it
+is the same false statement as an `Enforced by` column that names a check nobody runs.
+Auditing the seven components against their own documents found twenty such names and one
+that was simply **wrong**: `bk-field` documented three parts it never rendered, so
+`bk-field::part(error)` styled nothing. It is the cheapest case in this repository to write,
+because the document already says what to assert.
+
+**Do** — one case per part the README lists, one per documented property, and one for each
+limitation the README declares.
+
+**Don't** — a test per README sentence. The rule counts names, not paragraphs.
+
+**Enforced by.** Review against the `README.md` tables.
 
 ## Commands
 

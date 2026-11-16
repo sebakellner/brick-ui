@@ -1,6 +1,7 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import '../../bk-checkbox/define.js';
 import '.././define.js';
+import type { BkCheckbox } from '../../bk-checkbox/bk-checkbox.js';
 import type { BkField } from '.././bk-field.js';
 import type { BkFieldDescription } from '.././bk-field-description.js';
 import type { BkFieldError } from '.././bk-field-error.js';
@@ -95,6 +96,52 @@ describe('bk-field', () => {
 
     expect(el.getAttribute('role'), 'a field is a layout, not a widget').to.equal(null);
     expect(stack.getAttribute('role'), 'and so is the stack it lays out with').to.equal(null);
+  });
+
+  it('should leave the control unnamed when its atoms are written flat', async () => {
+    const el = await fixture<BkField>(html`
+      <bk-field>
+        <bk-field-label>Accept the terms</bk-field-label>
+        <bk-checkbox name="terms"></bk-checkbox>
+      </bk-field>
+    `);
+    const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+    await checkbox.updateComplete;
+    const label = checkbox.shadowRoot!.querySelector('label')!;
+
+    expect(
+      el.querySelector('bk-field-label')!.textContent!.trim(),
+      'the visual label is still on the page',
+    ).to.equal('Accept the terms');
+    expect(label.textContent!.trim(), 'but the label beside the control never reaches it').to.equal(
+      '',
+    );
+    expect(
+      el.querySelector('bk-field-label')!.getAttribute('slot'),
+      'the atom is slotted to the field, not to the control',
+    ).to.equal('label');
+  });
+
+  it('should report nothing while the control it holds is invalid', async () => {
+    const el = await fixture<BkField>(html`
+      <bk-field>
+        <bk-checkbox name="terms" required>
+          <bk-field-label>Accept the terms</bk-field-label>
+        </bk-checkbox>
+      </bk-field>
+    `);
+    const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+    const input = checkbox.shadowRoot!.querySelector('input')!;
+    await el.updateComplete;
+
+    input.focus();
+    input.blur();
+    await checkbox.updateComplete;
+
+    expect(checkbox.checkValidity(), 'the control is invalid').to.equal(false);
+    expect(input.getAttribute('aria-invalid'), 'and shows a problem').to.equal('true');
+    expect(el.invalid, 'the field derives nothing from the control').to.equal(false);
+    expect(el.hasAttribute('invalid'), 'and paints no state').to.equal(false);
   });
 
   it('should put data-state on every part while invalid and take it away again', async () => {
