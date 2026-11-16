@@ -463,9 +463,10 @@ describe('bk-input', () => {
 
     expect(Boolean(innerRequired(el)), 'the label carries the mark').to.equal(true);
     expect(innerRequired(el)!.textContent).to.equal('*');
-    expect(innerRequired(el)!.closest('label'), 'the mark lives inside the label').to.equal(
-      innerLabel(el),
-    );
+    expect(
+      innerRequired(el)!.closest('label') === innerLabel(el),
+      'the mark lives inside the label',
+    ).to.equal(true);
   });
 
   it('should keep the required glyph out of the accessible name', async () => {
