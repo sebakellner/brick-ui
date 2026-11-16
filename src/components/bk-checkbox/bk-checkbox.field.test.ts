@@ -196,4 +196,53 @@ describe('bk-checkbox composed field parts', () => {
     );
     expect(projectedText(describedNode(checkbox))).to.deep.equal(['Added later.']);
   });
+
+  it('should take a slotted error atom as the box error and make it invalid', async () => {
+    const el = await fixture<BkField>(html`
+      <bk-field>
+        <bk-checkbox name="terms" value="accepted">
+          <bk-field-label>Accept the terms</bk-field-label>
+          <bk-field-error>You have to accept the terms.</bk-field-error>
+        </bk-checkbox>
+      </bk-field>
+    `);
+    await settle(el);
+    const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+
+    expect(
+      innerInput(checkbox).getAttribute('aria-invalid'),
+      'the atom makes the box invalid',
+    ).to.equal('true');
+    expect(Boolean(checkbox.fieldInvalid), 'and the field reports it').to.equal(true);
+    expect(checkbox.validity.customError, 'a submit is blocked by it').to.equal(true);
+    expect(checkbox.validationMessage, 'with the atom text as the message').to.equal(
+      'You have to accept the terms.',
+    );
+    expect(
+      projectedText(region(checkbox, 'error')),
+      'the atom is what the region shows',
+    ).to.deep.equal(['You have to accept the terms.']);
+  });
+
+  it('should treat an empty error atom as no error at all', async () => {
+    const el = await fixture<BkField>(html`
+      <bk-field>
+        <bk-checkbox name="terms"
+          ><bk-field-label>Accept the terms</bk-field-label><bk-field-error></bk-field-error
+        ></bk-checkbox>
+      </bk-field>
+    `);
+    await settle(el);
+    const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+
+    expect(
+      innerInput(checkbox).getAttribute('aria-invalid'),
+      'an empty atom announces no error',
+    ).to.equal(null);
+    expect(checkbox.validity.customError, 'and asks nothing of the form').to.equal(false);
+    expect(
+      innerInput(checkbox).getAttribute('aria-describedby'),
+      'a region with no text is not referenced',
+    ).to.equal(null);
+  });
 });
