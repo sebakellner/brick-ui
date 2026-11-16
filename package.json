@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Brick — a small web components kit built with Lit and TypeScript",
+  "description": "Brick \u2014 a small web components kit built with Lit and TypeScript",
   "engines": {
     "node": ">=22"
   },
@@ -13,6 +13,7 @@
     "build": "vite build",
     "build:tokens": "style-dictionary build --config style-dictionary.config.mjs",
     "check:tokens": "node scripts/check-token-usage.mjs",
+    "check:storybook": "node scripts/check-storybook-bundle.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
@@ -41,6 +42,7 @@
     "vite": "^8.3.8"
   },
   "sideEffects": [
-    "**/define.js"
+    "**/define.js",
+    "**/define.ts"
   ]
 }

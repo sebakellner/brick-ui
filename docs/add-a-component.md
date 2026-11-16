@@ -80,7 +80,8 @@ component does not re-decide any of it.
 
 7. **Tests.** `test/bk-<name>.test.ts` (the component's `test/` folder holds every suite it
    ships) and assertions on computed styles. No registration suite: `package.json` declares
-   `"sideEffects": ["**/define.js"]` and the suite proves registration by using the element.
+   `"sideEffects": ["**/define.js", "**/define.ts"]` and the suite proves registration by
+   using the element.
    See [conventions-testing.md](conventions-testing.md), T8.
 
 8. **Stories.** `bk-<name>.stories.ts` with one story per variant and per state, and a

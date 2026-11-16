@@ -55,3 +55,4 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build:tokens
       - run: pnpm build-storybook
+      - run: pnpm check:storybook
