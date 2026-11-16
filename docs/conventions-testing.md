@@ -39,14 +39,15 @@ the kit's vocabulary. The line is **who decides the composition**:
 how many elements sit in the fixture.** That is the test of every doubtful case, and it
 is the one that answers why a `<form>` does not make a suite integration:
 
-- `bk-checkbox.form.test.ts` is **unit**. The rule — "a form can submit, reset and disable
-  me" — is the control's own contract with the platform, and the `<form>` is a given
-  rather than a composition of the kit. When it fails, the diagnosis is one component: its
-  `formResetCallback`, its `setValidity`, its `submittedValue`. That diagnosis is what the
-  level is for.
-- `bk-input.field.test.ts` is **integration**. "A control's label can arrive through the
-  field's atoms" belongs to neither element alone — the field routes the atoms, the control
-  hosts them — so a failure can be either one, and no single component owns the rule.
+- The `form participation` block of `bk-checkbox.test.ts` is **unit**. The rule — "a form can
+  submit, reset and disable me" — is the control's own contract with the platform, and the
+  `<form>` is a given rather than a composition of the kit. When it fails, the diagnosis is
+  one component: its `formResetCallback`, its `setValidity`, its `submittedValue`. That
+  diagnosis is what the level is for.
+- `src/test/integration/field/input.test.ts` is **integration**. "A control's label can arrive
+  through the field's atoms" belongs to neither element alone — the field routes the atoms,
+  the control hosts them — so a failure can be either one, and no single component owns the
+  rule.
 - `bk-checkbox.test.ts` is **unit** although it imports two defines, because its atoms are
   part of its own documented contract.
 - A screen with an input, a checkbox and a select is **integration**, because the test
@@ -61,9 +62,9 @@ its component, in one file broken into `describe` blocks per concern (`form
 participation`, `error channel`, `label state`) instead of `.form` and `.error` files —
 one file per subject is what Shoelace and Material Web do, and a concern is a paragraph
 of a suite, not a module. Integration gets its own directory, the way Spectrum keeps its
-accessibility specs apart from its unit tests and the runner itself separates kinds. The
-`.field.test.ts` pair that exists today is integration by this rule and moves to
-`src/test/integration/field/` in the pass that collapses the concern suffixes.
+accessibility specs apart from its unit tests and the runner itself separates kinds. The pair
+that asserts a control's label and description through the field's atoms is integration by
+this rule, and it lives in `src/test/integration/field/`.
 
 Three rules make the levels useful instead of decorative:
 
@@ -98,7 +99,7 @@ itself; when it needs the other theme it calls `setTheme('dark')` and nothing el
 
 **Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)), so
 a suite without the theme asserts against nothing — but that is a property of the page, not
-of twenty-two files. ADR 0002 still decides that the theme is required; only the loader it
+of twenty-one files. ADR 0002 still decides that the theme is required; only the loader it
 mentions (`before(loadTheme)`) is gone, and an accepted record is superseded, never edited. Fetching the same stylesheet from each of them was twenty-two chances
 to forget, and the copy that forgot failed with an unrelated-looking assertion.
 
@@ -256,7 +257,8 @@ behaviour (the radio item's activation and tab stop, the select atoms' reflectio
 part that only paints is covered where it is used (`bk-field-label` and its siblings
 inside `bk-field.test.ts`). **A concern is a `describe` block, not a file**: form
 participation, the error channel and the label state are paragraphs of the component's
-suite. A third file appears only when the **level** changes — an assembly moves to
+suite. A module exists per **level**, not per concern: a concern is a `describe`, and only a
+change of level moves a file — an assembly the test composes lives under
 `src/test/integration/` — because a suffix that names a concern splits one subject across
 modules, and one that names an assembly invents a category nobody else uses.
 

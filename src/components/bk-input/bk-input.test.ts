@@ -1,5 +1,5 @@
 import { colorOf, opacityOf } from '../../test/helpers/style.js';
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import './define.js';
 import '../bk-field/define.js';
@@ -16,6 +16,43 @@ const innerDescription = (el: BkInput) =>
 const innerError = (el: BkInput) => el.shadowRoot!.querySelector<HTMLElement>('[part="error"]')!;
 const innerRequired = (el: BkInput) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="required"]');
+
+const message = (el: BkInput) => innerError(el).textContent!.trim();
+
+const projectedMessage = (el: BkInput) =>
+  Array.from(innerError(el).querySelector('slot')!.assignedNodes({ flatten: true }))
+    .map((node) => node.textContent!.trim())
+    .join(' ');
+
+const settle = async (el: BkInput) => {
+  await el.updateComplete;
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  await el.updateComplete;
+};
+
+const type = async (el: BkInput, value: string) => {
+  const field = innerInput(el);
+  field.value = value;
+  field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
+  await el.updateComplete;
+};
+
+// The form suite dispatched a bubbling, non-composed input event. The two helpers do
+// the same work for the component's own listener, but each concern keeps the event it
+// was proven with rather than one of them flattening the other.
+const typeBubbling = async (el: BkInput, value: string) => {
+  const field = innerInput(el);
+  field.value = value;
+  field.dispatchEvent(new Event('input', { bubbles: true }));
+  await el.updateComplete;
+};
+
+const touch = async (el: BkInput) => {
+  const field = innerInput(el);
+  field.focus();
+  field.blur();
+  await el.updateComplete;
+};
 
 const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
 
@@ -491,5 +528,669 @@ describe('bk-input', () => {
     expect(received?.detail).to.deep.equal({ value: 'hi@brick.dev' });
     expect(received?.bubbles).to.equal(true);
     expect(received?.composed).to.equal(true);
+  });
+
+  describe('error channel', () => {
+    it('should show the error instead of the native message when both exist', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-input name="email" required error="We need this address."></bk-input>
+        </form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await el.updateComplete;
+      await touch(el);
+
+      expect(innerInput(el).validity.valueMissing, 'the native control is invalid').to.equal(true);
+      expect(innerInput(el).validationMessage).to.not.equal('');
+      expect(message(el)).to.equal('We need this address.');
+      expect(innerError(el).getAttribute('data-state')).to.equal('error');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+    });
+
+    it('should show nothing and stay out of aria-invalid while an invalid field is untouched', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form><bk-input name="email" required></bk-input></form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await el.updateComplete;
+      el.requestUpdate();
+      await el.updateComplete;
+
+      expect(el.validity.valueMissing).to.equal(true);
+      expect(el.fieldMessage).to.equal('');
+      expect(message(el)).to.equal('');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+    });
+
+    it('should show the native message after a blur and never while typing', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-input name="email" type="email" value="you@brick.dev"></bk-input>
+        </form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await el.updateComplete;
+
+      await type(el, 'a@');
+      expect(innerInput(el).validity.typeMismatch).to.equal(true);
+      expect(message(el)).to.equal('');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+
+      const native = innerInput(el).validationMessage;
+      expect(native).to.not.equal('');
+
+      await touch(el);
+
+      expect(message(el)).to.equal(native);
+      expect(innerError(el).getAttribute('data-state')).to.equal('error');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+    });
+
+    it('should never show a native message under novalidate', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form novalidate><bk-input name="email" required></bk-input></form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await el.updateComplete;
+      let submitted = false;
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        submitted = true;
+      });
+
+      await touch(el);
+      form.requestSubmit();
+      await el.updateComplete;
+
+      expect(submitted, 'novalidate lets the submit through').to.equal(true);
+      expect(message(el)).to.equal('');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+
+      el.error = 'We need your address.';
+      await el.updateComplete;
+
+      expect(message(el)).to.equal('We need your address.');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+    });
+
+    it('should show the native message only on the fields a failed submit rejected', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-input name="email" required></bk-input>
+          <bk-input name="other" value="ok" required></bk-input>
+        </form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      const other = form.querySelectorAll('bk-input')[1] as BkInput;
+      await el.updateComplete;
+      await other.updateComplete;
+      let submitted = false;
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        submitted = true;
+      });
+
+      form.requestSubmit();
+      await el.updateComplete;
+      await other.updateComplete;
+
+      expect(submitted).to.equal(false);
+      expect(message(el)).to.equal(innerInput(el).validationMessage);
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+      expect(message(other)).to.equal('');
+      expect(innerInput(other).getAttribute('aria-invalid')).to.equal(null);
+    });
+
+    it('should show the native message when a consumer reports the field explicitly', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form><bk-input name="email" required></bk-input></form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await el.updateComplete;
+
+      el.showValidationMessage();
+      await el.updateComplete;
+
+      expect(message(el)).to.equal(innerInput(el).validationMessage);
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+    });
+
+    it('should clear the error, the touched state and aria-invalid on reset', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form><bk-input name="email" required></bk-input></form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      el.error = 'That address is taken.';
+      await el.updateComplete;
+      await touch(el);
+
+      expect(message(el)).to.equal('That address is taken.');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+
+      form.reset();
+      await el.updateComplete;
+
+      expect(el.error).to.equal('');
+      expect(el.validity.valueMissing, 'the reset field is still natively invalid').to.equal(true);
+      expect(message(el)).to.equal('');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+    });
+
+    it('should not mark the field touched when the browser restores a value', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form><bk-input name="email" type="email"></bk-input></form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+
+      el.formStateRestoreCallback('nope', 'restore');
+      el.requestUpdate();
+      await el.updateComplete;
+
+      expect(el.value).to.equal('nope');
+      expect(el.validity.typeMismatch).to.equal(true);
+      expect(el.fieldMessage).to.equal('');
+      expect(message(el)).to.equal('');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+    });
+
+    it('should take a slotted error atom as the field error', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-input name="email" value="you@brick.dev">
+            <bk-field-error slot="error">That address looks wrong.</bk-field-error>
+          </bk-input>
+        </form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await settle(el);
+      let submitted = false;
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        submitted = true;
+      });
+
+      expect(projectedMessage(el), 'the region shows the text of the atom').to.equal(
+        'That address looks wrong.',
+      );
+      expect(
+        innerInput(el).getAttribute('aria-invalid'),
+        'the atom makes the field invalid',
+      ).to.equal('true');
+      expect(el.validity.customError, 'the atom takes part in constraint validation').to.equal(
+        true,
+      );
+      expect(el.validationMessage, 'with the atom text as its message').to.equal(
+        'That address looks wrong.',
+      );
+      expect(form.checkValidity(), 'so the form refuses to validate').to.equal(false);
+
+      form.requestSubmit();
+
+      expect(submitted, 'and the submit is blocked like an error property would block it').to.equal(
+        false,
+      );
+    });
+
+    it('should let the slotted atom win over the error property, and give it back', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-input name="email" value="you@brick.dev" error="Set by the property.">
+            <bk-field-error slot="error">Set by the atom.</bk-field-error>
+          </bk-input>
+        </form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await settle(el);
+
+      expect(projectedMessage(el), 'the atom text is what the region shows').to.equal(
+        'Set by the atom.',
+      );
+      expect(el.validationMessage, 'and the atom text is the validity message').to.equal(
+        'Set by the atom.',
+      );
+
+      const atom = el.querySelector('bk-field-error')!;
+      atom.textContent = '';
+      await settle(el);
+
+      expect(message(el), 'an atom with no text is not content, so the property shows').to.equal(
+        'Set by the property.',
+      );
+      expect(el.validationMessage, 'and the property is the validity message again').to.equal(
+        'Set by the property.',
+      );
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+    });
+
+    it('should follow the text of the slotted atom while the field sits there', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-input name="email" value="you@brick.dev">
+            <bk-field-error slot="error">Set by the atom.</bk-field-error>
+          </bk-input>
+        </form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await settle(el);
+
+      expect(el.validity.customError).to.equal(true);
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+
+      const atom = el.querySelector('bk-field-error')!;
+      atom.textContent = '';
+      await settle(el);
+
+      expect(el.checkValidity(), 'emptying the atom makes the field valid').to.equal(true);
+      expect(el.validity.customError).to.equal(false);
+      expect(el.validationMessage).to.equal('');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+
+      atom.textContent = 'Back again.';
+      await settle(el);
+
+      expect(el.checkValidity(), 'and refilling it makes it invalid again').to.equal(false);
+      expect(el.validationMessage).to.equal('Back again.');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+    });
+
+    it('should follow the value on the next keystroke once the field has been touched', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-input name="email" type="email" value="you@brick.dev"></bk-input>
+        </form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await el.updateComplete;
+
+      await type(el, 'a@');
+      expect(message(el), 'nothing is shown before the first touch').to.equal('');
+
+      await touch(el);
+      expect(message(el), 'the blur shows the native message').to.equal(
+        innerInput(el).validationMessage,
+      );
+
+      await type(el, 'you@brick.dev');
+
+      expect(message(el), 'the next keystroke drops the message the value fixed').to.equal('');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+
+      await type(el, 'b@');
+
+      expect(message(el), 'and a broken value brings it back while typing').to.equal(
+        innerInput(el).validationMessage,
+      );
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+    });
+
+    it('should block submission for an error a schema result set, until the user acts', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-input name="email" type="email" value="you@brick.dev"></bk-input>
+        </form>
+      `);
+      const el = form.querySelector('bk-input') as BkInput;
+      await el.updateComplete;
+      let submitted = false;
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        submitted = true;
+      });
+
+      const result = { success: false as const, message: 'That address looks wrong.' };
+      el.error = result.success ? '' : result.message;
+      await el.updateComplete;
+
+      expect(form.checkValidity()).to.equal(false);
+      expect(el.validity.customError).to.equal(true);
+      expect(message(el)).to.equal('That address looks wrong.');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+      form.requestSubmit();
+      expect(submitted).to.equal(false);
+
+      el.value = 'changed@brick.dev';
+      await el.updateComplete;
+      expect(message(el), 'a value change alone keeps the message').to.equal(
+        'That address looks wrong.',
+      );
+
+      await type(el, 'changed@brick.dev');
+
+      expect(el.error).to.equal('');
+      expect(message(el)).to.equal('');
+      expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+      expect(form.checkValidity()).to.equal(true);
+    });
+  });
+
+  describe('form participation', () => {
+    it('should enter FormData under its name without a wrapper', async () => {
+      const form = await fixture<HTMLFormElement>(
+        html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
+      );
+
+      expect(new FormData(form).get('email')).to.equal('a@b.c');
+    });
+
+    it('should follow the typed value into FormData', async () => {
+      const form = await fixture<HTMLFormElement>(
+        html`<form><bk-input name="email"></bk-input></form>`,
+      );
+      const el = form.querySelector('bk-input') as BkInput;
+
+      await typeBubbling(el, 'typed@b.c');
+
+      expect(new FormData(form).get('email')).to.equal('typed@b.c');
+    });
+
+    it('should submit its value with the form', async () => {
+      const form = await fixture<HTMLFormElement>(
+        html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
+      );
+      let submitted: FormData | undefined;
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        submitted = new FormData(form);
+      });
+
+      form.requestSubmit();
+
+      expect(submitted?.get('email')).to.equal('a@b.c');
+    });
+
+    it('should not enter FormData when it has no name', async () => {
+      const form = await fixture<HTMLFormElement>(
+        html`<form><bk-input value="a@b.c"></bk-input></form>`,
+      );
+
+      expect([...new FormData(form).keys()]).to.deep.equal([]);
+    });
+
+    describe('reset', () => {
+      it('should restore the initial value on reset', async () => {
+        const form = await fixture<HTMLFormElement>(
+          html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
+        );
+        const el = form.querySelector('bk-input') as BkInput;
+        await typeBubbling(el, 'changed@b.c');
+
+        form.reset();
+        await el.updateComplete;
+
+        expect(el.value).to.equal('a@b.c');
+        expect(new FormData(form).get('email')).to.equal('a@b.c');
+      });
+
+      it('should restore FormData and the field synchronously, before a render', async () => {
+        const form = await fixture<HTMLFormElement>(
+          html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
+        );
+        const el = form.querySelector('bk-input') as BkInput;
+        await typeBubbling(el, 'changed@b.c');
+
+        form.reset();
+
+        expect(new FormData(form).get('email')).to.equal('a@b.c');
+        expect(innerInput(el).value).to.equal('a@b.c');
+      });
+    });
+
+    describe('a disabled fieldset', () => {
+      it('should disable the field with its fieldset and re-enable it', async () => {
+        const form = await fixture<HTMLFormElement>(html`
+          <form>
+            <fieldset disabled><bk-input name="email"></bk-input></fieldset>
+          </form>
+        `);
+        const fieldset = form.querySelector('fieldset')!;
+        const el = form.querySelector('bk-input') as BkInput;
+        await nextFrame();
+        await el.updateComplete;
+
+        expect(innerInput(el).disabled).to.equal(true);
+        expect(innerInput(el).getAttribute('aria-disabled')).to.equal(null);
+
+        fieldset.disabled = false;
+        await nextFrame();
+        await el.updateComplete;
+
+        expect(innerInput(el).disabled).to.equal(false);
+      });
+
+      it('should keep an author-disabled field disabled when its fieldset re-enables', async () => {
+        const form = await fixture<HTMLFormElement>(html`
+          <form>
+            <fieldset disabled>
+              <bk-input name="email" disabled></bk-input>
+            </fieldset>
+          </form>
+        `);
+        const fieldset = form.querySelector('fieldset')!;
+        const el = form.querySelector('bk-input') as BkInput;
+        await nextFrame();
+        await el.updateComplete;
+
+        fieldset.disabled = false;
+        await nextFrame();
+        await el.updateComplete;
+
+        expect(el.disabled).to.equal(true);
+        expect(innerInput(el).disabled).to.equal(true);
+        expect(innerInput(el).getAttribute('aria-disabled')).to.equal(null);
+      });
+
+      it('should submit nothing and report valid while disabled', async () => {
+        const form = await fixture<HTMLFormElement>(html`
+          <form>
+            <bk-input name="email" value="a@b.c" required disabled></bk-input>
+          </form>
+        `);
+        const el = form.querySelector('bk-input') as BkInput;
+        await el.updateComplete;
+
+        expect(new FormData(form).get('email')).to.equal(null);
+        expect(el.checkValidity()).to.equal(true);
+        expect(form.checkValidity()).to.equal(true);
+      });
+
+      it('should block submission with an error only while it is enabled', async () => {
+        const form = await fixture<HTMLFormElement>(html`
+          <form>
+            <bk-input name="email" error="That address looks wrong." disabled></bk-input>
+          </form>
+        `);
+        const el = form.querySelector('bk-input') as BkInput;
+        await el.updateComplete;
+
+        expect(el.validity.customError).to.equal(false);
+        expect(form.checkValidity()).to.equal(true);
+
+        el.disabled = false;
+        await el.updateComplete;
+
+        expect(el.validity.customError).to.equal(true);
+        expect(form.checkValidity()).to.equal(false);
+      });
+    });
+
+    describe('the invalid flow', () => {
+      it('should mark the field invalid and block submission while it has an error', async () => {
+        const form = await fixture<HTMLFormElement>(
+          html`<form>
+            <bk-input name="email" value="you@brick" error="That address looks wrong."></bk-input>
+          </form>`,
+        );
+        const el = form.querySelector('bk-input') as BkInput;
+        let submitted = false;
+        let invalidOn: EventTarget | null = null;
+        form.addEventListener('submit', (event) => {
+          event.preventDefault();
+          submitted = true;
+        });
+        form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+
+        form.requestSubmit();
+
+        expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+        expect(innerError(el).textContent!.trim()).to.equal('That address looks wrong.');
+        expect(form.checkValidity()).to.equal(false);
+        expect(invalidOn).to.equal(el);
+        expect(submitted).to.equal(false);
+      });
+
+      it('should announce a missing required value and clear it when filled', async () => {
+        const form = await fixture<HTMLFormElement>(
+          html`<form><bk-input name="email" required></bk-input></form>`,
+        );
+        const el = form.querySelector('bk-input') as BkInput;
+        await el.updateComplete;
+
+        expect(form.checkValidity()).to.equal(false);
+
+        await typeBubbling(el, 'a@b.c');
+
+        expect(form.checkValidity()).to.equal(true);
+      });
+
+      it('should stay valid while it only has a description', async () => {
+        const form = await fixture<HTMLFormElement>(
+          html`<form>
+            <bk-input name="email" value="a@b.c"
+              ><bk-field-description slot="description"
+                >We never share it.</bk-field-description
+              ></bk-input
+            >
+          </form>`,
+        );
+        const el = form.querySelector('bk-input') as BkInput;
+        await el.updateComplete;
+
+        expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+        expect(form.checkValidity()).to.equal(true);
+      });
+    });
+
+    describe('the public form API', () => {
+      it('should expose the form it belongs to', async () => {
+        const form = await fixture<HTMLFormElement>(
+          html`<form><bk-input name="email"></bk-input></form>`,
+        );
+        const el = form.querySelector('bk-input') as BkInput;
+
+        expect(el.form === form, 'the form the field points at').to.equal(true);
+      });
+
+      it('should expose its validity and validation message', async () => {
+        const el = await fixture<BkInput>(
+          html`<bk-input name="email" error="That address looks wrong."></bk-input>`,
+        );
+
+        expect(el.validity.valid).to.equal(false);
+        expect(el.validity.customError).to.equal(true);
+        expect(el.validationMessage).to.equal('That address looks wrong.');
+      });
+
+      it('should answer checkValidity and reportValidity', async () => {
+        const el = await fixture<BkInput>(html`<bk-input name="email" required></bk-input>`);
+        await el.updateComplete;
+
+        expect(el.validity.valueMissing).to.equal(true);
+        expect(el.checkValidity()).to.equal(false);
+        expect(el.reportValidity()).to.equal(false);
+
+        await typeBubbling(el, 'a@b.c');
+
+        expect(el.validity.valid).to.equal(true);
+        expect(el.checkValidity()).to.equal(true);
+        expect(el.reportValidity()).to.equal(true);
+      });
+
+      it('should restore its value from the browser state', async () => {
+        const form = await fixture<HTMLFormElement>(
+          html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
+        );
+        const el = form.querySelector('bk-input') as BkInput;
+
+        el.formStateRestoreCallback('restored@b.c', 'restore');
+
+        expect(el.value).to.equal('restored@b.c');
+        expect(new FormData(form).get('email')).to.equal('restored@b.c');
+      });
+    });
+  });
+
+  describe('reset semantics', () => {
+    it('should reset to the value attribute, not to the value it had when it mounted', async () => {
+      const form = await fixture<HTMLFormElement>(html`<form></form>`);
+      const el = document.createElement('bk-input') as BkInput;
+      el.setAttribute('name', 'email');
+      el.setAttribute('label', 'Email');
+      el.setAttribute('value', 'default@b.c');
+      el.value = 'start@b.c';
+      form.append(el);
+      await el.updateComplete;
+
+      form.reset();
+
+      expect(el.value).to.equal('default@b.c');
+      expect(new FormData(form).get('email')).to.equal('default@b.c');
+    });
+  });
+
+  describe('platform validity', () => {
+    it('should reject a value the native control rejects', async () => {
+      const form = await fixture<HTMLFormElement>(
+        html`<form><bk-input name="email" type="email" value="nope"></bk-input></form>`,
+      );
+      const el = form.querySelector('bk-input') as BkInput;
+
+      expect(el.validity.typeMismatch).to.equal(true);
+      expect(el.checkValidity()).to.equal(false);
+    });
+
+    it('should use the message the platform already localised', async () => {
+      const form = await fixture<HTMLFormElement>(
+        html`<form><bk-input name="email" type="email" value="nope"></bk-input></form>`,
+      );
+      const el = form.querySelector('bk-input') as BkInput;
+      const control = el.shadowRoot!.querySelector('input')!;
+
+      expect(el.validationMessage).to.equal(control.validationMessage);
+      expect(el.validationMessage).to.not.equal('');
+    });
+
+    it('should clear a server error on reset, so the form is not stuck invalid', async () => {
+      const form = await fixture<HTMLFormElement>(
+        html`<form><bk-input name="email" value="a@b.c"></bk-input></form>`,
+      );
+      const el = form.querySelector('bk-input') as BkInput;
+      el.error = 'That address is taken.';
+      await el.updateComplete;
+      expect(el.checkValidity()).to.equal(false);
+
+      form.reset();
+
+      expect(el.error).to.equal('');
+      expect(el.checkValidity()).to.equal(true);
+    });
+  });
+
+  describe('required', () => {
+    it('should report a required empty field as invalid, with the platform message', async () => {
+      const form = await fixture<HTMLFormElement>(
+        html`<form><bk-input name="email" required></bk-input></form>`,
+      );
+      const el = form.querySelector('bk-input') as BkInput;
+
+      expect(el.validity.valueMissing).to.equal(true);
+      expect(el.validationMessage).to.not.equal('');
+
+      el.value = 'a@b.c';
+      await el.updateComplete;
+
+      expect(el.validity.valueMissing).to.equal(false);
+      expect(el.checkValidity()).to.equal(true);
+    });
   });
 });

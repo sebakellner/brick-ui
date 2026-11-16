@@ -1,8 +1,8 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import './define.js';
-import '../bk-field/define.js';
-import type { BkField } from '../bk-field/bk-field.js';
-import type { BkCheckbox } from './bk-checkbox.js';
+import '../../../components/bk-checkbox/define.js';
+import '../../../components/bk-field/define.js';
+import type { BkField } from '../../../components/bk-field/bk-field.js';
+import type { BkCheckbox } from '../../../components/bk-checkbox/bk-checkbox.js';
 
 const innerInput = (el: BkCheckbox) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkCheckbox) => el.shadowRoot!.querySelector('label');
