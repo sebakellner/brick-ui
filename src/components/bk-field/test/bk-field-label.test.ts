@@ -1,9 +1,25 @@
 import { colorOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
+import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.js';
+import { setTheme } from '../../../test/helpers/theme.js';
 import '.././define.js';
 import type { BkFieldLabel } from '.././bk-field-label.js';
 
 describe('bk-field-label', () => {
+  describe('accessibility', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      it(`should have no accessibility violations (${theme})`, async () => {
+        setTheme(theme);
+        const el = await fixture<BkFieldLabel>(html`<bk-field-label>Email</bk-field-label>`);
+
+        await expectRendered(el, 'slot');
+        await expectNoViolations(el);
+      });
+    }
+
+    afterEach(() => setTheme('light'));
+  });
+
   it('should paint the default text role while it carries no state', async () => {
     const el = await fixture<BkFieldLabel>(html`<bk-field-label>Email</bk-field-label>`);
 

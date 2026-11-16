@@ -1,9 +1,25 @@
 import { colorOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
+import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.js';
+import { setTheme } from '../../../test/helpers/theme.js';
 import '.././define.js';
 import type { BkFieldError } from '.././bk-field-error.js';
 
 describe('bk-field-error', () => {
+  describe('accessibility', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      it(`should have no accessibility violations (${theme})`, async () => {
+        setTheme(theme);
+        const el = await fixture<BkFieldError>(html`<bk-field-error>Required</bk-field-error>`);
+
+        await expectRendered(el, 'slot');
+        await expectNoViolations(el);
+      });
+    }
+
+    afterEach(() => setTheme('light'));
+  });
+
   it('should paint the danger text role outside a field', async () => {
     const el = await fixture<BkFieldError>(
       html`<bk-field-error>Enter a valid address.</bk-field-error>`,
