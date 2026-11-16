@@ -6,16 +6,22 @@ several widgets lives under `src/test/integration/`, and the `sendMouse` plugin 
 the hover and focus tests need. One engine is a decision, not an accident: see
 [ADR 0005](adr/0005-test-in-chrome-only.md).
 
-| #   | Rule                                                        | Enforced by                          |
-| --- | ----------------------------------------------------------- | ------------------------------------ |
-| T1  | Load the theme in every test file                           | the suite — an unstyled read fails   |
-| T2  | Assert computed styles, not markup                          | review                               |
-| T3  | Drive hover and focus with real input                       | review                               |
-| T4  | Wait past the transition before asserting it                | review                               |
-| T5  | Every fix is provable by mutation                           | review                               |
-| T6  | Never put a DOM element on the tested side of a failure     | the suite — a violation is a hang    |
-| T7  | The runner claims a pointer, and the suite proves it        | `src/test/browser.test.ts`           |
-| T8  | Two suites per component, a part only when it has behaviour | the suites, visible in the inventory |
+The eight numbered rules follow, each with what enforces it. The **three levels** after
+them are the frame the rules sit in: where a suite lives and what it is allowed to assert.
+They are not numbered because they are judged as a whole — a misplaced suite is caught by
+reading a diff, not by one assertion going red — while a rule is something a single test
+can name.
+
+| #   | Rule                                                        | Enforced by                             |
+| --- | ----------------------------------------------------------- | --------------------------------------- |
+| T1  | Load the theme in every test file                           | the suite — an unstyled read fails      |
+| T2  | Assert computed styles, not markup                          | review                                  |
+| T3  | Drive hover and focus with real input                       | review                                  |
+| T4  | Wait past the transition before asserting it                | review                                  |
+| T5  | Every fix is provable by mutation                           | review                                  |
+| T6  | Never put a DOM element on the tested side of a failure     | the suite — a violation is a hang       |
+| T7  | The runner claims a pointer, and the suite proves it        | `browser.test.ts` + the enabled sibling |
+| T8  | Two suites per component, a part only when it has behaviour | the suites, visible in the inventory    |
 
 ## The three levels, and who decides the composition
 
@@ -29,11 +35,26 @@ the kit's vocabulary. The line is **who decides the composition**:
 | **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                     |
 | **e2e** (later) | **the package on a real page**: entry, registration, `theme.css`, bundler                                                                                                        | the application | `e2e/` with Playwright, once the kit is consumed by an app           |
 
-So `bk-checkbox.test.ts` is **unit** although it imports two defines (its atoms are its
-vocabulary), and `bk-checkbox.form.test.ts` is **unit** as well: a widget inside a
-`<form>` is a widget in the platform's surroundings, and the form is not a composition of
-the kit. A screen with an input, a checkbox and a select is **integration**, because the
-test decides that those three belong together.
+**Where exactly the line falls: the level names whose contract the test writes down, not
+how many elements sit in the fixture.** That is the test of every doubtful case, and it
+is the one that answers why a `<form>` does not make a suite integration:
+
+- `bk-checkbox.form.test.ts` is **unit**. The rule — "a form can submit, reset and disable
+  me" — is the control's own contract with the platform, and the `<form>` is a given
+  rather than a composition of the kit. When it fails, the diagnosis is one component: its
+  `formResetCallback`, its `setValidity`, its `submittedValue`. That diagnosis is what the
+  level is for.
+- `bk-input.field.test.ts` is **integration**. "A control's label can arrive through the
+  field's atoms" belongs to neither element alone — the field routes the atoms, the control
+  hosts them — so a failure can be either one, and no single component owns the rule.
+- `bk-checkbox.test.ts` is **unit** although it imports two defines, because its atoms are
+  part of its own documented contract.
+- A screen with an input, a checkbox and a select is **integration**, because the test
+  decides that those three belong together and nobody else does.
+
+The crossing-a-boundary reading of "integration" (a `<form>` is a boundary) would make
+almost every suite integration, and with it the word stops telling a reader what a failure
+means.
 
 **The level is the location, and no suffix is invented for it.** A unit suite lives with
 its component, in one file broken into `describe` blocks per concern (`form
