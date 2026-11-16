@@ -4,15 +4,16 @@ The bar every component has to clear before it ships. It is not a review
 aspiration: most of it is asserted by the suite, because the failure mode is
 invisible until someone cannot use the control.
 
-| #   | Rule                                                         | Enforced by                    |
-| --- | ------------------------------------------------------------ | ------------------------------ |
-| A1  | Native semantics first                                       | the suite, and review          |
-| A2  | Non-text contrast is asserted, not eyeballed                 | `src/test/helpers/contrast.ts` |
-| A3  | ARIA is wired in the component, never left to the host page  | review                         |
-| A4  | Descriptions are referenced only while they have content     | the suite                      |
-| A5  | Disabled is `aria-disabled`, with activation blocked         | the suite                      |
-| A6  | Form controls are form-associated through `ElementInternals` | review                         |
-| A7  | A live region is never removed from the accessibility tree   | review                         |
+| #   | Rule                                                         | Enforced by                             |
+| --- | ------------------------------------------------------------ | --------------------------------------- |
+| A1  | Native semantics first                                       | the suite, and review                   |
+| A2  | Non-text contrast is asserted, not eyeballed                 | `src/test/helpers/contrast.ts`          |
+| A3  | ARIA is wired in the component, never left to the host page  | review                                  |
+| A4  | Descriptions are referenced only while they have content     | the suite                               |
+| A5  | Disabled is `aria-disabled`, with activation blocked         | the suite                               |
+| A6  | Form controls are form-associated through `ElementInternals` | the suite                               |
+| A7  | A live region is never removed from the accessibility tree   | the suite, for what a test can see      |
+| A7a | A container of controls is named on its host                 | the suite, by resolving every reference |
 
 ## A1. Native semantics first
 
@@ -94,7 +95,10 @@ and validity, so it participates in the surrounding `<form>` through the platfor
 **Why.** Anything else means reimplementing form serialization in JavaScript and
 being wrong about reset, about validity, and about submission order.
 
-**Enforced by.** Review.
+**Enforced by.** The suite: every control participates through `ElementInternals`, and
+its own suite asserts the submit, the reset and the disabled state a surrounding
+`<form>` observes — plus the validity, for the controls that carry a value (a button
+has none).
 
 ## A7. Never hide a live region from the accessibility tree
 
@@ -114,7 +118,13 @@ from `data-empty` as well, which `FieldMessagesController` sets from
 design value
 ([ADR 0004](adr/0004-forbid-style-literals-in-components.md)).
 
-**Enforced by.** Review.
+**Enforced by.** The suite, for the part a test can see: the region keeps
+`role="status"` while it is empty (`bk-checkbox.test.ts`, `bk-input.test.ts`), stays
+connected, and is collapsed rather than hidden (`bk-field-error.test.ts` proves the
+collapse; the `role` it carries is the atom's own). Whether the
+announcement actually reaches a screen reader is not assertable here — the suite runs
+in Chrome alone ([0005](adr/0005-test-in-chrome-only.md)) — so that half stays a review
+question.
 
 ## A7a. A container of controls is named on its host
 

@@ -8,6 +8,7 @@ import type { BkField } from '../../bk-field/bk-field.js';
 import type { BkFieldLabel } from '../../bk-field/bk-field-label.js';
 import type { BkInput } from '.././bk-input.js';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
+import { expectNoViolations } from '../../../test/helpers/a11y.js';
 import { hover, hoverCapable } from '../../../test/helpers/pointer.js';
 import { setTheme } from '../../../test/helpers/theme.js';
 
@@ -86,6 +87,14 @@ const projectedNodes = (node: Element | null) =>
 const projectedText = (node: Element) => projectedNodes(node).join('');
 
 describe('bk-input', () => {
+  for (const theme of ['light', 'dark'] as const) {
+    it(`should have no accessibility violations (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+
+      await expectNoViolations(el);
+    });
+  }
   afterEach(async () => {
     await resetMouse();
   });
@@ -378,6 +387,48 @@ describe('bk-input', () => {
       setTheme(theme);
       const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
       const style = getComputedStyle(innerInput(el));
+
+      expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
+    });
+
+    it(`should keep the focus ring at 3:1 against its own surface (${theme})`, async () => {
+      setTheme(theme);
+      const host = await fixture<HTMLElement>(html`
+        <div>
+          <button type="button">before</button>
+          <bk-input>${labelAtom}</bk-input>
+        </div>
+      `);
+      const el = host.querySelector<BkInput>('bk-input')!;
+      host.querySelector<HTMLElement>('button')!.focus();
+      await sendKeys({ press: 'Tab' });
+      await nextFrame();
+      const style = getComputedStyle(innerInput(el));
+
+      expect(style.outlineStyle, 'the ring is drawn').to.equal('solid');
+      expect(style.outlineWidth, 'the ring has a width').to.not.equal('0px');
+      expect(contrastRatio(style.outlineColor, style.backgroundColor)).to.be.at.least(3);
+    });
+
+    it(`should keep the invalid border at 3:1 against its own surface (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkInput>(html`<bk-input error="Required">${labelAtom}</bk-input>`);
+      const style = getComputedStyle(innerInput(el));
+
+      expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
+    });
+
+    it(`should keep the hover border at 3:1 against its own surface (${theme})`, async function () {
+      if (!hoverCapable()) this.skip();
+
+      setTheme(theme);
+      const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+      const field = innerInput(el);
+
+      await hover(field);
+
+      expect(field.matches(':hover'), 'the pointer reaches the field').to.equal(true);
+      const style = getComputedStyle(field);
 
       expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
     });

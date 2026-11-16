@@ -8,6 +8,7 @@ import type { BkField } from '../../bk-field/bk-field.js';
 import type { BkFieldLabel } from '../../bk-field/bk-field-label.js';
 import type { BkCheckbox } from '.././bk-checkbox.js';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
+import { expectNoViolations } from '../../../test/helpers/a11y.js';
 import { clickAt, hover, hoverCapable } from '../../../test/helpers/pointer.js';
 import { setTheme } from '../../../test/helpers/theme.js';
 
@@ -56,6 +57,14 @@ const projectedNodes = (node: Element | null) =>
 const projectedText = (node: Element) => projectedNodes(node).join('');
 
 describe('bk-checkbox', () => {
+  for (const theme of ['light', 'dark'] as const) {
+    it(`should have no accessibility violations (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkCheckbox>(html`<bk-checkbox>${labelAtom}</bk-checkbox>`);
+
+      await expectNoViolations(el);
+    });
+  }
   afterEach(async () => {
     await resetMouse();
   });
@@ -330,6 +339,7 @@ describe('bk-checkbox', () => {
 
     expect(el.shadowRoot!.activeElement).to.equal(innerInput(el));
     expect(getComputedStyle(box).outlineStyle).to.equal('solid');
+    expect(getComputedStyle(box).outlineWidth, 'the ring has a width').to.not.equal('0px');
     expect(getComputedStyle(box).outlineColor).to.equal(await colorOf('var(--bk-focus-ring)'));
   });
 
@@ -733,6 +743,18 @@ describe('bk-checkbox', () => {
       expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
     });
 
+    it(`should keep the invalid box border at 3:1 against its own surface (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkCheckbox>(html`<bk-checkbox></bk-checkbox>`);
+
+      el.error = 'You have to accept the terms.';
+      await el.updateComplete;
+
+      const box = getComputedStyle(innerBox(el));
+
+      expect(contrastRatio(box.borderTopColor, box.backgroundColor)).to.be.at.least(3);
+    });
+
     it(`should keep the check at 3:1 against the checked box (${theme})`, async () => {
       setTheme(theme);
       const el = await fixture<BkCheckbox>(html`<bk-checkbox></bk-checkbox>`);
@@ -774,6 +796,7 @@ describe('bk-checkbox', () => {
       const box = getComputedStyle(innerBox(el));
 
       expect(box.outlineStyle).to.equal('solid');
+      expect(box.outlineWidth, 'the ring has a width').to.not.equal('0px');
       expect(contrastRatio(box.outlineColor, await colorOf('var(--bk-bg-surface)'))).to.be.at.least(
         3,
       );
