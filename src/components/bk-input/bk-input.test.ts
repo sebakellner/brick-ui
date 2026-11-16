@@ -1,8 +1,10 @@
 import { colorOf, opacityOf } from '../../test/helpers/style.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
+import type { LitElement } from 'lit';
 import './define.js';
 import '../bk-field/define.js';
+import type { BkField } from '../bk-field/bk-field.js';
 import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
 import type { BkInput } from './bk-input.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
@@ -24,7 +26,23 @@ const projectedMessage = (el: BkInput) =>
     .map((node) => node.textContent!.trim())
     .join(' ');
 
-const settle = async (el: BkInput) => {
+const region = (el: BkInput, part: string) =>
+  el.shadowRoot!.querySelector(`[part="${part}"]`) as HTMLElement | null;
+
+const slot = (el: BkInput, name: string) =>
+  el.shadowRoot!.querySelector(`slot[name="${name}"]`) as HTMLSlotElement | null;
+
+const slotted = (el: BkInput, name: string) =>
+  slot(el, name)!
+    .assignedElements({ flatten: true })
+    .map((node) => node.textContent!.trim());
+
+const describedNode = (el: BkInput) => {
+  const id = innerInput(el).getAttribute('aria-describedby');
+  return id ? el.shadowRoot!.getElementById(id) : null;
+};
+
+const settle = async (el: LitElement) => {
   await el.updateComplete;
   await new Promise((resolve) => setTimeout(resolve, 0));
   await el.updateComplete;
@@ -59,10 +77,13 @@ const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
 const descriptionAtom = (text: string) =>
   html`<bk-field-description slot="description">${text}</bk-field-description>`;
 
-const projectedText = (region: HTMLElement) =>
-  Array.from(region.querySelector('slot')!.assignedNodes({ flatten: true }))
-    .map((node) => node.textContent!.trim())
-    .join('');
+const projectedNodes = (node: Element | null) =>
+  Array.from(node?.querySelectorAll('slot') ?? [])
+    .flatMap((entry) => entry.assignedNodes({ flatten: true }))
+    .map((assigned) => assigned.textContent!.trim())
+    .filter(Boolean);
+
+const projectedText = (node: Element) => projectedNodes(node).join('');
 
 describe('bk-input', () => {
   afterEach(async () => {
@@ -528,6 +549,188 @@ describe('bk-input', () => {
     expect(received?.detail).to.deep.equal({ value: 'hi@brick.dev' });
     expect(received?.bubbles).to.equal(true);
     expect(received?.composed).to.equal(true);
+  });
+
+  describe('field parts', () => {
+    it('should take a slotted label as the control label', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-input name="email"><bk-field-label>Email</bk-field-label></bk-input>
+        </bk-field>
+      `);
+      await settle(el);
+      const input = el.querySelector('bk-input') as BkInput;
+
+      expect(innerLabel(input), 'the control renders a label').to.not.equal(null);
+      expect(innerLabel(input)!.htmlFor, 'the label points at the inner control').to.equal(
+        innerInput(input).id,
+      );
+      expect(slotted(input, 'label'), 'the label content is the consumer node').to.deep.equal([
+        'Email',
+      ]);
+    });
+
+    it('should describe the control with a slotted description', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-input name="email">
+            <bk-field-label>Email</bk-field-label>
+            <bk-field-description>We only use it for the receipt.</bk-field-description>
+          </bk-input>
+        </bk-field>
+      `);
+      await settle(el);
+      const input = el.querySelector('bk-input') as BkInput;
+
+      expect(describedNode(input), 'the description region is the description').to.equal(
+        region(input, 'description'),
+      );
+      expect(
+        projectedNodes(describedNode(input)),
+        'the region projects the consumer node',
+      ).to.deep.equal(['We only use it for the receipt.']);
+    });
+
+    it('should reference no description while there is no content', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field
+          ><bk-input name="email"><bk-field-label>Email</bk-field-label></bk-input></bk-field
+        >
+      `);
+      await settle(el);
+      const input = el.querySelector('bk-input') as BkInput;
+
+      expect(innerInput(input).getAttribute('aria-describedby')).to.equal(null);
+    });
+
+    it('should reference no error region while the slotted error atom has no text', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-input name="email">
+            <bk-field-label>Email</bk-field-label>
+            <bk-field-error></bk-field-error>
+          </bk-input>
+        </bk-field>
+      `);
+      await settle(el);
+      const input = el.querySelector('bk-input') as BkInput;
+      const id = innerInput(input).getAttribute('aria-describedby');
+
+      expect(id, 'an empty atom is not content, so nothing is referenced').to.equal(null);
+      expect(
+        Boolean(input.shadowRoot!.getElementById(id ?? '')),
+        'the reference resolves to no node at all',
+      ).to.equal(false);
+      expect(innerInput(input).getAttribute('aria-invalid'), 'and it is not an error').to.equal(
+        null,
+      );
+      expect(input.checkValidity(), 'the field stays valid').to.equal(true);
+    });
+
+    it('should keep the message region in the tree while it is empty', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field
+          ><bk-input name="email"><bk-field-label>Email</bk-field-label></bk-input></bk-field
+        >
+      `);
+      await settle(el);
+      const input = el.querySelector('bk-input') as BkInput;
+
+      expect(region(input, 'message'), 'the region stays').to.not.equal(null);
+    });
+
+    it('should prefer a slotted error over a slotted description', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-input name="email">
+            <bk-field-label>Email</bk-field-label>
+            <bk-field-description>We only use it for the receipt.</bk-field-description>
+            <bk-field-error>Enter a valid address.</bk-field-error>
+          </bk-input>
+        </bk-field>
+      `);
+      await settle(el);
+      const input = el.querySelector('bk-input') as BkInput;
+
+      expect(describedNode(input), 'the error region is the description').to.equal(
+        region(input, 'error'),
+      );
+      expect(
+        projectedNodes(describedNode(input)),
+        'the error replaces the description',
+      ).to.deep.equal(['Enter a valid address.']);
+      expect(
+        region(input, 'description')!.hasAttribute('hidden'),
+        'the description is not rendered while the error is',
+      ).to.equal(true);
+      expect(region(input, 'description'), 'the description keeps its part').to.not.equal(null);
+    });
+
+    it('should follow a description added after connect', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field
+          ><bk-input name="email"><bk-field-label>Email</bk-field-label></bk-input></bk-field
+        >
+      `);
+      await settle(el);
+      const input = el.querySelector('bk-input') as BkInput;
+      expect(innerInput(input).getAttribute('aria-describedby')).to.equal(null);
+
+      const description = document.createElement('bk-field-description');
+      description.textContent = 'Added later.';
+      input.append(description);
+      await settle(el);
+
+      expect(describedNode(input), 'the description region is the description').to.equal(
+        region(input, 'description'),
+      );
+      expect(projectedNodes(describedNode(input))).to.deep.equal(['Added later.']);
+    });
+
+    it('should collapse an empty region and give it space once it has content', async () => {
+      const el = await fixture<BkInput>(
+        html`<bk-input name="email"><bk-field-label slot="label">Email</bk-field-label></bk-input>`,
+      );
+      await el.updateComplete;
+      const error = region(el, 'error')!;
+
+      expect(error.isConnected, 'the region stays in the tree while empty').to.equal(true);
+      expect(getComputedStyle(error).position, 'and is taken out of the flow').to.equal('absolute');
+      const before = el.getBoundingClientRect().height;
+
+      const atom = document.createElement('bk-field-error');
+      atom.slot = 'error';
+      atom.textContent = 'Enter a valid address.';
+      el.append(atom);
+      await el.updateComplete;
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      await el.updateComplete;
+
+      expect(getComputedStyle(error).position, 'content brings it back into the flow').to.not.equal(
+        'absolute',
+      );
+      expect(el.getBoundingClientRect().height, 'and the field grows').to.be.greaterThan(before);
+    });
+
+    it('should hide an empty label and show it once the atom arrives', async () => {
+      const el = await fixture<BkInput>(html`<bk-input name="email"></bk-input>`);
+      await el.updateComplete;
+      const label = innerLabel(el)!;
+
+      expect(label.hasAttribute('hidden'), 'an empty label is hidden, not omitted').to.equal(true);
+      expect(label.getBoundingClientRect().height, 'and takes no space').to.equal(0);
+
+      const atom = document.createElement('bk-field-label');
+      atom.slot = 'label';
+      atom.textContent = 'Email';
+      el.append(atom);
+      await el.updateComplete;
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      await el.updateComplete;
+
+      expect(label.hasAttribute('hidden'), 'the label appears with its content').to.equal(false);
+      expect(label.getBoundingClientRect().height).to.be.greaterThan(0);
+    });
   });
 
   describe('error channel', () => {
