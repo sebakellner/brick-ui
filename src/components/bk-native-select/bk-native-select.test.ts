@@ -2,7 +2,7 @@ import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkNativeSelect } from './bk-native-select.js';
-import { loadTheme, setTheme } from '../../test/helpers/theme.js';
+import { setTheme } from '../../test/helpers/theme.js';
 
 const innerSelect = (el: BkNativeSelect) => el.shadowRoot!.querySelector('select')!;
 const innerLabel = (el: BkNativeSelect) =>
@@ -47,8 +47,6 @@ const choose = async (el: BkNativeSelect, value: string) => {
 };
 
 describe('bk-native-select', () => {
-  before(loadTheme);
-
   afterEach(() => {
     setTheme('light');
   });

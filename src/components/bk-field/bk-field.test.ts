@@ -5,7 +5,6 @@ import type { BkField } from './bk-field.js';
 import type { BkFieldDescription } from './bk-field-description.js';
 import type { BkFieldError } from './bk-field-error.js';
 import type { BkFieldLabel } from './bk-field-label.js';
-import { loadTheme } from '../../test/helpers/theme.js';
 
 const part = <T extends Element>(el: BkField, tag: string) => el.querySelector<T>(tag)!;
 
@@ -16,8 +15,6 @@ const states = (el: BkField) => PARTS.map((tag) => part(el, tag).getAttribute('d
 const top = (el: BkField, tag: string) => part(el, tag).getBoundingClientRect().top;
 
 describe('bk-field', () => {
-  before(loadTheme);
-
   it('should stack label, control, description and error in that order', async () => {
     const el = await fixture<BkField>(html`
       <bk-field>

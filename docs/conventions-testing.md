@@ -14,10 +14,10 @@ can name.
 
 | #   | Rule                                                        | Enforced by                             |
 | --- | ----------------------------------------------------------- | --------------------------------------- |
-| T1  | Load the theme in every test file                           | the suite — an unstyled read fails      |
+| T1  | The runner page loads the theme, once                       | the suite — an unstyled read fails      |
 | T2  | Assert computed styles, not markup                          | review                                  |
 | T3  | Drive hover and focus with real input                       | review                                  |
-| T4  | Wait past the transition before asserting it                | review                                  |
+| T4  | The test page has no transition to wait for                 | review; the suite runtime shows it      |
 | T5  | Every fix is provable by mutation                           | review                                  |
 | T6  | Never put a DOM element on the tested side of a failure     | the suite — a violation is a hang       |
 | T7  | The runner claims a pointer, and the suite proves it        | `browser.test.ts` + the enabled sibling |
@@ -90,24 +90,24 @@ costs nothing a consumer can feel teaches people to route around gates. A mislab
 suite reaches nobody; an undefined token reaches a consumer in runtime, which is why
 `check:tokens` earns its place and this did not.
 
-## T1. Load the theme in every test file
+## T1. The runner page loads the theme, once
 
-**Rule.** Every test file starts with `before(loadTheme)` from
-`src/test/helpers/theme.ts`.
+**Rule.** `web-test-runner.config.mjs` serves every suite from one page: it links
+`/src/styles/theme.css` and zeroes `--bk-transition`. A suite never loads the stylesheet
+itself; when it needs the other theme it calls `setTheme('dark')` and nothing else.
 
-**Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)),
-so a test without the theme asserts against nothing. Loading the real stylesheet
-also means the suite exercises the same configuration a consumer uses, instead of
-a second setup that could drift from it.
+**Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)), so
+a suite without the theme asserts against nothing — but that is a property of the page, not
+of twenty-two files. Fetching the same stylesheet from each of them was twenty-two chances
+to forget, and the copy that forgot failed with an unrelated-looking assertion.
 
-**Do**
+**Do** — switch the theme when the test is about the theme, and nothing otherwise:
 
 ```ts
-import { loadTheme } from '../../test/helpers/theme.js';
-
-describe('bk-x', () => {
-  before(loadTheme);
+setTheme('dark');
 ```
+
+**Don't** — inject a `<link>` from a test, or assert before the page has its stylesheet.
 
 **Enforced by.** The suite: a missing token read fails the assertion.
 
@@ -151,15 +151,30 @@ await sendMouse({ type: 'move', position: [x, y] });
 
 **Enforced by.** Review.
 
-## T4. Wait past the transition before asserting it
+## T4. The test page has no transition to wait for
 
-**Rule.** A transitioned property is asserted after more than `--bk-transition`
-(120ms), not immediately.
+**Rule.** The runner page zeroes the kit's duration token (`--bk-transition: 0s`), so a
+transitioned property reaches its final value immediately and no test waits for it. A test
+that is _about_ a transition sets the token back to its real value and awaits
+`element.getAnimations()` — never a timer.
 
-**Why.** Sampling mid-transition returns an interpolated color, so the test asserts
-a value that exists for a few frames and fails intermittently on a slower machine.
+**Why.** Sampling mid-transition returns an interpolated colour, which is what the old
+rule guarded against with a fixed 250 ms sleep; the sleep was the symptom, not the fix. It
+cost ten seconds across the suite, and it hid a real leak: with the pointer left where the
+previous test parked it, the next fixture inherited `:hover`, and only a delayed sample
+made that look stable.
 
-**Enforced by.** Review.
+**Do** — assert the final value directly, and reset what the test moved:
+
+```ts
+expect(getComputedStyle(box).borderTopColor).to.equal(await colorOf('var(--bk-border-strong)'));
+```
+
+**Don't** — `await new Promise((resolve) => setTimeout(resolve, 250))`, and do not leave the
+pointer over a fixture: `afterEach(resetMouse)` is what keeps one test's hover out of the
+next one's colours.
+
+**Enforced by.** Review; the suite's runtime is the visible effect.
 
 ## T5. Every fix is provable by mutation
 

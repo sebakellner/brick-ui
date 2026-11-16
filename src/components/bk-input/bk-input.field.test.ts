@@ -3,7 +3,6 @@ import './define.js';
 import '../bk-field/define.js';
 import type { BkField } from '../bk-field/bk-field.js';
 import type { BkInput } from './bk-input.js';
-import { loadTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkInput) => el.shadowRoot!.querySelector('label');
@@ -37,8 +36,6 @@ const settle = async (el: BkField) => {
 };
 
 describe('bk-input composed field parts', () => {
-  before(loadTheme);
-
   it('should take a slotted label as the control label', async () => {
     const el = await fixture<BkField>(html`
       <bk-field>

@@ -4,7 +4,7 @@ import '../bk-checkbox/define.js';
 import '../bk-field/define.js';
 import type { BkCheckbox } from '../bk-checkbox/bk-checkbox.js';
 import type { BkCheckboxGroup } from './bk-checkbox-group.js';
-import { loadTheme, setTheme } from '../../test/helpers/theme.js';
+import { setTheme } from '../../test/helpers/theme.js';
 
 const part = (el: BkCheckboxGroup, name: string) =>
   el.shadowRoot!.querySelector<HTMLElement>(`[part="${name}"]`);
@@ -91,8 +91,6 @@ const twoBoxes = html`
 `;
 
 describe('bk-checkbox-group', () => {
-  before(loadTheme);
-
   afterEach(() => {
     setTheme('light');
   });

@@ -3,8 +3,8 @@ import './define.js';
 import type { BkButton } from './bk-button.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
 import { hover, hoverCapable } from '../../test/helpers/pointer.js';
-import { loadTheme, setTheme } from '../../test/helpers/theme.js';
-import { sendKeys } from '@web/test-runner-commands';
+import { setTheme } from '../../test/helpers/theme.js';
+import { sendKeys, resetMouse } from '@web/test-runner-commands';
 
 const innerButton = (el: BkButton) => el.shadowRoot!.querySelector('button')!;
 
@@ -16,7 +16,9 @@ const mount = (variant?: string) =>
   );
 
 describe('bk-button', () => {
-  before(loadTheme);
+  afterEach(async () => {
+    await resetMouse();
+  });
 
   afterEach(() => {
     for (const prop of [
@@ -64,7 +66,7 @@ describe('bk-button', () => {
 
   for (const theme of ['light', 'dark'] as const) {
     it(`should keep its label readable on the accent background (${theme})`, async () => {
-      await loadTheme(theme);
+      setTheme(theme);
       const primary = await mount();
       const style = getComputedStyle(innerButton(primary));
 
@@ -72,7 +74,7 @@ describe('bk-button', () => {
     });
 
     it(`should keep the secondary border at 3:1 against its own surface (${theme})`, async () => {
-      await loadTheme(theme);
+      setTheme(theme);
       const secondary = await mount('secondary');
       const style = getComputedStyle(innerButton(secondary));
 
