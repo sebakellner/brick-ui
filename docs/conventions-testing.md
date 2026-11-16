@@ -1,17 +1,73 @@
 # Testing Conventions
 
 The suite runs in real Chrome through Web Test Runner. `web-test-runner.config.mjs`
-picks up `src/**/*.test.ts`, keeps tests next to the element, and registers the
-`sendMouse` plugin that the hover and focus tests need. One engine is a decision,
-not an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
+picks up `src/**/*.test.ts`: a component's rule suites live next to it, an assembly of
+several widgets lives under `src/test/integration/`, and the `sendMouse` plugin is what
+the hover and focus tests need. One engine is a decision, not an accident: see
+[ADR 0005](adr/0005-test-in-chrome-only.md).
 
-| #   | Rule                                         | Enforced by                        |
-| --- | -------------------------------------------- | ---------------------------------- |
-| T1  | Load the theme in every test file            | the suite — an unstyled read fails |
-| T2  | Assert computed styles, not markup           | review                             |
-| T3  | Drive hover and focus with real input        | review                             |
-| T4  | Wait past the transition before asserting it | review                             |
-| T5  | Every fix is provable by mutation            | review                             |
+| #   | Rule                                                        | Enforced by                          |
+| --- | ----------------------------------------------------------- | ------------------------------------ |
+| T1  | Load the theme in every test file                           | the suite — an unstyled read fails   |
+| T2  | Assert computed styles, not markup                          | review                               |
+| T3  | Drive hover and focus with real input                       | review                               |
+| T4  | Wait past the transition before asserting it                | review                               |
+| T5  | Every fix is provable by mutation                           | review                               |
+| T6  | Never put a DOM element on the tested side of a failure     | the suite — a violation is a hang    |
+| T7  | The runner claims a pointer, and the suite proves it        | `src/test/browser.test.ts`           |
+| T8  | Two suites per component, a part only when it has behaviour | the suites, visible in the inventory |
+
+## The three levels, and who decides the composition
+
+The line between a unit test and an integration test is not "how many elements it
+imports" — almost every suite here imports an atom's `define.js`, because the atoms are
+the kit's vocabulary. The line is **who decides the composition**:
+
+| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                                |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | -------------------------------------------------------------------- |
+| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/bk-x.test.ts`, one file, `describe` per concern |
+| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                     |
+| **e2e** (later) | **the package on a real page**: entry, registration, `theme.css`, bundler                                                                                                        | the application | `e2e/` with Playwright, once the kit is consumed by an app           |
+
+So `bk-checkbox.test.ts` is **unit** although it imports two defines (its atoms are its
+vocabulary), and `bk-checkbox.form.test.ts` is **unit** as well: a widget inside a
+`<form>` is a widget in the platform's surroundings, and the form is not a composition of
+the kit. A screen with an input, a checkbox and a select is **integration**, because the
+test decides that those three belong together.
+
+**The level is the location, and no suffix is invented for it.** A unit suite lives with
+its component, in one file broken into `describe` blocks per concern (`form
+participation`, `error channel`, `label state`) instead of `.form` and `.error` files —
+one file per subject is what Shoelace and Material Web do, and a concern is a paragraph
+of a suite, not a module. Integration gets its own directory, the way Spectrum keeps its
+accessibility specs apart from its unit tests and the runner itself separates kinds. The
+`.field.test.ts` pair that exists today is integration by this rule and moves to
+`src/test/integration/field/` in the pass that collapses the concern suffixes.
+
+Three rules make the levels useful instead of decorative:
+
+- **A level asserts only what the level below cannot.** Integration never re-asserts a
+  control's computed-style rules; it asserts what changes _because_ two widgets are
+  together: the order in which validity is reported, the payload, a reset crossing
+  widgets, focus moving to the next control.
+- **Share the mechanics, not the rules.** Mounting a field with its atoms, typing a
+  value, submitting and settling are the same four lines in every suite, so they belong
+  in `src/test/helpers/`. The rules stay with the component that owns them: a shared rule
+  suite reports a failure without saying which component drifted, and it grows options and
+  conditionals the moment two controls differ — the input keeps the native `disabled` and
+  the checkbox does not, the checkbox submits only while checked. Shoelace's
+  `runFormControlBaseTests` and Material's `createFormTests` exist because their controls
+  are uniform; ours already disagree, so the criterion for adopting one here is a
+  **third** control with the same shape, not two.
+- **No mocks at any level** (T2). E2E included: a real page, a real package.
+
+The placement rule worth stating — a suite under `src/test/integration/` composes at
+least two components, or the folder becomes a dumping ground — is enforced by **review,
+not by a script**. It is a _positive_ rule, which lint cannot express even with ESLint
+installed (`no-restricted-imports` forbids, it does not count), and a gate whose failure
+costs nothing a consumer can feel teaches people to route around gates. A mislabeled
+suite reaches nobody; an undefined token reaches a consumer in runtime, which is why
+`check:tokens` earns its place and this did not.
 
 ## T1. Load the theme in every test file
 
@@ -47,8 +103,10 @@ painted.
 **Do**
 
 ```ts
-const el = await fixture<BkX>(html`<bk-x label="Email"></bk-x>`);
-expect(getComputedStyle(inner(el)).borderTopColor).to.equal('rgb(185, 28, 28)');
+const el = await fixture<BkX>(html`<bk-x><bk-field-label>Email</bk-field-label></bk-x>`);
+expect(getComputedStyle(inner(el)).borderTopColor).to.equal(
+  await colorOf('var(--bk-border-danger)'),
+);
 ```
 
 **Don't** — assert that the host has `data-state="error"` and call it covered.
@@ -159,9 +217,11 @@ each hover test: the assertion cannot pass unless a hovered sibling really chang
 component with atoms is the whole list. A part gets a suite of its own when it has
 behaviour (the radio item's activation and tab stop, the select atoms' reflection); a
 part that only paints is covered where it is used (`bk-field-label` and its siblings
-inside `bk-field.test.ts`). A third file is added **by concern** — `.form`,
-`.field`, `.error` — and only when that concern has rules of its own and the main
-file has grown past a few hundred lines; the suffix names the concern, never a mood.
+inside `bk-field.test.ts`). **A concern is a `describe` block, not a file**: form
+participation, the error channel and the label state are paragraphs of the component's
+suite. A third file appears only when the **level** changes — an assembly moves to
+`src/test/integration/` — because a suffix that names a concern splits one subject across
+modules, and one that names an assembly invents a category nobody else uses.
 
 **Why.** The register suite existed in four components of seven and the atom coverage
 in one of three, which is how a convention stops being one: each addition was locally
