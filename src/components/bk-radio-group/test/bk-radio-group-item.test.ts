@@ -1,5 +1,6 @@
 import { settle } from '../../../test/helpers/settle.js';
 import { resetMouse, sendKeys } from '@web/test-runner-commands';
+import { labelAtom } from '../../../test/helpers/atoms.js';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
 import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
@@ -16,8 +17,6 @@ const innerBox = (el: BkRadioGroupItem) =>
 const innerDescription = (el: BkRadioGroupItem) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="description"]')!;
 
-const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
-
 describe('bk-radio-group-item', () => {
   afterEach(async () => {
     await resetMouse();
@@ -33,7 +32,7 @@ describe('bk-radio-group-item', () => {
     it(`should keep the box boundary at 3:1 against its own surface (${theme})`, async () => {
       setTheme(theme);
       const el = await fixture<BkRadioGroupItem>(
-        html`<bk-radio-group-item>${labelAtom}</bk-radio-group-item>`,
+        html`<bk-radio-group-item>${labelAtom('Email')}</bk-radio-group-item>`,
       );
       const box = getComputedStyle(innerBox(el));
 
@@ -43,7 +42,7 @@ describe('bk-radio-group-item', () => {
     it(`should keep the dot at 3:1 against the box it sits in (${theme})`, async () => {
       setTheme(theme);
       const el = await fixture<BkRadioGroupItem>(
-        html`<bk-radio-group-item>${labelAtom}</bk-radio-group-item>`,
+        html`<bk-radio-group-item>${labelAtom('Email')}</bk-radio-group-item>`,
       );
       el.checked = true;
       await el.updateComplete;
@@ -59,7 +58,7 @@ describe('bk-radio-group-item', () => {
       const host = await fixture<HTMLElement>(html`
         <div>
           <button type="button">before</button>
-          <bk-radio-group-item>${labelAtom}</bk-radio-group-item>
+          <bk-radio-group-item>${labelAtom('Email')}</bk-radio-group-item>
         </div>
       `);
       const el = host.querySelector<BkRadioGroupItem>('bk-radio-group-item')!;
@@ -80,7 +79,7 @@ describe('bk-radio-group-item', () => {
 
   it('should render a label that points at and contains the inner radio', async () => {
     const el = await fixture<BkRadioGroupItem>(
-      html`<bk-radio-group-item>${labelAtom}</bk-radio-group-item>`,
+      html`<bk-radio-group-item>${labelAtom('Email')}</bk-radio-group-item>`,
     );
     const input = innerInput(el);
     const label = innerLabel(el);
@@ -129,7 +128,7 @@ describe('bk-radio-group-item', () => {
 
   it('should report an activation and leave the selection to the group', async () => {
     const host = await fixture<HTMLElement>(html`
-      <div><bk-radio-group-item value="a">${labelAtom}</bk-radio-group-item></div>
+      <div><bk-radio-group-item value="a">${labelAtom('Email')}</bk-radio-group-item></div>
     `);
     const el = host.querySelector<BkRadioGroupItem>('bk-radio-group-item')!;
     const details: unknown[] = [];
@@ -152,7 +151,7 @@ describe('bk-radio-group-item', () => {
 
   it('should refuse to activate while disabled and stay focusable', async () => {
     const el = await fixture<BkRadioGroupItem>(
-      html`<bk-radio-group-item disabled>${labelAtom}</bk-radio-group-item>`,
+      html`<bk-radio-group-item disabled>${labelAtom('Email')}</bk-radio-group-item>`,
     );
     const input = innerInput(el);
     let changes = 0;
@@ -176,7 +175,7 @@ describe('bk-radio-group-item', () => {
 
   it('should dim the row of a disabled radio and leave the box surface alone', async () => {
     const el = await fixture<BkRadioGroupItem>(
-      html`<bk-radio-group-item disabled>${labelAtom}</bk-radio-group-item>`,
+      html`<bk-radio-group-item disabled>${labelAtom('Email')}</bk-radio-group-item>`,
     );
 
     expect(
@@ -196,7 +195,7 @@ describe('bk-radio-group-item', () => {
     if (!hoverCapable()) this.skip();
 
     const el = await fixture<BkRadioGroupItem>(
-      html`<bk-radio-group-item>${labelAtom}</bk-radio-group-item>`,
+      html`<bk-radio-group-item>${labelAtom('Email')}</bk-radio-group-item>`,
     );
     const box = innerBox(el);
 
@@ -215,8 +214,8 @@ describe('bk-radio-group-item', () => {
 
     const host = await fixture<HTMLElement>(html`
       <div>
-        <bk-radio-group-item disabled>${labelAtom}</bk-radio-group-item>
-        <bk-radio-group-item>${labelAtom}</bk-radio-group-item>
+        <bk-radio-group-item disabled>${labelAtom('Email')}</bk-radio-group-item>
+        <bk-radio-group-item>${labelAtom('Email')}</bk-radio-group-item>
       </div>
     `);
     const [disabled, enabled] = host.querySelectorAll<BkRadioGroupItem>('bk-radio-group-item');
@@ -254,7 +253,7 @@ describe('bk-radio-group-item', () => {
 
   it('should take the disabled opacity from the shared primitive', async () => {
     const el = await fixture<BkRadioGroupItem>(
-      html`<bk-radio-group-item disabled>${labelAtom}</bk-radio-group-item>`,
+      html`<bk-radio-group-item disabled>${labelAtom('Email')}</bk-radio-group-item>`,
     );
     el.style.setProperty('--bk-opacity-disabled', '0.25');
 

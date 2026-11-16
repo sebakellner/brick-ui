@@ -1,5 +1,14 @@
 import { settle } from '../../../test/helpers/settle.js';
 import { colorOf, opacityOf } from '../../../test/helpers/style.js';
+import {
+  describedNode,
+  projectedNodes,
+  projectedText,
+  region,
+  slotIn,
+  slottedText,
+} from '../../../test/helpers/dom.js';
+import { labelAtom } from '../../../test/helpers/atoms.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import '.././define.js';
@@ -23,38 +32,16 @@ const innerError = (el: BkCheckbox) => el.shadowRoot!.querySelector<HTMLElement>
 
 const formData = (form: HTMLFormElement) => new FormData(form);
 
-const region = (el: BkCheckbox, part: string) =>
-  el.shadowRoot!.querySelector(`[part="${part}"]`) as HTMLElement | null;
-
-const slot = (el: BkCheckbox, name: string) =>
-  el.shadowRoot!.querySelector(`slot[name="${name}"]`) as HTMLSlotElement | null;
-
 const assigned = (el: BkCheckbox, name: string) =>
-  slot(el, name)!.assignedElements({ flatten: true });
-
-const slotted = (el: BkCheckbox, name: string) =>
-  assigned(el, name).map((node) => node.textContent!.trim());
-
-const describedNode = (el: BkCheckbox) => {
-  const id = innerInput(el).getAttribute('aria-describedby');
-  return id ? el.shadowRoot!.getElementById(id) : null;
-};
-
-const labelAtom = html`<bk-field-label slot="label">Accept terms</bk-field-label>`;
-
-const projectedNodes = (node: Element | null) =>
-  Array.from(node?.querySelectorAll('slot') ?? [])
-    .flatMap((entry) => entry.assignedNodes({ flatten: true }))
-    .map((assignedText) => assignedText.textContent!.trim())
-    .filter(Boolean);
-
-const projectedText = (node: Element) => projectedNodes(node).join('');
+  slotIn(el, name)!.assignedElements({ flatten: true });
 
 describe('bk-checkbox', () => {
   for (const theme of ['light', 'dark'] as const) {
     it(`should have no accessibility violations (${theme})`, async () => {
       setTheme(theme);
-      const el = await fixture<BkCheckbox>(html`<bk-checkbox>${labelAtom}</bk-checkbox>`);
+      const el = await fixture<BkCheckbox>(
+        html`<bk-checkbox>${labelAtom('Accept terms')}</bk-checkbox>`,
+      );
 
       await expectNoViolations(el);
     });
@@ -70,7 +57,9 @@ describe('bk-checkbox', () => {
   });
 
   it('should render a label that points at the inner checkbox', async () => {
-    const el = await fixture<BkCheckbox>(html`<bk-checkbox>${labelAtom}</bk-checkbox>`);
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox>${labelAtom('Accept terms')}</bk-checkbox>`,
+    );
     const input = innerInput(el);
 
     expect(innerLabel(el).htmlFor).to.equal(input.id);
@@ -121,7 +110,9 @@ describe('bk-checkbox', () => {
   });
 
   it('should toggle from a click on the label text', async () => {
-    const el = await fixture<BkCheckbox>(html`<bk-checkbox>${labelAtom}</bk-checkbox>`);
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox>${labelAtom('Accept terms')}</bk-checkbox>`,
+    );
 
     innerLabel(el).click();
     await el.updateComplete;
@@ -173,7 +164,7 @@ describe('bk-checkbox', () => {
 
   it('should resolve to checked and report it when a mixed box is clicked', async () => {
     const host = await fixture<HTMLElement>(html`
-      <div><bk-checkbox indeterminate>${labelAtom}</bk-checkbox></div>
+      <div><bk-checkbox indeterminate>${labelAtom('Accept terms')}</bk-checkbox></div>
     `);
     const el = host.querySelector<BkCheckbox>('bk-checkbox')!;
     const details: unknown[] = [];
@@ -597,7 +588,9 @@ describe('bk-checkbox', () => {
   });
 
   it('should mark a required box that has a label', async () => {
-    const el = await fixture<BkCheckbox>(html`<bk-checkbox required>${labelAtom}</bk-checkbox>`);
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox required>${labelAtom('Accept terms')}</bk-checkbox>`,
+    );
 
     expect(Boolean(innerRequired(el)), 'the label carries the mark').to.equal(true);
     expect(innerRequired(el)!.textContent).to.equal('*');
@@ -607,7 +600,9 @@ describe('bk-checkbox', () => {
   });
 
   it('should keep the required glyph out of the accessible name', async () => {
-    const el = await fixture<BkCheckbox>(html`<bk-checkbox required>${labelAtom}</bk-checkbox>`);
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox required>${labelAtom('Accept terms')}</bk-checkbox>`,
+    );
 
     expect(innerRequired(el)!.getAttribute('aria-hidden')).to.equal('true');
   });
@@ -634,7 +629,9 @@ describe('bk-checkbox', () => {
   });
 
   it('should paint the required glyph with the danger role', async () => {
-    const el = await fixture<BkCheckbox>(html`<bk-checkbox required>${labelAtom}</bk-checkbox>`);
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox required>${labelAtom('Accept terms')}</bk-checkbox>`,
+    );
 
     expect(getComputedStyle(innerRequired(el)!).color).to.equal(
       await colorOf('var(--bk-text-danger)'),
@@ -654,7 +651,9 @@ describe('bk-checkbox', () => {
   });
 
   it('should paint the label danger while the box is invalid', async () => {
-    const el = await fixture<BkCheckbox>(html`<bk-checkbox>${labelAtom}</bk-checkbox>`);
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox>${labelAtom('Accept terms')}</bk-checkbox>`,
+    );
 
     el.error = 'You have to accept the terms.';
     await el.updateComplete;
@@ -663,7 +662,9 @@ describe('bk-checkbox', () => {
   });
 
   it('should dim the label while the box is disabled, keeping its text role', async () => {
-    const el = await fixture<BkCheckbox>(html`<bk-checkbox disabled>${labelAtom}</bk-checkbox>`);
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox disabled>${labelAtom('Accept terms')}</bk-checkbox>`,
+    );
 
     expect(
       getComputedStyle(innerLabel(el)).color,
@@ -675,7 +676,9 @@ describe('bk-checkbox', () => {
   });
 
   it('should let invalid win over disabled on the label', async () => {
-    const el = await fixture<BkCheckbox>(html`<bk-checkbox disabled>${labelAtom}</bk-checkbox>`);
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox disabled>${labelAtom('Accept terms')}</bk-checkbox>`,
+    );
 
     el.error = 'You have to accept the terms.';
     await el.updateComplete;
@@ -684,7 +687,9 @@ describe('bk-checkbox', () => {
   });
 
   it('should still dim a box that is both disabled and invalid', async () => {
-    const el = await fixture<BkCheckbox>(html`<bk-checkbox disabled>${labelAtom}</bk-checkbox>`);
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox disabled>${labelAtom('Accept terms')}</bk-checkbox>`,
+    );
 
     el.error = 'You have to accept the terms.';
     await el.updateComplete;
@@ -827,9 +832,10 @@ describe('bk-checkbox', () => {
       expect(assigned(checkbox, 'label')[0].localName, 'the consumer node is the atom').to.equal(
         'bk-field-label',
       );
-      expect(slotted(checkbox, 'label'), 'the label content is the consumer node').to.deep.equal([
-        'Accept the terms',
-      ]);
+      expect(
+        slottedText(checkbox, 'label'),
+        'the label content is the consumer node',
+      ).to.deep.equal(['Accept the terms']);
     });
 
     it('should keep the label inline beside the box and the description under it', async () => {
@@ -875,11 +881,12 @@ describe('bk-checkbox', () => {
       await settle(el);
       const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
 
-      expect(describedNode(checkbox), 'the description region is the description').to.equal(
-        region(checkbox, 'description'),
-      );
       expect(
-        projectedNodes(describedNode(checkbox)),
+        describedNode(innerInput(checkbox)),
+        'the description region is the description',
+      ).to.equal(region(checkbox, 'description'));
+      expect(
+        projectedNodes(describedNode(innerInput(checkbox))),
         'the region projects the consumer node',
       ).to.deep.equal(['You can change this later.']);
     });
@@ -925,11 +932,11 @@ describe('bk-checkbox', () => {
       await settle(el);
       const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
 
-      expect(describedNode(checkbox), 'the error region is the description').to.equal(
+      expect(describedNode(innerInput(checkbox)), 'the error region is the description').to.equal(
         region(checkbox, 'error'),
       );
       expect(
-        projectedNodes(describedNode(checkbox)),
+        projectedNodes(describedNode(innerInput(checkbox))),
         'the error replaces the description',
       ).to.deep.equal(['You have to accept the terms.']);
       expect(
@@ -957,10 +964,11 @@ describe('bk-checkbox', () => {
       checkbox.append(description);
       await settle(el);
 
-      expect(describedNode(checkbox), 'the description region is the description').to.equal(
-        region(checkbox, 'description'),
-      );
-      expect(projectedNodes(describedNode(checkbox))).to.deep.equal(['Added later.']);
+      expect(
+        describedNode(innerInput(checkbox)),
+        'the description region is the description',
+      ).to.equal(region(checkbox, 'description'));
+      expect(projectedNodes(describedNode(innerInput(checkbox)))).to.deep.equal(['Added later.']);
     });
 
     it('should take a slotted error atom as the box error and make it invalid', async () => {

@@ -1,5 +1,13 @@
 import { settle } from '../../../test/helpers/settle.js';
 import { colorOf, opacityOf } from '../../../test/helpers/style.js';
+import {
+  describedNode,
+  projectedNodes,
+  projectedText,
+  region,
+  slottedText,
+} from '../../../test/helpers/dom.js';
+import { descriptionAtom, labelAtom } from '../../../test/helpers/atoms.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import '.././define.js';
@@ -22,26 +30,7 @@ const innerRequired = (el: BkInput) =>
 
 const message = (el: BkInput) => innerError(el).textContent!.trim();
 
-const projectedMessage = (el: BkInput) =>
-  Array.from(innerError(el).querySelector('slot')!.assignedNodes({ flatten: true }))
-    .map((node) => node.textContent!.trim())
-    .join(' ');
-
-const region = (el: BkInput, part: string) =>
-  el.shadowRoot!.querySelector(`[part="${part}"]`) as HTMLElement | null;
-
-const slot = (el: BkInput, name: string) =>
-  el.shadowRoot!.querySelector(`slot[name="${name}"]`) as HTMLSlotElement | null;
-
-const slotted = (el: BkInput, name: string) =>
-  slot(el, name)!
-    .assignedElements({ flatten: true })
-    .map((node) => node.textContent!.trim());
-
-const describedNode = (el: BkInput) => {
-  const id = innerInput(el).getAttribute('aria-describedby');
-  return id ? el.shadowRoot!.getElementById(id) : null;
-};
+const projectedMessage = (el: BkInput) => projectedText(innerError(el));
 
 const type = async (el: BkInput, value: string) => {
   const field = innerInput(el);
@@ -67,24 +56,11 @@ const touch = async (el: BkInput) => {
   await el.updateComplete;
 };
 
-const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
-
-const descriptionAtom = (text: string) =>
-  html`<bk-field-description slot="description">${text}</bk-field-description>`;
-
-const projectedNodes = (node: Element | null) =>
-  Array.from(node?.querySelectorAll('slot') ?? [])
-    .flatMap((entry) => entry.assignedNodes({ flatten: true }))
-    .map((assigned) => assigned.textContent!.trim())
-    .filter(Boolean);
-
-const projectedText = (node: Element) => projectedNodes(node).join('');
-
 describe('bk-input', () => {
   for (const theme of ['light', 'dark'] as const) {
     it(`should have no accessibility violations (${theme})`, async () => {
       setTheme(theme);
-      const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+      const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
 
       await expectNoViolations(el);
     });
@@ -99,7 +75,7 @@ describe('bk-input', () => {
   });
 
   it('should label the input with a real label element', async () => {
-    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
 
     expect(projectedText(innerLabel(el))).to.equal('Email');
     expect(innerLabel(el).htmlFor).to.equal(innerInput(el).id);
@@ -133,7 +109,7 @@ describe('bk-input', () => {
   });
 
   it('should take the label weight from the shared typography token', async () => {
-    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
     document.documentElement.style.setProperty('--bk-font-weight-medium', '700');
 
     expect(getComputedStyle(innerLabel(el)).fontWeight).to.equal('700');
@@ -141,7 +117,7 @@ describe('bk-input', () => {
 
   it('should describe the input with the slotted description and stay valid', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input>${labelAtom}${descriptionAtom('We never share it')}</bk-input>`,
+      html`<bk-input>${labelAtom('Email')}${descriptionAtom('We never share it')}</bk-input>`,
     );
 
     expect(projectedText(innerDescription(el))).to.equal('We never share it');
@@ -152,7 +128,7 @@ describe('bk-input', () => {
 
   it('should show the error instead of the description and mark the field invalid', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input error="Required">${labelAtom}${descriptionAtom('Helper')}</bk-input>`,
+      html`<bk-input error="Required">${labelAtom('Email')}${descriptionAtom('Helper')}</bk-input>`,
     );
 
     expect(innerError(el).textContent!.trim()).to.equal('Required');
@@ -164,7 +140,7 @@ describe('bk-input', () => {
   it('should paint its field from the roles', async () => {
     const el = await fixture<BkInput>(
       html`<bk-input style="--bk-bg-surface: rgb(7, 8, 9); --bk-border-default: rgb(1, 2, 3)"
-        >${labelAtom}</bk-input
+        >${labelAtom('Email')}</bk-input
       >`,
     );
     const style = getComputedStyle(innerInput(el));
@@ -174,14 +150,14 @@ describe('bk-input', () => {
   });
 
   it('should take the label colour from the text role', async () => {
-    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
     el.style.setProperty('--bk-text-default', 'rgb(3, 3, 3)');
 
     expect(getComputedStyle(innerLabel(el)).color).to.equal('rgb(3, 3, 3)');
   });
 
   it('should take the disabled value from the muted role and keep the surface role', async () => {
-    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom('Email')}</bk-input>`);
     el.style.setProperty('--bk-bg-surface-muted', 'rgb(4, 4, 4)');
     el.style.setProperty('--bk-text-muted', 'rgb(5, 5, 5)');
     const style = getComputedStyle(innerInput(el));
@@ -196,7 +172,9 @@ describe('bk-input', () => {
   });
 
   it('should take the error border and message from the danger roles', async () => {
-    const el = await fixture<BkInput>(html`<bk-input error="Required">${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(
+      html`<bk-input error="Required">${labelAtom('Email')}</bk-input>`,
+    );
     el.style.setProperty('--bk-border-danger', 'rgb(6, 6, 6)');
     el.style.setProperty('--bk-text-danger', 'rgb(7, 7, 7)');
 
@@ -209,8 +187,8 @@ describe('bk-input', () => {
 
     const host = await fixture<HTMLElement>(html`
       <div>
-        <bk-input error="Required">${labelAtom}</bk-input>
-        <bk-input>${labelAtom}</bk-input>
+        <bk-input error="Required">${labelAtom('Email')}</bk-input>
+        <bk-input>${labelAtom('Email')}</bk-input>
       </div>
     `);
     const [invalid, enabled] = host.querySelectorAll<BkInput>('bk-input');
@@ -236,7 +214,7 @@ describe('bk-input', () => {
 
   it('should pass autocomplete and inputmode through to the field', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input autocomplete="email" inputmode="email">${labelAtom}</bk-input>`,
+      html`<bk-input autocomplete="email" inputmode="email">${labelAtom('Email')}</bk-input>`,
     );
 
     expect(innerInput(el).getAttribute('autocomplete')).to.equal('email');
@@ -244,7 +222,7 @@ describe('bk-input', () => {
   });
 
   it('should keep the message region available to assistive tech while empty', async () => {
-    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
     const message = innerError(el);
 
     expect(message.getAttribute('role')).to.equal('status');
@@ -254,7 +232,7 @@ describe('bk-input', () => {
 
   it('should submit with the form and restore the initial value on reset', async () => {
     const form = await fixture<HTMLFormElement>(
-      html`<form><bk-input name="email" value="a@b.c">${labelAtom}</bk-input></form>`,
+      html`<form><bk-input name="email" value="a@b.c">${labelAtom('Email')}</bk-input></form>`,
     );
     const field = form.querySelector('bk-input') as BkInput;
     await field.updateComplete;
@@ -272,7 +250,7 @@ describe('bk-input', () => {
 
   it('should clear the submitted value on reset without waiting a render', async () => {
     const form = await fixture<HTMLFormElement>(
-      html`<form><bk-input name="email" value="a@b.c">${labelAtom}</bk-input></form>`,
+      html`<form><bk-input name="email" value="a@b.c">${labelAtom('Email')}</bk-input></form>`,
     );
     const field = form.querySelector('bk-input') as BkInput;
     field.value = 'changed@b.c';
@@ -287,7 +265,7 @@ describe('bk-input', () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
         <fieldset disabled>
-          <bk-input name="email" disabled>${labelAtom}</bk-input>
+          <bk-input name="email" disabled>${labelAtom('Email')}</bk-input>
           <bk-input name="other"></bk-input>
         </fieldset>
       </form>
@@ -308,7 +286,7 @@ describe('bk-input', () => {
   });
 
   it('should disable the inner field with the native attribute, not aria-disabled', async () => {
-    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom('Email')}</bk-input>`);
     const input = innerInput(el);
 
     expect(input.disabled).to.equal(true);
@@ -318,7 +296,7 @@ describe('bk-input', () => {
 
   it('should refuse typed input while disabled', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input value="a@b.c" disabled>${labelAtom}</bk-input>`,
+      html`<bk-input value="a@b.c" disabled>${labelAtom('Email')}</bk-input>`,
     );
 
     el.focus();
@@ -334,8 +312,8 @@ describe('bk-input', () => {
 
     const host = await fixture<HTMLElement>(html`
       <div>
-        <bk-input disabled>${labelAtom}</bk-input>
-        <bk-input>${labelAtom}</bk-input>
+        <bk-input disabled>${labelAtom('Email')}</bk-input>
+        <bk-input>${labelAtom('Email')}</bk-input>
       </div>
     `);
     const [disabled, enabled] = host.querySelectorAll<BkInput>('bk-input');
@@ -369,7 +347,7 @@ describe('bk-input', () => {
   });
 
   it('should take the disabled opacity from the shared primitive', async () => {
-    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom('Email')}</bk-input>`);
     el.style.setProperty('--bk-opacity-disabled', '0.25');
 
     expect(getComputedStyle(innerInput(el)).opacity, 'the control dims').to.equal('0.25');
@@ -379,7 +357,7 @@ describe('bk-input', () => {
   for (const theme of ['light', 'dark'] as const) {
     it(`should keep the field border at 3:1 against its own surface (${theme})`, async () => {
       setTheme(theme);
-      const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+      const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
       const style = getComputedStyle(innerInput(el));
 
       expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
@@ -390,7 +368,7 @@ describe('bk-input', () => {
       const host = await fixture<HTMLElement>(html`
         <div>
           <button type="button">before</button>
-          <bk-input>${labelAtom}</bk-input>
+          <bk-input>${labelAtom('Email')}</bk-input>
         </div>
       `);
       const el = host.querySelector<BkInput>('bk-input')!;
@@ -406,7 +384,9 @@ describe('bk-input', () => {
 
     it(`should keep the invalid border at 3:1 against its own surface (${theme})`, async () => {
       setTheme(theme);
-      const el = await fixture<BkInput>(html`<bk-input error="Required">${labelAtom}</bk-input>`);
+      const el = await fixture<BkInput>(
+        html`<bk-input error="Required">${labelAtom('Email')}</bk-input>`,
+      );
       const style = getComputedStyle(innerInput(el));
 
       expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
@@ -416,7 +396,7 @@ describe('bk-input', () => {
       if (!hoverCapable()) this.skip();
 
       setTheme(theme);
-      const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+      const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
       const field = innerInput(el);
 
       await hover(field);
@@ -429,13 +409,13 @@ describe('bk-input', () => {
   }
 
   it('should render no required glyph on an optional field', async () => {
-    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
 
     expect(Boolean(innerRequired(el)), 'an optional field marks nothing').to.equal(false);
   });
 
   it('should mark a required field that has a label', async () => {
-    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom('Email')}</bk-input>`);
 
     expect(Boolean(innerRequired(el)), 'the label carries the mark').to.equal(true);
     expect(innerRequired(el)!.textContent).to.equal('*');
@@ -445,13 +425,13 @@ describe('bk-input', () => {
   });
 
   it('should keep the required glyph out of the accessible name', async () => {
-    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom('Email')}</bk-input>`);
 
     expect(innerRequired(el)!.getAttribute('aria-hidden')).to.equal('true');
   });
 
   it('should keep the native required attribute as what announces the state', async () => {
-    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom('Email')}</bk-input>`);
 
     expect(innerInput(el).hasAttribute('required')).to.equal(true);
     expect(innerInput(el).required).to.equal(true);
@@ -472,7 +452,7 @@ describe('bk-input', () => {
   });
 
   it('should leave two steps of the space scale under the label', async () => {
-    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
 
     expect(
       getComputedStyle(innerLabel(el)).marginBlockEnd,
@@ -481,7 +461,7 @@ describe('bk-input', () => {
   });
 
   it('should paint the required glyph with the danger role', async () => {
-    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input required>${labelAtom('Email')}</bk-input>`);
 
     expect(getComputedStyle(innerRequired(el)!).color).to.equal(
       await colorOf('var(--bk-text-danger)'),
@@ -502,13 +482,15 @@ describe('bk-input', () => {
   });
 
   it('should paint the label danger while the field is invalid', async () => {
-    const el = await fixture<BkInput>(html`<bk-input error="Required">${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(
+      html`<bk-input error="Required">${labelAtom('Email')}</bk-input>`,
+    );
 
     expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
   });
 
   it('should dim the label while the field is disabled, keeping its text role', async () => {
-    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom('Email')}</bk-input>`);
 
     expect(
       getComputedStyle(innerLabel(el)).color,
@@ -521,7 +503,7 @@ describe('bk-input', () => {
 
   it('should let invalid win over disabled on the label', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input error="Required" disabled>${labelAtom}</bk-input>`,
+      html`<bk-input error="Required" disabled>${labelAtom('Email')}</bk-input>`,
     );
 
     expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
@@ -529,7 +511,7 @@ describe('bk-input', () => {
 
   it('should still dim a field that is both disabled and invalid', async () => {
     const el = await fixture<BkInput>(
-      html`<bk-input error="Required" disabled>${labelAtom}</bk-input>`,
+      html`<bk-input error="Required" disabled>${labelAtom('Email')}</bk-input>`,
     );
     const label = innerLabel(el);
 
@@ -581,7 +563,7 @@ describe('bk-input', () => {
   });
 
   it('should emit bk-change with the value, bubbling out of the shadow root', async () => {
-    const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
+    const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
     let received: CustomEvent<{ value: string }> | undefined;
     el.addEventListener('bk-change', (event) => {
       received = event as CustomEvent<{ value: string }>;
@@ -610,7 +592,7 @@ describe('bk-input', () => {
       expect(innerLabel(input)!.htmlFor, 'the label points at the inner control').to.equal(
         innerInput(input).id,
       );
-      expect(slotted(input, 'label'), 'the label content is the consumer node').to.deep.equal([
+      expect(slottedText(input, 'label'), 'the label content is the consumer node').to.deep.equal([
         'Email',
       ]);
     });
@@ -627,11 +609,12 @@ describe('bk-input', () => {
       await settle(el);
       const input = el.querySelector('bk-input') as BkInput;
 
-      expect(describedNode(input), 'the description region is the description').to.equal(
-        region(input, 'description'),
-      );
       expect(
-        projectedNodes(describedNode(input)),
+        describedNode(innerInput(input)),
+        'the description region is the description',
+      ).to.equal(region(input, 'description'));
+      expect(
+        projectedNodes(describedNode(innerInput(input))),
         'the region projects the consumer node',
       ).to.deep.equal(['We only use it for the receipt.']);
     });
@@ -697,11 +680,11 @@ describe('bk-input', () => {
       await settle(el);
       const input = el.querySelector('bk-input') as BkInput;
 
-      expect(describedNode(input), 'the error region is the description').to.equal(
+      expect(describedNode(innerInput(input)), 'the error region is the description').to.equal(
         region(input, 'error'),
       );
       expect(
-        projectedNodes(describedNode(input)),
+        projectedNodes(describedNode(innerInput(input))),
         'the error replaces the description',
       ).to.deep.equal(['Enter a valid address.']);
       expect(
@@ -728,10 +711,11 @@ describe('bk-input', () => {
       input.append(description);
       await settle(el);
 
-      expect(describedNode(input), 'the description region is the description').to.equal(
-        region(input, 'description'),
-      );
-      expect(projectedNodes(describedNode(input))).to.deep.equal(['Added later.']);
+      expect(
+        describedNode(innerInput(input)),
+        'the description region is the description',
+      ).to.equal(region(input, 'description'));
+      expect(projectedNodes(describedNode(innerInput(input)))).to.deep.equal(['Added later.']);
     });
 
     it('should collapse an empty region and give it space once it has content', async () => {

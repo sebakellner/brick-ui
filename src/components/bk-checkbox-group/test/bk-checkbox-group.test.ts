@@ -1,5 +1,6 @@
 import { settle } from '../../../test/helpers/settle.js';
 import { colorOf, opacityOf } from '../../../test/helpers/style.js';
+import { describedNode, region } from '../../../test/helpers/dom.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import '.././define.js';
 import '../../bk-checkbox/define.js';
@@ -9,20 +10,12 @@ import type { BkCheckboxGroup } from '.././bk-checkbox-group.js';
 import { setTheme } from '../../../test/helpers/theme.js';
 import { expectNoViolations } from '../../../test/helpers/a11y.js';
 
-const part = (el: BkCheckboxGroup, name: string) =>
-  el.shadowRoot!.querySelector<HTMLElement>(`[part="${name}"]`);
-
-const boxesContainer = (el: BkCheckboxGroup) => part(el, 'boxes')!;
+const boxesContainer = (el: BkCheckboxGroup) => region(el, 'boxes')!;
 
 const descriptionAtom = (el: BkCheckboxGroup) =>
   el.querySelector<HTMLElement>(':scope > bk-field-description');
 
 const errorAtom = (el: BkCheckboxGroup) => el.querySelector<HTMLElement>(':scope > bk-field-error');
-
-const describedNode = (el: BkCheckboxGroup): Element | null => {
-  const id = el.getAttribute('aria-describedby');
-  return id ? document.getElementById(id) : null;
-};
 
 const resolved = (el: BkCheckboxGroup, atom: Element | null) => describedNode(el) === atom;
 
