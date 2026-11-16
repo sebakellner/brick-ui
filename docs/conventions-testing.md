@@ -1,10 +1,10 @@
 # Testing Conventions
 
 The suite runs in real Chrome through Web Test Runner. `web-test-runner.config.mjs`
-picks up `src/**/*.test.ts`: a component's rule suites live next to it, an assembly of
-several widgets lives under `src/test/integration/`, and the `sendMouse` plugin is what
-the hover and focus tests need. One engine is a decision, not an accident: see
-[ADR 0005](adr/0005-test-in-chrome-only.md).
+picks up `src/**/*.test.ts`: a component's rule suites live in its `test/` folder, an assembly of two
+or more widgets that the test composes lives under `src/test/integration/`, and the
+`sendMouse` plugin is what the hover and focus tests need. One engine is a decision, not
+an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 
 The eight numbered rules follow, each with what enforces it. The **three levels** after
 them are the frame the rules sit in: where a suite lives and what it is allowed to assert.
@@ -22,6 +22,7 @@ can name.
 | T6  | Never put a DOM element on the tested side of a failure     | the suite — a violation is a hang       |
 | T7  | The runner claims a pointer, and the suite proves it        | `browser.test.ts` + the enabled sibling |
 | T8  | Two suites per component, a part only when it has behaviour | the suites, visible in the inventory    |
+| T9  | Use the testing library's own vocabulary, never an alias    | review                                  |
 
 ## The three levels, and who decides the composition
 
@@ -29,24 +30,28 @@ The line between a unit test and an integration test is not "how many elements i
 imports" — almost every suite here imports an atom's `define.js`, because the atoms are
 the kit's vocabulary. The line is **who decides the composition**:
 
-| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                                |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | -------------------------------------------------------------------- |
-| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/bk-x.test.ts`, one file, `describe` per concern |
-| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                     |
-| **e2e** (later) | **the package on a real page**: entry, registration, `theme.css`, bundler                                                                                                        | the application | `e2e/` with Playwright, once the kit is consumed by an app           |
+| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                                                                |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------- |
+| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/test/bk-x.test.ts` (and its `register` suite beside it), `describe` per concern |
+| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                                                     |
+| **e2e** (later) | **the package on a real page**: entry, registration, `theme.css`, bundler                                                                                                        | the application | `e2e/` with Playwright, once the kit is consumed by an app                                           |
 
 **Where exactly the line falls: the level names whose contract the test writes down, not
 how many elements sit in the fixture.** That is the test of every doubtful case, and it
 is the one that answers why a `<form>` does not make a suite integration:
 
-- `bk-checkbox.form.test.ts` is **unit**. The rule — "a form can submit, reset and disable
-  me" — is the control's own contract with the platform, and the `<form>` is a given
-  rather than a composition of the kit. When it fails, the diagnosis is one component: its
-  `formResetCallback`, its `setValidity`, its `submittedValue`. That diagnosis is what the
-  level is for.
-- `bk-input.field.test.ts` is **integration**. "A control's label can arrive through the
-  field's atoms" belongs to neither element alone — the field routes the atoms, the control
-  hosts them — so a failure can be either one, and no single component owns the rule.
+- The `form participation` block of `bk-checkbox.test.ts` is **unit**. The rule — "a form can
+  submit, reset and disable me" — is the control's own contract with the platform, and the
+  `<form>` is a given rather than a composition of the kit. When it fails, the diagnosis is
+  one component: its `formResetCallback`, its `setValidity`, its `submittedValue`. That
+  diagnosis is what the level is for.
+- Label, description and error association are the **control's** contract, so a control with
+  its atoms is **unit**. `<label for>`, which region `aria-describedby` names and in what
+  order, the live region that stays in the tree while it is empty, the atom a consumer adds
+  after connect: each is a rule about one control, and a failure is diagnosed in its suite.
+  Shoelace tests `label` and `help-text` in `input.test.ts`, Material Web's helper text
+  landed as component unit tests, and Spectrum keeps its declarative field spec inside the
+  component's folder. Nobody tests "a control with a label atom" as integration.
 - `bk-checkbox.test.ts` is **unit** although it imports two defines, because its atoms are
   part of its own documented contract.
 - A screen with an input, a checkbox and a select is **integration**, because the test
@@ -61,9 +66,10 @@ its component, in one file broken into `describe` blocks per concern (`form
 participation`, `error channel`, `label state`) instead of `.form` and `.error` files —
 one file per subject is what Shoelace and Material Web do, and a concern is a paragraph
 of a suite, not a module. Integration gets its own directory, the way Spectrum keeps its
-accessibility specs apart from its unit tests and the runner itself separates kinds. The
-`.field.test.ts` pair that exists today is integration by this rule and moves to
-`src/test/integration/field/` in the pass that collapses the concern suffixes.
+accessibility specs apart from its unit tests and the runner itself separates kinds. Nothing
+lives there today: the directory is for an assembly the test composes, and the form suite —
+several controls on one form — is the first one that earns it. A folder whose rule is "two or
+more widgets" does not exist before that suite does.
 
 Three rules make the levels useful instead of decorative:
 
@@ -246,50 +252,63 @@ the flag is Blink-only: on an engine with no pointer the hover tests still decla
 **Enforced by.** `src/test/browser.test.ts`, plus the enabled-sibling control inside
 each hover test: the assertion cannot pass unless a hovered sibling really changed.
 
-## T8. Every component ships the same two suites, and a part only when it has behaviour
+## T8. One suite per component, a suite per part that has behaviour, and the packaging contract declared
 
-**Rule.** A component ships `bk-<name>.test.ts` for its rules and
-`bk-<name>.register.test.ts` for the packaging contract — the package entry registers
-**none** of its tags, and its `define.js` registers **all** of them, which for a
-component with atoms is the whole list. A part gets a suite of its own when it has
-behaviour (the radio item's activation and tab stop, the select atoms' reflection); a
-part that only paints is covered where it is used (`bk-field-label` and its siblings
-inside `bk-field.test.ts`). **A concern is a `describe` block, not a file**: form
-participation, the error channel and the label state are paragraphs of the component's
-suite. A third file appears only when the **level** changes — an assembly moves to
-`src/test/integration/` — because a suffix that names a concern splits one subject across
-modules, and one that names an assembly invents a category nobody else uses.
+**Rule.** A component ships `test/bk-<name>.test.ts` for its rules and nothing else. A part
+gets a suite of its own when it has behaviour — the radio item's activation, the select atoms'
+reflection, the field atoms' painting — and a part that only paints is covered where it is
+used. **The packaging contract is not a test**: `package.json` declares
+`"sideEffects": ["**/define.js"]`, `src/index.ts` imports no `define.js`, and
+`CONTRIBUTING.md` states both. A concern is a `describe`, never a file: only a change of
+level changes a file's home.
 
-**Why.** The register suite existed in four components of seven and the atom coverage
-in one of three, which is how a convention stops being one: each addition was locally
-reasonable and the set stopped matching. Its rule is not about the component at all —
-it is the packaging contract, and an atom whose tag nobody defined would stay inert —
-so it is the same test everywhere, and having it everywhere is what makes its absence
-visible. Reflection on a data atom is the same kind of fact: the select's mirror
-watches attributes, so a property an atom does not reflect is invisible to it, and
-that is worth pinning at the atom instead of inferring it from the parent.
+**Why.** Two claims were being tested that do not need it. "`define.js` registers its tags" is
+proven by every suite that imports it and uses the element: an unregistered tag mounts an
+unknown element and the assertions fail on a shadow root that is not there. "The entry
+registers nothing" is a property of the **package**, not of a component — and no library tests
+it: Shoelace imports its built bundle in every test, Spectrum and Material import the
+component module, and all three make the claim with `sideEffects` and review. Seven suites and
+fourteen assertions for one package-level fact was the wrong shape, and they sat in a
+component's folder while testing the package.
 
-**Do** — the shape, identical in all seven:
+**Do** — the component's own suite, and a part's when the part does something:
+
+```
+src/components/bk-field/
+  bk-field.ts  bk-field-label.ts  define.ts  …
+  test/
+    bk-field.test.ts  bk-field-label.test.ts
+```
+
+**Don't** — a `*.register.test.ts` beside a component. When a new component lands, its file is
+the suite; there is no list to extend and no second file to remember.
+
+**Enforced by.** The suites themselves; `sideEffects` for a bundler; review for the entry.
+
+## T9. Use the testing library's own vocabulary, never an alias
+
+**Rule.** Cases are declared with `it(…)` and grouped with `describe(…)` — what
+`@web/test-runner`'s mocha interface defines. The suite does not build aliases for them:
+no `test`, no `spec`, no wrapper that exists to read better.
+
+**Why.** An alias is API the library does not have, so every reader has to discover it, and
+every tool that parses the suite — a reporter, an editor, a grep for a failing name — sees a
+name that is ours instead of the one it knows. The gain was a sentence that reads better, and
+the cost was a layer nobody asked for. The same instinct, kept honest, is what makes the rest
+of this document worth following: use what the platform and the libraries give, and only
+build where they have nothing.
+
+**Do**
 
 ```ts
-const TAGS = ['bk-x', 'bk-x-atom'] as const;
-
-it('should register none of its tags when the package entry is imported', () => {
-  for (const tag of TAGS) expect(customElements.get(tag), tag).to.equal(undefined);
-});
-
-it('should register all of them when its define module is imported', async () => {
-  await import('./define.js');
-  for (const tag of TAGS) expect(customElements.get(tag) === undefined, tag).to.equal(false);
+describe('bk-input', () => {
+  it('should name the field from the label slot', () => {});
 });
 ```
 
-**Don't** — a register suite that imports `define.js` statically: module evaluation
-runs before the first test, so "the entry does not register it" becomes untestable
-and the suite proves half of what it claims.
+**Don't** — `const test = it;` and then a suite that calls `test(…)`.
 
-**Enforced by.** The suites themselves; a missing one is visible in the inventory,
-which is how this rule was found.
+**Enforced by.** Review; the suite imports no such name.
 
 ## Commands
 

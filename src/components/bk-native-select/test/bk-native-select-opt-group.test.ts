@@ -1,6 +1,6 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import type { BkNativeSelectOptGroup } from './bk-native-select-opt-group.js';
-import './define.js';
+import type { BkNativeSelectOptGroup } from '.././bk-native-select-opt-group.js';
+import '.././define.js';
 
 describe('bk-native-select-opt-group', () => {
   it('should hold its options and paint nothing itself', async () => {

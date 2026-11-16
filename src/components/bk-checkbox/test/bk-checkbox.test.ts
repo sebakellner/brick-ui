@@ -1,13 +1,15 @@
-import { colorOf, opacityOf } from '../../test/helpers/style.js';
+import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
-import './define.js';
-import '../bk-field/define.js';
-import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
-import type { BkCheckbox } from './bk-checkbox.js';
-import { contrastRatio } from '../../test/helpers/contrast.js';
-import { clickAt, hover, hoverCapable } from '../../test/helpers/pointer.js';
-import { setTheme } from '../../test/helpers/theme.js';
+import type { LitElement } from 'lit';
+import '.././define.js';
+import '../../bk-field/define.js';
+import type { BkField } from '../../bk-field/bk-field.js';
+import type { BkFieldLabel } from '../../bk-field/bk-field-label.js';
+import type { BkCheckbox } from '.././bk-checkbox.js';
+import { contrastRatio } from '../../../test/helpers/contrast.js';
+import { clickAt, hover, hoverCapable } from '../../../test/helpers/pointer.js';
+import { setTheme } from '../../../test/helpers/theme.js';
 
 const innerInput = (el: BkCheckbox) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkCheckbox) => el.shadowRoot!.querySelector('label')!;
@@ -18,12 +20,40 @@ const innerDescription = (el: BkCheckbox) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="description"]')!;
 const innerError = (el: BkCheckbox) => el.shadowRoot!.querySelector<HTMLElement>('[part="error"]')!;
 
+const formData = (form: HTMLFormElement) => new FormData(form);
+
+const region = (el: BkCheckbox, part: string) =>
+  el.shadowRoot!.querySelector(`[part="${part}"]`) as HTMLElement | null;
+
+const slot = (el: BkCheckbox, name: string) =>
+  el.shadowRoot!.querySelector(`slot[name="${name}"]`) as HTMLSlotElement | null;
+
+const assigned = (el: BkCheckbox, name: string) =>
+  slot(el, name)!.assignedElements({ flatten: true });
+
+const slotted = (el: BkCheckbox, name: string) =>
+  assigned(el, name).map((node) => node.textContent!.trim());
+
+const describedNode = (el: BkCheckbox) => {
+  const id = innerInput(el).getAttribute('aria-describedby');
+  return id ? el.shadowRoot!.getElementById(id) : null;
+};
+
+const settle = async (el: LitElement) => {
+  await el.updateComplete;
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  await el.updateComplete;
+};
+
 const labelAtom = html`<bk-field-label slot="label">Accept terms</bk-field-label>`;
 
-const projectedText = (region: HTMLElement) =>
-  Array.from(region.querySelector('slot')!.assignedNodes({ flatten: true }))
-    .map((node) => node.textContent!.trim())
-    .join('');
+const projectedNodes = (node: Element | null) =>
+  Array.from(node?.querySelectorAll('slot') ?? [])
+    .flatMap((entry) => entry.assignedNodes({ flatten: true }))
+    .map((assignedText) => assignedText.textContent!.trim())
+    .filter(Boolean);
+
+const projectedText = (node: Element) => projectedNodes(node).join('');
 
 describe('bk-checkbox', () => {
   afterEach(async () => {
@@ -749,4 +779,442 @@ describe('bk-checkbox', () => {
       );
     });
   }
+
+  describe('field parts', () => {
+    it('should take a slotted label as the control label', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-checkbox name="terms">
+            <bk-field-label>Accept the terms</bk-field-label>
+          </bk-checkbox>
+        </bk-field>
+      `);
+      await settle(el);
+      const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+
+      expect(innerLabel(checkbox), 'the control renders a label').to.not.equal(null);
+      expect(innerLabel(checkbox)!.htmlFor, 'the label points at the inner control').to.equal(
+        innerInput(checkbox).id,
+      );
+      expect(
+        innerLabel(checkbox)!.querySelector('slot[name="label"]'),
+        'the label slot lives inside the label, so the association stays implicit',
+      ).to.not.equal(null);
+      expect(assigned(checkbox, 'label')[0].localName, 'the consumer node is the atom').to.equal(
+        'bk-field-label',
+      );
+      expect(slotted(checkbox, 'label'), 'the label content is the consumer node').to.deep.equal([
+        'Accept the terms',
+      ]);
+    });
+
+    it('should keep the label inline beside the box and the description under it', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-checkbox name="terms">
+            <bk-field-label>Accept the terms</bk-field-label>
+            <bk-field-description>You can change this later.</bk-field-description>
+          </bk-checkbox>
+        </bk-field>
+      `);
+      await settle(el);
+      const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+
+      const box = innerBox(checkbox).getBoundingClientRect();
+      const label = assigned(checkbox, 'label')[0].getBoundingClientRect();
+      const description = region(checkbox, 'description')!.getBoundingClientRect();
+      const middle = (rect: DOMRect) => rect.top + rect.height / 2;
+
+      expect(
+        Math.abs(middle(label) - middle(box)),
+        'the label sits on the row of the box, not above it',
+      ).to.be.lessThan(4);
+      expect(label.left, 'the label sits to the box, not over it').to.be.greaterThan(box.right);
+      expect(description.top, 'the description sits under the label row').to.be.greaterThan(
+        label.bottom,
+      );
+      expect(
+        innerLabel(checkbox)!.querySelector('[part="description"]'),
+        'the description is outside the label, so it never joins the name',
+      ).to.equal(null);
+    });
+
+    it('should describe the control with a slotted description', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-checkbox name="terms">
+            <bk-field-label>Accept the terms</bk-field-label>
+            <bk-field-description>You can change this later.</bk-field-description>
+          </bk-checkbox>
+        </bk-field>
+      `);
+      await settle(el);
+      const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+
+      expect(describedNode(checkbox), 'the description region is the description').to.equal(
+        region(checkbox, 'description'),
+      );
+      expect(
+        projectedNodes(describedNode(checkbox)),
+        'the region projects the consumer node',
+      ).to.deep.equal(['You can change this later.']);
+    });
+
+    it('should reference no description while there is no content', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-checkbox name="terms"><bk-field-label>Accept the terms</bk-field-label></bk-checkbox>
+        </bk-field>
+      `);
+      await settle(el);
+      const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+
+      expect(innerInput(checkbox).getAttribute('aria-describedby')).to.equal(null);
+    });
+
+    it('should keep the message region in the tree while it is empty', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-checkbox name="terms"><bk-field-label>Accept the terms</bk-field-label></bk-checkbox>
+        </bk-field>
+      `);
+      await settle(el);
+      const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+
+      expect(region(checkbox, 'message'), 'the region stays').to.not.equal(null);
+      expect(
+        region(checkbox, 'error')!.getAttribute('role'),
+        'the live region keeps its role while it is empty',
+      ).to.equal('status');
+    });
+
+    it('should prefer a slotted error over a slotted description', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-checkbox name="terms">
+            <bk-field-label>Accept the terms</bk-field-label>
+            <bk-field-description>You can change this later.</bk-field-description>
+            <bk-field-error>You have to accept the terms.</bk-field-error>
+          </bk-checkbox>
+        </bk-field>
+      `);
+      await settle(el);
+      const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+
+      expect(describedNode(checkbox), 'the error region is the description').to.equal(
+        region(checkbox, 'error'),
+      );
+      expect(
+        projectedNodes(describedNode(checkbox)),
+        'the error replaces the description',
+      ).to.deep.equal(['You have to accept the terms.']);
+      expect(
+        region(checkbox, 'description')!.hasAttribute('hidden'),
+        'the description is not rendered while the error is',
+      ).to.equal(true);
+      expect(region(checkbox, 'description'), 'the description keeps its part').to.not.equal(null);
+      expect(region(checkbox, 'error'), 'the error keeps its part').to.not.equal(null);
+    });
+
+    it('should follow a description added after connect', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-checkbox name="terms"><bk-field-label>Accept the terms</bk-field-label></bk-checkbox>
+        </bk-field>
+      `);
+      await settle(el);
+      const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+      expect(innerInput(checkbox).getAttribute('aria-describedby')).to.equal(null);
+
+      const description = document.createElement('bk-field-description');
+      description.textContent = 'Added later.';
+      checkbox.append(description);
+      await settle(el);
+
+      expect(describedNode(checkbox), 'the description region is the description').to.equal(
+        region(checkbox, 'description'),
+      );
+      expect(projectedNodes(describedNode(checkbox))).to.deep.equal(['Added later.']);
+    });
+
+    it('should take a slotted error atom as the box error and make it invalid', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-checkbox name="terms" value="accepted">
+            <bk-field-label>Accept the terms</bk-field-label>
+            <bk-field-error>You have to accept the terms.</bk-field-error>
+          </bk-checkbox>
+        </bk-field>
+      `);
+      await settle(el);
+      const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+
+      expect(
+        innerInput(checkbox).getAttribute('aria-invalid'),
+        'the atom makes the box invalid',
+      ).to.equal('true');
+      expect(Boolean(checkbox.fieldInvalid), 'and the field reports it').to.equal(true);
+      expect(checkbox.validity.customError, 'a submit is blocked by it').to.equal(true);
+      expect(checkbox.validationMessage, 'with the atom text as the message').to.equal(
+        'You have to accept the terms.',
+      );
+      expect(
+        projectedNodes(region(checkbox, 'error')),
+        'the atom is what the region shows',
+      ).to.deep.equal(['You have to accept the terms.']);
+    });
+
+    it('should treat an empty error atom as no error at all', async () => {
+      const el = await fixture<BkField>(html`
+        <bk-field>
+          <bk-checkbox name="terms"
+            ><bk-field-label>Accept the terms</bk-field-label><bk-field-error></bk-field-error
+          ></bk-checkbox>
+        </bk-field>
+      `);
+      await settle(el);
+      const checkbox = el.querySelector('bk-checkbox') as BkCheckbox;
+
+      expect(
+        innerInput(checkbox).getAttribute('aria-invalid'),
+        'an empty atom announces no error',
+      ).to.equal(null);
+      expect(checkbox.validity.customError, 'and asks nothing of the form').to.equal(false);
+      expect(
+        innerInput(checkbox).getAttribute('aria-describedby'),
+        'a region with no text is not referenced',
+      ).to.equal(null);
+    });
+  });
+
+  describe('form participation', () => {
+    it('should submit the platform default while checked and nothing while unchecked', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-checkbox name="accept"></bk-checkbox>
+          <bk-checkbox name="other" checked></bk-checkbox>
+        </form>
+      `);
+      const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
+
+      expect(formData(form).get('accept')).to.equal(null);
+      expect(formData(form).get('other')).to.equal('on');
+
+      el.checked = true;
+      await el.updateComplete;
+
+      expect(formData(form).get('accept')).to.equal('on');
+    });
+
+    it('should submit the value property instead of the default', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-checkbox name="terms" value="v2" checked></bk-checkbox>
+        </form>
+      `);
+
+      expect(formData(form).get('terms')).to.equal('v2');
+    });
+
+    it('should submit nothing while it is mixed, whatever checked says', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-checkbox name="all" value="v2" checked indeterminate></bk-checkbox>
+          <bk-checkbox name="plain" checked indeterminate></bk-checkbox>
+        </form>
+      `);
+      const all = form.querySelector<BkCheckbox>('bk-checkbox')!;
+      const plain = form.querySelector<BkCheckbox>('[name="plain"]')!;
+
+      expect(formData(form).get('all'), 'the mixed box is a header, not a value').to.equal(null);
+      expect(formData(form).get('plain')).to.equal(null);
+
+      all.indeterminate = false;
+      plain.indeterminate = false;
+      await all.updateComplete;
+      await plain.updateComplete;
+
+      expect(formData(form).get('all'), 'the value comes back once it is only checked').to.equal(
+        'v2',
+      );
+      expect(formData(form).get('plain')).to.equal('on');
+    });
+
+    it('should keep a required mixed box valueMissing and block the submit', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-checkbox name="all" required indeterminate></bk-checkbox>
+        </form>
+      `);
+      const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
+      let submitted = false;
+      let invalidOn: EventTarget | null = null;
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        submitted = true;
+      });
+      form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+
+      expect(el.validity.valueMissing, 'nothing is submitted, so the box is missing').to.equal(
+        true,
+      );
+      expect(el.validity.valid).to.equal(false);
+      expect(form.checkValidity()).to.equal(false);
+      expect(formData(form).get('all')).to.equal(null);
+
+      form.requestSubmit();
+      await el.updateComplete;
+
+      expect(submitted).to.equal(false);
+      expect(invalidOn).to.equal(el);
+
+      el.indeterminate = false;
+      el.checked = true;
+      await el.updateComplete;
+
+      expect(el.validity.valueMissing).to.equal(false);
+      expect(form.checkValidity()).to.equal(true);
+    });
+
+    it('should restore the authored indeterminate and checked attributes on reset', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-checkbox name="all" indeterminate></bk-checkbox>
+          <bk-checkbox name="terms" checked></bk-checkbox>
+        </form>
+      `);
+      const all = form.querySelector<BkCheckbox>('[name="all"]')!;
+      const terms = form.querySelector<BkCheckbox>('[name="terms"]')!;
+
+      innerInput(all).click();
+      innerInput(terms).click();
+      await all.updateComplete;
+      await terms.updateComplete;
+
+      expect(all.checked).to.equal(true);
+      expect(all.indeterminate).to.equal(false);
+      expect(terms.checked).to.equal(false);
+
+      form.reset();
+      await all.updateComplete;
+      await terms.updateComplete;
+
+      expect(all.indeterminate, 'the mixed state the markup declared comes back').to.equal(true);
+      expect(innerInput(all).indeterminate).to.equal(true);
+      expect(all.checked).to.equal(false);
+      expect(innerInput(all).checked).to.equal(false);
+      expect(terms.checked).to.equal(true);
+      expect(innerInput(terms).checked).to.equal(true);
+    });
+
+    it('should expose the form and refuse to validate while required and unchecked', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-checkbox name="accept" required></bk-checkbox>
+        </form>
+      `);
+      const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
+
+      expect(el.form).to.equal(form);
+      expect(form.checkValidity()).to.equal(false);
+      expect(el.validity.valueMissing).to.equal(true);
+
+      el.checked = true;
+      await el.updateComplete;
+
+      expect(form.checkValidity()).to.equal(true);
+    });
+
+    it('should block submission while the error is set', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-checkbox name="accept" checked></bk-checkbox>
+        </form>
+      `);
+      const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
+
+      el.error = 'You have to accept the terms.';
+      await el.updateComplete;
+
+      expect(el.validity.customError).to.equal(true);
+      expect(form.checkValidity()).to.equal(false);
+    });
+
+    it('should restore the authored checked attribute on reset and clear the error', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-checkbox name="accept" checked></bk-checkbox>
+        </form>
+      `);
+      const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
+
+      innerInput(el).click();
+      el.error = 'You have to accept the terms.';
+      await el.updateComplete;
+
+      expect(el.checked).to.equal(false);
+      expect(el.error).to.equal('You have to accept the terms.');
+
+      form.reset();
+      await el.updateComplete;
+
+      expect(el.checked).to.equal(true);
+      expect(innerInput(el).checked).to.equal(true);
+      expect(el.error).to.equal('');
+    });
+
+    it('should come back with no error and no state after a reset of an unchecked field', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-checkbox name="accept" label="Accept terms"></bk-checkbox>
+        </form>
+      `);
+      const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
+
+      innerInput(el).click();
+      await el.updateComplete;
+
+      expect(el.checked).to.equal(true);
+
+      form.reset();
+      await el.updateComplete;
+
+      expect(el.checked).to.equal(false);
+      expect(innerInput(el).checked).to.equal(false);
+    });
+
+    it('should submit nothing and report valid while it is disabled', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-checkbox name="accept" checked disabled></bk-checkbox>
+          <bk-checkbox name="terms" required disabled></bk-checkbox>
+        </form>
+      `);
+
+      expect(new FormData(form).get('accept')).to.equal(null);
+      expect(form.checkValidity()).to.equal(true);
+    });
+
+    it('should be disabled and still focusable inside a disabled fieldset', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <fieldset disabled>
+            <bk-checkbox name="accept"></bk-checkbox>
+          </fieldset>
+        </form>
+      `);
+      const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
+
+      expect(el.fieldDisabled).to.equal(true);
+      expect(innerInput(el).getAttribute('aria-disabled')).to.equal('true');
+
+      innerInput(el).click();
+      await el.updateComplete;
+
+      expect(el.checked).to.equal(false);
+
+      el.focus();
+      expect(el.shadowRoot!.activeElement).to.equal(innerInput(el));
+    });
+  });
 });

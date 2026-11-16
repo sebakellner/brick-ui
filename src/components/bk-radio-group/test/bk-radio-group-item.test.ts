@@ -1,11 +1,11 @@
 import { resetMouse } from '@web/test-runner-commands';
-import { colorOf, opacityOf } from '../../test/helpers/style.js';
+import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
-import './define.js';
-import '../bk-field/define.js';
-import type { BkRadioGroupItem } from './bk-radio-group-item.js';
-import { clickAt, hover, hoverCapable } from '../../test/helpers/pointer.js';
-import { setTheme } from '../../test/helpers/theme.js';
+import '.././define.js';
+import '../../bk-field/define.js';
+import type { BkRadioGroupItem } from '.././bk-radio-group-item.js';
+import { clickAt, hover, hoverCapable } from '../../../test/helpers/pointer.js';
+import { setTheme } from '../../../test/helpers/theme.js';
 
 const innerInput = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('label')!;

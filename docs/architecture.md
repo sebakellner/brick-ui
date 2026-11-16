@@ -73,10 +73,11 @@ not have to reopen the question.
 tokens/base/           primitives: palette, space, radius, typography, structure
 tokens/role/light.json semantic roles, one file per theme
 tokens/component/      what one component paints, one file per component
-src/components/bk-*/   element, stories, Storybook docs page, test, README
+src/components/bk-*/   element, stories, Storybook docs page, test/, README
 src/styles/theme.css   imports the generated token files; the consumer entry point
 src/index.ts           public entry point
 src/test/helpers/      token resolver (colorOf, opacityOf), contrast assertions, theme switch, pointer (hover, clickAt)
+src/test/integration/  where a suite the test composes from two or more widgets goes, one folder per assembly; empty until the form suite exists
 scripts/               check-token-usage.mjs
 ```
 

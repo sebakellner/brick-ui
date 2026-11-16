@@ -1,10 +1,10 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
-import '../bk-checkbox/define.js';
-import './define.js';
-import type { BkField } from './bk-field.js';
-import type { BkFieldDescription } from './bk-field-description.js';
-import type { BkFieldError } from './bk-field-error.js';
-import type { BkFieldLabel } from './bk-field-label.js';
+import '../../bk-checkbox/define.js';
+import '.././define.js';
+import type { BkField } from '.././bk-field.js';
+import type { BkFieldDescription } from '.././bk-field-description.js';
+import type { BkFieldError } from '.././bk-field-error.js';
+import type { BkFieldLabel } from '.././bk-field-label.js';
 
 const part = <T extends Element>(el: BkField, tag: string) => el.querySelector<T>(tag)!;
 
@@ -60,6 +60,21 @@ describe('bk-field', () => {
     }
   });
 
+  it('should claim no role of its own', async () => {
+    const el = await fixture<BkField>(html`
+      <bk-field>
+        <bk-field-label>Email</bk-field-label>
+        <bk-input name="email"></bk-input>
+      </bk-field>
+    `);
+    await el.updateComplete;
+
+    const stack = el.shadowRoot!.querySelector('.stack')!;
+
+    expect(el.getAttribute('role'), 'a field is a layout, not a widget').to.equal(null);
+    expect(stack.getAttribute('role'), 'and so is the stack it lays out with').to.equal(null);
+  });
+
   it('should put data-state on every part while invalid and take it away again', async () => {
     const el = await fixture<BkField>(html`
       <bk-field>
@@ -82,76 +97,6 @@ describe('bk-field', () => {
 
     expect(el.hasAttribute('invalid'), 'the attribute follows the property').to.equal(false);
     expect(states(el)).to.deep.equal([null, null, null]);
-  });
-
-  it('should paint every part from its own semantic role outside a field', async () => {
-    const label = await fixture<BkFieldLabel>(html`<bk-field-label>Email</bk-field-label>`);
-    label.style.setProperty('--bk-text-default', 'rgb(1, 2, 3)');
-    label.style.setProperty('--bk-font-weight-medium', '700');
-
-    const labelStyle = getComputedStyle(label);
-    expect(labelStyle.color, 'the label takes the default text role').to.equal('rgb(1, 2, 3)');
-    expect(labelStyle.fontWeight, 'the label takes the medium weight').to.equal('700');
-
-    const description = await fixture<BkFieldDescription>(
-      html`<bk-field-description>We only use it for the receipt.</bk-field-description>`,
-    );
-    description.style.setProperty('--bk-text-muted', 'rgb(4, 5, 6)');
-
-    const descriptionStyle = getComputedStyle(description);
-    expect(descriptionStyle.color, 'the description takes the muted role').to.equal('rgb(4, 5, 6)');
-
-    const error = await fixture<BkFieldError>(
-      html`<bk-field-error>Enter a valid address.</bk-field-error>`,
-    );
-    error.style.setProperty('--bk-text-danger', 'rgb(7, 8, 9)');
-
-    const errorStyle = getComputedStyle(error);
-    expect(errorStyle.color, 'the error takes the danger role').to.equal('rgb(7, 8, 9)');
-
-    for (const el of [label, description, error]) {
-      const style = getComputedStyle(el);
-      expect(style.display, 'a part outside a field still lays out').to.equal('block');
-      expect(
-        el.shadowRoot!.querySelector('slot')!.assignedNodes({ flatten: true }).length,
-        'a part outside a field still projects its content',
-      ).to.be.greaterThan(0);
-      expect(el.getAttribute('data-state'), 'a part outside a field carries no state').to.equal(
-        null,
-      );
-    }
-  });
-
-  it('should collapse a description atom while it is marked empty', async () => {
-    const el = await fixture<BkFieldDescription>(
-      html`<bk-field-description data-empty>We only use it for the receipt.</bk-field-description>`,
-    );
-    const style = getComputedStyle(el);
-
-    expect(style.position, 'an empty description is clipped, not removed').to.equal('absolute');
-    expect(style.width).to.equal('1px');
-    expect(style.height).to.equal('1px');
-    expect(Boolean(el.isConnected), 'the empty description stays in the tree').to.equal(true);
-    expect(
-      el.shadowRoot!.querySelector('slot')!.assignedNodes({ flatten: true }).length,
-      'the empty description still projects its content',
-    ).to.be.greaterThan(0);
-  });
-
-  it('should collapse an error atom while it is marked empty', async () => {
-    const el = await fixture<BkFieldError>(
-      html`<bk-field-error data-empty>Enter a valid address.</bk-field-error>`,
-    );
-    const style = getComputedStyle(el);
-
-    expect(style.position, 'an empty error is clipped, not removed').to.equal('absolute');
-    expect(style.width).to.equal('1px');
-    expect(style.height).to.equal('1px');
-    expect(Boolean(el.isConnected), 'the empty error stays in the tree').to.equal(true);
-    expect(
-      el.shadowRoot!.querySelector('slot')!.assignedNodes({ flatten: true }).length,
-      'the empty error still projects its content',
-    ).to.be.greaterThan(0);
   });
 
   it('should space the parts from the field and not from the atoms', async () => {

@@ -1,6 +1,6 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import type { BkNativeSelectOpt } from './bk-native-select-opt.js';
-import './define.js';
+import type { BkNativeSelectOpt } from '.././bk-native-select-opt.js';
+import '.././define.js';
 
 const atom = (markup = 'Email') =>
   fixture<BkNativeSelectOpt>(
