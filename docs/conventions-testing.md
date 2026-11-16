@@ -9,7 +9,7 @@ an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 The **three levels** come first, because they are the frame the rules sit in: where a
 suite lives and what it is allowed to assert. They are not numbered because they are judged
 as a whole — a misplaced suite is caught by reading a diff, not by one assertion going red
-— while a rule is something a single test can name. The seventeen numbered rules follow as a
+— while a rule is something a single test can name. The sixteen numbered rules follow as a
 checklist, each with what enforces it, and each explained in turn after it.
 
 ## The three levels, and who decides the composition
@@ -22,7 +22,7 @@ the kit's vocabulary. The line is **who decides the composition**:
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | --------------------------------------------------------------- |
 | **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/test/bk-x.test.ts`, `describe` per concern |
 | **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                |
-| **e2e** (later) | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/` with Playwright, once the kit is consumed by an app      |
+| **e2e**         | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/`, Playwright. No such suite exists today                  |
 
 **Where exactly the line falls: the level names whose contract the test writes down, not
 how many elements sit in the fixture.** That is the test of every doubtful case, and it
@@ -54,10 +54,9 @@ its component, in one file broken into `describe` blocks per concern (`form
 participation`, `error channel`, `label state`) instead of `.form` and `.error` files —
 one file per subject is what Shoelace and Material Web do, and a concern is a paragraph
 of a suite, not a module. Integration gets its own directory, the way Spectrum keeps its
-accessibility specs apart from its unit tests and the runner itself separates kinds. Nothing
-lives there today: the directory is for an assembly the test composes, and the form suite —
-several controls on one form — is the first one that earns it. A folder whose rule is "two or
-more widgets" does not exist before that suite does.
+accessibility specs apart from its unit tests and the runner itself separates kinds. There is no
+integration suite today, and the directory is named here so that the first one has a home
+instead of a debate.
 
 Three rules make the levels useful instead of decorative:
 
@@ -67,7 +66,11 @@ Three rules make the levels useful instead of decorative:
   widgets, focus moving to the next control.
 - **Share the mechanics, not the rules.** Mounting a field with its atoms, typing a
   value, submitting and settling are the same four lines in every suite, so they belong
-  in `src/test/helpers/`. The rules stay with the component that owns them: a shared rule
+  in `src/test/helpers/`. A mechanic that has already been copied into more than one
+  suite moves there, and the zero-delay settle is the case in hand: eight files write
+  their own flush today, some once and some twice, and a copied settle is how a suite
+  samples a half-rendered state and reports a failure that names nothing. The rules stay
+  with the component that owns them: a shared rule
   suite reports a failure without saying which component drifted, and it grows options and
   conditionals the moment two controls differ — the input keeps the native `disabled` and
   the checkbox does not, the checkbox submits only while checked. Shoelace's
@@ -76,13 +79,13 @@ Three rules make the levels useful instead of decorative:
   **third** control with the same shape, not two.
 - **No mocks at any level** (T13). E2E included: a real page, a real package.
 
-**What e2e adds, and what it will never repeat.** The package is the subject: the entry
+**What e2e asserts, and what it never repeats.** The package is the subject: the entry
 registers nothing, each `define.js` registers its tags, a page that links `theme.css` gets the
 theme, and the bundle the build produces loads. Google's size vocabulary is the same line —
 a Large test validates "the interaction of several distinct parts of the system" — and FAST
-runs its Playwright suite as a separate step after the unit suite, not as a bigger one. What
-it must not do is re-assert a component's rules: a computed style that a unit test already
-pins is not more true from a Playwright page.
+runs its Playwright suite as a separate step after the unit suite, not as a bigger one. And
+it does not re-assert a component's rules: a computed style that a unit test already pins is
+not more true from a Playwright page.
 
 The placement rule worth stating — a suite under `src/test/integration/` composes at
 least two components, or the folder becomes a dumping ground — is enforced by **review,
@@ -112,7 +115,6 @@ suite reaches nobody; an undefined token reaches a consumer in runtime, which is
 | T14 | A suite is named after its element, and a case says what should hold | review                                     |
 | T15 | Accessibility is asserted by rule and by audit                       | `a11y.test.ts`, then every component suite |
 | T16 | A suite proves its subject rendered                                  | review                                     |
-| T17 | `settle` is shared mechanics, and a suite writes no timer            | review; the helper lands with the refactor |
 
 The explanations below are **grouped by theme, not by number**. The numbers are stable
 identifiers: other documents, commit messages and reviews cite `T6` and `T15` by name, so
@@ -375,28 +377,6 @@ describe('bk-input', () => {
 **Don't** — `const test = it;` and then a suite that calls `test(…)`.
 
 **Enforced by.** Review; the suite imports no such name.
-
-## T17. `settle` is shared mechanics, and a suite writes no timer
-
-**Rule.** The wait every suite repeats — `updateComplete`, then one microtask flush so a
-`MutationObserver` or a `slotchange` has landed — lives once in
-`src/test/helpers/settle.ts`, and a suite calls `settle(el)`. No file writes its own flush,
-and the number of flushes is not the suite's choice: `bk-native-select` needs two rounds
-because its mirror rebuilds inside an observer, and that requirement belongs in the helper
-instead of in eight copies that drifted.
-
-**Why.** Eight files carry their own `await new Promise((resolve) => setTimeout(resolve, 0))`
-today, some once and some twice. A copied settle is how a suite samples a half-rendered state
-and reports a failure that names nothing, and "share the mechanics, not the rules" is already
-the criterion the levels use — this is the first mechanic that had already drifted before
-anyone wrote it down.
-
-**Do** — `await settle(el);`
-
-**Don't** — `await new Promise((resolve) => setTimeout(resolve, 0));` in a test file, or a
-hand-picked duration anywhere (T4, T13).
-
-**Enforced by.** Review; the helper lands with the component-by-component test refactor.
 
 ### The cases a rule earns
 
