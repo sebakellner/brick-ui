@@ -262,6 +262,12 @@ consumer's node and the consumer empties it.
 There is no `message`, `description` or `error` part: those regions are the
 consumer's own atoms.
 
+**A nested group is its own widget.** A group writes `disabled` on the boxes it
+owns, and a group nested inside another is not owned by it: the outer `disabled`
+does not reach the inner one, and the inner boxes keep responding — which is what
+they look like, since nothing dims them. Disabling a whole subtree means disabling
+each group.
+
 ## Label state
 
 The group writes its state on the `bk-field-label` it hosts, as `data-state`:

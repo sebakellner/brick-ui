@@ -67,6 +67,12 @@ at least one option.` — which only the platform surfaces, through
 `validationMessage` and the browser's own validation UI on submit. A component
 does not translate; a consumer who wants text on the page writes it.
 
+**A nested group is its own widget.** A group writes `disabled` on the boxes it
+owns, and a group nested inside another is not owned by it: the outer `disabled`
+does not reach the inner one, and the inner boxes keep responding — which is what
+they look like, since nothing dims them. Disabling a whole subtree means disabling
+each group.
+
 ## Disabled
 
 `disabled` flows to the boxes. The group writes `disabled` on every `bk-checkbox`

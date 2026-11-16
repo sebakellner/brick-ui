@@ -750,4 +750,31 @@ describe('bk-checkbox-group', () => {
     expect(nameOf(second).length, 'no atom, no name').to.equal(0);
     expect(first.getAttribute('role'), 'the host is still a group').to.equal('group');
   });
+
+  it('should treat a nested group as its own widget and leave it alone', async () => {
+    const el = await fixture<BkCheckboxGroup>(html`
+      <bk-checkbox-group name="outer" disabled>
+        <bk-field-label>Channels</bk-field-label>
+        <bk-checkbox name="email" value="email"
+          ><bk-field-label slot="label">Email</bk-field-label></bk-checkbox
+        >
+        <bk-checkbox-group name="inner">
+          <bk-field-label>Frequency</bk-field-label>
+          <bk-checkbox name="daily" value="daily"
+            ><bk-field-label slot="label">Daily</bk-field-label></bk-checkbox
+          >
+        </bk-checkbox-group>
+      </bk-checkbox-group>
+    `);
+    await settleBoxes(el);
+    const inner = el.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
+    await settleBoxes(inner);
+
+    expect(boxesOf(el)[0].disabled, 'the outer group disables the boxes it owns').to.equal(true);
+    expect(inner.disabled, 'the inner group is a widget of its own').to.equal(false);
+    expect(
+      boxesOf(inner)[0].disabled,
+      'and its boxes keep responding, which is what they look like',
+    ).to.equal(false);
+  });
 });

@@ -108,7 +108,10 @@ not read as an empty one. The surface is **not** repainted: a disabled field kee
 `--bk-bg-surface`.
 
 The dim speaks for the availability, the muted text role speaks for the content,
-and neither repaints the surface. The dim is written once, at the container that
+and neither repaints the surface. An atom hosted by a disabled control still
+carries `data-state="disabled"` — it reports the state, it does not paint it; the
+container that owns the row is the one that dims, and a consumer can style the atom
+on that state if they want a louder signal. The dim is written once, at the container that
 owns the state — the control's own row, never the row and the label inside it. A
 message region (`bk-field-description`, `bk-field-error`, the `message` part) is
 never dimmed. A component hook may default to the primitive, but never repeats
