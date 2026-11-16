@@ -59,12 +59,15 @@ alternatives that lost. The rules of the folder:
 
 ## When to update what
 
-| If you change…                             | Update                                                                                                               |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| a token, a layer or the pipeline           | [architecture.md](architecture.md) and [conventions-tokens.md](conventions-tokens.md); a new ADR if it is a decision |
-| a component's public surface               | its `README.md` and its Storybook page                                                                               |
-| a check, a CI gate or a command            | [CONTRIBUTING.md](../CONTRIBUTING.md)                                                                                |
-| something that makes a past decision false | not that ADR — a new one that supersedes it                                                                          |
+| If you change…                             | Update                                                                                                                            |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| a token, a layer or the pipeline           | [architecture.md](architecture.md) and [conventions-tokens.md](conventions-tokens.md); a new ADR if it is a decision              |
+| a component's public surface               | its `README.md` and its Storybook page                                                                                            |
+| a shared layer — a mixin, a controller     | the layers table in [CONTRIBUTING.md](../CONTRIBUTING.md#how-a-field-is-built), and the map in [architecture.md](architecture.md) |
+| a test rule                                | [conventions-testing.md](conventions-testing.md), and the suite that enforces it                                                  |
+| adding an element or a part                | [add-a-component.md](add-a-component.md), which is where the current checklist lives                                              |
+| a check, a CI gate or a command            | [CONTRIBUTING.md](../CONTRIBUTING.md)                                                                                             |
+| something that makes a past decision false | not that ADR — a new one that supersedes it                                                                                       |
 
 ## Rules for these documents
 
@@ -77,12 +80,14 @@ alternatives that lost. The rules of the folder:
 
 ## Glossary
 
-| Term                | Meaning                                                                                                                                |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| primitive / palette | a raw declared value (`--bk-palette-blue-600`). A reference ramp, not a usage list                                                     |
-| semantic role       | a role in `color.json` read **directly** by a component (`--bk-text-danger`). See R1 in [conventions-tokens.md](conventions-tokens.md) |
-| control token       | what one component paints, when no role can carry it (`--bk-button-disabled-opacity`)                                                  |
-| hook                | a public custom property a consumer may override (`--bk-button-bg`), declared in `style-dictionary.config.mjs`                         |
-| part                | a styling escape hatch exposed through `::part()`                                                                                      |
-| invariant           | a rule that holds across the codebase and has something enforcing it                                                                   |
-| ADR                 | architecture decision record — one decision, one file, in [adr/](adr/)                                                                 |
+| Term                | Meaning                                                                                                                                                                                  |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| primitive / palette | a raw declared value (`--bk-palette-blue-600`). A reference ramp, not a usage list                                                                                                       |
+| semantic role       | a role in `color.json` read **directly** by a component (`--bk-text-danger`). See R1 in [conventions-tokens.md](conventions-tokens.md)                                                   |
+| control token       | what one component paints, when no role can carry it (`--bk-button-disabled-opacity`)                                                                                                    |
+| hook                | a public custom property a consumer may override (`--bk-button-bg`), declared in `style-dictionary.config.mjs`                                                                           |
+| part (`::part()`)   | a styling escape hatch a component exposes — never a nested element. The word is overloaded on purpose below                                                                             |
+| private part        | an element that only works inside one component (`bk-radio-group-item`, `bk-native-select-opt`): registered by the parent's `define.ts`, not exported, documented in the parent's README |
+| atom                | an element that is shared vocabulary (`bk-field-label`): exported, registered by its own `define.ts`, composed by several components                                                     |
+| invariant           | a rule that holds across the codebase and has something enforcing it                                                                                                                     |
+| ADR                 | architecture decision record — one decision, one file, in [adr/](adr/)                                                                                                                   |
