@@ -443,7 +443,7 @@ describe('bk-input', () => {
   it('should mark a required field that has a label', async () => {
     const el = await fixture<BkInput>(html`<bk-input required>${labelAtom}</bk-input>`);
 
-    expect(innerRequired(el), 'the label carries the mark').to.not.equal(null);
+    expect(Boolean(innerRequired(el)), 'the label carries the mark').to.equal(true);
     expect(innerRequired(el)!.textContent).to.equal('*');
     expect(innerRequired(el)!.closest('label'), 'the mark lives inside the label').to.equal(
       innerLabel(el),
@@ -468,7 +468,7 @@ describe('bk-input', () => {
       <bk-input required><bk-field-label slot="label">Email</bk-field-label></bk-input>
     `);
 
-    expect(innerRequired(el), 'the slotted label is a label to mark').to.not.equal(null);
+    expect(Boolean(innerRequired(el)), 'the slotted label is a label to mark').to.equal(true);
   });
 
   it('should render no glyph for a required field with no label at all', async () => {
@@ -612,7 +612,7 @@ describe('bk-input', () => {
       await settle(el);
       const input = el.querySelector('bk-input') as BkInput;
 
-      expect(innerLabel(input), 'the control renders a label').to.not.equal(null);
+      expect(Boolean(innerLabel(input)), 'the control renders a label').to.equal(true);
       expect(innerLabel(input)!.htmlFor, 'the label points at the inner control').to.equal(
         innerInput(input).id,
       );
@@ -687,7 +687,7 @@ describe('bk-input', () => {
       await settle(el);
       const input = el.querySelector('bk-input') as BkInput;
 
-      expect(region(input, 'message'), 'the region stays').to.not.equal(null);
+      expect(Boolean(region(input, 'message')), 'the region stays').to.equal(true);
     });
 
     it('should prefer a slotted error over a slotted description', async () => {
@@ -714,7 +714,9 @@ describe('bk-input', () => {
         region(input, 'description')!.hasAttribute('hidden'),
         'the description is not rendered while the error is',
       ).to.equal(true);
-      expect(region(input, 'description'), 'the description keeps its part').to.not.equal(null);
+      expect(Boolean(region(input, 'description')), 'the description keeps its part').to.equal(
+        true,
+      );
     });
 
     it('should follow a description added after connect', async () => {
