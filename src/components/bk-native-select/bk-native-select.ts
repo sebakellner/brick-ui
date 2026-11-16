@@ -63,7 +63,7 @@ export class BkNativeSelect extends FieldControlMixin(LitElement) {
       .control {
         border-radius: var(--bk-radius-md);
         appearance: none;
-        padding-inline-end: calc(var(--bk-space-4) + var(--bk-space-4));
+        padding-inline-end: calc(var(--bk-space-4) + var(--bk-space-3));
       }
 
       /* Chrome anchors the native caret to the control's edge, so no padding can
@@ -72,11 +72,11 @@ export class BkNativeSelect extends FieldControlMixin(LitElement) {
         position: absolute;
         inset-block-start: 50%;
         inset-inline-end: var(--bk-space-4);
-        inline-size: var(--bk-space-2);
-        block-size: var(--bk-space-2);
+        inline-size: var(--bk-space-1);
+        block-size: var(--bk-space-1);
         color: var(--bk-text-muted);
-        border-inline-end: calc(var(--bk-border-width) * 2) solid currentColor;
-        border-block-end: calc(var(--bk-border-width) * 2) solid currentColor;
+        border-inline-end: var(--bk-border-width) solid currentColor;
+        border-block-end: var(--bk-border-width) solid currentColor;
         transform: translateY(-50%) rotate(45deg);
         pointer-events: none;
       }

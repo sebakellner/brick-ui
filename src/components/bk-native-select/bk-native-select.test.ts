@@ -356,6 +356,7 @@ describe('bk-native-select', () => {
 
     const gap = select.getBoundingClientRect().right - caret.getBoundingClientRect().right;
     expect(gap, 'the caret keeps a gap from the border').to.be.at.least(13);
+    expect(caret.getBoundingClientRect().width, 'and it stays small').to.be.at.most(8);
 
     const box = caret.getBoundingClientRect();
     const hit = el.shadowRoot!.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2);
