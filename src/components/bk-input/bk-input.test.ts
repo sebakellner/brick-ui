@@ -5,7 +5,7 @@ import '../bk-field/define.js';
 import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
 import type { BkInput } from './bk-input.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
-import { hover } from '../../test/helpers/pointer.js';
+import { hover, hoverCapable } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
@@ -128,17 +128,15 @@ describe('bk-input', () => {
     expect(getComputedStyle(innerLabel(el)).color).to.equal('rgb(3, 3, 3)');
   });
 
-  it('should take the disabled field from the surface roles and the opacity primitive', async () => {
+  it('should take the disabled value from the muted role and keep the surface role', async () => {
     const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
     el.style.setProperty('--bk-bg-surface-muted', 'rgb(4, 4, 4)');
     el.style.setProperty('--bk-text-muted', 'rgb(5, 5, 5)');
     const style = getComputedStyle(innerInput(el));
 
-    expect(style.backgroundColor, 'a disabled field keeps the surface role').to.equal(
+    expect(style.color, 'the disabled value reads the muted role').to.equal('rgb(5, 5, 5)');
+    expect(style.backgroundColor, 'the surface is not repainted, muted or otherwise').to.equal(
       await colorOf('var(--bk-bg-surface)'),
-    );
-    expect(style.color, 'and the default text role').to.equal(
-      await colorOf('var(--bk-text-default)'),
     );
     expect(style.opacity, 'the one dim is the disabled opacity').to.equal(
       await opacityOf('var(--bk-opacity-disabled)'),
@@ -154,9 +152,30 @@ describe('bk-input', () => {
     expect(getComputedStyle(innerError(el)).color).to.equal('rgb(7, 7, 7)');
   });
 
-  it('should keep the danger border while the invalid field is hovered', async () => {
-    const el = await fixture<BkInput>(html`<bk-input error="Required">${labelAtom}</bk-input>`);
-    const field = innerInput(el);
+  it('should keep the danger border while the invalid field is hovered', async function () {
+    if (!hoverCapable()) this.skip();
+
+    const host = await fixture<HTMLElement>(html`
+      <div>
+        <bk-input error="Required">${labelAtom}</bk-input>
+        <bk-input>${labelAtom}</bk-input>
+      </div>
+    `);
+    const [invalid, enabled] = host.querySelectorAll<BkInput>('bk-input');
+    const field = innerInput(invalid);
+    const enabledField = innerInput(enabled);
+    const enabledBefore = getComputedStyle(enabledField).borderTopColor;
+
+    await hover(enabledField);
+
+    expect(
+      enabledField.matches(':hover'),
+      'the pointer reaches an enabled field, so its hover rule runs in this browser',
+    ).to.equal(true);
+    expect(getComputedStyle(enabledField).borderTopColor, 'and it paints that field').to.not.equal(
+      enabledBefore,
+    );
+
     await hover(field);
 
     expect(field.matches(':hover')).to.equal(true);
@@ -258,13 +277,32 @@ describe('bk-input', () => {
     expect(el.value).to.equal('a@b.c');
   });
 
-  it('should change nothing under the pointer while the field is disabled', async () => {
-    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
-    const field = innerInput(el);
+  it('should change nothing under the pointer while the field is disabled', async function () {
+    if (!hoverCapable()) this.skip();
+
+    const host = await fixture<HTMLElement>(html`
+      <div>
+        <bk-input disabled>${labelAtom}</bk-input>
+        <bk-input>${labelAtom}</bk-input>
+      </div>
+    `);
+    const [disabled, enabled] = host.querySelectorAll<BkInput>('bk-input');
+    const field = innerInput(disabled);
+    const enabledField = innerInput(enabled);
     const borderBefore = getComputedStyle(field).borderTopColor;
     const backgroundBefore = getComputedStyle(field).backgroundColor;
+    const enabledBefore = getComputedStyle(enabledField).borderTopColor;
 
-    expect(field.matches(':hover'), 'the pointer starts elsewhere').to.equal(false);
+    await hover(enabledField);
+
+    expect(
+      enabledField.matches(':hover'),
+      'the pointer reaches an enabled field, so its hover rule runs in this browser',
+    ).to.equal(true);
+    expect(getComputedStyle(enabledField).borderTopColor, 'and it paints that field').to.not.equal(
+      enabledBefore,
+    );
+    expect(field.matches(':hover'), 'and leaves the disabled field alone').to.equal(false);
 
     await hover(field);
 

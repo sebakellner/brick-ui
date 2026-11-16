@@ -13,6 +13,10 @@ export const pastTransition = async (): Promise<void> => {
   await new Promise((resolve) => setTimeout(resolve, 250));
 };
 
+/* Headless Linux reports no hover-capable pointer, so a hover test there would assert
+ * against rules whose media query never matches: it proves nothing, so it skips. */
+export const hoverCapable = (): boolean => matchMedia('(hover: hover)').matches;
+
 export const hover = async (element: Element): Promise<void> => {
   await sendMouse({ type: 'move', position: centerOf(element) });
   await pastTransition();

@@ -72,6 +72,7 @@ export const formControlStyles = css`
 
   .control:disabled {
     cursor: not-allowed;
+    color: var(--bk-text-muted);
     opacity: var(--bk-opacity-disabled);
   }
 

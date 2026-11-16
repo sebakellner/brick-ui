@@ -2,7 +2,7 @@ import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkRadioGroupItem } from './bk-radio-group-item.js';
-import { clickAt, hover } from '../../test/helpers/pointer.js';
+import { clickAt, hover, hoverCapable } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('input')!;
@@ -147,7 +147,9 @@ describe('bk-radio-group-item', () => {
     );
   });
 
-  it('should keep the box border strong while an enabled radio is hovered', async () => {
+  it('should keep the box border strong while an enabled radio is hovered', async function () {
+    if (!hoverCapable()) this.skip();
+
     const el = await fixture<BkRadioGroupItem>(
       html`<bk-radio-group-item>${labelAtom}</bk-radio-group-item>`,
     );
@@ -159,22 +161,44 @@ describe('bk-radio-group-item', () => {
 
     await hover(innerLabel(el));
 
+    expect(innerLabel(el).matches(':hover'), 'the pointer reaches the field').to.equal(true);
     expect(getComputedStyle(box).borderTopColor).to.equal(await colorOf('var(--bk-border-strong)'));
   });
 
-  it('should change nothing under the pointer while the radio is disabled', async () => {
-    const el = await fixture<BkRadioGroupItem>(
-      html`<bk-radio-group-item disabled>${labelAtom}</bk-radio-group-item>`,
-    );
-    const box = innerBox(el);
+  it('should change nothing under the pointer while the radio is disabled', async function () {
+    if (!hoverCapable()) this.skip();
+
+    const host = await fixture<HTMLElement>(html`
+      <div>
+        <bk-radio-group-item disabled>${labelAtom}</bk-radio-group-item>
+        <bk-radio-group-item>${labelAtom}</bk-radio-group-item>
+      </div>
+    `);
+    const [disabled, enabled] = host.querySelectorAll<BkRadioGroupItem>('bk-radio-group-item');
+    const box = innerBox(disabled);
+    const enabledBox = innerBox(enabled);
     const borderBefore = getComputedStyle(box).borderTopColor;
     const backgroundBefore = getComputedStyle(box).backgroundColor;
+    const enabledBefore = getComputedStyle(enabledBox).borderTopColor;
 
-    expect(innerLabel(el).matches(':hover'), 'the pointer starts elsewhere').to.equal(false);
+    await hover(innerLabel(enabled));
 
-    await hover(innerLabel(el));
+    expect(
+      innerLabel(enabled).matches(':hover'),
+      'the pointer reaches an enabled field, so its hover rule runs in this browser',
+    ).to.equal(true);
+    expect(getComputedStyle(enabledBox).borderTopColor, 'and it paints that box').to.not.equal(
+      enabledBefore,
+    );
+    expect(innerLabel(disabled).matches(':hover'), 'and leaves the disabled box alone').to.equal(
+      false,
+    );
 
-    expect(innerLabel(el).matches(':hover'), 'the pointer is on the disabled row').to.equal(true);
+    await hover(innerLabel(disabled));
+
+    expect(innerLabel(disabled).matches(':hover'), 'the pointer is on the disabled row').to.equal(
+      true,
+    );
     expect(getComputedStyle(box).borderTopColor, 'a disabled radio has no hover border').to.equal(
       borderBefore,
     );

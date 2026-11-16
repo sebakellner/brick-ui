@@ -5,7 +5,7 @@ import '../bk-field/define.js';
 import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
 import type { BkCheckbox } from './bk-checkbox.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
-import { clickAt, hover, pastTransition } from '../../test/helpers/pointer.js';
+import { clickAt, hover, hoverCapable, pastTransition } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkCheckbox) => el.shadowRoot!.querySelector('input')!;
@@ -278,7 +278,9 @@ describe('bk-checkbox', () => {
     expect(el.error).to.equal('');
   });
 
-  it('should keep the box border strong while the field is hovered', async () => {
+  it('should keep the box border strong while the field is hovered', async function () {
+    if (!hoverCapable()) this.skip();
+
     const el = await fixture<BkCheckbox>(html`<bk-checkbox></bk-checkbox>`);
     const box = innerBox(el);
 
@@ -288,6 +290,7 @@ describe('bk-checkbox', () => {
 
     await hover(innerLabel(el));
 
+    expect(innerLabel(el).matches(':hover'), 'the pointer reaches the field').to.equal(true);
     expect(getComputedStyle(box).borderTopColor).to.equal(await colorOf('var(--bk-border-strong)'));
   });
 
@@ -346,17 +349,40 @@ describe('bk-checkbox', () => {
     );
   });
 
-  it('should change nothing under the pointer while the box is disabled', async () => {
-    const el = await fixture<BkCheckbox>(html`<bk-checkbox disabled></bk-checkbox>`);
-    const box = innerBox(el);
+  it('should change nothing under the pointer while the box is disabled', async function () {
+    if (!hoverCapable()) this.skip();
+
+    const host = await fixture<HTMLElement>(html`
+      <div>
+        <bk-checkbox disabled></bk-checkbox>
+        <bk-checkbox></bk-checkbox>
+      </div>
+    `);
+    const [disabled, enabled] = host.querySelectorAll<BkCheckbox>('bk-checkbox');
+    const box = innerBox(disabled);
+    const enabledBox = innerBox(enabled);
     const borderBefore = getComputedStyle(box).borderTopColor;
     const backgroundBefore = getComputedStyle(box).backgroundColor;
+    const enabledBefore = getComputedStyle(enabledBox).borderTopColor;
 
-    expect(innerLabel(el).matches(':hover'), 'the pointer starts elsewhere').to.equal(false);
+    await hover(innerLabel(enabled));
 
-    await hover(innerLabel(el));
+    expect(
+      innerLabel(enabled).matches(':hover'),
+      'the pointer reaches an enabled field, so its hover rule runs in this browser',
+    ).to.equal(true);
+    expect(getComputedStyle(enabledBox).borderTopColor, 'and it paints that box').to.not.equal(
+      enabledBefore,
+    );
+    expect(innerLabel(disabled).matches(':hover'), 'and leaves the disabled box alone').to.equal(
+      false,
+    );
 
-    expect(innerLabel(el).matches(':hover'), 'the pointer is on the disabled row').to.equal(true);
+    await hover(innerLabel(disabled));
+
+    expect(innerLabel(disabled).matches(':hover'), 'the pointer is on the disabled row').to.equal(
+      true,
+    );
     expect(getComputedStyle(box).borderTopColor, 'a disabled box has no hover border').to.equal(
       borderBefore,
     );

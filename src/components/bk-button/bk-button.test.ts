@@ -2,7 +2,7 @@ import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import type { BkButton } from './bk-button.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
-import { hover } from '../../test/helpers/pointer.js';
+import { hover, hoverCapable } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 import { sendKeys } from '@web/test-runner-commands';
 
@@ -152,19 +152,33 @@ describe('bk-button', () => {
     expect(getComputedStyle(innerButton(button)).opacity).to.equal('0.3');
   });
 
-  it('should change nothing under the pointer while the button is disabled', async () => {
-    const button = await mount();
-    button.disabled = true;
-    await button.updateComplete;
+  it('should change nothing under the pointer while the button is disabled', async function () {
+    if (!hoverCapable()) this.skip();
+
+    const host = await fixture<HTMLElement>(html`
+      <div>
+        <bk-button disabled>Save</bk-button>
+        <bk-button>Cancel</bk-button>
+      </div>
+    `);
+    const [button, enabled] = host.querySelectorAll<BkButton>('bk-button');
     const inner = innerButton(button);
+    const enabledInner = innerButton(enabled);
     const backgroundBefore = getComputedStyle(inner).backgroundColor;
     const borderBefore = getComputedStyle(inner).borderTopColor;
+    const enabledBefore = getComputedStyle(enabledInner).backgroundColor;
+
+    await hover(enabledInner);
 
     expect(
-      matchMedia('(hover: hover)').matches,
-      'the hover rule can apply in this browser at all',
+      enabledInner.matches(':hover'),
+      'the pointer reaches an enabled button, so its hover rule runs in this browser',
     ).to.equal(true);
-    expect(inner.matches(':hover'), 'the pointer starts elsewhere').to.equal(false);
+    expect(
+      getComputedStyle(enabledInner).backgroundColor,
+      'and it paints that button',
+    ).to.not.equal(enabledBefore);
+    expect(inner.matches(':hover'), 'and leaves the disabled button alone').to.equal(false);
 
     await hover(inner);
 
