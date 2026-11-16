@@ -37,7 +37,6 @@ jobs:
             exit 1
           fi
       - run: pnpm check:tokens
-      - run: pnpm check:tests
       - run: pnpm typecheck
       - run: pnpm test
 

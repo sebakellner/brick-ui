@@ -33,10 +33,14 @@ Two rules make the levels useful instead of decorative:
   moving to the next control.
 - **No mocks at any level** (T2). E2E included: a real page, a real package.
 
-The level is a property of the subject, not of the folder — with one exception worth
-gating, because it is the drift that actually happens: a suite under
-`src/test/integration/` must compose at least two components. `scripts/check-test-levels.mjs`
-checks exactly that, and nothing else.
+The level is a property of the subject, not of the folder. The one placement rule worth
+stating is that a suite under `src/test/integration/` composes at least two components —
+otherwise the folder becomes a dumping ground — and it is enforced by **review, not by a
+script**. Two reasons: the rule is a _positive_ one (compose at least two), which lint
+cannot express even with ESLint installed (`no-restricted-imports` forbids, it does not
+count), and a gate whose failure costs nothing a consumer can feel teaches people to
+route around gates. A mislabeled suite does not reach anyone; an undefined token does,
+which is why `check:tokens` earns its place and this does not.
 
 | #   | Rule                                         | Enforced by                        |
 | --- | -------------------------------------------- | ---------------------------------- |

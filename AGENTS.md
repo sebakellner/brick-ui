@@ -68,7 +68,6 @@ you are about to change, and never edit an accepted ADR — supersede it.
 | `pnpm typecheck`    | `tsc --noEmit`, with `strict`, `noUnusedLocals`, `noUnusedParameters`         |
 | `pnpm build:tokens` | regenerate the CSS and `tokens.generated.ts`; commit the result               |
 | `pnpm check:tokens` | every `--bk-*` name a component reads exists, and every semantic role is read |
-| `pnpm check:tests`  | every suite under `src/test/integration/` composes at least two components    |
 | `pnpm format`       | rewrite the files Prettier owns                                               |
 | `pnpm format:check` | fail if any of them is not formatted                                          |
 | `pnpm dev`          | the playground                                                                |
