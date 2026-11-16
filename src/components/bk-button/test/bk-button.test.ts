@@ -2,7 +2,7 @@ import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import '.././define.js';
 import type { BkButton } from '.././bk-button.js';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
-import { expectNoViolations } from '../../../test/helpers/a11y.js';
+import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.js';
 import { colorOf } from '../../../test/helpers/style.js';
 import { hover, hoverCapable } from '../../../test/helpers/pointer.js';
 import { setTheme } from '../../../test/helpers/theme.js';
@@ -18,14 +18,17 @@ const mount = (variant?: string) =>
   );
 
 describe('bk-button', () => {
-  for (const theme of ['light', 'dark'] as const) {
-    it(`should have no accessibility violations (${theme})`, async () => {
-      setTheme(theme);
-      const primary = await mount();
+  describe('accessibility', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      it(`should have no accessibility violations (${theme})`, async () => {
+        setTheme(theme);
+        const primary = await mount();
 
-      await expectNoViolations(primary);
-    });
-  }
+        await expectRendered(primary, 'button');
+        await expectNoViolations(primary);
+      });
+    }
+  });
   afterEach(async () => {
     await resetMouse();
   });

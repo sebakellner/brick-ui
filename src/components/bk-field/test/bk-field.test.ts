@@ -5,7 +5,7 @@ import type { BkField } from '.././bk-field.js';
 import type { BkFieldDescription } from '.././bk-field-description.js';
 import type { BkFieldError } from '.././bk-field-error.js';
 import type { BkFieldLabel } from '.././bk-field-label.js';
-import { expectNoViolations } from '../../../test/helpers/a11y.js';
+import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.js';
 import { setTheme } from '../../../test/helpers/theme.js';
 
 const part = <T extends Element>(el: BkField, tag: string) => el.querySelector<T>(tag)!;
@@ -17,19 +17,22 @@ const states = (el: BkField) => PARTS.map((tag) => part(el, tag).getAttribute('d
 const top = (el: BkField, tag: string) => part(el, tag).getBoundingClientRect().top;
 
 describe('bk-field', () => {
-  for (const theme of ['light', 'dark'] as const) {
-    it(`should have no accessibility violations (${theme})`, async () => {
-      setTheme(theme);
-      const el = await fixture<BkField>(html`
-        <bk-field>
-          <bk-field-label>Email</bk-field-label>
-          <bk-field-description>We never share it.</bk-field-description>
-        </bk-field>
-      `);
+  describe('accessibility', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      it(`should have no accessibility violations (${theme})`, async () => {
+        setTheme(theme);
+        const el = await fixture<BkField>(html`
+          <bk-field>
+            <bk-field-label>Email</bk-field-label>
+            <bk-field-description>We never share it.</bk-field-description>
+          </bk-field>
+        `);
 
-      await expectNoViolations(el);
-    });
-  }
+        await expectRendered(el, 'slot');
+        await expectNoViolations(el);
+      });
+    }
+  });
   afterEach(() => {
     setTheme('light');
   });

@@ -8,7 +8,7 @@ import '../../bk-field/define.js';
 import type { BkCheckbox } from '../../bk-checkbox/bk-checkbox.js';
 import type { BkCheckboxGroup } from '.././bk-checkbox-group.js';
 import { setTheme } from '../../../test/helpers/theme.js';
-import { expectNoViolations } from '../../../test/helpers/a11y.js';
+import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.js';
 
 const boxesContainer = (el: BkCheckboxGroup) => region(el, 'boxes')!;
 
@@ -69,24 +69,27 @@ const twoBoxes = html`
 `;
 
 describe('bk-checkbox-group', () => {
-  for (const theme of ['light', 'dark'] as const) {
-    it(`should have no accessibility violations (${theme})`, async () => {
-      setTheme(theme);
-      const el = await fixture<BkCheckboxGroup>(html`
-        <bk-checkbox-group>
-          <bk-field-label slot="label">Channels</bk-field-label>
-          <bk-checkbox name="email" value="email"
-            ><bk-field-label slot="label">Email</bk-field-label></bk-checkbox
-          >
-          <bk-checkbox name="sms" value="sms"
-            ><bk-field-label slot="label">SMS</bk-field-label></bk-checkbox
-          >
-        </bk-checkbox-group>
-      `);
+  describe('accessibility', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      it(`should have no accessibility violations (${theme})`, async () => {
+        setTheme(theme);
+        const el = await fixture<BkCheckboxGroup>(html`
+          <bk-checkbox-group>
+            <bk-field-label slot="label">Channels</bk-field-label>
+            <bk-checkbox name="email" value="email"
+              ><bk-field-label slot="label">Email</bk-field-label></bk-checkbox
+            >
+            <bk-checkbox name="sms" value="sms"
+              ><bk-field-label slot="label">SMS</bk-field-label></bk-checkbox
+            >
+          </bk-checkbox-group>
+        `);
 
-      await expectNoViolations(el);
-    });
-  }
+        await expectRendered(el, '[part="boxes"]');
+        await expectNoViolations(el);
+      });
+    }
+  });
   afterEach(() => {
     setTheme('light');
   });
