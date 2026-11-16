@@ -29,11 +29,26 @@ the kit's vocabulary. The line is **who decides the composition**:
 | **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                     |
 | **e2e** (later) | **the package on a real page**: entry, registration, `theme.css`, bundler                                                                                                        | the application | `e2e/` with Playwright, once the kit is consumed by an app           |
 
-So `bk-checkbox.test.ts` is **unit** although it imports two defines (its atoms are its
-vocabulary), and `bk-checkbox.form.test.ts` is **unit** as well: a widget inside a
-`<form>` is a widget in the platform's surroundings, and the form is not a composition of
-the kit. A screen with an input, a checkbox and a select is **integration**, because the
-test decides that those three belong together.
+**Where exactly the line falls: the level names whose contract the test writes down, not
+how many elements sit in the fixture.** That is the test of every doubtful case, and it
+is the one that answers why a `<form>` does not make a suite integration:
+
+- `bk-checkbox.form.test.ts` is **unit**. The rule — "a form can submit, reset and disable
+  me" — is the control's own contract with the platform, and the `<form>` is a given
+  rather than a composition of the kit. When it fails, the diagnosis is one component: its
+  `formResetCallback`, its `setValidity`, its `submittedValue`. That diagnosis is what the
+  level is for.
+- `bk-input.field.test.ts` is **integration**. "A control's label can arrive through the
+  field's atoms" belongs to neither element alone — the field routes the atoms, the control
+  hosts them — so a failure can be either one, and no single component owns the rule.
+- `bk-checkbox.test.ts` is **unit** although it imports two defines, because its atoms are
+  part of its own documented contract.
+- A screen with an input, a checkbox and a select is **integration**, because the test
+  decides that those three belong together and nobody else does.
+
+The crossing-a-boundary reading of "integration" (a `<form>` is a boundary) would make
+almost every suite integration, and with it the word stops telling a reader what a failure
+means.
 
 **The level is the location, and no suffix is invented for it.** A unit suite lives with
 its component, in one file broken into `describe` blocks per concern (`form
