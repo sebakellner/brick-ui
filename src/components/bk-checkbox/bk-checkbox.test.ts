@@ -1,3 +1,4 @@
+import { colorOf, opacityOf } from '../../test/helpers/style.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import './define.js';
@@ -23,18 +24,6 @@ const projectedText = (region: HTMLElement) =>
   Array.from(region.querySelector('slot')!.assignedNodes({ flatten: true }))
     .map((node) => node.textContent!.trim())
     .join('');
-
-const colorOf = async (value: string): Promise<string> => {
-  const probe = await fixture<HTMLElement>(html`<span style="color: ${value}"></span>`);
-
-  return getComputedStyle(probe).color;
-};
-
-const opacityOf = async (value: string): Promise<string> => {
-  const probe = await fixture<HTMLElement>(html`<span style="opacity: ${value}"></span>`);
-
-  return getComputedStyle(probe).opacity;
-};
 
 describe('bk-checkbox', () => {
   afterEach(async () => {

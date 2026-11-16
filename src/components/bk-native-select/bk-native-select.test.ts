@@ -1,3 +1,4 @@
+import { colorOf } from '../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import '../bk-field/define.js';
@@ -14,12 +15,6 @@ const builtOptions = (el: BkNativeSelect) => Array.from(innerSelect(el).querySel
 
 const optionFace = (el: BkNativeSelect) =>
   builtOptions(el).map((option) => [option.value, option.textContent]);
-
-const colorOf = async (value: string): Promise<string> => {
-  const probe = await fixture<HTMLElement>(html`<span style="color: ${value}"></span>`);
-
-  return getComputedStyle(probe).color;
-};
 
 /* The mirror is rebuilt from a MutationObserver, and the rebuild is a render. */
 const settle = async (el: BkNativeSelect) => {
