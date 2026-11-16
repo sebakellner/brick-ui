@@ -39,6 +39,11 @@ export class FieldPartsController implements ReactiveController {
     return this.regions.render();
   }
 
+  /* The text of the slotted error atom, empty while it has none. */
+  get slotError(): string {
+    return this.regions.slotError;
+  }
+
   describedBy(sources: FieldMessageFallbacks): string | undefined {
     return this.regions.update(sources);
   }
@@ -50,6 +55,10 @@ export class FieldPartsController implements ReactiveController {
 
   hostUpdated(): void {
     this.syncHostedLabel();
+  }
+
+  hostDisconnected(): void {
+    this.regions.disconnect();
   }
 
   readonly handleLabelSlot = (event: Event): void => {

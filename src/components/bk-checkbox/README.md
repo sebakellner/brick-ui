@@ -21,22 +21,28 @@ A checkbox with a real `<label>`, a description and an error slot, and a
 
 ## Attributes and properties
 
-| Property   | Attribute  | Type      | Default | Notes                                                                                                                                                                                   |
-| ---------- | ---------- | --------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `error`    | `error`    | `string`  | `''`    | fallback for the `error` slot; wins over the description and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input`                              |
-| `checked`  | `checked`  | `boolean` | `false` | the state. The attribute is the default the form returns to on reset, like the platform's `defaultChecked`; the property is not reflected, so the attribute stays what the author wrote |
-| `value`    | `value`    | `string`  | `''`    | submits as `on` while checked, and submits nothing while unchecked                                                                                                                      |
-| `name`     | `name`     | `string`  | `''`    |                                                                                                                                                                                         |
-| `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner checkbox and blocks activation                                                                                                             |
-| `required` | `required` | `boolean` | `false` | reflected; announces the state and marks the label with a `*` when there is one                                                                                                         |
+| Property   | Attribute  | Type      | Default | Notes                                                                                                                                                                                                       |
+| ---------- | ---------- | --------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`    | `error`    | `string`  | `''`    | the message from JavaScript; a slotted `bk-field-error` with text wins over it; wins over the description and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input` |
+| `checked`  | `checked`  | `boolean` | `false` | the state. The attribute is the default the form returns to on reset, like the platform's `defaultChecked`; the property is not reflected, so the attribute stays what the author wrote                     |
+| `value`    | `value`    | `string`  | `''`    | submits as `on` while checked, and submits nothing while unchecked                                                                                                                                          |
+| `name`     | `name`     | `string`  | `''`    |                                                                                                                                                                                                             |
+| `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner checkbox and blocks activation                                                                                                                                 |
+| `required` | `required` | `boolean` | `false` | reflected; announces the state and marks the label with a `*` when there is one                                                                                                                             |
 
 ## Slots
 
-| Slot          | Content                | Notes                                                                                                                           |
-| ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `label`       | `bk-field-label`       | rendered inside the `<label>` that wraps the native input; the slot is the only label, and the box is unnamed while it is empty |
-| `description` | `bk-field-description` | the help text, under the label row; `aria-describedby` names the region while it has content                                    |
-| `error`       | `bk-field-error`       | the problem, rendered outside the label; the description is hidden while it has content                                         |
+| Slot          | Content                | Notes                                                                                                                                                                                                           |
+| ------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`       | `bk-field-label`       | rendered inside the `<label>` that wraps the native input; the slot is the only label, and the box is unnamed while it is empty                                                                                 |
+| `description` | `bk-field-description` | the help text, under the label row; `aria-describedby` names the region while it has content                                                                                                                    |
+| `error`       | `bk-field-error`       | the problem, rendered outside the label; an atom with text **is** the box's error (marks the box invalid, blocks submission) and wins over the `error` property; the description is hidden while it has content |
+
+The error channel has two writers and one display: `error` from JavaScript, and
+a `bk-field-error` with text in the `error` slot. When both are set the atom
+wins, and the property comes back when the atom's text goes; an atom with no text
+is not content and says nothing about validity
+([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
 
 The atoms need no `slot` attribute inside a `bk-field`, which assigns them by
 tag name. Rendered straight as a child of the control they do, because the
@@ -74,8 +80,10 @@ document.querySelector('bk-checkbox').addEventListener('bk-change', (event) => {
 Both message regions always exist so screen readers announce an error when it
 appears. The description is hidden while the error has text, and an empty region
 is collapsed with `data-empty` instead of being removed, so it stays in the
-accessibility tree. The part names do not move with the state: `description`
-keeps its name while the error shows.
+accessibility tree. The error region always carries `data-state="error"`, which
+names it as the region that paints a problem, whichever channel fills it; whether
+it holds a message is `data-empty`, not that attribute. The part names do not
+move with the state: `description` keeps its name while the error shows.
 
 The label is inline beside the box by design. The row is the checkbox's own
 layout, so no `orientation` decides it and the field never reaches into it.
@@ -155,9 +163,10 @@ Set the two hooks above, not those.
   in the accessibility tree while it is visually collapsed.
 - **Form-associated** through `ElementInternals`: a checked box submits under
   `name`, an unchecked one submits nothing, `required` reports `valueMissing`,
-  `error` reports `customError`, a disabled `<fieldset>` disables the field, and
-  `reset()` restores the authored `checked` attribute and drops `error`. A
-  disabled box submits nothing and reports no error, like a native one.
+  `error` — or the text of a `bk-field-error` in the `error` slot — reports
+  `customError`, a disabled `<fieldset>` disables the field, and `reset()`
+  restores the authored `checked` attribute and drops `error`. A disabled box
+  submits nothing and reports no error, like a native one.
 
 ## Limitations
 

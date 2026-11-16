@@ -8,6 +8,17 @@ const innerError = (el: BkInput) => el.shadowRoot!.querySelector<HTMLElement>('[
 
 const message = (el: BkInput) => innerError(el).textContent!.trim();
 
+const projectedMessage = (el: BkInput) =>
+  Array.from(innerError(el).querySelector('slot')!.assignedNodes({ flatten: true }))
+    .map((node) => node.textContent!.trim())
+    .join(' ');
+
+const settle = async (el: BkInput) => {
+  await el.updateComplete;
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  await el.updateComplete;
+};
+
 const type = async (el: BkInput, value: string) => {
   const field = innerInput(el);
   field.value = value;
@@ -186,6 +197,134 @@ describe('bk-input error model', () => {
     expect(el.fieldMessage).to.equal('');
     expect(message(el)).to.equal('');
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+  });
+
+  it('should take a slotted error atom as the field error', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-input name="email" value="you@brick.dev">
+          <bk-field-error slot="error">That address looks wrong.</bk-field-error>
+        </bk-input>
+      </form>
+    `);
+    const el = form.querySelector('bk-input') as BkInput;
+    await settle(el);
+    let submitted = false;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      submitted = true;
+    });
+
+    expect(projectedMessage(el), 'the region shows the text of the atom').to.equal(
+      'That address looks wrong.',
+    );
+    expect(
+      innerInput(el).getAttribute('aria-invalid'),
+      'the atom makes the field invalid',
+    ).to.equal('true');
+    expect(el.validity.customError, 'the atom takes part in constraint validation').to.equal(true);
+    expect(el.validationMessage, 'with the atom text as its message').to.equal(
+      'That address looks wrong.',
+    );
+    expect(form.checkValidity(), 'so the form refuses to validate').to.equal(false);
+
+    form.requestSubmit();
+
+    expect(submitted, 'and the submit is blocked like an error property would block it').to.equal(
+      false,
+    );
+  });
+
+  it('should let the slotted atom win over the error property, and give it back', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-input name="email" value="you@brick.dev" error="Set by the property.">
+          <bk-field-error slot="error">Set by the atom.</bk-field-error>
+        </bk-input>
+      </form>
+    `);
+    const el = form.querySelector('bk-input') as BkInput;
+    await settle(el);
+
+    expect(projectedMessage(el), 'the atom text is what the region shows').to.equal(
+      'Set by the atom.',
+    );
+    expect(el.validationMessage, 'and the atom text is the validity message').to.equal(
+      'Set by the atom.',
+    );
+
+    const atom = el.querySelector('bk-field-error')!;
+    atom.textContent = '';
+    await settle(el);
+
+    expect(message(el), 'an atom with no text is not content, so the property shows').to.equal(
+      'Set by the property.',
+    );
+    expect(el.validationMessage, 'and the property is the validity message again').to.equal(
+      'Set by the property.',
+    );
+    expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+  });
+
+  it('should follow the text of the slotted atom while the field sits there', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-input name="email" value="you@brick.dev">
+          <bk-field-error slot="error">Set by the atom.</bk-field-error>
+        </bk-input>
+      </form>
+    `);
+    const el = form.querySelector('bk-input') as BkInput;
+    await settle(el);
+
+    expect(el.validity.customError).to.equal(true);
+    expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+
+    const atom = el.querySelector('bk-field-error')!;
+    atom.textContent = '';
+    await settle(el);
+
+    expect(el.checkValidity(), 'emptying the atom makes the field valid').to.equal(true);
+    expect(el.validity.customError).to.equal(false);
+    expect(el.validationMessage).to.equal('');
+    expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+
+    atom.textContent = 'Back again.';
+    await settle(el);
+
+    expect(el.checkValidity(), 'and refilling it makes it invalid again').to.equal(false);
+    expect(el.validationMessage).to.equal('Back again.');
+    expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
+  });
+
+  it('should follow the value on the next keystroke once the field has been touched', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-input name="email" type="email" value="you@brick.dev"></bk-input>
+      </form>
+    `);
+    const el = form.querySelector('bk-input') as BkInput;
+    await el.updateComplete;
+
+    await type(el, 'a@');
+    expect(message(el), 'nothing is shown before the first touch').to.equal('');
+
+    await touch(el);
+    expect(message(el), 'the blur shows the native message').to.equal(
+      innerInput(el).validationMessage,
+    );
+
+    await type(el, 'you@brick.dev');
+
+    expect(message(el), 'the next keystroke drops the message the value fixed').to.equal('');
+    expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+
+    await type(el, 'b@');
+
+    expect(message(el), 'and a broken value brings it back while typing').to.equal(
+      innerInput(el).validationMessage,
+    );
+    expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
   });
 
   it('should block submission for an error a schema result set, until the user acts', async () => {

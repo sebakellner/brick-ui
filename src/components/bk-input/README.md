@@ -21,29 +21,34 @@ and a `bk-change` event.
 
 ## Properties
 
-| Property       | Attribute      | Type                                                                                        | Default  | Notes                                                                                                                                                                                                 |
-| -------------- | -------------- | ------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `error`        | `error`        | `string`                                                                                    | `''`     | wins over the description and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input`                                                                           |
-| `value`        | `value`        | `string`                                                                                    | `''`     |                                                                                                                                                                                                       |
-| `name`         | `name`         | `string`                                                                                    | `''`     |                                                                                                                                                                                                       |
-| `type`         | `type`         | `'text' \| 'email' \| 'password' \| 'search' \| 'tel' \| 'url'`                             | `'text'` |                                                                                                                                                                                                       |
-| `placeholder`  | `placeholder`  | `string`                                                                                    | `''`     |                                                                                                                                                                                                       |
-| `autocomplete` | `autocomplete` | `string`                                                                                    | `''`     | forwarded to the field (WCAG 1.3.5)                                                                                                                                                                   |
-| `inputMode`    | —              | `'text' \| 'tel' \| 'url' \| 'email' \| 'numeric' \| 'decimal' \| 'search' \| 'none' \| ''` | `''`     | sets `inputmode` on the field                                                                                                                                                                         |
-| `disabled`     | `disabled`     | `boolean`                                                                                   | `false`  | reflected; sets the native `disabled` attribute on the inner field ([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)) |
-| `required`     | `required`     | `boolean`                                                                                   | `false`  | reflected; announces the state and marks the label with a `*` when there is one                                                                                                                       |
+| Property       | Attribute      | Type                                                                                        | Default  | Notes                                                                                                                                                                                                           |
+| -------------- | -------------- | ------------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`        | `error`        | `string`                                                                                    | `''`     | the message from JavaScript; wins over the description and over the native message, and loses to a slotted `bk-field-error` that has text; sets `aria-invalid="true"` and blocks submission; cleared on `input` |
+| `value`        | `value`        | `string`                                                                                    | `''`     |                                                                                                                                                                                                                 |
+| `name`         | `name`         | `string`                                                                                    | `''`     |                                                                                                                                                                                                                 |
+| `type`         | `type`         | `'text' \| 'email' \| 'password' \| 'search' \| 'tel' \| 'url'`                             | `'text'` |                                                                                                                                                                                                                 |
+| `placeholder`  | `placeholder`  | `string`                                                                                    | `''`     |                                                                                                                                                                                                                 |
+| `autocomplete` | `autocomplete` | `string`                                                                                    | `''`     | forwarded to the field (WCAG 1.3.5)                                                                                                                                                                             |
+| `inputMode`    | —              | `'text' \| 'tel' \| 'url' \| 'email' \| 'numeric' \| 'decimal' \| 'search' \| 'none' \| ''` | `''`     | sets `inputmode` on the field                                                                                                                                                                                   |
+| `disabled`     | `disabled`     | `boolean`                                                                                   | `false`  | reflected; sets the native `disabled` attribute on the inner field ([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md))           |
+| `required`     | `required`     | `boolean`                                                                                   | `false`  | reflected; announces the state and marks the label with a `*` when there is one                                                                                                                                 |
 
 ## Slots
 
-| Slot          | Content                | Notes                                                                                                                                    |
-| ------------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `label`       | `bk-field-label`       | rendered inside the `<label>` bound to the input with `for`/`id`; the slot is the only label, and the field is unnamed while it is empty |
-| `description` | `bk-field-description` | the help text; `aria-describedby` names the region while it has content                                                                  |
-| `error`       | `bk-field-error`       | the problem, rendered in the `role="status"` region; the description is hidden while it has content                                      |
+| Slot          | Content                | Notes                                                                                                                                                                                                                           |
+| ------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`       | `bk-field-label`       | rendered inside the `<label>` bound to the input with `for`/`id`; the slot is the only label, and the field is unnamed while it is empty                                                                                        |
+| `description` | `bk-field-description` | the help text; `aria-describedby` names the region while it has content                                                                                                                                                         |
+| `error`       | `bk-field-error`       | the problem, rendered in the `role="status"` region; an atom with text **is** the field's error (marks the field invalid, blocks submission) and wins over the `error` property; the description is hidden while it has content |
 
-What the description and the error slots hold is the consumer's text; `error` is
-the property that also makes the field invalid. The atoms need no `slot`
-attribute inside a `bk-field`, which assigns them by tag name.
+What the description and the error slots hold is the consumer's text. A
+`bk-field-error` with text is the field's error, and `error` is the same channel
+written from JavaScript: the atom wins while it has text, and the property comes
+back when the atom's text goes. An atom with no text is not content — nothing is
+referenced and the field stays valid
+([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
+The atoms need no `slot` attribute inside a `bk-field`, which assigns them by
+tag name.
 
 ## Events
 
@@ -68,6 +73,7 @@ Inherited from `FormControlMixin`, the same surface a native control offers:
 | `checkValidity()`, `reportValidity()` | the platform validation calls                                                                                   |
 | `showValidationMessage()`             | marks the field touched, so the native message appears                                                          |
 | `fieldMessage`                        | the native message the field would show, or `''`                                                                |
+| `fieldError`                          | the message the field owns: the text of the `error` slot when it has any, otherwise `error`                     |
 | `fieldInvalid`                        | whether the message region is currently reporting a problem                                                     |
 | `submittedValue`                      | what `setFormValue` submits; `value` by default, overridden by `bk-checkbox` to submit only while it is checked |
 
@@ -77,12 +83,17 @@ its validity carries `customError`. A `required` field with no value reports
 
 ## The two channels
 
-The field shows one message at a time, from one of two sources:
+The field shows one message at a time, from one of three sources:
 
-| Source             | Produced by                                                   | Shows                                                |
-| ------------------ | ------------------------------------------------------------- | ---------------------------------------------------- |
-| native constraints | the browser: `required`, `type=email`, `pattern`, `minlength` | after the field is touched, or after a failed submit |
-| `error`            | the consumer, from a schema result or a rejection             | immediately, and it wins while it is set             |
+| Source                       | Produced by                                                   | Shows                                                   |
+| ---------------------------- | ------------------------------------------------------------- | ------------------------------------------------------- |
+| native constraints           | the browser: `required`, `type=email`, `pattern`, `minlength` | after the field is touched, or after a failed submit    |
+| `error`                      | the consumer, from a schema result or a rejection             | immediately, and it wins while it is set                |
+| a `bk-field-error` with text | the consumer, in markup                                       | immediately, and it wins over `error` while it has text |
+
+The atom outranks the property because markup is the more specific statement. A
+template that writes both had not decided, and the sentence the consumer left
+next to the control is the one that shows, announces and blocks.
 
 The native message is the browser's own, in the browser's locale.
 `showValidationMessage()` reports the native message explicitly, for the submits
@@ -111,9 +122,9 @@ async rule, or translate a message.
 The two regions always exist so screen readers announce an error when it
 appears: the description is hidden while the error has text, and an empty region
 is collapsed with `data-empty` instead of being removed, so it stays in the
-accessibility tree. The error region carries `data-state="error"` while it is
-showing either channel; the native message is a problem too, so it is painted as
-one.
+accessibility tree. The error region always carries `data-state="error"`, which
+names it as the region that paints a problem, whichever channel fills it; whether
+it holds a message is `data-empty`, not that attribute.
 
 ## Label state
 
@@ -169,6 +180,13 @@ values: theming the input means theming the roles, not the field.
   not marked. The error region is `role="status"` and stays in the accessibility
   tree while empty (visually collapsed instead of `display: none`), so an
   announcement is not lost when the text appears.
+- A slotted `bk-field-error` with text is the field's error
+  ([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)):
+  the same text is what the region shows, what `aria-invalid` marks and what
+  `customError` blocks the submit with, so the announcement and the form cannot
+  disagree. An empty atom is invisible to assistive technology — no reference and
+  no invalidity — and the control watches the text of the atom it was given, so an
+  edit to the node updates the validity without a re-assignment.
 - `autocomplete` and `inputMode` are forwarded, so a field can identify its
   purpose (WCAG 1.3.5).
 - The label colour is reinforcement, never the signal (WCAG 1.4.1): the border,

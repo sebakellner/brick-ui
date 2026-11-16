@@ -90,6 +90,28 @@ describe('bk-input composed field parts', () => {
     expect(innerInput(input).getAttribute('aria-describedby')).to.equal(null);
   });
 
+  it('should reference no error region while the slotted error atom has no text', async () => {
+    const el = await fixture<BkField>(html`
+      <bk-field>
+        <bk-input name="email">
+          <bk-field-label>Email</bk-field-label>
+          <bk-field-error></bk-field-error>
+        </bk-input>
+      </bk-field>
+    `);
+    await settle(el);
+    const input = el.querySelector('bk-input') as BkInput;
+    const id = innerInput(input).getAttribute('aria-describedby');
+
+    expect(id, 'an empty atom is not content, so nothing is referenced').to.equal(null);
+    expect(
+      Boolean(input.shadowRoot!.getElementById(id ?? '')),
+      'the reference resolves to no node at all',
+    ).to.equal(false);
+    expect(innerInput(input).getAttribute('aria-invalid'), 'and it is not an error').to.equal(null);
+    expect(input.checkValidity(), 'the field stays valid').to.equal(true);
+  });
+
   it('should keep the message region in the tree while it is empty', async () => {
     const el = await fixture<BkField>(html`
       <bk-field
