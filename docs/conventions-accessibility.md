@@ -96,8 +96,9 @@ and validity, so it participates in the surrounding `<form>` through the platfor
 being wrong about reset, about validity, and about submission order.
 
 **Enforced by.** The suite: every control participates through `ElementInternals`, and
-its own suite asserts the submit, the reset, the disabled state and the validity a
-surrounding `<form>` observes.
+its own suite asserts the submit, the reset and the disabled state a surrounding
+`<form>` observes — plus the validity, for the controls that carry a value (a button
+has none).
 
 ## A7. Never hide a live region from the accessibility tree
 
@@ -118,8 +119,9 @@ design value
 ([ADR 0004](adr/0004-forbid-style-literals-in-components.md)).
 
 **Enforced by.** The suite, for the part a test can see: the region keeps
-`role="status"`, stays connected while empty, and is collapsed rather than hidden
-(`bk-checkbox.test.ts`, `bk-input.test.ts`, `bk-field-error.test.ts`). Whether the
+`role="status"` while it is empty (`bk-checkbox.test.ts`, `bk-input.test.ts`), stays
+connected, and is collapsed rather than hidden (`bk-field-error.test.ts` proves the
+collapse; the `role` it carries is the atom's own). Whether the
 announcement actually reaches a screen reader is not assertable here — the suite runs
 in Chrome alone ([0005](adr/0005-test-in-chrome-only.md)) — so that half stays a review
 question.
