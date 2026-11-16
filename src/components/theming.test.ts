@@ -1,7 +1,7 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import './bk-button/define.js';
 import type { BkButton } from './bk-button/bk-button.js';
-import { loadTheme, setTheme } from '../test/helpers/theme.js';
+import { setTheme } from '../test/helpers/theme.js';
 
 const hex = (value: string) =>
   `rgb(${parseInt(value.slice(1, 3), 16)}, ${parseInt(value.slice(3, 5), 16)}, ${parseInt(
@@ -50,8 +50,6 @@ const DARK: Record<string, string> = {
 };
 
 describe('theming', () => {
-  before(() => loadTheme());
-
   afterEach(() => {
     probe?.remove();
     probe = undefined;

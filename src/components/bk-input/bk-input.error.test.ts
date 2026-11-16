@@ -1,7 +1,6 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import type { BkInput } from './bk-input.js';
-import { loadTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
 const innerError = (el: BkInput) => el.shadowRoot!.querySelector<HTMLElement>('[part="error"]')!;
@@ -34,8 +33,6 @@ const touch = async (el: BkInput) => {
 };
 
 describe('bk-input error model', () => {
-  before(loadTheme);
-
   it('should show the error instead of the native message when both exist', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>

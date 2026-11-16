@@ -1,12 +1,12 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { sendKeys } from '@web/test-runner-commands';
+import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
 import type { BkInput } from './bk-input.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
 import { hover, hoverCapable } from '../../test/helpers/pointer.js';
-import { loadTheme, setTheme } from '../../test/helpers/theme.js';
+import { setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkInput) => el.shadowRoot!.querySelector('label')!;
@@ -39,7 +39,9 @@ const opacityOf = async (value: string): Promise<string> => {
 };
 
 describe('bk-input', () => {
-  before(loadTheme);
+  afterEach(async () => {
+    await resetMouse();
+  });
 
   afterEach(() => {
     document.documentElement.style.removeProperty('--bk-font-weight-medium');
@@ -326,7 +328,7 @@ describe('bk-input', () => {
 
   for (const theme of ['light', 'dark'] as const) {
     it(`should keep the field border at 3:1 against its own surface (${theme})`, async () => {
-      await loadTheme(theme);
+      setTheme(theme);
       const el = await fixture<BkInput>(html`<bk-input>${labelAtom}</bk-input>`);
       const style = getComputedStyle(innerInput(el));
 

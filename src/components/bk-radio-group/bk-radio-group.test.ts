@@ -1,11 +1,11 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { sendKeys } from '@web/test-runner-commands';
+import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkRadioGroupItem } from './bk-radio-group-item.js';
 import type { BkRadioGroup } from './bk-radio-group.js';
 import { clickAt } from '../../test/helpers/pointer.js';
-import { loadTheme, setTheme } from '../../test/helpers/theme.js';
+import { setTheme } from '../../test/helpers/theme.js';
 
 const radios = (el: BkRadioGroup) =>
   Array.from(el.querySelectorAll<BkRadioGroupItem>('bk-radio-group-item'));
@@ -52,7 +52,9 @@ const threeRadios = html`
 `;
 
 describe('bk-radio-group', () => {
-  before(loadTheme);
+  afterEach(async () => {
+    await resetMouse();
+  });
 
   afterEach(() => {
     setTheme('light');

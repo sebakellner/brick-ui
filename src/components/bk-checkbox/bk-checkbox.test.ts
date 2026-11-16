@@ -1,12 +1,12 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
-import { sendKeys } from '@web/test-runner-commands';
+import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
 import type { BkCheckbox } from './bk-checkbox.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
-import { clickAt, hover, hoverCapable, pastTransition } from '../../test/helpers/pointer.js';
-import { loadTheme, setTheme } from '../../test/helpers/theme.js';
+import { clickAt, hover, hoverCapable } from '../../test/helpers/pointer.js';
+import { setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkCheckbox) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkCheckbox) => el.shadowRoot!.querySelector('label')!;
@@ -37,7 +37,9 @@ const opacityOf = async (value: string): Promise<string> => {
 };
 
 describe('bk-checkbox', () => {
-  before(loadTheme);
+  afterEach(async () => {
+    await resetMouse();
+  });
 
   afterEach(() => {
     document.documentElement.style.removeProperty('--bk-checkbox-size');
@@ -190,7 +192,6 @@ describe('bk-checkbox', () => {
 
     el.checked = true;
     await el.updateComplete;
-    await pastTransition();
 
     expect(getComputedStyle(innerBox(el)).backgroundColor).to.equal(
       await colorOf('var(--bk-bg-accent)'),
@@ -222,7 +223,6 @@ describe('bk-checkbox', () => {
 
   it('should paint a dash and not the check while it is mixed', async () => {
     const el = await fixture<BkCheckbox>(html`<bk-checkbox indeterminate></bk-checkbox>`);
-    await pastTransition();
 
     const box = getComputedStyle(innerBox(el));
     const mixed = getComputedStyle(innerBox(el), '::after');
@@ -240,7 +240,6 @@ describe('bk-checkbox', () => {
     el.indeterminate = false;
     el.checked = true;
     await el.updateComplete;
-    await pastTransition();
 
     const check = getComputedStyle(innerBox(el), '::after');
 
@@ -708,7 +707,7 @@ describe('bk-checkbox', () => {
 
   for (const theme of ['light', 'dark'] as const) {
     it(`should keep the box boundary at 3:1 against its own surface (${theme})`, async () => {
-      await loadTheme(theme);
+      setTheme(theme);
       const el = await fixture<BkCheckbox>(html`<bk-checkbox></bk-checkbox>`);
       const style = getComputedStyle(innerBox(el));
 
@@ -716,12 +715,11 @@ describe('bk-checkbox', () => {
     });
 
     it(`should keep the check at 3:1 against the checked box (${theme})`, async () => {
-      await loadTheme(theme);
+      setTheme(theme);
       const el = await fixture<BkCheckbox>(html`<bk-checkbox></bk-checkbox>`);
 
       el.checked = true;
       await el.updateComplete;
-      await pastTransition();
 
       const box = getComputedStyle(innerBox(el));
       const check = getComputedStyle(innerBox(el), '::after');
@@ -730,9 +728,8 @@ describe('bk-checkbox', () => {
     });
 
     it(`should keep the check at 3:1 against a disabled box (${theme})`, async () => {
-      await loadTheme(theme);
+      setTheme(theme);
       const el = await fixture<BkCheckbox>(html`<bk-checkbox checked disabled></bk-checkbox>`);
-      await pastTransition();
 
       const box = getComputedStyle(innerBox(el));
       const check = getComputedStyle(innerBox(el), '::after');
@@ -742,7 +739,7 @@ describe('bk-checkbox', () => {
     });
 
     it(`should put the focus ring on the box and keep it at 3:1 (${theme})`, async () => {
-      await loadTheme(theme);
+      setTheme(theme);
       const host = await fixture<HTMLElement>(html`
         <div>
           <button type="button">before</button>

@@ -1,9 +1,10 @@
+import { resetMouse } from '@web/test-runner-commands';
 import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkRadioGroupItem } from './bk-radio-group-item.js';
 import { clickAt, hover, hoverCapable } from '../../test/helpers/pointer.js';
-import { loadTheme, setTheme } from '../../test/helpers/theme.js';
+import { setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('label')!;
@@ -32,7 +33,9 @@ const opacityOf = async (value: string): Promise<string> => {
 };
 
 describe('bk-radio-group-item', () => {
-  before(loadTheme);
+  afterEach(async () => {
+    await resetMouse();
+  });
 
   afterEach(() => {
     document.documentElement.style.removeProperty('--bk-radio-group-item-size');

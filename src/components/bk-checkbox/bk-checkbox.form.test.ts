@@ -1,15 +1,13 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import type { BkCheckbox } from './bk-checkbox.js';
-import { loadTheme, setTheme } from '../../test/helpers/theme.js';
+import { setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkCheckbox) => el.shadowRoot!.querySelector('input')!;
 
 const formData = (form: HTMLFormElement) => new FormData(form);
 
 describe('bk-checkbox form participation', () => {
-  before(loadTheme);
-
   afterEach(() => {
     setTheme('light');
   });

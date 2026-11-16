@@ -2,7 +2,6 @@ import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkInput } from './bk-input.js';
-import { loadTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
 const innerError = (el: BkInput) => el.shadowRoot!.querySelector<HTMLElement>('[part="error"]')!;
@@ -15,8 +14,6 @@ const type = async (el: BkInput, value: string) => {
 };
 
 describe('bk-input form integration', () => {
-  before(loadTheme);
-
   describe('form participation', () => {
     it('should enter FormData under its name without a wrapper', async () => {
       const form = await fixture<HTMLFormElement>(

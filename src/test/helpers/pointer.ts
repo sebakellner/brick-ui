@@ -7,19 +7,13 @@ const centerOf = (element: Element): [number, number] => {
   return [Math.round(x + width / 2), Math.round(y + height / 2)];
 };
 
-/* Must stay above --bk-transition (120ms), or the sample lands on an interpolated colour. */
-export const pastTransition = async (): Promise<void> => {
-  await nextFrame();
-  await new Promise((resolve) => setTimeout(resolve, 250));
-};
-
 /* Headless Linux reports no hover-capable pointer, so a hover test there would assert
  * against rules whose media query never matches: it proves nothing, so it skips. */
 export const hoverCapable = (): boolean => matchMedia('(hover: hover)').matches;
 
 export const hover = async (element: Element): Promise<void> => {
   await sendMouse({ type: 'move', position: centerOf(element) });
-  await pastTransition();
+  await nextFrame();
 };
 
 export const clickAt = async (element: Element): Promise<void> => {
