@@ -2,6 +2,7 @@ import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import type { BkButton } from './bk-button.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
+import { hover, hoverCapable } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 import { sendKeys } from '@web/test-runner-commands';
 
@@ -26,6 +27,7 @@ describe('bk-button', () => {
       '--bk-text-default',
       '--bk-text-on-accent',
       '--bk-button-disabled-opacity',
+      '--bk-opacity-disabled',
       '--bk-font-weight-medium',
       'font-family',
     ]) {
@@ -128,6 +130,64 @@ describe('bk-button', () => {
     document.documentElement.style.setProperty('--bk-button-disabled-opacity', '0.25');
 
     expect(getComputedStyle(innerButton(button)).opacity).to.equal('0.25');
+  });
+
+  it('should default its disabled opacity to the base primitive', async () => {
+    const button = await mount();
+    button.disabled = true;
+    await button.updateComplete;
+
+    expect(
+      getComputedStyle(innerButton(button)).opacity,
+      'the hook holds no value of its own',
+    ).to.equal('0.5');
+  });
+
+  it('should follow the base primitive when a host moves it', async () => {
+    const button = await mount();
+    button.disabled = true;
+    await button.updateComplete;
+    document.documentElement.style.setProperty('--bk-opacity-disabled', '0.3');
+
+    expect(getComputedStyle(innerButton(button)).opacity).to.equal('0.3');
+  });
+
+  it('should change nothing under the pointer while the button is disabled', async function () {
+    if (!hoverCapable()) this.skip();
+
+    const host = await fixture<HTMLElement>(html`
+      <div>
+        <bk-button disabled>Save</bk-button>
+        <bk-button>Cancel</bk-button>
+      </div>
+    `);
+    const [button, enabled] = host.querySelectorAll<BkButton>('bk-button');
+    const inner = innerButton(button);
+    const enabledInner = innerButton(enabled);
+    const backgroundBefore = getComputedStyle(inner).backgroundColor;
+    const borderBefore = getComputedStyle(inner).borderTopColor;
+    const enabledBefore = getComputedStyle(enabledInner).backgroundColor;
+
+    await hover(enabledInner);
+
+    expect(
+      enabledInner.matches(':hover'),
+      'the pointer reaches an enabled button, so its hover rule runs in this browser',
+    ).to.equal(true);
+    expect(
+      getComputedStyle(enabledInner).backgroundColor,
+      'and it paints that button',
+    ).to.not.equal(enabledBefore);
+    expect(inner.matches(':hover'), 'and leaves the disabled button alone').to.equal(false);
+
+    await hover(inner);
+
+    expect(inner.matches(':hover'), 'the pointer is on the disabled button').to.equal(true);
+    expect(
+      getComputedStyle(inner).backgroundColor,
+      'a disabled button has no hover background',
+    ).to.equal(backgroundBefore);
+    expect(getComputedStyle(inner).borderTopColor, 'nor a hover border').to.equal(borderBefore);
   });
 
   it('should take the label colour from the on-accent role', async () => {

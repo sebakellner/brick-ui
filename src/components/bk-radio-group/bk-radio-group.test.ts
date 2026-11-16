@@ -1,9 +1,10 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { sendKeys, sendMouse } from '@web/test-runner-commands';
+import { sendKeys } from '@web/test-runner-commands';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkRadioGroupItem } from './bk-radio-group-item.js';
 import type { BkRadioGroup } from './bk-radio-group.js';
+import { clickAt } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const radios = (el: BkRadioGroup) =>
@@ -22,12 +23,10 @@ const describedNode = (el: BkRadioGroup): Element | null => {
   return id ? document.getElementById(id) : null;
 };
 
-const click = async (element: Element) => {
-  const { x, y, width, height } = element.getBoundingClientRect();
-  await sendMouse({
-    type: 'click',
-    position: [Math.round(x + width / 2), Math.round(y + height / 2)],
-  });
+const opacityOf = async (value: string): Promise<string> => {
+  const probe = await fixture<HTMLElement>(html`<span style="opacity: ${value}"></span>`);
+
+  return getComputedStyle(probe).opacity;
 };
 
 const settle = async (el: BkRadioGroup) => {
@@ -132,7 +131,7 @@ describe('bk-radio-group', () => {
     await settle(el);
     const [small, medium] = radios(el);
 
-    await click(box(medium));
+    await clickAt(box(medium));
     await settle(el);
 
     expect(el.value).to.equal('m');
@@ -140,7 +139,7 @@ describe('bk-radio-group', () => {
     expect(innerInput(medium).checked, 'and so is its inner input').to.equal(true);
     expect(small.checked).to.equal(false);
 
-    await click(box(small));
+    await clickAt(box(small));
     await settle(el);
 
     expect(el.value).to.equal('s');
@@ -178,7 +177,7 @@ describe('bk-radio-group', () => {
     expect(new FormData(form).get('size'), 'an unselected group submits nothing').to.equal(null);
     expect(new FormData(form).get('other')).to.equal(null);
 
-    await click(box(radios(second)[0]));
+    await clickAt(box(radios(second)[0]));
     await settle(second);
 
     expect(new FormData(form).get('other')).to.equal('x');
@@ -227,7 +226,7 @@ describe('bk-radio-group', () => {
     expect(describedNode(el) === error, 'and it is what the host points at').to.equal(true);
     expect(el.getAttribute('aria-invalid')).to.equal('true');
 
-    await click(box(radios(el)[0]));
+    await clickAt(box(radios(el)[0]));
     await settle(el);
 
     expect(el.validity.valueMissing, 'a selection satisfies the constraint').to.equal(false);
@@ -334,7 +333,7 @@ describe('bk-radio-group', () => {
     expect(tabIndex(medium), 'nothing selected, so the first enabled radio').to.equal('0');
     expect(tabIndex(large)).to.equal('-1');
 
-    await click(box(large));
+    await clickAt(box(large));
     await settle(el);
 
     expect(tabIndex(large), 'the selection takes the tab stop with it').to.equal('0');
@@ -368,7 +367,7 @@ describe('bk-radio-group', () => {
     await settle(el);
     const [small, medium, large] = radios(el);
 
-    await click(box(medium));
+    await clickAt(box(medium));
     await settle(el);
 
     expect(new FormData(form).get('size')).to.equal('m');
@@ -417,6 +416,36 @@ describe('bk-radio-group', () => {
     ).to.equal(null);
   });
 
+  it('should dim its own label row once while the group is disabled', async () => {
+    const el = await fixture<BkRadioGroup>(html`
+      <bk-radio-group name="size">
+        <bk-field-label>Size</bk-field-label>
+        <bk-radio-group-item value="s"
+          ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+        >
+      </bk-radio-group>
+    `);
+    await settle(el);
+    const row = el.shadowRoot!.querySelector<HTMLElement>('[part="label"]')!;
+
+    expect(getComputedStyle(row).opacity, 'an enabled group paints the row fully').to.equal('1');
+
+    el.disabled = true;
+    await settle(el);
+
+    expect(getComputedStyle(row).opacity, 'the group label dims with the primitive').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
+    expect(
+      getComputedStyle(el.querySelector('bk-field-label')!).opacity,
+      'the hosted atom is dimmed by its row, not a second time on its own',
+    ).to.equal('1');
+    expect(
+      getComputedStyle(radios(el)[0].shadowRoot!.querySelector('label')!).opacity,
+      'and each radio row dims on its own',
+    ).to.equal(await opacityOf('var(--bk-opacity-disabled)'));
+  });
+
   it('should return the selection to the radio whose markup carried checked on reset', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
@@ -443,7 +472,7 @@ describe('bk-radio-group', () => {
     expect(innerInput(medium).checked).to.equal(true);
     expect(tabIndex(medium)).to.equal('0');
 
-    await click(box(large));
+    await clickAt(box(large));
     await settle(el);
     el.error = 'Pick a size.';
     await settle(el);

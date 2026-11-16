@@ -110,14 +110,14 @@ async rule, or translate a message.
 
 ## Parts
 
-| Part          | Element                                                                    |
-| ------------- | -------------------------------------------------------------------------- |
-| `label`       | the `<label>`, carrying `data-state` when the field is invalid or disabled |
-| `input`       | the native `<input>`                                                       |
-| `required`    | the `*` that marks a required field, `aria-hidden`                         |
-| `message`     | the container of the two regions                                           |
-| `description` | the help region                                                            |
-| `error`       | the error region, `role="status"`                                          |
+| Part          | Element                                                                                                              |
+| ------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `label`       | the `<label>`, carrying `data-state` when the field is invalid or disabled, and `data-disabled` while it is disabled |
+| `input`       | the native `<input>`                                                                                                 |
+| `required`    | the `*` that marks a required field, `aria-hidden`                                                                   |
+| `message`     | the container of the two regions                                                                                     |
+| `description` | the help region                                                                                                      |
+| `error`       | the error region, `role="status"`                                                                                    |
 
 The two regions always exist so screen readers announce an error when it
 appears: the description is hidden while the error has text, and an empty region
@@ -131,15 +131,23 @@ it holds a message is `data-empty`, not that attribute.
 The control writes its state on its own label — this `<label>`, and a
 `bk-field-label` hosted through the `label` slot — as `data-state`:
 
-| Value      | When                                               | Paints             |
-| ---------- | -------------------------------------------------- | ------------------ |
-| `invalid`  | `error` is set, or the native message is showing   | `--bk-text-danger` |
-| `disabled` | `disabled`, or the field is inside a disabled form | `--bk-text-muted`  |
+| Value      | When                                               | Paints                  |
+| ---------- | -------------------------------------------------- | ----------------------- |
+| `invalid`  | `error` is set, or the native message is showing   | `--bk-text-danger`      |
+| `disabled` | `disabled`, or the field is inside a disabled form | `--bk-opacity-disabled` |
 
-The two never both apply: an invalid field is painted as invalid even when it is
-also disabled, because a broken field still needs a fix. A label with no state
-keeps `--bk-text-default`, and a standalone `bk-field-label` paints the same way
-from its own `data-state`.
+A field that is both is painted with the danger colour and still dimmed: the
+colour is the state's and the dim is the fact's. `data-state` carries one value
+and `invalid` wins it, so the label also carries `data-disabled` while the field
+is unavailable, and the dim is read from that. The field itself takes the same
+opacity through `:disabled`.
+
+A label with no state keeps `--bk-text-default`, and a standalone
+`bk-field-label` paints the same way from its own `data-state`.
+
+The dim is applied where the state is: the label row and the `<input>` each take
+it once, and a `bk-field-label` hosted through the `label` slot is dimmed by the
+row it sits in, not a second time on its own.
 
 A `required` field marks its label with a `*` (`part="required"`,
 `aria-hidden="true"`) in `--bk-text-danger`, the same role as the error text. It
@@ -149,22 +157,22 @@ the only signal — the native `required` attribute is what announces the state.
 
 ## Tokens
 
-| Token                                                                                                        | Paints                                       |
-| ------------------------------------------------------------------------------------------------------------ | -------------------------------------------- |
-| `--bk-input-radius`                                                                                          | corner radius (defaults to `--bk-radius-md`) |
-| `--bk-bg-surface`                                                                                            | field surface                                |
-| `--bk-border-default`                                                                                        | field border                                 |
-| `--bk-border-strong`                                                                                         | border on hover                              |
-| `--bk-border-danger`                                                                                         | border on error                              |
-| `--bk-text-default`                                                                                          | input text and label                         |
-| `--bk-text-danger`                                                                                           | message on error, label while invalid, `*`   |
-| `--bk-text-muted`                                                                                            | placeholder, message, disabled label         |
-| `--bk-bg-surface-muted`                                                                                      | background when disabled                     |
-| `--bk-border-width`                                                                                          | border width                                 |
-| `--bk-control-height`, `--bk-space-1`, `--bk-space-2`, `--bk-space-3`                                        | height, padding and the gap under the label  |
-| `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-size-md`, `--bk-line-height-md`, `--bk-font-weight-medium` | typography                                   |
-| `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset`                                         | focus ring                                   |
-| `--bk-transition`                                                                                            | border transition                            |
+| Token                                                                                                        | Paints                                         |
+| ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| `--bk-input-radius`                                                                                          | corner radius (defaults to `--bk-radius-md`)   |
+| `--bk-bg-surface`                                                                                            | field surface                                  |
+| `--bk-border-default`                                                                                        | field border                                   |
+| `--bk-border-strong`                                                                                         | border on hover                                |
+| `--bk-border-danger`                                                                                         | border on error                                |
+| `--bk-text-default`                                                                                          | input text and label                           |
+| `--bk-text-danger`                                                                                           | message on error, label while invalid, `*`     |
+| `--bk-text-muted`                                                                                            | placeholder, message, the value while disabled |
+| `--bk-opacity-disabled`                                                                                      | the field and its label row while disabled     |
+| `--bk-border-width`                                                                                          | border width                                   |
+| `--bk-control-height`, `--bk-space-1`, `--bk-space-2`, `--bk-space-3`                                        | height, padding and the gap under the label    |
+| `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-size-md`, `--bk-line-height-md`, `--bk-font-weight-medium` | typography                                     |
+| `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset`                                         | focus ring                                     |
+| `--bk-transition`                                                                                            | border transition                              |
 
 `--bk-input-radius` is the only override hook. The rest are shared roles or base
 values: theming the input means theming the roles, not the field.

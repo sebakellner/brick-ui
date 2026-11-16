@@ -64,7 +64,9 @@ The control tier is gone. The sixteen tokens removed were
 `input.{bg,color,label-color,border-color}`; their values now live in
 `text-default`, `border-default`, `bg-surface*` and `bg-accent*`.
 `--bk-button-disabled-opacity` is the only component token left, because opacity
-is not a color.
+is not a color. It holds no value of its own: it defaults to the base primitive
+`{opacity.disabled}`, so a disabled control has one default and one place to
+override it.
 
 **Do**
 
@@ -131,7 +133,7 @@ reviewer reading forty correct declarations does not notice the forty-first.
 ## R6. A component reads a role for colour and a primitive for everything else
 
 **Rule.** A component never reads `--bk-palette-*`. It reads space, radius,
-typography and the structural primitives directly.
+typography, opacity and the structural primitives directly.
 
 **Why.** A role exists where one name must resolve to different values in
 different contexts. Colour has two themes; spacing has one. Reaching for the ramp

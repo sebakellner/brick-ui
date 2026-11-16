@@ -1,10 +1,11 @@
-import { expect, fixture, html, nextFrame } from '@open-wc/testing';
-import { sendKeys, sendMouse } from '@web/test-runner-commands';
+import { expect, fixture, html } from '@open-wc/testing';
+import { sendKeys } from '@web/test-runner-commands';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkFieldLabel } from '../bk-field/bk-field-label.js';
 import type { BkInput } from './bk-input.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
+import { hover, hoverCapable } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
@@ -29,6 +30,12 @@ const colorOf = async (value: string): Promise<string> => {
   const probe = await fixture<HTMLElement>(html`<span style="color: ${value}"></span>`);
 
   return getComputedStyle(probe).color;
+};
+
+const opacityOf = async (value: string): Promise<string> => {
+  const probe = await fixture<HTMLElement>(html`<span style="opacity: ${value}"></span>`);
+
+  return getComputedStyle(probe).opacity;
 };
 
 describe('bk-input', () => {
@@ -121,14 +128,19 @@ describe('bk-input', () => {
     expect(getComputedStyle(innerLabel(el)).color).to.equal('rgb(3, 3, 3)');
   });
 
-  it('should take the disabled field from the muted roles', async () => {
+  it('should take the disabled value from the muted role and keep the surface role', async () => {
     const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
     el.style.setProperty('--bk-bg-surface-muted', 'rgb(4, 4, 4)');
     el.style.setProperty('--bk-text-muted', 'rgb(5, 5, 5)');
     const style = getComputedStyle(innerInput(el));
 
-    expect(style.backgroundColor).to.equal('rgb(4, 4, 4)');
-    expect(style.color).to.equal('rgb(5, 5, 5)');
+    expect(style.color, 'the disabled value reads the muted role').to.equal('rgb(5, 5, 5)');
+    expect(style.backgroundColor, 'the surface is not repainted, muted or otherwise').to.equal(
+      await colorOf('var(--bk-bg-surface)'),
+    );
+    expect(style.opacity, 'the one dim is the disabled opacity').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
   });
 
   it('should take the error border and message from the danger roles', async () => {
@@ -140,16 +152,31 @@ describe('bk-input', () => {
     expect(getComputedStyle(innerError(el)).color).to.equal('rgb(7, 7, 7)');
   });
 
-  it('should keep the danger border while the invalid field is hovered', async () => {
-    const el = await fixture<BkInput>(html`<bk-input error="Required">${labelAtom}</bk-input>`);
-    const field = innerInput(el);
-    const { x, y, width, height } = field.getBoundingClientRect();
-    await sendMouse({
-      type: 'move',
-      position: [Math.round(x + width / 2), Math.round(y + height / 2)],
-    });
-    await nextFrame();
-    await new Promise((resolve) => setTimeout(resolve, 250));
+  it('should keep the danger border while the invalid field is hovered', async function () {
+    if (!hoverCapable()) this.skip();
+
+    const host = await fixture<HTMLElement>(html`
+      <div>
+        <bk-input error="Required">${labelAtom}</bk-input>
+        <bk-input>${labelAtom}</bk-input>
+      </div>
+    `);
+    const [invalid, enabled] = host.querySelectorAll<BkInput>('bk-input');
+    const field = innerInput(invalid);
+    const enabledField = innerInput(enabled);
+    const enabledBefore = getComputedStyle(enabledField).borderTopColor;
+
+    await hover(enabledField);
+
+    expect(
+      enabledField.matches(':hover'),
+      'the pointer reaches an enabled field, so its hover rule runs in this browser',
+    ).to.equal(true);
+    expect(getComputedStyle(enabledField).borderTopColor, 'and it paints that field').to.not.equal(
+      enabledBefore,
+    );
+
+    await hover(field);
 
     expect(field.matches(':hover')).to.equal(true);
     expect(getComputedStyle(field).borderTopColor).to.equal('rgb(185, 28, 28)');
@@ -250,6 +277,53 @@ describe('bk-input', () => {
     expect(el.value).to.equal('a@b.c');
   });
 
+  it('should change nothing under the pointer while the field is disabled', async function () {
+    if (!hoverCapable()) this.skip();
+
+    const host = await fixture<HTMLElement>(html`
+      <div>
+        <bk-input disabled>${labelAtom}</bk-input>
+        <bk-input>${labelAtom}</bk-input>
+      </div>
+    `);
+    const [disabled, enabled] = host.querySelectorAll<BkInput>('bk-input');
+    const field = innerInput(disabled);
+    const enabledField = innerInput(enabled);
+    const borderBefore = getComputedStyle(field).borderTopColor;
+    const backgroundBefore = getComputedStyle(field).backgroundColor;
+    const enabledBefore = getComputedStyle(enabledField).borderTopColor;
+
+    await hover(enabledField);
+
+    expect(
+      enabledField.matches(':hover'),
+      'the pointer reaches an enabled field, so its hover rule runs in this browser',
+    ).to.equal(true);
+    expect(getComputedStyle(enabledField).borderTopColor, 'and it paints that field').to.not.equal(
+      enabledBefore,
+    );
+    expect(field.matches(':hover'), 'and leaves the disabled field alone').to.equal(false);
+
+    await hover(field);
+
+    expect(field.matches(':hover'), 'the pointer is on the disabled field').to.equal(true);
+    expect(getComputedStyle(field).borderTopColor, 'a disabled field has no hover border').to.equal(
+      borderBefore,
+    );
+    expect(
+      getComputedStyle(field).backgroundColor,
+      'a disabled field has no hover background',
+    ).to.equal(backgroundBefore);
+  });
+
+  it('should take the disabled opacity from the shared primitive', async () => {
+    const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
+    el.style.setProperty('--bk-opacity-disabled', '0.25');
+
+    expect(getComputedStyle(innerInput(el)).opacity, 'the control dims').to.equal('0.25');
+    expect(getComputedStyle(innerLabel(el)).opacity, 'the label row dims').to.equal('0.25');
+  });
+
   for (const theme of ['light', 'dark'] as const) {
     it(`should keep the field border at 3:1 against its own surface (${theme})`, async () => {
       await loadTheme(theme);
@@ -339,10 +413,16 @@ describe('bk-input', () => {
     expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
   });
 
-  it('should paint the label muted while the field is disabled', async () => {
+  it('should dim the label while the field is disabled, keeping its text role', async () => {
     const el = await fixture<BkInput>(html`<bk-input disabled>${labelAtom}</bk-input>`);
 
-    expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-muted)'));
+    expect(
+      getComputedStyle(innerLabel(el)).color,
+      'the label keeps the default text role',
+    ).to.equal(await colorOf('var(--bk-text-default)'));
+    expect(getComputedStyle(innerLabel(el)).opacity, 'the row carries the dim').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
   });
 
   it('should let invalid win over disabled on the label', async () => {
@@ -351,6 +431,27 @@ describe('bk-input', () => {
     );
 
     expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
+  });
+
+  it('should still dim a field that is both disabled and invalid', async () => {
+    const el = await fixture<BkInput>(
+      html`<bk-input error="Required" disabled>${labelAtom}</bk-input>`,
+    );
+    const label = innerLabel(el);
+
+    expect(label.getAttribute('data-state'), 'invalid wins the state attribute').to.equal(
+      'invalid',
+    );
+    expect(
+      label.hasAttribute('data-disabled'),
+      'the dim keys off disabled, which the state precedence cannot take away',
+    ).to.equal(true);
+    expect(getComputedStyle(label).opacity, 'the label row still dims').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
+    expect(getComputedStyle(innerInput(el)).opacity, 'and so does the control').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
   });
 
   it('should paint a hosted label atom with the field state', async () => {
@@ -362,13 +463,21 @@ describe('bk-input', () => {
     expect(getComputedStyle(atom).color).to.equal(await colorOf('var(--bk-text-danger)'));
   });
 
-  it('should paint a hosted label atom muted while the field is disabled', async () => {
+  it('should leave a hosted label atom undimmed while the field is disabled', async () => {
     const el = await fixture<BkInput>(html`
       <bk-input disabled><bk-field-label slot="label">Email</bk-field-label></bk-input>
     `);
     const atom = el.querySelector<BkFieldLabel>('bk-field-label')!;
 
-    expect(getComputedStyle(atom).color).to.equal(await colorOf('var(--bk-text-muted)'));
+    expect(getComputedStyle(atom).color, 'the atom keeps the default text role').to.equal(
+      await colorOf('var(--bk-text-default)'),
+    );
+    expect(getComputedStyle(atom).opacity, 'the atom is not dimmed on top of its row').to.equal(
+      '1',
+    );
+    expect(getComputedStyle(innerLabel(el)).opacity, 'the row owns the one dim').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
   });
 
   it('should leave a standalone label atom unpainted', async () => {

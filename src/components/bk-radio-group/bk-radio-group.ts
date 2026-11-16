@@ -53,7 +53,12 @@ export class BkRadioGroup extends FieldControlMixin(LitElement) {
 
   override render() {
     return html`
-      <div class="label" part="label" ?hidden=${!this.fieldParts.labelled}>
+      <div
+        class="label"
+        part="label"
+        ?data-disabled=${this.fieldDisabled}
+        ?hidden=${!this.fieldParts.labelled}
+      >
         <slot name="label" @slotchange=${this.handleSlotChange}></slot>
         ${this.fieldParts.glyph}
       </div>

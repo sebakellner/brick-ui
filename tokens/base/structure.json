@@ -13,5 +13,10 @@
   },
   "focus-ring-offset": {
     "value": "1px"
+  },
+  "opacity": {
+    "disabled": {
+      "value": "0.5"
+    }
   }
 }

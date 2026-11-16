@@ -4,12 +4,13 @@ Rules for the TypeScript, the stylesheets and the tooling. Token rules are in
 [conventions-tokens.md](conventions-tokens.md); testing is in
 [conventions-testing.md](conventions-testing.md).
 
-| #   | Rule                                                     | Enforced by      |
-| --- | -------------------------------------------------------- | ---------------- |
-| C1  | Imports of local modules carry `.js`                     | `pnpm typecheck` |
-| C2  | No comments in CSS                                       | review           |
-| C3  | `strict`, `noUnusedLocals`, `noUnusedParameters` stay on | `pnpm typecheck` |
-| C4  | Token names in component styles stay plain CSS strings   | review           |
+| #   | Rule                                                                         | Enforced by      |
+| --- | ---------------------------------------------------------------------------- | ---------------- |
+| C1  | Imports of local modules carry `.js`                                         | `pnpm typecheck` |
+| C2  | No comments in CSS                                                           | review           |
+| C3  | `strict`, `noUnusedLocals`, `noUnusedParameters` stay on                     | `pnpm typecheck` |
+| C4  | Token names in component styles stay plain CSS strings                       | review           |
+| C5  | A disabled control keeps its muted text, loses its hover and carries one dim | review           |
 
 ## C1. Imports of local modules carry `.js`
 
@@ -96,3 +97,67 @@ background: css`
 
 **Enforced by.** Review — and `check:tokens` covers the failure this would
 otherwise catch.
+
+## C5. A disabled control keeps its muted text, loses its hover and carries one dim
+
+**Rule.** A disabled control is drawn with `opacity: var(--bk-opacity-disabled)`
+and has no hover state: every hover rule is guarded by the disabled condition, so
+pointing at an unavailable control changes nothing. Its value text reads
+`--bk-text-muted`, the role the placeholder already reads, so a filled field does
+not read as an empty one. The surface is **not** repainted: a disabled field keeps
+`--bk-bg-surface`.
+
+The dim speaks for the availability, the muted text role speaks for the content,
+and neither repaints the surface. The dim is written once, at the container that
+owns the state — the control's own row, never the row and the label inside it. A
+message region (`bk-field-description`, `bk-field-error`, the `message` part) is
+never dimmed. A component hook may default to the primitive, but never repeats
+its value.
+
+The dim keys off the fact `disabled`, not off the painted state. `data-state`
+carries one value and `invalid` wins it, so a control that owns a dim writes
+`data-disabled` beside `data-state` and dims on that; the muted role paints the
+value text, never the whole unavailable control.
+
+**Why.** WCAG exempts inactive components from its contrast minimums (1.4.3,
+1.4.11), so a dim is an honest "unavailable" rather than a contrast failure. But
+the dim does not inherit safely: opacity on the row and opacity on the label
+inside it compose, and two 0.5s draw the text at 0.25. Two names for one value
+drift the same way — the first retune leaves one of them behind. The muted
+surface, by contrast, is the empty field's surface: painting it under a disabled
+value makes a filled field look unfilled, which is why the text carries the
+signal instead.
+
+**Do** — muted text, one dim, on the element that owns the state, plus a guarded
+hover:
+
+```css
+.control:disabled {
+  cursor: not-allowed;
+  color: var(--bk-text-muted);
+  opacity: var(--bk-opacity-disabled);
+}
+
+.control:hover:not(:disabled):not([aria-invalid='true']) {
+  border-color: var(--bk-border-strong);
+}
+```
+
+**Don't** — dim the row and the label inside it, or repaint the surface of the
+disabled control with the muted one:
+
+```css
+.field[data-state='disabled'] {
+  background: var(--bk-bg-surface-muted);
+}
+
+.field[data-state='disabled'] .label {
+  opacity: 0.5;
+}
+```
+
+**Enforced by.** Review. The tests assert the computed opacity against the token,
+the value's colour against the muted role, the background against the surface
+role, and that hovering a disabled control leaves its border and background where
+they were — with a hovered enabled sibling as the positive control, so the
+assertion cannot pass in a browser that never applies the hover rule.

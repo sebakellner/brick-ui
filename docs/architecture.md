@@ -59,7 +59,7 @@ tokens/component/      what one component paints, one file per component
 src/components/bk-*/   element, stories, Storybook docs page, test, README
 src/styles/theme.css   imports the generated token files; the consumer entry point
 src/index.ts           public entry point
-src/test/helpers/      loadTheme, contrast assertions
+src/test/helpers/      loadTheme, contrast assertions, the pointer helpers (hover, clickAt, pastTransition)
 scripts/               check-token-usage.mjs
 ```
 

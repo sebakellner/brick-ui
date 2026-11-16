@@ -26,8 +26,8 @@ export const formControlStyles = css`
     color: var(--bk-text-danger);
   }
 
-  .label[data-state='disabled'] {
-    color: var(--bk-text-muted);
+  .label[data-disabled] {
+    opacity: var(--bk-opacity-disabled);
   }
 
   slot[name='label']::slotted(*) {
@@ -73,7 +73,7 @@ export const formControlStyles = css`
   .control:disabled {
     cursor: not-allowed;
     color: var(--bk-text-muted);
-    background: var(--bk-bg-surface-muted);
+    opacity: var(--bk-opacity-disabled);
   }
 
   .control[aria-invalid='true'] {

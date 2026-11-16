@@ -77,15 +77,15 @@ document.querySelector('bk-checkbox').addEventListener('bk-change', (event) => {
 
 ## Parts
 
-| Part          | Element                                                         |
-| ------------- | --------------------------------------------------------------- |
-| `label`       | the `<label>` row: the box and the label, carrying `data-state` |
-| `input`       | the native `<input type="checkbox">`                            |
-| `box`         | the painted square                                              |
-| `required`    | the `*` that marks a required box, `aria-hidden`                |
-| `message`     | the container of the two message regions                        |
-| `description` | the help region                                                 |
-| `error`       | the error region, `role="status"`                               |
+| Part          | Element                                                                             |
+| ------------- | ----------------------------------------------------------------------------------- |
+| `label`       | the `<label>` row: the box and the label, carrying `data-state` and `data-disabled` |
+| `input`       | the native `<input type="checkbox">`                                                |
+| `box`         | the painted square                                                                  |
+| `required`    | the `*` that marks a required box, `aria-hidden`                                    |
+| `message`     | the container of the two message regions                                            |
+| `description` | the help region                                                                     |
+| `error`       | the error region, `role="status"`                                                   |
 
 Both message regions always exist so screen readers announce an error when it
 appears. The description is hidden while the error has text, and an empty region
@@ -103,15 +103,21 @@ layout, so no `orientation` decides it and the field never reaches into it.
 The control writes its state on its own label row — this `<label>`, and a
 `bk-field-label` hosted through the `label` slot — as `data-state`:
 
-| Value      | When                                               | Paints             |
-| ---------- | -------------------------------------------------- | ------------------ |
-| `invalid`  | `error` is set, or the native message is showing   | `--bk-text-danger` |
-| `disabled` | `disabled`, or the field is inside a disabled form | `--bk-text-muted`  |
+| Value      | When                                               | Paints                  |
+| ---------- | -------------------------------------------------- | ----------------------- |
+| `invalid`  | `error` is set, or the native message is showing   | `--bk-text-danger`      |
+| `disabled` | `disabled`, or the field is inside a disabled form | `--bk-opacity-disabled` |
 
-The two never both apply: an invalid box is painted as invalid even when it is
-also disabled, because a broken field still needs a fix. A label with no state
-keeps `--bk-text-default`, and a standalone `bk-field-label` paints the same way
-from its own `data-state`.
+A box that is both is painted with the danger colour and still dimmed: the colour
+is the state's and the dim is the fact's. `data-state` carries one value and
+`invalid` wins it, so the row also carries `data-disabled` while the box is
+unavailable, and both the row and the box are dimmed from that.
+
+A label with no state keeps `--bk-text-default`, and a standalone
+`bk-field-label` paints the same way from its own `data-state`. The row is the
+one container that dims: the box and the label inside it are not dimmed twice,
+and a `bk-field-label` hosted through the `label` slot is dimmed by the row it
+sits in.
 
 A `required` box marks its label with a `*` (`part="required"`,
 `aria-hidden="true"`) in `--bk-text-danger`, the same role as the error text. It
@@ -128,7 +134,10 @@ the state.
 | `--bk-checkbox-radius` | corner radius (defaults to `--bk-radius-sm`)             |
 
 Everything else the box paints is a shared role or base token: theming the
-checkbox means theming the roles, not the field.
+checkbox means theming the roles, not the field. The disabled dim is the base
+primitive `--bk-opacity-disabled`, which the box does not wrap in a hook of its
+own, and a disabled row keeps the box surface and the default text role instead
+of the muted ones.
 
 `--bk-checkbox-variant-size` and `--bk-checkbox-variant-radius` are the internal
 defaults the two hooks fall back to, so an override set on an ancestor still

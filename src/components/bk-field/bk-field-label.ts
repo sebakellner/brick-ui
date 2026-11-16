@@ -14,10 +14,6 @@ export class BkFieldLabel extends LitElement {
     :host([data-state='invalid']) {
       color: var(--bk-text-danger);
     }
-
-    :host([data-state='disabled']) {
-      color: var(--bk-text-muted);
-    }
   `;
 
   override connectedCallback(): void {

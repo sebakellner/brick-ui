@@ -1,8 +1,8 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { sendMouse } from '@web/test-runner-commands';
 import './define.js';
 import '../bk-field/define.js';
 import type { BkRadioGroupItem } from './bk-radio-group-item.js';
+import { clickAt, hover, hoverCapable } from '../../test/helpers/pointer.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
 const innerInput = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('input')!;
@@ -10,15 +10,19 @@ const innerLabel = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('label
 const innerBox = (el: BkRadioGroupItem) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
 
-const clickAt = async (element: Element) => {
-  const { x, y, width, height } = element.getBoundingClientRect();
-  await sendMouse({
-    type: 'click',
-    position: [Math.round(x + width / 2), Math.round(y + height / 2)],
-  });
+const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
+
+const colorOf = async (value: string): Promise<string> => {
+  const probe = await fixture<HTMLElement>(html`<span style="color: ${value}"></span>`);
+
+  return getComputedStyle(probe).color;
 };
 
-const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
+const opacityOf = async (value: string): Promise<string> => {
+  const probe = await fixture<HTMLElement>(html`<span style="opacity: ${value}"></span>`);
+
+  return getComputedStyle(probe).opacity;
+};
 
 describe('bk-radio-group-item', () => {
   before(loadTheme);
@@ -123,6 +127,93 @@ describe('bk-radio-group-item', () => {
 
     el.focus();
     expect(el.shadowRoot!.activeElement === input).to.equal(true);
+  });
+
+  it('should dim the row of a disabled radio and leave the box surface alone', async () => {
+    const el = await fixture<BkRadioGroupItem>(
+      html`<bk-radio-group-item disabled>${labelAtom}</bk-radio-group-item>`,
+    );
+
+    expect(
+      getComputedStyle(innerBox(el)).backgroundColor,
+      'the box keeps the surface role',
+    ).to.equal(await colorOf('var(--bk-bg-surface)'));
+    expect(
+      innerLabel(el).hasAttribute('data-disabled'),
+      'the row states that it is disabled',
+    ).to.equal(true);
+    expect(getComputedStyle(innerLabel(el)).opacity, 'the row carries the dim').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
+  });
+
+  it('should keep the box border strong while an enabled radio is hovered', async function () {
+    if (!hoverCapable()) this.skip();
+
+    const el = await fixture<BkRadioGroupItem>(
+      html`<bk-radio-group-item>${labelAtom}</bk-radio-group-item>`,
+    );
+    const box = innerBox(el);
+
+    expect(getComputedStyle(box).borderTopColor).to.equal(
+      await colorOf('var(--bk-border-default)'),
+    );
+
+    await hover(innerLabel(el));
+
+    expect(innerLabel(el).matches(':hover'), 'the pointer reaches the field').to.equal(true);
+    expect(getComputedStyle(box).borderTopColor).to.equal(await colorOf('var(--bk-border-strong)'));
+  });
+
+  it('should change nothing under the pointer while the radio is disabled', async function () {
+    if (!hoverCapable()) this.skip();
+
+    const host = await fixture<HTMLElement>(html`
+      <div>
+        <bk-radio-group-item disabled>${labelAtom}</bk-radio-group-item>
+        <bk-radio-group-item>${labelAtom}</bk-radio-group-item>
+      </div>
+    `);
+    const [disabled, enabled] = host.querySelectorAll<BkRadioGroupItem>('bk-radio-group-item');
+    const box = innerBox(disabled);
+    const enabledBox = innerBox(enabled);
+    const borderBefore = getComputedStyle(box).borderTopColor;
+    const backgroundBefore = getComputedStyle(box).backgroundColor;
+    const enabledBefore = getComputedStyle(enabledBox).borderTopColor;
+
+    await hover(innerLabel(enabled));
+
+    expect(
+      innerLabel(enabled).matches(':hover'),
+      'the pointer reaches an enabled field, so its hover rule runs in this browser',
+    ).to.equal(true);
+    expect(getComputedStyle(enabledBox).borderTopColor, 'and it paints that box').to.not.equal(
+      enabledBefore,
+    );
+    expect(innerLabel(disabled).matches(':hover'), 'and leaves the disabled box alone').to.equal(
+      false,
+    );
+
+    await hover(innerLabel(disabled));
+
+    expect(innerLabel(disabled).matches(':hover'), 'the pointer is on the disabled row').to.equal(
+      true,
+    );
+    expect(getComputedStyle(box).borderTopColor, 'a disabled radio has no hover border').to.equal(
+      borderBefore,
+    );
+    expect(getComputedStyle(box).backgroundColor, 'nor a hover background').to.equal(
+      backgroundBefore,
+    );
+  });
+
+  it('should take the disabled opacity from the shared primitive', async () => {
+    const el = await fixture<BkRadioGroupItem>(
+      html`<bk-radio-group-item disabled>${labelAtom}</bk-radio-group-item>`,
+    );
+    el.style.setProperty('--bk-opacity-disabled', '0.25');
+
+    expect(getComputedStyle(innerLabel(el)).opacity).to.equal('0.25');
   });
 
   it('should move the inner tab stop with the tabStop property alone', async () => {
