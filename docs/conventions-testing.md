@@ -1,12 +1,21 @@
 # Testing Conventions
 
 The suite runs in real Chrome through Web Test Runner. `web-test-runner.config.mjs`
-picks up `src/**/*.test.ts`, keeps tests next to the element, and registers the
-`sendMouse` plugin that the hover and focus tests need. One engine is a decision,
-not an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
+picks up `src/**/*.test.ts`: a component's rule suites live next to it, an assembly of
+several widgets lives under `src/test/integration/`, and the `sendMouse` plugin is what
+the hover and focus tests need. One engine is a decision, not an accident: see
+[ADR 0005](adr/0005-test-in-chrome-only.md).
 
-| #   | Rule | Enforced by |
-| --- | ---- | ----------- |
+| #   | Rule                                                        | Enforced by                          |
+| --- | ----------------------------------------------------------- | ------------------------------------ |
+| T1  | Load the theme in every test file                           | the suite — an unstyled read fails   |
+| T2  | Assert computed styles, not markup                          | review                               |
+| T3  | Drive hover and focus with real input                       | review                               |
+| T4  | Wait past the transition before asserting it                | review                               |
+| T5  | Every fix is provable by mutation                           | review                               |
+| T6  | Never put a DOM element on the tested side of a failure     | the suite — a violation is a hang    |
+| T7  | The runner claims a pointer, and the suite proves it        | `src/test/browser.test.ts`           |
+| T8  | Two suites per component, a part only when it has behaviour | the suites, visible in the inventory |
 
 ## The three levels, and who decides the composition
 
@@ -35,7 +44,7 @@ accessibility specs apart from its unit tests and the runner itself separates ki
 `.field.test.ts` pair that exists today is integration by this rule and moves to
 `src/test/integration/field/` in the pass that collapses the concern suffixes.
 
-Two rules make the levels useful instead of decorative:
+Three rules make the levels useful instead of decorative:
 
 - **A level asserts only what the level below cannot.** Integration never re-asserts a
   control's computed-style rules; it asserts what changes _because_ two widgets are
@@ -94,8 +103,10 @@ painted.
 **Do**
 
 ```ts
-const el = await fixture<BkX>(html`<bk-x label="Email"></bk-x>`);
-expect(getComputedStyle(inner(el)).borderTopColor).to.equal('rgb(185, 28, 28)');
+const el = await fixture<BkX>(html`<bk-x><bk-field-label>Email</bk-field-label></bk-x>`);
+expect(getComputedStyle(inner(el)).borderTopColor).to.equal(
+  await colorOf('var(--bk-border-danger)'),
+);
 ```
 
 **Don't** — assert that the host has `data-state="error"` and call it covered.
