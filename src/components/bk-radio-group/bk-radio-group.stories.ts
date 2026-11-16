@@ -28,7 +28,7 @@ const sizes = html`
 `;
 
 const meta: Meta<Args> = {
-  title: 'Form/Radio Group',
+  title: 'Form/Radio group',
   component: 'bk-radio-group',
   args: {
     label: 'Size',

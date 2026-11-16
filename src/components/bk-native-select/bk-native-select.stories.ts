@@ -21,7 +21,7 @@ const channels = html`
 `;
 
 const meta: Meta<Args> = {
-  title: 'Form/Native Select',
+  title: 'Form/Native select',
   component: 'bk-native-select',
   args: {
     label: 'Channel',
