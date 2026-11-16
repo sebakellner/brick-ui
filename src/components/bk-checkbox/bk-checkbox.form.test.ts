@@ -42,6 +42,95 @@ describe('bk-checkbox form participation', () => {
     expect(formData(form).get('terms')).to.equal('v2');
   });
 
+  it('should submit nothing while it is mixed, whatever checked says', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-checkbox name="all" value="v2" checked indeterminate></bk-checkbox>
+        <bk-checkbox name="plain" checked indeterminate></bk-checkbox>
+      </form>
+    `);
+    const all = form.querySelector<BkCheckbox>('bk-checkbox')!;
+    const plain = form.querySelector<BkCheckbox>('[name="plain"]')!;
+
+    expect(formData(form).get('all'), 'the mixed box is a header, not a value').to.equal(null);
+    expect(formData(form).get('plain')).to.equal(null);
+
+    all.indeterminate = false;
+    plain.indeterminate = false;
+    await all.updateComplete;
+    await plain.updateComplete;
+
+    expect(formData(form).get('all'), 'the value comes back once it is only checked').to.equal(
+      'v2',
+    );
+    expect(formData(form).get('plain')).to.equal('on');
+  });
+
+  it('should keep a required mixed box valueMissing and block the submit', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-checkbox name="all" required indeterminate></bk-checkbox>
+      </form>
+    `);
+    const el = form.querySelector<BkCheckbox>('bk-checkbox')!;
+    let submitted = false;
+    let invalidOn: EventTarget | null = null;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      submitted = true;
+    });
+    form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+
+    expect(el.validity.valueMissing, 'nothing is submitted, so the box is missing').to.equal(true);
+    expect(el.validity.valid).to.equal(false);
+    expect(form.checkValidity()).to.equal(false);
+    expect(formData(form).get('all')).to.equal(null);
+
+    form.requestSubmit();
+    await el.updateComplete;
+
+    expect(submitted).to.equal(false);
+    expect(invalidOn).to.equal(el);
+
+    el.indeterminate = false;
+    el.checked = true;
+    await el.updateComplete;
+
+    expect(el.validity.valueMissing).to.equal(false);
+    expect(form.checkValidity()).to.equal(true);
+  });
+
+  it('should restore the authored indeterminate and checked attributes on reset', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-checkbox name="all" indeterminate></bk-checkbox>
+        <bk-checkbox name="terms" checked></bk-checkbox>
+      </form>
+    `);
+    const all = form.querySelector<BkCheckbox>('[name="all"]')!;
+    const terms = form.querySelector<BkCheckbox>('[name="terms"]')!;
+
+    innerInput(all).click();
+    innerInput(terms).click();
+    await all.updateComplete;
+    await terms.updateComplete;
+
+    expect(all.checked).to.equal(true);
+    expect(all.indeterminate).to.equal(false);
+    expect(terms.checked).to.equal(false);
+
+    form.reset();
+    await all.updateComplete;
+    await terms.updateComplete;
+
+    expect(all.indeterminate, 'the mixed state the markup declared comes back').to.equal(true);
+    expect(innerInput(all).indeterminate).to.equal(true);
+    expect(all.checked).to.equal(false);
+    expect(innerInput(all).checked).to.equal(false);
+    expect(terms.checked).to.equal(true);
+    expect(innerInput(terms).checked).to.equal(true);
+  });
+
   it('should expose the form and refuse to validate while required and unchecked', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>

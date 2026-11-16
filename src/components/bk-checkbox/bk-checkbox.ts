@@ -65,6 +65,10 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
         background: var(--bk-bg-accent);
       }
 
+      .native:indeterminate + .box {
+        background: var(--bk-bg-accent);
+      }
+
       .native[aria-disabled='true'] + .box {
         cursor: not-allowed;
         background: var(--bk-bg-surface-muted);
@@ -86,6 +90,15 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
         visibility: visible;
       }
 
+      .native:indeterminate + .box::after {
+        visibility: visible;
+        inline-size: 60%;
+        block-size: calc(var(--bk-border-width) * 2);
+        border: 0;
+        background: currentColor;
+        transform: none;
+      }
+
       .native[aria-disabled='true'] + .box::after {
         color: var(--bk-text-muted);
       }
@@ -94,11 +107,22 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
 
   @property({ type: Boolean }) checked = false;
 
+  @property({ type: Boolean, reflect: true }) indeterminate = false;
+
+  private authoredIndeterminate: boolean | null = null;
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.authoredIndeterminate ??= this.hasAttribute('indeterminate');
+  }
+
   override get formControlElement(): HTMLInputElement | undefined {
     return this.shadowRoot?.querySelector('input') ?? undefined;
   }
 
   override get submittedValue(): string | null {
+    if (this.indeterminate) return null;
+
     return this.checked ? this.value || 'on' : null;
   }
 
@@ -118,6 +142,7 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
           name=${this.name || nothing}
           .checked=${this.checked}
           ?required=${this.required}
+          .indeterminate=${this.indeterminate}
           aria-disabled=${this.fieldDisabled ? 'true' : nothing}
           aria-invalid=${this.fieldInvalid ? 'true' : nothing}
           aria-describedby=${this.fieldParts.describedBy(this.messageSources()) || nothing}
@@ -133,10 +158,15 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
   }
 
   override formResetCallback(): void {
-    const initial = this.hasAttribute('checked');
+    const initialChecked = this.hasAttribute('checked');
+    const initialIndeterminate = this.authoredIndeterminate ?? this.hasAttribute('indeterminate');
     const control = this.formControlElement;
-    if (control) control.checked = initial;
-    this.checked = initial;
+    if (control) {
+      control.checked = initialChecked;
+      control.indeterminate = initialIndeterminate;
+    }
+    this.checked = initialChecked;
+    this.indeterminate = initialIndeterminate;
     super.formResetCallback();
   }
 
@@ -148,6 +178,7 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
     const control = this.formControlElement;
     if (!control) return;
     this.checked = control.checked;
+    this.indeterminate = control.indeterminate;
     this.dispatchEvent(
       new CustomEvent<{ checked: boolean }>('bk-change', {
         detail: { checked: this.checked },
