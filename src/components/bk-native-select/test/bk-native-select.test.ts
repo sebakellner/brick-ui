@@ -1,5 +1,7 @@
 import { colorOf } from '../../../test/helpers/style.js';
-import { expect, fixture, html } from '@open-wc/testing';
+import { contrastRatio } from '../../../test/helpers/contrast.js';
+import { expect, fixture, html, nextFrame } from '@open-wc/testing';
+import { sendKeys } from '@web/test-runner-commands';
 import '.././define.js';
 import '../../bk-field/define.js';
 import type { BkNativeSelect } from '.././bk-native-select.js';
@@ -7,9 +9,19 @@ import { setTheme } from '../../../test/helpers/theme.js';
 
 const innerSelect = (el: BkNativeSelect) => el.shadowRoot!.querySelector('select')!;
 const innerLabel = (el: BkNativeSelect) =>
-  el.shadowRoot!.querySelector<HTMLElement>('[part="label"]')!;
+  el.shadowRoot!.querySelector<HTMLLabelElement>('[part="label"]')!;
 const innerError = (el: BkNativeSelect) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="error"]')!;
+const innerDescription = (el: BkNativeSelect) =>
+  el.shadowRoot!.querySelector<HTMLElement>('[part="description"]')!;
+
+const descriptionNode = (text: string) => {
+  const node = document.createElement('bk-field-description');
+  node.setAttribute('slot', 'description');
+  node.textContent = text;
+
+  return node;
+};
 
 const builtOptions = (el: BkNativeSelect) => Array.from(innerSelect(el).querySelectorAll('option'));
 
@@ -44,6 +56,90 @@ const choose = async (el: BkNativeSelect, value: string) => {
 describe('bk-native-select', () => {
   afterEach(() => {
     setTheme('light');
+  });
+
+  for (const theme of ['light', 'dark'] as const) {
+    it(`should keep the field border at 3:1 against its own surface (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkNativeSelect>(html`
+        <bk-native-select>${labelAtom}</bk-native-select>
+      `);
+      const style = getComputedStyle(innerSelect(el));
+
+      expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
+    });
+
+    it(`should keep the focus ring at 3:1 against its own surface (${theme})`, async () => {
+      setTheme(theme);
+      const host = await fixture<HTMLElement>(html`
+        <div>
+          <button type="button">before</button>
+          <bk-native-select>${labelAtom}</bk-native-select>
+        </div>
+      `);
+      const el = host.querySelector<BkNativeSelect>('bk-native-select')!;
+      host.querySelector<HTMLElement>('button')!.focus();
+      await sendKeys({ press: 'Tab' });
+      await nextFrame();
+      const style = getComputedStyle(innerSelect(el));
+
+      expect(style.outlineStyle, 'the ring is drawn').to.equal('solid');
+      expect(contrastRatio(style.outlineColor, style.backgroundColor)).to.be.at.least(3);
+    });
+  }
+
+  it('should point its label at the select it names', async () => {
+    const el = await fixture<BkNativeSelect>(html`
+      <bk-native-select>${labelAtom}</bk-native-select>
+    `);
+
+    expect(innerLabel(el).htmlFor).to.equal(innerSelect(el).id);
+    expect(innerSelect(el).id).to.not.equal('');
+  });
+
+  it('should delegate focus to the real select', async () => {
+    const el = await fixture<BkNativeSelect>(html`
+      <bk-native-select>${labelAtom}</bk-native-select>
+    `);
+
+    el.focus();
+
+    expect(
+      el.shadowRoot!.activeElement === innerSelect(el),
+      'focus lands on the real select',
+    ).to.equal(true);
+  });
+
+  it('should reference no description while the region is empty', async () => {
+    const el = await fixture<BkNativeSelect>(html`
+      <bk-native-select>${labelAtom}</bk-native-select>
+    `);
+    await settle(el);
+
+    expect(innerDescription(el).textContent!.trim(), 'the region describes nothing').to.equal('');
+    expect(
+      innerSelect(el).getAttribute('aria-describedby'),
+      'a region with no content is not referenced',
+    ).to.equal(null);
+  });
+
+  it('should describe the select while the atom has text, and drop the reference when it empties', async () => {
+    const el = await fixture<BkNativeSelect>(html`
+      <bk-native-select>${labelAtom}</bk-native-select>
+    `);
+    const description = descriptionNode('We only use it for the receipt.');
+    el.appendChild(description);
+    await settle(el);
+
+    expect(innerSelect(el).getAttribute('aria-describedby')).to.equal(innerDescription(el).id);
+
+    description.textContent = '';
+    await settle(el);
+
+    expect(
+      innerSelect(el).getAttribute('aria-describedby'),
+      'an emptied region is no longer referenced',
+    ).to.equal(null);
   });
 
   it('should mirror every atom as an option carrying its value and its text', async () => {

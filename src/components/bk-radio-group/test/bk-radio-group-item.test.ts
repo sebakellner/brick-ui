@@ -1,6 +1,7 @@
-import { resetMouse } from '@web/test-runner-commands';
+import { resetMouse, sendKeys } from '@web/test-runner-commands';
+import { contrastRatio } from '../../../test/helpers/contrast.js';
 import { colorOf, opacityOf } from '../../../test/helpers/style.js';
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import '.././define.js';
 import '../../bk-field/define.js';
 import type { BkRadioGroupItem } from '.././bk-radio-group-item.js';
@@ -31,6 +32,54 @@ describe('bk-radio-group-item', () => {
     document.documentElement.style.removeProperty('--bk-radio-group-item-radius');
     setTheme('light');
   });
+
+  for (const theme of ['light', 'dark'] as const) {
+    it(`should keep the box boundary at 3:1 against its own surface (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkRadioGroupItem>(
+        html`<bk-radio-group-item>${labelAtom}</bk-radio-group-item>`,
+      );
+      const box = getComputedStyle(innerBox(el));
+
+      expect(contrastRatio(box.borderTopColor, box.backgroundColor)).to.be.at.least(3);
+    });
+
+    it(`should keep the dot at 3:1 against the box it sits in (${theme})`, async () => {
+      setTheme(theme);
+      const el = await fixture<BkRadioGroupItem>(
+        html`<bk-radio-group-item>${labelAtom}</bk-radio-group-item>`,
+      );
+      el.checked = true;
+      await el.updateComplete;
+      const box = getComputedStyle(innerBox(el));
+      const dot = getComputedStyle(innerBox(el), '::after');
+
+      expect(dot.visibility, 'the selected box draws its dot').to.equal('visible');
+      expect(contrastRatio(dot.color, box.backgroundColor)).to.be.at.least(3);
+    });
+
+    it(`should keep the focus ring at 3:1 against the surface it sits on (${theme})`, async () => {
+      setTheme(theme);
+      const host = await fixture<HTMLElement>(html`
+        <div>
+          <button type="button">before</button>
+          <bk-radio-group-item>${labelAtom}</bk-radio-group-item>
+        </div>
+      `);
+      const el = host.querySelector<BkRadioGroupItem>('bk-radio-group-item')!;
+      el.tabStop = true;
+      await el.updateComplete;
+      host.querySelector<HTMLElement>('button')!.focus();
+      await sendKeys({ press: 'Tab' });
+      await nextFrame();
+      const box = getComputedStyle(innerBox(el));
+
+      expect(box.outlineStyle, 'the ring is drawn').to.equal('solid');
+      expect(contrastRatio(box.outlineColor, await colorOf('var(--bk-bg-surface)'))).to.be.at.least(
+        3,
+      );
+    });
+  }
 
   it('should render a label that points at and contains the inner radio', async () => {
     const el = await fixture<BkRadioGroupItem>(

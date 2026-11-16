@@ -1,7 +1,8 @@
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import '.././define.js';
 import type { BkButton } from '.././bk-button.js';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
+import { colorOf } from '../../../test/helpers/style.js';
 import { hover, hoverCapable } from '../../../test/helpers/pointer.js';
 import { setTheme } from '../../../test/helpers/theme.js';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
@@ -79,6 +80,26 @@ describe('bk-button', () => {
       const style = getComputedStyle(innerButton(secondary));
 
       expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
+    });
+
+    it(`should keep the focus ring at 3:1 against the surface it sits on (${theme})`, async () => {
+      setTheme(theme);
+      const host = await fixture<HTMLElement>(html`
+        <div>
+          <button type="button">before</button>
+          <bk-button>Save</bk-button>
+        </div>
+      `);
+      const el = host.querySelector<BkButton>('bk-button')!;
+      host.querySelector<HTMLElement>('button')!.focus();
+      await sendKeys({ press: 'Tab' });
+      await nextFrame();
+      const style = getComputedStyle(innerButton(el));
+
+      expect(style.outlineStyle, 'the ring is drawn').to.equal('solid');
+      expect(
+        contrastRatio(style.outlineColor, await colorOf('var(--bk-bg-surface)')),
+      ).to.be.at.least(3);
     });
   }
 

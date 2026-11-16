@@ -381,6 +381,24 @@ describe('bk-input', () => {
 
       expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
     });
+
+    it(`should keep the focus ring at 3:1 against its own surface (${theme})`, async () => {
+      setTheme(theme);
+      const host = await fixture<HTMLElement>(html`
+        <div>
+          <button type="button">before</button>
+          <bk-input>${labelAtom}</bk-input>
+        </div>
+      `);
+      const el = host.querySelector<BkInput>('bk-input')!;
+      host.querySelector<HTMLElement>('button')!.focus();
+      await sendKeys({ press: 'Tab' });
+      await nextFrame();
+      const style = getComputedStyle(innerInput(el));
+
+      expect(style.outlineStyle, 'the ring is drawn').to.equal('solid');
+      expect(contrastRatio(style.outlineColor, style.backgroundColor)).to.be.at.least(3);
+    });
   }
 
   it('should render no required glyph on an optional field', async () => {
