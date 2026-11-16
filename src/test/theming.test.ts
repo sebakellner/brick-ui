@@ -1,7 +1,7 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import './bk-button/define.js';
-import type { BkButton } from './bk-button/bk-button.js';
-import { setTheme } from '../test/helpers/theme.js';
+import '../components/bk-button/define.js';
+import type { BkButton } from '../components/bk-button/bk-button.js';
+import { setTheme } from './helpers/theme.js';
 
 const hex = (value: string) =>
   `rgb(${parseInt(value.slice(1, 3), 16)}, ${parseInt(value.slice(3, 5), 16)}, ${parseInt(
@@ -105,16 +105,31 @@ describe('theming', () => {
   });
 
   describe('system preference', () => {
-    it('should ship the system-preference block and load it', async () => {
-      const theme = await (await fetch('/src/styles/theme.css')).text();
-      const block = await (await fetch('/src/styles/tokens/color.dark.media.css')).text();
+    for (const theme of ['light', 'dark'] as const) {
+      it(`should tell the platform which scheme it paints (${theme})`, () => {
+        setTheme(theme);
 
-      expect(theme, 'the dark media block is imported').to.include(
-        "@import './tokens/color.dark.media.css';",
+        expect(
+          getComputedStyle(document.documentElement).colorScheme,
+          'native widgets follow the theme the page declares',
+        ).to.equal(theme);
+      });
+    }
+
+    it('should let an explicit theme win over the system block', () => {
+      setTheme('dark');
+      expect(role('bg-surface'), 'dark is what the attribute asks for').to.equal(
+        hex(DARK['bg-surface']!),
       );
-      expect(theme, 'the page is told which way to paint').to.include('color-scheme: dark');
-      expect(block, 'the block is a media query').to.include('@media (prefers-color-scheme: dark)');
-      expect(block, 'it yields to an explicit theme').to.include(':where(:root:not([data-theme]))');
+
+      document.documentElement.dataset['theme'] = 'light';
+      probe!.style.color = 'var(--bk-bg-surface)';
+
+      expect(
+        getComputedStyle(probe!).color,
+        'the attribute decides, wherever the system stands',
+      ).to.equal(hex(LIGHT['bg-surface']!));
+      expect(getComputedStyle(document.documentElement).colorScheme).to.equal('light');
     });
   });
 });
