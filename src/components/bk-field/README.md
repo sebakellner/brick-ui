@@ -34,6 +34,9 @@ Three things, and nothing else:
   `slot="error"` to the parts it recognises by tag, so the consumer writes the
   element and never the attribute.
 - It reflects its boolean `invalid` into `data-state="invalid"` on those parts.
+- An atom paints `invalid` and nothing else. `data-state="disabled"` is written by
+  the control that hosts the atom — it reports the state, and the row that owns the
+  dim is what paints it ([C5](../conventions-code.md)).
 
 It has no `role`, computes no accessible name and carries no validity. The role
 belongs to the widget; `bk-field` is structure.

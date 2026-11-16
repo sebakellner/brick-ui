@@ -692,6 +692,9 @@ describe('bk-checkbox', () => {
     `);
     const atom = el.querySelector<BkFieldLabel>('bk-field-label')!;
 
+    expect(atom.getAttribute('data-state'), 'the atom reports the state the row paints').to.equal(
+      'disabled',
+    );
     expect(getComputedStyle(atom).color, 'the atom keeps the default text role').to.equal(
       await colorOf('var(--bk-text-default)'),
     );
