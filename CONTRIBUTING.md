@@ -40,7 +40,8 @@ Component modules carry **no side effects**. Registration lives in a `define.ts`
 
 ## Setup
 
-Node 22+, pnpm, and Chrome for the test runner.
+Node 22+, pnpm, and the Playwright browser for the test runner
+(`npx playwright install --with-deps chromium`, once).
 
 ```bash
 pnpm install
@@ -48,20 +49,21 @@ pnpm install
 
 ## Commands
 
-| Command                | Use                                                                                    |
-| ---------------------- | -------------------------------------------------------------------------------------- |
-| `pnpm dev`             | the playground                                                                         |
-| `pnpm storybook`       | component stories and the docs pages                                                   |
-| `pnpm test`            | the suite, in real Chrome                                                              |
-| `pnpm test:watch`      | the suite, watching                                                                    |
-| `pnpm typecheck`       | `tsc --noEmit`                                                                         |
-| `pnpm build:tokens`    | regenerate the CSS and `tokens.generated.ts`; commit the result                        |
-| `pnpm check:tokens`    | every name a component reads exists, and every semantic role is read                   |
-| `pnpm format`          | rewrite the files Prettier owns                                                        |
-| `pnpm format:check`    | fail if any of them is not formatted                                                   |
-| `pnpm build`           | the bundle                                                                             |
-| `pnpm build-storybook` | the static site                                                                        |
-| (CI) storybook job     | after the build, fails if the bundle registers none of the elements the sources define |
+| Command                                       | Use                                                                                                                          |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`                                    | the playground                                                                                                               |
+| `pnpm storybook`                              | component stories and the docs pages                                                                                         |
+| `pnpm test`                                   | the suite, in real Chromium                                                                                                  |
+| `npx playwright install --with-deps chromium` | once per machine: the browser the suite runs. Local and CI run the same build because `playwright` is pinned in the lockfile |
+| `pnpm test:watch`                             | the suite, watching                                                                                                          |
+| `pnpm typecheck`                              | `tsc --noEmit`                                                                                                               |
+| `pnpm build:tokens`                           | regenerate the CSS and `tokens.generated.ts`; commit the result                                                              |
+| `pnpm check:tokens`                           | every name a component reads exists, and every semantic role is read                                                         |
+| `pnpm format`                                 | rewrite the files Prettier owns                                                                                              |
+| `pnpm format:check`                           | fail if any of them is not formatted                                                                                         |
+| `pnpm build`                                  | the bundle                                                                                                                   |
+| `pnpm build-storybook`                        | the static site                                                                                                              |
+| (CI) storybook job                            | after the build, fails if the bundle registers none of the elements the sources define                                       |
 
 Storybook starts in the light theme whatever the operating system says, and the
 **Theme** toolbar switches it to `dark` or `system`. The preview canvas paints
@@ -93,10 +95,10 @@ the other.
 
 `ci.yml` runs on every PR and on `main`:
 
-| Job               | Checks                                                                                                                                                         |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `test`            | Prettier's `format:check`, tokens match the JSON (`git status --porcelain`, so untracked output counts), `check:tokens`, `typecheck`, the suite in real Chrome |
-| `storybook build` | regenerates the tokens and builds the site                                                                                                                     |
+| Job               | Checks                                                                                                                                                           |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `test`            | Prettier's `format:check`, tokens match the JSON (`git status --porcelain`, so untracked output counts), `check:tokens`, `typecheck`, the suite in real Chromium |
+| `storybook build` | regenerates the tokens and builds the site                                                                                                                       |
 
 `storybook-pages.yml` publishes from `main` only, gated by the suite.
 

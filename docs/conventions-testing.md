@@ -173,17 +173,20 @@ next one's colours.
 
 ## T7. The runner claims a pointer, and the suite proves it
 
-**Rule.** `web-test-runner.config.mjs` launches Chrome with
+**Rule.** `web-test-runner.config.mjs` launches the browser with
 `--blink-settings=primaryHoverType=2`, and `src/test/browser.test.ts` asserts that
 `matchMedia('(hover: hover)')` is true. A hover test that skips is a hover test that
 proves nothing, so the environment is a test like any other.
 
-**Why.** Headless Chrome has no pointer device and reports `(hover: none)`, so every
-`@media (hover: hover)` rule stays out of the cascade — tests asserting "nothing
-changed on hover" pass without ever hovering. It happened here: three suites went
-green that way and only the button's own positive control caught it. `2` is hover
-(`1` is none); emulating the feature through `emulateMedia` is not possible, which is
-why the flag is at the launch layer.
+**Why.** What a headless build reports for the pointer is not a constant: the Chrome
+that ran the suite when this rule was written reported `(hover: none)` and left every
+`@media (hover: hover)` rule out of the cascade, so tests asserting "nothing changed on
+hover" passed without hovering — three suites went green that way and only the button's
+own positive control caught it. Playwright's headless Chromium reports `(hover: hover)`
+by default today, which makes the flag a no-op rather than obsolete: the claim must be
+made and proved, not assumed of whichever build the lockfile resolves. `2` is hover,
+`1` is none, and `emulateMedia` cannot emulate the pointer, which is why the flag sits
+at the launch layer.
 
 **Two caveats, both learned from other projects the hard way.** Any viewport
 emulation — `setViewport` — rewrites the pointer and hover types and silently undoes
