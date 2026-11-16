@@ -252,53 +252,38 @@ the flag is Blink-only: on an engine with no pointer the hover tests still decla
 **Enforced by.** `src/test/browser.test.ts`, plus the enabled-sibling control inside
 each hover test: the assertion cannot pass unless a hovered sibling really changed.
 
-## T8. Every component ships the same two suites, and a part only when it has behaviour
+## T8. One suite per component, a suite per part that has behaviour, and the packaging contract declared
 
-**Rule.** A component ships `test/bk-<name>.test.ts` for its rules and
-`test/bk-<name>.register.test.ts` for the packaging contract — the package entry registers
-**none** of its tags, and its `define.js` registers **all** of them, which for a
-component with atoms is the whole list. A part gets a suite of its own when it has
-behaviour (the radio item's activation and tab stop, the select atoms' reflection, the field
-atoms' state colour, their collapsed rule while empty and their hidden rule); the painters
-are covered where they are used, and `bk-field.test.ts` keeps what the field owns — routing
-by tag, `data-state` on the parts it lays out, the spacing between them. **A concern is a
-`describe` block, not a file**: form participation, the error channel and the label state are
-paragraphs of the component's suite. A module exists per **level**, not per concern: a
-concern is a `describe`, and only a
-change of level moves a file — an assembly the test composes lives under
-`src/test/integration/` — because a suffix that names a concern splits one subject across
-modules, and one that names an assembly invents a category nobody else uses.
+**Rule.** A component ships `test/bk-<name>.test.ts` for its rules and nothing else. A part
+gets a suite of its own when it has behaviour — the radio item's activation, the select atoms'
+reflection, the field atoms' painting — and a part that only paints is covered where it is
+used. **The packaging contract is not a test**: `package.json` declares
+`"sideEffects": ["**/define.js"]`, `src/index.ts` imports no `define.js`, and
+`CONTRIBUTING.md` states both. A concern is a `describe`, never a file: only a change of
+level changes a file's home.
 
-**Why.** The register suite existed in four components of seven and the atom coverage
-in one of three, which is how a convention stops being one: each addition was locally
-reasonable and the set stopped matching. Its rule is not about the component at all —
-it is the packaging contract, and an atom whose tag nobody defined would stay inert —
-so it is the same test everywhere, and having it everywhere is what makes its absence
-visible. Reflection on a data atom is the same kind of fact: the select's mirror
-watches attributes, so a property an atom does not reflect is invisible to it, and
-that is worth pinning at the atom instead of inferring it from the parent.
+**Why.** Two claims were being tested that do not need it. "`define.js` registers its tags" is
+proven by every suite that imports it and uses the element: an unregistered tag mounts an
+unknown element and the assertions fail on a shadow root that is not there. "The entry
+registers nothing" is a property of the **package**, not of a component — and no library tests
+it: Shoelace imports its built bundle in every test, Spectrum and Material import the
+component module, and all three make the claim with `sideEffects` and review. Seven suites and
+fourteen assertions for one package-level fact was the wrong shape, and they sat in a
+component's folder while testing the package.
 
-**Do** — the shape, identical in all seven:
+**Do** — the component's own suite, and a part's when the part does something:
 
-```ts
-const TAGS = ['bk-x', 'bk-x-atom'] as const;
-
-it('should register none of its tags when the package entry is imported', () => {
-  for (const tag of TAGS) expect(customElements.get(tag), tag).to.equal(undefined);
-});
-
-it('should register all of them when its define module is imported', async () => {
-  await import('./define.js');
-  for (const tag of TAGS) expect(customElements.get(tag) === undefined, tag).to.equal(false);
-});
+```
+src/components/bk-field/
+  bk-field.ts  bk-field-label.ts  define.ts  …
+  test/
+    bk-field.test.ts  bk-field-label.test.ts
 ```
 
-**Don't** — a register suite that imports `define.js` statically: module evaluation
-runs before the first test, so "the entry does not register it" becomes untestable
-and the suite proves half of what it claims.
+**Don't** — a `*.register.test.ts` beside a component. When a new component lands, its file is
+the suite; there is no list to extend and no second file to remember.
 
-**Enforced by.** The suites themselves; a missing one is visible in the inventory,
-which is how this rule was found.
+**Enforced by.** The suites themselves; `sideEffects` for a bundler; review for the entry.
 
 ## T9. Use the testing library's own vocabulary, never an alias
 

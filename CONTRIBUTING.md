@@ -31,7 +31,7 @@ A field is up to four layers, and only the last one is specific to it:
 
 A second field composes them — `class BkTextarea extends FieldControlMixin(LitElement)` with `static styles = [formControlStyles, css\`…\`]`— and overrides `formControlElement` to return the native control inside its shadow root. Nothing about form participation is copied:
 
-Component modules carry **no side effects**. Registration lives in a `define.ts` beside the component, guarded so a second copy of the package cannot throw, and the package entry point exports without registering. `src/playground.ts` is the only module that registers for the dev server.
+Component modules carry **no side effects**. Registration lives in a `define.ts` beside the component, guarded so a second copy of the package cannot throw, and the package entry point exports without registering. `package.json` declares `"sideEffects": ["**/define.js"]`, which is what makes a bundler enforce the split instead of a test. `src/playground.ts` is the only module that registers for the dev server.
 
 ## Setup
 
