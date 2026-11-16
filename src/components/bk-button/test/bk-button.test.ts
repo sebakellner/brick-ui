@@ -5,7 +5,7 @@ import { contrastRatio } from '../../../test/helpers/contrast.js';
 import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.js';
 import { colorOf } from '../../../test/helpers/style.js';
 import { watchSubmit } from '../../../test/helpers/form.js';
-import { hover, hoverCapable } from '../../../test/helpers/pointer.js';
+import { clickAt, hover, hoverCapable } from '../../../test/helpers/pointer.js';
 import { setTheme } from '../../../test/helpers/theme.js';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 
@@ -83,6 +83,20 @@ describe('bk-button', () => {
       button.shadowRoot!.activeElement === innerButton(button),
       'focus lands on the inner button',
     ).to.equal(true);
+  });
+
+  it('should draw no focus ring when the pointer focuses it', async () => {
+    const button = await mount();
+    const inner = innerButton(button);
+
+    await clickAt(inner);
+    await nextFrame();
+
+    expect(inner.matches(':focus'), 'the pointer put focus on the inner button').to.equal(true);
+    expect(inner.matches(':focus-visible'), 'a pointer click is not keyboard focus').to.equal(
+      false,
+    );
+    expect(getComputedStyle(inner).outlineStyle, 'no ring is drawn').to.equal('none');
   });
 
   for (const theme of ['light', 'dark'] as const) {
@@ -277,6 +291,27 @@ describe('bk-button in a form', () => {
     expect(watch.count).to.equal(0);
   });
 
+  it('should not submit from Enter pressed in another field', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <input name="first" value="one" />
+        <input name="second" value="two" />
+        <bk-button type="submit">Save</bk-button>
+      </form>
+    `);
+    const button = form.querySelector('bk-button') as BkButton;
+    const watch = watchSubmit(form);
+
+    expect(Boolean(innerButton(button)), 'the button rendered').to.equal(true);
+
+    form.querySelector('input')!.focus();
+    await sendKeys({ press: 'Enter' });
+    await button.updateComplete;
+    await nextFrame();
+
+    expect(watch.count, 'the shadow button is not the form’s default submit').to.equal(0);
+  });
+
   it('should submit the form when type is submit', async () => {
     const form = await inForm(html`<bk-button type="submit">Save</bk-button>`);
     const watch = watchSubmit(form);
@@ -363,6 +398,30 @@ describe('bk-button as a form control', () => {
     button.click();
 
     expect(watch.count).to.equal(1);
+  });
+
+  it('should submit with no submitter, so its name and value do not travel', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <input name="field" value="initial" />
+        <bk-button type="submit" name="action" value="save">Save</bk-button>
+      </form>
+    `);
+    const button = form.querySelector('bk-button') as BkButton;
+    const watch = watchSubmit(form);
+    let submitter: HTMLElement | null | undefined;
+    let data: FormData | undefined;
+    form.addEventListener('submit', (event) => {
+      submitter = (event as SubmitEvent).submitter;
+      data = new FormData(form);
+    });
+
+    innerButton(button).click();
+    await button.updateComplete;
+
+    expect(watch.count, 'the submit arrived').to.equal(1);
+    expect(submitter === null, 'requestSubmit() ran without a submitter').to.equal(true);
+    expect(data!.has('action'), 'the button name does not travel with it').to.equal(false);
   });
 
   it('should be disabled by the fieldset that contains it', async () => {

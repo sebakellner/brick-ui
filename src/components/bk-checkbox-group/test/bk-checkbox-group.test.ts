@@ -370,6 +370,49 @@ describe('bk-checkbox-group', () => {
     );
   });
 
+  it('should mark its label with a star while required', async () => {
+    const el = await fixture<BkCheckboxGroup>(html`
+      <bk-checkbox-group required>
+        <bk-field-label>Notifications</bk-field-label>
+        <bk-checkbox name="email" value="email"
+          ><bk-field-label slot="label">Email</bk-field-label></bk-checkbox
+        >
+      </bk-checkbox-group>
+    `);
+    await settleBoxes(el);
+    const mark = region(el, 'required');
+
+    expect(Boolean(mark), 'a required group marks its label').to.equal(true);
+    expect(mark!.textContent, 'the mark is a star').to.equal('*');
+    expect(mark!.getAttribute('aria-hidden'), 'and decoration for the eye').to.equal('true');
+    expect(getComputedStyle(mark!).color, 'painted with the danger role').to.equal(
+      await colorOf('var(--bk-text-danger)'),
+    );
+
+    const optional = await fixture<BkCheckboxGroup>(twoBoxes);
+    await settle(optional);
+
+    expect(Boolean(region(optional, 'required')), 'an optional group marks nothing').to.equal(
+      false,
+    );
+  });
+
+  it('should submit nothing while its value is assigned', async () => {
+    const form = await fixture<HTMLFormElement>(requiredForm);
+    const el = form.querySelector('bk-checkbox-group') as BkCheckboxGroup;
+    await settle(el);
+
+    el.value = 'channels';
+    await settle(el);
+
+    const data = new FormData(form);
+
+    expect(el.submittedValue === null, 'the group has no value of its own').to.equal(true);
+    expect(data.has('channels'), 'the assigned value adds no entry to the form data').to.equal(
+      false,
+    );
+  });
+
   it('should clear valueMissing as soon as one box is checked, with no manual call', async () => {
     const form = await fixture<HTMLFormElement>(requiredForm);
     const el = form.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;

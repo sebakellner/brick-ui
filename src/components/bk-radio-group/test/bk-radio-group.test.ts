@@ -1,5 +1,5 @@
 import { settle as settleHost } from '../../../test/helpers/settle.js';
-import { opacityOf } from '../../../test/helpers/style.js';
+import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { describedNode } from '../../../test/helpers/dom.js';
 import { watchSubmit } from '../../../test/helpers/form.js';
 import { expect, fixture, html } from '@open-wc/testing';
@@ -247,6 +247,54 @@ describe('bk-radio-group', () => {
     expect(new FormData(form).get('other')).to.equal('x');
     expect(new FormData(form).getAll('other').length, 'one value, one entry').to.equal(1);
     expect(new FormData(form).get('size')).to.equal(null);
+  });
+
+  it('should mark its label with a star while required', async () => {
+    const el = await fixture<BkRadioGroup>(html`
+      <bk-radio-group name="size" required>
+        <bk-field-label>Size</bk-field-label>
+        <bk-radio-group-item value="s"
+          ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+        >
+      </bk-radio-group>
+    `);
+    await settle(el);
+    const mark = el.shadowRoot!.querySelector<HTMLElement>('[part="required"]');
+
+    expect(Boolean(mark), 'a required group marks its label').to.equal(true);
+    expect(mark!.textContent, 'the mark is a star').to.equal('*');
+    expect(mark!.getAttribute('aria-hidden'), 'and decoration for the eye').to.equal('true');
+    expect(getComputedStyle(mark!).color, 'painted with the danger role').to.equal(
+      await colorOf('var(--bk-text-danger)'),
+    );
+  });
+
+  it('should submit nothing when its only radio carries no value', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-radio-group name="size">
+          <bk-field-label>Size</bk-field-label>
+          <bk-radio-group-item
+            ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+          >
+        </bk-radio-group>
+      </form>
+    `);
+    const el = form.querySelector('bk-radio-group') as BkRadioGroup;
+    await settle(el);
+    const [radio] = radios(el);
+    const details: unknown[] = [];
+    el.addEventListener('bk-change', (event) => {
+      details.push((event as CustomEvent).detail);
+    });
+
+    await clickAt(box(radio));
+    await settle(el);
+
+    expect(details, 'the click reached the radio').to.deep.equal([{ checked: true }]);
+    expect(el.value, 'an empty value reads as nothing selected').to.equal('');
+    expect(radio.checked, 'the group writes the selection back to nothing').to.equal(false);
+    expect(new FormData(form).get('size'), 'and submits nothing').to.equal(null);
   });
 
   it('should report valueMissing, block the submit and show the message through the atom', async () => {

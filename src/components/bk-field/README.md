@@ -81,15 +81,11 @@ control does not read the field's attribute.
 
 ## Parts
 
-| Part          | Element                                     |
-| ------------- | ------------------------------------------- |
-| `message`     | the container holding description and error |
-| `description` | the description region                      |
-| `error`       | the error region                            |
-
-The names are stable and independent of state: a valid field and an invalid one
-expose the same three parts, so `::part(error)` never stops matching. `label` and
-`input` belong to the control, not to the field.
+**`bk-field` exposes no parts.** It stacks and it routes slots; the regions, the
+label and the control are rendered by the control you put inside it, so they are
+styled through that element — `bk-input::part(error)`, never `bk-field::part(error)`.
+The field's own hooks are its atoms' tags, which are elements a consumer can
+target directly.
 
 ## Tokens
 

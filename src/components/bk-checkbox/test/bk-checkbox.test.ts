@@ -113,6 +113,18 @@ describe('bk-checkbox', () => {
     ).to.equal(true);
   });
 
+  it('should expose the documented parts on its inner elements', async () => {
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox required>${labelAtom('Accept terms')}</bk-checkbox>`,
+    );
+
+    for (const name of ['label', 'input', 'box', 'required', 'message', 'description', 'error']) {
+      const node = region(el, name);
+      expect(Boolean(node), `the ${name} part is exposed`).to.equal(true);
+      expect(node!.getAttribute('part')).to.equal(name);
+    }
+  });
+
   it('should toggle from a click on the label text', async () => {
     const el = await fixture<BkCheckbox>(
       html`<bk-checkbox>${labelAtom('Accept terms')}</bk-checkbox>`,
@@ -339,6 +351,22 @@ describe('bk-checkbox', () => {
     expect(getComputedStyle(box).outlineStyle).to.equal('solid');
     expect(getComputedStyle(box).outlineWidth, 'the ring has a width').to.not.equal('0px');
     expect(getComputedStyle(box).outlineColor).to.equal(await colorOf('var(--bk-focus-ring)'));
+  });
+
+  it('should draw no focus ring when the pointer focuses the box', async () => {
+    const el = await fixture<BkCheckbox>(
+      html`<bk-checkbox>${labelAtom('Accept terms')}</bk-checkbox>`,
+    );
+    const input = innerInput(el);
+
+    await clickAt(innerBox(el));
+    await el.updateComplete;
+
+    expect(input.matches(':focus'), 'the click focused the inner input').to.equal(true);
+    expect(input.matches(':focus-visible'), 'a pointer click is not keyboard focus').to.equal(
+      false,
+    );
+    expect(getComputedStyle(innerBox(el)).outlineStyle, 'no ring is drawn').to.equal('none');
   });
 
   it('should refuse to toggle while disabled and stay focusable', async () => {
@@ -1054,6 +1082,25 @@ describe('bk-checkbox', () => {
       `);
 
       expect(formData(form).get('terms')).to.equal('v2');
+    });
+
+    it('should come back unchecked when the browser restores the submitted value', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <bk-checkbox name="accept" value="v2"></bk-checkbox>
+        </form>
+      `);
+      const el = form.querySelector('bk-checkbox') as BkCheckbox;
+
+      el.formStateRestoreCallback('v2', 'restore');
+      await el.updateComplete;
+
+      expect(el.value, 'the restored state lands in the submitted value').to.equal('v2');
+      expect(el.checked, 'and never in the checked state').to.equal(false);
+      expect(innerInput(el).checked, 'the box renders unchecked').to.equal(false);
+      expect(new FormData(form).get('accept'), 'and an unchecked box submits nothing').to.equal(
+        null,
+      );
     });
 
     it('should submit nothing while it is mixed, whatever checked says', async () => {
