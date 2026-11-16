@@ -1,3 +1,4 @@
+import { settle } from '../../../test/helpers/settle.js';
 import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import '.././define.js';
@@ -33,12 +34,6 @@ const boxAttributes = (box: Element) =>
   Array.from(box.attributes)
     .map((one) => one.name)
     .sort();
-
-const settle = async (el: BkCheckboxGroup) => {
-  await el.updateComplete;
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  await el.updateComplete;
-};
 
 const boxesOf = (el: BkCheckboxGroup) => Array.from(el.querySelectorAll<BkCheckbox>('bk-checkbox'));
 

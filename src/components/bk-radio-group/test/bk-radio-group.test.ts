@@ -1,3 +1,4 @@
+import { settle as settleHost } from '../../../test/helpers/settle.js';
 import { opacityOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
@@ -25,11 +26,10 @@ const describedNode = (el: BkRadioGroup): Element | null => {
   return id ? document.getElementById(id) : null;
 };
 
+/* The group writes on its item, so each item's own update has to commit too. */
 const settle = async (el: BkRadioGroup) => {
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  await el.updateComplete;
-  for (const radio of radios(el)) await radio.updateComplete;
-  await el.updateComplete;
+  await settleHost(el);
+  for (const radio of radios(el)) await settleHost(radio);
 };
 
 const threeRadios = html`

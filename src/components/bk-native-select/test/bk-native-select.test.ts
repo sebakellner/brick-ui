@@ -1,3 +1,4 @@
+import { settle } from '../../../test/helpers/settle.js';
 import { colorOf } from '../../../test/helpers/style.js';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
@@ -30,12 +31,6 @@ const optionFace = (el: BkNativeSelect) =>
   builtOptions(el).map((option) => [option.value, option.textContent]);
 
 /* The mirror is rebuilt from a MutationObserver, and the rebuild is a render. */
-const settle = async (el: BkNativeSelect) => {
-  for (let round = 0; round < 2; round += 1) {
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    await el.updateComplete;
-  }
-};
 
 const atom = (value: string, label: string) => {
   const element = document.createElement('bk-native-select-opt');
