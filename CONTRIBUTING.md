@@ -48,19 +48,20 @@ pnpm install
 
 ## Commands
 
-| Command                | Use                                                                  |
-| ---------------------- | -------------------------------------------------------------------- |
-| `pnpm dev`             | the playground                                                       |
-| `pnpm storybook`       | component stories and the docs pages                                 |
-| `pnpm test`            | the suite, in real Chrome                                            |
-| `pnpm test:watch`      | the suite, watching                                                  |
-| `pnpm typecheck`       | `tsc --noEmit`                                                       |
-| `pnpm build:tokens`    | regenerate the CSS and `tokens.generated.ts`; commit the result      |
-| `pnpm check:tokens`    | every name a component reads exists, and every semantic role is read |
-| `pnpm format`          | rewrite the files Prettier owns                                      |
-| `pnpm format:check`    | fail if any of them is not formatted                                 |
-| `pnpm build`           | the bundle                                                           |
-| `pnpm build-storybook` | the static site                                                      |
+| Command                | Use                                                                                    |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| `pnpm dev`             | the playground                                                                         |
+| `pnpm storybook`       | component stories and the docs pages                                                   |
+| `pnpm test`            | the suite, in real Chrome                                                              |
+| `pnpm test:watch`      | the suite, watching                                                                    |
+| `pnpm typecheck`       | `tsc --noEmit`                                                                         |
+| `pnpm build:tokens`    | regenerate the CSS and `tokens.generated.ts`; commit the result                        |
+| `pnpm check:tokens`    | every name a component reads exists, and every semantic role is read                   |
+| `pnpm format`          | rewrite the files Prettier owns                                                        |
+| `pnpm format:check`    | fail if any of them is not formatted                                                   |
+| `pnpm build`           | the bundle                                                                             |
+| `pnpm build-storybook` | the static site                                                                        |
+| (CI) storybook job     | after the build, fails if the bundle registers none of the elements the sources define |
 
 Storybook starts in the light theme whatever the operating system says, and the
 **Theme** toolbar switches it to `dark` or `system`. The preview canvas paints
