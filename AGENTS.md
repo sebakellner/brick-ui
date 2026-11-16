@@ -17,7 +17,7 @@ src/components/bk-*/   element, stories, docs page, test, README
 src/components/shared/ contract: mixins, controllers, styles; no tag, no define, no shadow root
 src/styles/tokens/     generated CSS — never edit by hand
 src/styles/theme.css   the theming entry point, imports the generated files
-src/test/helpers/      loadTheme and the contrast assertions
+src/test/helpers/      the runner page's helpers: token resolver, contrast, pointer
 scripts/               check-token-usage.mjs
 docs/                  conventions and decision records
 ```
@@ -81,8 +81,10 @@ you are about to change, and never edit an accepted ADR — supersede it.
    specificity bugs; `getComputedStyle` does not.
 3. Hover and focus must go through real input — `sendMouse` from
    `@web/test-runner-commands`. A class swap cannot reproduce a specificity loss.
-4. Wait past the `--bk-transition` duration (120ms) before asserting a
-   transitioned property, or you sample an interpolated color.
+4. The test page zeroes `--bk-transition` (`web-test-runner.config.mjs`), so a
+   transitioned property is final immediately. A test about a transition sets the token
+   back and awaits `getAnimations()`; never a timer. The pointer is global: a suite that
+   moves it resets it in `afterEach`, or the next fixture inherits `:hover`.
 5. Prove every fix by mutation: break the code, watch the test go red, restore
    it. If it stays green the test is decorative.
 6. Run `pnpm test`, `pnpm typecheck`, `pnpm check:tokens` and

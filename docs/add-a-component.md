@@ -49,8 +49,9 @@ component does not re-decide any of it.
    [conventions-accessibility.md](conventions-accessibility.md), and most of it is
    asserted by the suite.
 
-5. **Tests.** `bk-<name>.test.ts` next to the element, `before(loadTheme)`, and
-   assertions on computed styles — plus `bk-<name>.register.test.ts` for the packaging
+5. **Tests.** `bk-<name>.test.ts` next to the element and assertions on computed
+   styles (the runner page already carries the theme) — plus
+   `bk-<name>.register.test.ts` for the packaging
    contract (the entry registers none of its tags, `define.js` registers all of them).
    A part with behaviour of its own gets its own suite; a part that only paints is
    covered where it is used. See [conventions-testing.md](conventions-testing.md), T8.

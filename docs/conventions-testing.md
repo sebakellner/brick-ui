@@ -98,7 +98,8 @@ itself; when it needs the other theme it calls `setTheme('dark')` and nothing el
 
 **Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)), so
 a suite without the theme asserts against nothing — but that is a property of the page, not
-of twenty-two files. Fetching the same stylesheet from each of them was twenty-two chances
+of twenty-two files. ADR 0002 still decides that the theme is required; only the loader it
+mentions (`before(loadTheme)`) is gone, and an accepted record is superseded, never edited. Fetching the same stylesheet from each of them was twenty-two chances
 to forget, and the copy that forgot failed with an unrelated-looking assertion.
 
 **Do** — switch the theme when the test is about the theme, and nothing otherwise:

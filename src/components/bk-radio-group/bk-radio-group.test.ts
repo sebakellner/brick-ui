@@ -1,3 +1,4 @@
+import { opacityOf } from '../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import './define.js';
@@ -21,12 +22,6 @@ const tabIndex = (radio: BkRadioGroupItem) => innerInput(radio).getAttribute('ta
 const describedNode = (el: BkRadioGroup): Element | null => {
   const id = el.getAttribute('aria-describedby');
   return id ? document.getElementById(id) : null;
-};
-
-const opacityOf = async (value: string): Promise<string> => {
-  const probe = await fixture<HTMLElement>(html`<span style="opacity: ${value}"></span>`);
-
-  return getComputedStyle(probe).opacity;
 };
 
 const settle = async (el: BkRadioGroup) => {

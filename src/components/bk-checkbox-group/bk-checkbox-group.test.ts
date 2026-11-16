@@ -1,3 +1,4 @@
+import { colorOf, opacityOf } from '../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import '../bk-checkbox/define.js';
@@ -32,12 +33,6 @@ const boxAttributes = (box: Element) =>
     .map((one) => one.name)
     .sort();
 
-const colorOf = async (value: string): Promise<string> => {
-  const probe = await fixture<HTMLElement>(html`<span style="color: ${value}"></span>`);
-
-  return getComputedStyle(probe).color;
-};
-
 const settle = async (el: BkCheckboxGroup) => {
   await el.updateComplete;
   await new Promise((resolve) => setTimeout(resolve, 0));
@@ -60,12 +55,6 @@ const settleBoxes = async (el: BkCheckboxGroup) => {
 const toggle = async (el: BkCheckboxGroup, box: BkCheckbox) => {
   inputOf(box).click();
   await settleBoxes(el);
-};
-
-const opacityOf = async (value: string): Promise<string> => {
-  const probe = await fixture<HTMLElement>(html`<span style="opacity: ${value}"></span>`);
-
-  return getComputedStyle(probe).opacity;
 };
 
 const requiredForm = html`

@@ -1,4 +1,5 @@
 import { resetMouse } from '@web/test-runner-commands';
+import { colorOf, opacityOf } from '../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import './define.js';
 import '../bk-field/define.js';
@@ -19,18 +20,6 @@ const settle = async (el: BkRadioGroupItem) => {
 };
 
 const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
-
-const colorOf = async (value: string): Promise<string> => {
-  const probe = await fixture<HTMLElement>(html`<span style="color: ${value}"></span>`);
-
-  return getComputedStyle(probe).color;
-};
-
-const opacityOf = async (value: string): Promise<string> => {
-  const probe = await fixture<HTMLElement>(html`<span style="opacity: ${value}"></span>`);
-
-  return getComputedStyle(probe).opacity;
-};
 
 describe('bk-radio-group-item', () => {
   afterEach(async () => {
