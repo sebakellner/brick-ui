@@ -5,6 +5,13 @@ export type Constructor<T = object> = new (...args: any[]) => T;
 
 export type NativeFormControl = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
+/* A constraint a control carries itself, because no native anchor reports it:
+ * the flags it is failing and the message a consumer reads for them. */
+export interface FieldConstraint {
+  flags: ValidityStateFlags;
+  message: string;
+}
+
 export interface FormControlInterface {
   name: string;
   value: string;
@@ -79,6 +86,13 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
 
     get fieldInvalid(): boolean {
       return Boolean(this.fieldError || this.fieldMessage);
+    }
+
+    /* A control whose constraint lives in no native anchor — a group whose
+     * missing value no single child reports — states it here. It is read before
+     * the native anchor, because a stated constraint is this element's own. */
+    protected get fieldConstraint(): FieldConstraint | undefined {
+      return undefined;
     }
 
     checkValidity(): boolean {
@@ -169,9 +183,12 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
       }
 
       const control = this.formControlElement;
+      const constraint = this.fieldConstraint;
       const error = this.fieldError;
 
-      if (error) {
+      if (constraint) {
+        this.internals.setValidity(constraint.flags, constraint.message, control);
+      } else if (error) {
         this.internals.setValidity({ customError: true }, error, control);
       } else if (control && !control.validity.valid) {
         this.internals.setValidity(control.validity, control.validationMessage, control);

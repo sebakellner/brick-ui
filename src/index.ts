@@ -10,6 +10,10 @@ export { BkFieldError } from './components/bk-field/bk-field-error.js';
 export { BkFieldLabel } from './components/bk-field/bk-field-label.js';
 export { BkInput, type BkInputMode, type BkInputType } from './components/bk-input/bk-input.js';
 export {
+  BkRadioGroup,
+  type BkRadioGroupOrientation,
+} from './components/bk-radio-group/bk-radio-group.js';
+export {
   FormControlMixin,
   formControlStyles,
   type Constructor,

@@ -1,6 +1,7 @@
 export {
   FormControlMixin,
   type Constructor,
+  type FieldConstraint,
   type FormControlInterface,
   type NativeFormControl,
 } from './form-control.mixin.js';
@@ -15,3 +16,4 @@ export {
   type FieldLabelState,
   type FieldPartsHost,
 } from './field-parts.controller.js';
+export { FieldRegionsController, type FieldRegionsOptions } from './field-regions.controller.js';

@@ -38,6 +38,16 @@ Load the theme once, then use the elements:
   </bk-input>
 </bk-field>
 
+<bk-radio-group name="shipping">
+  <bk-field-label>Shipping</bk-field-label>
+  <bk-radio-group-item value="standard" checked>
+    <bk-field-label slot="label">Standard</bk-field-label>
+  </bk-radio-group-item>
+  <bk-radio-group-item value="express">
+    <bk-field-label slot="label">Express</bk-field-label>
+  </bk-radio-group-item>
+</bk-radio-group>
+
 <script type="module" src="/src/index.ts"></script>
 ```
 
