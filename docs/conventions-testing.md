@@ -321,8 +321,8 @@ used. **The packaging contract is not a test**: `package.json` declares
 and `CONTRIBUTING.md` states both. Both extensions are listed because two bundlers read
 that field against two different graphs: a consumer's build sees the compiled `define.js`,
 and any build that reads the sources sees `define.ts`. A field that names only the first
-lets the second drop every registration — which is what a Storybook build did until
-`check:storybook` caught it. A concern is a `describe`, never a file: only a change of
+lets the second drop every registration, so the CI job that builds Storybook asserts the
+bundle registers something before it uploads anything. A concern is a `describe`, never a file: only a change of
 level changes a file's home.
 
 **Why.** Two claims were being tested that do not need it. "`define.js` registers its tags" is

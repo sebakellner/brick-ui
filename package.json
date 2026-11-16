@@ -13,7 +13,6 @@
     "build": "vite build",
     "build:tokens": "style-dictionary build --config style-dictionary.config.mjs",
     "check:tokens": "node scripts/check-token-usage.mjs",
-    "check:storybook": "node scripts/check-storybook-bundle.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",

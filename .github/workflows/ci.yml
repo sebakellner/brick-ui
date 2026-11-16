@@ -55,4 +55,4 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build:tokens
       - run: pnpm build-storybook
-      - run: pnpm check:storybook
+      - run: grep -rq 'customElements.define' storybook-static/assets || (echo 'the storybook build registers no element; a story renders bare text when its element never upgraded' && exit 1)
