@@ -6,6 +6,7 @@ import type { BkFieldDescription } from '.././bk-field-description.js';
 import type { BkFieldError } from '.././bk-field-error.js';
 import type { BkFieldLabel } from '.././bk-field-label.js';
 import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.js';
+import { colorOf } from '../../../test/helpers/style.js';
 import { setTheme } from '../../../test/helpers/theme.js';
 
 const part = <T extends Element>(el: BkField, tag: string) => el.querySelector<T>(tag)!;
@@ -118,6 +119,28 @@ describe('bk-field', () => {
 
     expect(el.hasAttribute('invalid'), 'the attribute follows the property').to.equal(false);
     expect(states(el)).to.deep.equal([null, null, null]);
+  });
+
+  it('should paint the label atom from the state, not only name it', async () => {
+    const el = await fixture<BkField>(html`
+      <bk-field>
+        <bk-field-label>Email</bk-field-label>
+        <bk-input name="email"></bk-input>
+      </bk-field>
+    `);
+    await el.updateComplete;
+
+    const label = part(el, 'bk-field-label');
+    expect(getComputedStyle(label).color, 'a field with no state paints the default role').to.equal(
+      await colorOf('var(--bk-text-default)'),
+    );
+
+    el.invalid = true;
+    await el.updateComplete;
+
+    expect(getComputedStyle(label).color, 'invalid reaches the atom through the paint').to.equal(
+      await colorOf('var(--bk-text-danger)'),
+    );
   });
 
   it('should space the parts from the field and not from the atoms', async () => {

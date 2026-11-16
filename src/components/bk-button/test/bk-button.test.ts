@@ -58,6 +58,10 @@ describe('bk-button', () => {
     expect(button.variant).to.equal('primary');
     expect(button.getAttribute('variant')).to.equal('primary');
     expect(innerButton(button).getAttribute('part')).to.equal('button');
+    expect(
+      getComputedStyle(innerButton(button)).backgroundColor,
+      'the default variant is what the button paints, not only the attribute naming it',
+    ).to.equal(await colorOf('var(--bk-bg-accent)'));
   });
 
   it('should mark a disabled button as unavailable without dropping it from the tab order', async () => {

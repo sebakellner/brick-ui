@@ -468,6 +468,10 @@ describe('bk-checkbox', () => {
     expect(innerInput(el).validationMessage).to.not.equal('');
     expect(innerError(el).textContent!.trim()).to.equal('You have to accept the terms.');
     expect(innerError(el).getAttribute('data-state')).to.equal('error');
+    expect(
+      getComputedStyle(innerError(el)).color,
+      'the error state is the danger role the region paints',
+    ).to.equal(await colorOf('var(--bk-text-danger)'));
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
   });
 
@@ -702,6 +706,10 @@ describe('bk-checkbox', () => {
     expect(label.getAttribute('data-state'), 'invalid wins the state attribute').to.equal(
       'invalid',
     );
+    expect(
+      getComputedStyle(label).color,
+      'the state the attribute names is also the role the row paints',
+    ).to.equal(await colorOf('var(--bk-text-danger)'));
     expect(
       label.hasAttribute('data-disabled'),
       'the dim keys off disabled, which the state precedence cannot take away',
