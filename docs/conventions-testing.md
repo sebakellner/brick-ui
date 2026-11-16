@@ -5,6 +5,39 @@ picks up `src/**/*.test.ts`, keeps tests next to the element, and registers the
 `sendMouse` plugin that the hover and focus tests need. One engine is a decision,
 not an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 
+| #   | Rule | Enforced by |
+| --- | ---- | ----------- |
+
+## The three levels, and who decides the composition
+
+The line between a unit test and an integration test is not "how many elements it
+imports" — almost every suite here imports an atom's `define.js`, because the atoms
+are the kit's vocabulary. The line is **who decides the composition**:
+
+| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                                                                                           |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/bk-x.test.ts`, plus the concern suffixes `.error`, `.form`                                                 |
+| **integration** | an assembly **the consumer chooses** — one control inside a `bk-field`, or four widgets in one form                                                                              | the test        | adjacent when one component owns the pairing (`bk-x.field.test.ts`), otherwise `src/test/integration/<assembly>/<rule>.test.ts` |
+| **e2e** (later) | **the package on a real page**: entry, registration, `theme.css`, bundler                                                                                                        | the application | `e2e/` with Playwright, once the kit is consumed by an app                                                                      |
+
+So `bk-checkbox.test.ts` is **unit** although it imports two defines (its atoms are
+its vocabulary), `bk-field.test.ts` is **integration** because the test chooses the
+control to pair with, and `bk-checkbox.form.test.ts` stays **unit**: one widget in a
+`<form>` is one widget in platform surroundings.
+
+Two rules make the levels useful instead of decorative:
+
+- **A level asserts only what the level below cannot.** Integration never re-asserts a
+  control's computed-style rules; it asserts what changes _because_ two are together —
+  the order in which validity is reported, the payload, a reset crossing widgets, focus
+  moving to the next control.
+- **No mocks at any level** (T2). E2E included: a real page, a real package.
+
+The level is a property of the subject, not of the folder — with one exception worth
+gating, because it is the drift that actually happens: a suite under
+`src/test/integration/` must compose at least two components. `scripts/check-test-levels.mjs`
+checks exactly that, and nothing else.
+
 | #   | Rule                                         | Enforced by                        |
 | --- | -------------------------------------------- | ---------------------------------- |
 | T1  | Load the theme in every test file            | the suite — an unstyled read fails |

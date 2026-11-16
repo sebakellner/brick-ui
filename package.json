@@ -12,6 +12,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:tokens": "style-dictionary build --config style-dictionary.config.mjs",
+    "check:tests": "node scripts/check-test-levels.mjs",
     "check:tokens": "node scripts/check-token-usage.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
