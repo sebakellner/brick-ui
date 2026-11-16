@@ -9,7 +9,7 @@ an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 The **three levels** come first, because they are the frame the rules sit in: where a
 suite lives and what it is allowed to assert. They are not numbered because they are judged
 as a whole — a misplaced suite is caught by reading a diff, not by one assertion going red
-— while a rule is something a single test can name. The fifteen numbered rules follow as a
+— while a rule is something a single test can name. Each numbered rule follows as a
 checklist, each with what enforces it, and each explained in turn after it.
 
 ## The three levels, and who decides the composition
@@ -22,7 +22,7 @@ the kit's vocabulary. The line is **who decides the composition**:
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | --------------------------------------------------------------- |
 | **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/test/bk-x.test.ts`, `describe` per concern |
 | **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                |
-| **e2e** (later) | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/` with Playwright, once the kit is consumed by an app      |
+| **e2e**         | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/`, Playwright                                              |
 
 **Where exactly the line falls: the level names whose contract the test writes down, not
 how many elements sit in the fixture.** That is the test of every doubtful case, and it
@@ -54,10 +54,9 @@ its component, in one file broken into `describe` blocks per concern (`form
 participation`, `error channel`, `label state`) instead of `.form` and `.error` files —
 one file per subject is what Shoelace and Material Web do, and a concern is a paragraph
 of a suite, not a module. Integration gets its own directory, the way Spectrum keeps its
-accessibility specs apart from its unit tests and the runner itself separates kinds. Nothing
-lives there today: the directory is for an assembly the test composes, and the form suite —
-several controls on one form — is the first one that earns it. A folder whose rule is "two or
-more widgets" does not exist before that suite does.
+accessibility specs apart from its unit tests and the runner itself separates kinds, and
+the location is what makes the level legible: a failure under `src/test/integration/` is
+never a component's regression.
 
 Three rules make the levels useful instead of decorative:
 
@@ -67,8 +66,11 @@ Three rules make the levels useful instead of decorative:
   widgets, focus moving to the next control.
 - **Share the mechanics, not the rules.** Mounting a field with its atoms, typing a
   value, submitting and settling are the same four lines in every suite, so they belong
-  in `src/test/helpers/`. The rules stay with the component that owns them: a shared rule
-  suite reports a failure without saying which component drifted, and it grows options and
+  in `src/test/helpers/`. A mechanic that has already been copied into more than one
+  suite moves there — a zero-delay settle copied into several suites is how a suite
+  samples a half-rendered state and reports a failure that names nothing. The rules stay
+  with the component that owns them: a shared rule suite reports a failure without saying
+  which component drifted, and it grows options and
   conditionals the moment two controls differ — the input keeps the native `disabled` and
   the checkbox does not, the checkbox submits only while checked. Shoelace's
   `runFormControlBaseTests` and Material's `createFormTests` exist because their controls
@@ -76,13 +78,13 @@ Three rules make the levels useful instead of decorative:
   **third** control with the same shape, not two.
 - **No mocks at any level** (T13). E2E included: a real page, a real package.
 
-**What e2e adds, and what it will never repeat.** The package is the subject: the entry
+**What e2e asserts, and what it never repeats.** The package is the subject: the entry
 registers nothing, each `define.js` registers its tags, a page that links `theme.css` gets the
 theme, and the bundle the build produces loads. Google's size vocabulary is the same line —
 a Large test validates "the interaction of several distinct parts of the system" — and FAST
-runs its Playwright suite as a separate step after the unit suite, not as a bigger one. What
-it must not do is re-assert a component's rules: a computed style that a unit test already
-pins is not more true from a Playwright page.
+runs its Playwright suite as a separate step after the unit suite, not as a bigger one. And
+it does not re-assert a component's rules: a computed style that a unit test already pins is
+not more true from a Playwright page.
 
 The placement rule worth stating — a suite under `src/test/integration/` composes at
 least two components, or the folder becomes a dumping ground — is enforced by **review,
@@ -111,6 +113,13 @@ suite reaches nobody; an undefined token reaches a consumer in runtime, which is
 | T13 | A suite does not mock, wait on a duration, or depend on order        | review                                     |
 | T14 | A suite is named after its element, and a case says what should hold | review                                     |
 | T15 | Accessibility is asserted by rule and by audit                       | `a11y.test.ts`, then every component suite |
+| T16 | A suite proves its subject rendered                                  | review                                     |
+
+The explanations below are **grouped by theme, not by number**. The numbers are stable
+identifiers: other documents, commit messages and reviews cite `T6` and `T15` by name, so
+a group changes the reading order and never the name of a rule.
+
+### The environment
 
 ## T1. The runner page loads the theme, once
 
@@ -120,11 +129,11 @@ itself; when it needs the other theme it calls `setTheme('dark')` and nothing el
 
 **Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)), so
 a suite without the theme asserts against nothing — but that is a property of the page, not
-of sixteen files. ADR 0002 still decides that the theme is required; the loader it
+of every file. ADR 0002 still decides that the theme is required; the loader it
 mentions (`before(loadTheme)`) is gone, and
 [0015](adr/0015-the-page-loads-the-theme-the-suite-does-not.md) supersedes that part of
-it. Fetching the same stylesheet from each suite was sixteen chances
-to forget, and the copy that forgot failed with an unrelated-looking assertion.
+it. Fetching the same stylesheet from each suite gave every file its own chance to forget,
+and the copy that forgot failed with an unrelated-looking assertion.
 
 **Do** — switch the theme when the test is about the theme, and nothing otherwise:
 
@@ -135,6 +144,56 @@ setTheme('dark');
 **Don't** — inject a `<link>` from a test, or assert before the page has its stylesheet.
 
 **Enforced by.** The suite: a missing token read fails the assertion.
+
+## T4. The test page has no transition to wait for
+
+**Rule.** The runner page zeroes the kit's duration token (`--bk-transition: 0s`), so a
+transitioned property reaches its final value immediately and no test waits for it. A test
+that is _about_ a transition sets the token back to its real value and awaits
+`element.getAnimations()` — never a timer.
+
+**Why.** Sampling mid-transition returns an interpolated colour, which is what the old
+rule guarded against with a fixed 250 ms sleep; the sleep was the symptom, not the fix. It
+cost ten seconds across the suite, and it hid a real leak: with the pointer left where the
+previous test parked it, the next fixture inherited `:hover`, and only a delayed sample
+made that look stable.
+
+**Do** — assert the final value directly, and reset what the test moved:
+
+```ts
+expect(getComputedStyle(box).borderTopColor).to.equal(await colorOf('var(--bk-border-strong)'));
+```
+
+**Don't** — `await new Promise((resolve) => setTimeout(resolve, 250))`, and do not leave the
+pointer over a fixture: `afterEach(resetMouse)` is what keeps one test's hover out of the
+next one's colours.
+
+**Enforced by.** Review; the suite's runtime is the visible effect.
+
+## T7. The runner claims a pointer, and the suite proves it
+
+**Rule.** `web-test-runner.config.mjs` launches Chrome with
+`--blink-settings=primaryHoverType=2`, and `src/test/browser.test.ts` asserts that
+`matchMedia('(hover: hover)')` is true. A hover test that skips is a hover test that
+proves nothing, so the environment is a test like any other.
+
+**Why.** Headless Chrome has no pointer device and reports `(hover: none)`, so every
+`@media (hover: hover)` rule stays out of the cascade — tests asserting "nothing
+changed on hover" pass without ever hovering. It happened here: three suites went
+green that way and only the button's own positive control caught it. `2` is hover
+(`1` is none); emulating the feature through `emulateMedia` is not possible, which is
+why the flag is at the launch layer.
+
+**Two caveats, both learned from other projects the hard way.** Any viewport
+emulation — `setViewport` — rewrites the pointer and hover types and silently undoes
+the flag, so a test that resizes the viewport must not expect hover afterwards. And
+the flag is Blink-only: on an engine with no pointer the hover tests still declare
+`this.skip()` rather than assert anything.
+
+**Enforced by.** `src/test/browser.test.ts`, plus the enabled-sibling control inside
+each hover test: the assertion cannot pass unless a hovered sibling really changed.
+
+### What a case asserts
 
 ## T2. Assert computed styles, not markup
 
@@ -176,30 +235,33 @@ await sendMouse({ type: 'move', position: [x, y] });
 
 **Enforced by.** Review.
 
-## T4. The test page has no transition to wait for
+## T16. A suite proves its subject rendered
 
-**Rule.** The runner page zeroes the kit's duration token (`--bk-transition: 0s`), so a
-transitioned property reaches its final value immediately and no test waits for it. A test
-that is _about_ a transition sets the token back to its real value and awaits
-`element.getAnimations()` — never a timer.
+**Rule.** Before a suite asserts a negative — "nothing changed", "no reference", "no ring" —
+or hands the element to an audit, it asserts the subject exists: the element upgraded, the
+inner control is there, the case's own anchor is not `null`. A negative assertion is
+satisfied by a page where nothing rendered, so it proves nothing until its positive half
+sits in the same suite.
 
-**Why.** Sampling mid-transition returns an interpolated colour, which is what the old
-rule guarded against with a fixed 250 ms sleep; the sleep was the symptom, not the fix. It
-cost ten seconds across the suite, and it hid a real leak: with the pointer left where the
-previous test parked it, the next fixture inherited `:hover`, and only a delayed sample
-made that look stable.
+**Why.** The axe gate passes an empty `div`, and that limitation is now an explicit test
+rather than a silent hole — the gate cannot tell "renders nothing" from "clean". The same
+shape hides in every "should not change on hover" case: on a page where the element never
+upgraded, all of them are green. It is T6 in another costume, an assertion that cannot fail.
 
-**Do** — assert the final value directly, and reset what the test moved:
+**Do** — the subject, before the negative:
 
 ```ts
-expect(getComputedStyle(box).borderTopColor).to.equal(await colorOf('var(--bk-border-strong)'));
+expect(el.shadowRoot !== null, 'the element upgraded').to.equal(true);
+expect(Boolean(innerInput(el)), 'the inner control is there').to.equal(true);
 ```
 
-**Don't** — `await new Promise((resolve) => setTimeout(resolve, 250))`, and do not leave the
-pointer over a fixture: `afterEach(resetMouse)` is what keeps one test's hover out of the
-next one's colours.
+**Don't** — a case whose only assertion is that nothing changed, in a suite where nothing
+proves something ever rendered.
 
-**Enforced by.** Review; the suite's runtime is the visible effect.
+**Enforced by.** Review; `src/test/helpers/a11y.test.ts` pins what an audit reports with
+nothing to audit.
+
+### Traps that hide a regression
 
 ## T5. Every fix is provable by mutation
 
@@ -247,28 +309,7 @@ regression.
 **Enforced by.** The suite — a violation here is a hang, so this is the one rule
 that has to be read rather than observed.
 
-## T7. The runner claims a pointer, and the suite proves it
-
-**Rule.** `web-test-runner.config.mjs` launches Chrome with
-`--blink-settings=primaryHoverType=2`, and `src/test/browser.test.ts` asserts that
-`matchMedia('(hover: hover)')` is true. A hover test that skips is a hover test that
-proves nothing, so the environment is a test like any other.
-
-**Why.** Headless Chrome has no pointer device and reports `(hover: none)`, so every
-`@media (hover: hover)` rule stays out of the cascade — tests asserting "nothing
-changed on hover" pass without ever hovering. It happened here: three suites went
-green that way and only the button's own positive control caught it. `2` is hover
-(`1` is none); emulating the feature through `emulateMedia` is not possible, which is
-why the flag is at the launch layer.
-
-**Two caveats, both learned from other projects the hard way.** Any viewport
-emulation — `setViewport` — rewrites the pointer and hover types and silently undoes
-the flag, so a test that resizes the viewport must not expect hover afterwards. And
-the flag is Blink-only: on an engine with no pointer the hover tests still declare
-`this.skip()` rather than assert anything.
-
-**Enforced by.** `src/test/browser.test.ts`, plus the enabled-sibling control inside
-each hover test: the assertion cannot pass unless a hovered sibling really changed.
+### Structure, vocabulary and shared mechanics
 
 ## T8. One suite per component, a suite per part that has behaviour, and the packaging contract declared
 
@@ -302,12 +343,11 @@ src/components/bk-field/
 the suite; there is no list to extend and no second file to remember.
 
 **Accessibility is a concern, not a part.** The audit and the A-rule cases live inside the
-component's suite, under a `describe('accessibility')`, and not in a
-`bk-<name>.a11y.test.ts`. It was considered as an exception on 2026-11-16 and rejected: the
-whole suite runs in 5.2 s with the audit inside it, a failing case already prints the
-component's name, and a second file per component repeats verbatim the argument this rule
-exists to refuse for `.form` and `.error` files. A hang is the one thing that would reopen
-it — a hang in a shared file costs that file's whole signal, and axe has not produced one.
+component's suite, under a `describe('accessibility')`, never in a `bk-<name>.a11y.test.ts`:
+a failing case already prints the component's name, and a second file per component repeats
+verbatim the argument this rule exists to refuse for `.form` and `.error` files. The
+exception would be earned by a hang, which costs a shared file its whole signal — the audit
+has not caused one.
 
 **Enforced by.** The suites themselves; `sideEffects` for a bundler; review for the entry.
 
@@ -335,6 +375,8 @@ describe('bk-input', () => {
 **Don't** — `const test = it;` and then a suite that calls `test(…)`.
 
 **Enforced by.** Review; the suite imports no such name.
+
+### The cases a rule earns
 
 ## T10. A rule earns its path, and the case that refuses it
 
@@ -391,14 +433,14 @@ cost.
 request. A suite is judged by whether each rule a component documents has a case, not by how
 much of a file it executes.
 
-**Why.** Google's testing chapter names the failure mode: engineers treat the number "like a
-ceiling … changes begin landing with no more than 80% coverage", and recommends measuring
-coverage from small tests only. Fowler: "test coverage is of little use as a numeric statement
-of how good your tests are". Shoelace's maintainer: "I don't care about the number of tests or
-even coverage — I care about sensibility". The counter-example is real and named honestly:
-Spectrum Web Components keeps 99% with an auto-ratchet, and also runs visual regression and a
-Playwright accessibility suite. This repository has neither, so a threshold here would be a
-target for a number no one reads, guarding rules the audit in T15 already reaches.
+**Why.** The full record, including the position this reverses, is
+[0017](adr/0017-coverage-is-not-measured.md). Briefly: Google's testing chapter names the
+failure mode — engineers treat the number "like a ceiling … changes begin landing with no
+more than 80% coverage" — and Fowler calls it "of little use as a numeric statement of how
+good your tests are". The counter-example is real and named there: Spectrum Web Components
+keeps 99% with an auto-ratchet, and also runs visual regression and a Playwright
+accessibility suite. This repository has neither, so a threshold here would be a target for
+a number no one reads, guarding rules the audit in T15 already reaches.
 
 **Do** — ask which documented rule has no case, and add that case.
 
@@ -445,7 +487,7 @@ multiple tests for one feature into describe blocks".
 
 **Don't** — `it('works')`, `it('test 3')`, `it('can be disabled and also focused')`.
 
-**Enforced by.** Review; the suites follow it today.
+**Enforced by.** Review; the suites follow it.
 
 ## T15. Accessibility is asserted by rule and by audit
 

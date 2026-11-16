@@ -78,7 +78,7 @@ src/components/bk-*/   element, stories, Storybook docs page, test/, README
 src/styles/theme.css   imports the generated token files; the consumer entry point
 src/index.ts           public entry point
 src/test/helpers/      token resolver (colorOf, opacityOf), contrast assertions, theme switch, pointer (hover, clickAt)
-src/test/integration/  where a suite the test composes from two or more widgets goes, one folder per assembly; empty until the form suite exists
+src/test/integration/  where a suite the test composes from two or more widgets goes, one folder per assembly
 scripts/               check-token-usage.mjs
 ```
 
