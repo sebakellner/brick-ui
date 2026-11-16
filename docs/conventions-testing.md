@@ -317,8 +317,12 @@ that has to be read rather than observed.
 gets a suite of its own when it has behaviour — the radio item's activation, the select atoms'
 reflection, the field atoms' painting — and a part that only paints is covered where it is
 used. **The packaging contract is not a test**: `package.json` declares
-`"sideEffects": ["**/define.js"]`, `src/index.ts` imports no `define.js`, and
-`CONTRIBUTING.md` states both. A concern is a `describe`, never a file: only a change of
+`"sideEffects": ["**/define.js", "**/define.ts"]`, `src/index.ts` imports no `define.js`,
+and `CONTRIBUTING.md` states both. Both extensions are listed because two bundlers read
+that field against two different graphs: a consumer's build sees the compiled `define.js`,
+and any build that reads the sources sees `define.ts`. A field that names only the first
+lets the second drop every registration, so the CI job that builds Storybook asserts the
+bundle registers something before it uploads anything. A concern is a `describe`, never a file: only a change of
 level changes a file's home.
 
 **Why.** Two claims were being tested that do not need it. "`define.js` registers its tags" is

@@ -33,6 +33,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
       - run: pnpm build-storybook
+      - run: grep -rq 'customElements.define' storybook-static/assets || (echo 'the storybook build registers no element; a story renders bare text when its element never upgraded' && exit 1)
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

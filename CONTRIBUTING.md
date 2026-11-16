@@ -36,7 +36,7 @@ native control inside its shadow root. A container composes `FieldRegionsControl
 and both rely on `SlottedTextController` for the one question neither can answer alone: whether
 slotted content has text. Nothing about form participation is copied:
 
-Component modules carry **no side effects**. Registration lives in a `define.ts` beside the component, guarded so a second copy of the package cannot throw, and the package entry point exports without registering. `package.json` declares `"sideEffects": ["**/define.js"]`, which is what makes a bundler enforce the split instead of a test. `src/playground.ts` is the only module that registers for the dev server.
+Component modules carry **no side effects**. Registration lives in a `define.ts` beside the component, guarded so a second copy of the package cannot throw, and the package entry point exports without registering. `package.json` declares `"sideEffects": ["**/define.js", "**/define.ts"]` — the compiled file a consumer's bundler reads and the source a build that reads TypeScript reads — which is what makes a bundler enforce the split instead of a test. `src/playground.ts` is the only module that registers for the dev server.
 
 ## Setup
 
