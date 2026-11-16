@@ -97,6 +97,12 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
         background: currentColor;
         transform: none;
       }
+
+      [part='message'] {
+        margin-inline-start: calc(
+          var(--bk-checkbox-size, var(--bk-checkbox-variant-size)) + var(--bk-space-2)
+        );
+      }
     `,
   ];
 

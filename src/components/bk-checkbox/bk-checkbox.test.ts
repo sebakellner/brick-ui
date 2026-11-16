@@ -493,6 +493,54 @@ describe('bk-checkbox', () => {
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
   });
 
+  it('should start the message block where the label text starts', async () => {
+    const el = await fixture<BkCheckbox>(html`
+      <bk-checkbox>
+        <bk-field-label slot="label">Accept terms</bk-field-label>
+        <bk-field-description slot="description">You can change this later.</bk-field-description>
+      </bk-checkbox>
+    `);
+    const label = el.querySelector('bk-field-label')!.getBoundingClientRect();
+    const box = innerBox(el).getBoundingClientRect();
+    const description = innerDescription(el).getBoundingClientRect();
+
+    expect(box.left, 'the box starts the row').to.be.lessThan(label.left);
+    expect(
+      Math.abs(description.left - label.left),
+      'the description is indented by the box and the row gap, not rendered under the box',
+    ).to.be.at.most(1);
+
+    el.error = 'You have to accept the terms.';
+    await el.updateComplete;
+
+    expect(
+      Math.abs(innerError(el).getBoundingClientRect().left - label.left),
+      'the error is part of the same block and indented with it',
+    ).to.be.at.most(1);
+  });
+
+  it('should keep the message block aligned when the box is resized', async () => {
+    const el = await fixture<BkCheckbox>(html`
+      <bk-checkbox>
+        <bk-field-label slot="label">Accept terms</bk-field-label>
+        <bk-field-description slot="description">You can change this later.</bk-field-description>
+      </bk-checkbox>
+    `);
+    const before = innerDescription(el).getBoundingClientRect().left;
+
+    el.style.setProperty('--bk-checkbox-size', '24px');
+    await el.updateComplete;
+
+    const label = el.querySelector('bk-field-label')!.getBoundingClientRect();
+    const description = innerDescription(el).getBoundingClientRect();
+
+    expect(description.left, 'the indent follows the size hook').to.be.greaterThan(before);
+    expect(
+      Math.abs(description.left - label.left),
+      'a resized box keeps the message block on the label text',
+    ).to.be.at.most(1);
+  });
+
   it('should report a required checkbox as invalid until it is checked', async () => {
     const el = await fixture<BkCheckbox>(html`<bk-checkbox required></bk-checkbox>`);
 

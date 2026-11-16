@@ -5,7 +5,8 @@ Date: 2026-11-16
 ## Status
 
 accepted; superseded in part by
-[0013](0013-a-group-enforces-at-least-one-and-nothing-else.md)
+[0013](0013-a-group-enforces-at-least-one-and-nothing-else.md) and in part by
+[0014](0014-an-option-can-carry-its-own-hint.md)
 
 ## Context
 

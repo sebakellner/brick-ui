@@ -83,15 +83,18 @@ form API
 The group's atoms need no `slot` attribute: it assigns `bk-field-label`,
 `bk-field-description` and `bk-field-error` by tag name, at any depth. An item's
 atoms are the item's: a label written for a box goes inside that
-`bk-radio-group-item` with `slot="label"` on the atom itself, because a
-`bk-radio-group-item` does not assign slots by tag. A bare `bk-field-label`
-inside the group names the group.
+`bk-radio-group-item` with `slot="label"` on the atom itself, and a description
+written for a box needs no slot either, because the item assigns
+`bk-field-description` to its own `description` slot. The group stops at the
+nearest item, so an atom inside an item is never adopted as a message about the
+set, and a bare `bk-field-label` inside the group names the group.
 
 ## The item
 
 `bk-radio-group-item` is the box of one option: a real `<label>`, a round box, the
-slotted `bk-field-label` that names it, and a `bk-change` report. **It is part of
-the group's markup, not a component you import.** The group's `define.ts`
+slotted `bk-field-label` that names it, the slotted `bk-field-description` that
+hints at it, and a `bk-change` report. **It is part of the group's markup, not a
+component you import.** The group's `define.ts`
 registers its tag beside the group's own, so a `<bk-radio-group-item>` whose tag
 was never defined can never stay inert; the package entry `src/index.ts` exports
 only `BkRadioGroup` and the orientation type.
@@ -105,7 +108,9 @@ keyboard, and a public tag whose only correct context is one container is a trap
 ([ADR 0012](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0012-a-radio-group-is-a-widget-not-a-container.md)).
 
 The item is form-inert: no `name`, no `required`, no `error`, no `submittedValue`,
-no validity, no message region. Those are the group's.
+no validity and no error region. Validity is the group's. The one message region
+the item carries is the **description of its own option**, and the group never
+adopts it.
 
 ### Properties
 
@@ -116,19 +121,44 @@ no validity, no message region. Those are the group's.
 | `value`    | `value`    | `string`  | `''`    | what the item contributes to the group's value. An item with no `value` cannot hold the selection                                                                                                                              |
 | `tabStop`  | —          | `boolean` | `false` | the roving tab stop, written by the group as a **property only**. It becomes `tabindex="0"` on the inner input, or `-1`; the attribute does not exist because the group computes the tab order and a consumer never invents it |
 
-The item also takes one slot:
+The item also takes two slots:
 
-| Slot    | Content          | Notes                                                                                                                                                                          |
-| ------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `label` | `bk-field-label` | rendered inside the `<label>` that wraps the native input, so the association is implicit by containment. The slot is the only label, and the box is unnamed while it is empty |
+| Slot          | Content                | Notes                                                                                                                                                                                                 |
+| ------------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`       | `bk-field-label`       | rendered inside the `<label>` that wraps the native input, so the association is implicit by containment. The slot is the only label, and the box is unnamed while it is empty                        |
+| `description` | `bk-field-description` | the hint of that option, rendered under the label row and indented to the label text. The item assigns the slot by tag, so the atom needs no `slot` attribute. An empty or absent hint takes no space |
 
 ### Parts
 
-| Part    | Element                                                                |
-| ------- | ---------------------------------------------------------------------- |
-| `label` | the `<label>` row: the hidden input, the box and the label slot        |
-| `input` | the native `<input type="radio">`, visually hidden and still focusable |
-| `box`   | the painted circle, `aria-hidden` decoration                           |
+| Part          | Element                                                                         |
+| ------------- | ------------------------------------------------------------------------------- |
+| `label`       | the `<label>` row: the hidden input, the box and the label slot                 |
+| `input`       | the native `<input type="radio">`, visually hidden and still focusable          |
+| `box`         | the painted circle, `aria-hidden` decoration                                    |
+| `description` | the region of the option's hint, hidden while the option carries no description |
+
+### The hint of an option
+
+The item takes a **description, never an error**: why one option is the better
+choice belongs to that option, while validity belongs to the set
+([ADR 0014](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0014-an-option-can-carry-its-own-hint.md)).
+It renders under the label row, styled like any other message region (small and
+muted, `--bk-space-1` above it), and it starts where the label text starts: the
+region is indented by `var(--bk-radio-group-item-size,
+var(--bk-radio-group-item-variant-size))` plus the row gap `--bk-space-2`, read
+from the hook the box paints, so a resized box keeps the alignment.
+
+```html
+<bk-radio-group-item value="standard">
+  <bk-field-label slot="label">Standard</bk-field-label>
+  <bk-field-description>Three to five working days.</bk-field-description>
+</bk-radio-group-item>
+```
+
+An absent or still-empty description takes no space at all, so a column of
+options stays as tight as the labels it holds; the region appears when its text
+does, and it is content, not a live region. There is no `error` slot: an error
+written inside an item would be adopted by nothing and announced by nothing.
 
 ### Override hooks
 
@@ -170,6 +200,11 @@ Set the two hooks above, not those.
   the label beside it dim together, once. The label atom is the consumer's and
   this element writes no `data-state` on it (the group's own `data-state` marks
   only the group's label).
+- **The hint is referenced, and it is the region the item renders.** The `<input>` and the
+  region sit in the same shadow root, so `aria-describedby` resolves and the hint is the
+  radio's accessible description while it has text. It is dropped when the hint empties (A4).
+  [ADR 0009](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0009-nest-the-field-parts-inside-the-control.md)
+  could not resolve. The hint is read where it is, next to the option.
 
 ## Group-level messages
 

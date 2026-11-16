@@ -149,6 +149,32 @@ describe('bk-radio-group', () => {
     expect(getComputedStyle(description).display).to.not.equal('none');
   });
 
+  it('should leave the description of a radio to that radio', async () => {
+    const el = await fixture<BkRadioGroup>(html`
+      <bk-radio-group name="size">
+        <bk-field-label>Size</bk-field-label>
+        <bk-radio-group-item value="s">
+          <bk-field-label slot="label">Small</bk-field-label>
+          <bk-field-description>Fits most people.</bk-field-description>
+        </bk-radio-group-item>
+        <bk-field-description>Pick the one you wear.</bk-field-description>
+      </bk-radio-group>
+    `);
+    await settle(el);
+    const item = el.querySelector<BkRadioGroupItem>('bk-radio-group-item')!;
+    const hint = item.querySelector<HTMLElement>(':scope > bk-field-description')!;
+    const own = el.querySelector<HTMLElement>(':scope > bk-field-description')!;
+
+    expect(describedNode(el) === own, 'the group describes itself with its own atom').to.equal(
+      true,
+    );
+    expect(hint.id, 'the hint of a radio is not adopted: it is given no id').to.equal('');
+    expect(hint.hasAttribute('data-empty'), 'nor the empty mark the group writes').to.equal(false);
+    expect(hint.getAttribute('slot'), 'the item owns the slot assignment of its own atom').to.equal(
+      'description',
+    );
+  });
+
   it('should set its value and keep exactly one radio checked on an activation', async () => {
     const el = await fixture<BkRadioGroup>(threeRadios);
     await settle(el);
