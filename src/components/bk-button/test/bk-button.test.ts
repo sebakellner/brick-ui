@@ -71,7 +71,10 @@ describe('bk-button', () => {
     expect(clicks).to.equal(0);
 
     button.focus();
-    expect(button.shadowRoot!.activeElement).to.equal(innerButton(button));
+    expect(
+      button.shadowRoot!.activeElement === innerButton(button),
+      'focus lands on the inner button',
+    ).to.equal(true);
   });
 
   for (const theme of ['light', 'dark'] as const) {
