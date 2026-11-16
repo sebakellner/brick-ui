@@ -86,6 +86,13 @@ export class BkRadioGroupItem extends LitElement {
       .native:checked + .box::after {
         visibility: visible;
       }
+
+      .message {
+        margin-inline-start: calc(
+          var(--bk-radio-group-item-size, var(--bk-radio-group-item-variant-size)) +
+            var(--bk-space-2)
+        );
+      }
     `,
   ];
 
@@ -99,6 +106,27 @@ export class BkRadioGroupItem extends LitElement {
 
   private readonly controlId = nextInstanceId();
 
+  private hasDescription = false;
+
+  /* A consumer edits the text of its atom in place, without assigning a node
+   * again, so `slotchange` never fires for it; content has to be observed. */
+  private readonly descriptionMutations = new MutationObserver(() => this.syncDescription());
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.descriptionMutations.observe(this, {
+      childList: true,
+      characterData: true,
+      subtree: true,
+    });
+    this.syncDescription();
+  }
+
+  override disconnectedCallback(): void {
+    this.descriptionMutations.disconnect();
+    super.disconnectedCallback();
+  }
+
   override render() {
     return html`
       <label class="field label" part="label" for=${this.controlId} ?data-disabled=${this.disabled}>
@@ -110,12 +138,21 @@ export class BkRadioGroupItem extends LitElement {
           .checked=${this.checked}
           tabindex=${this.tabStop ? '0' : '-1'}
           aria-disabled=${this.disabled ? 'true' : nothing}
+          aria-describedby=${this.hasDescription ? `${this.controlId}-description` : nothing}
           @click=${this.handleClick}
           @change=${this.handleChange}
         />
         <span part="box" class="box" aria-hidden="true"></span>
         <slot name="label"></slot>
       </label>
+      <div
+        class="message"
+        part="description"
+        id=${`${this.controlId}-description`}
+        ?hidden=${!this.hasDescription}
+      >
+        <slot name="description" @slotchange=${this.syncDescription}></slot>
+      </div>
     `;
   }
 
@@ -133,6 +170,29 @@ export class BkRadioGroupItem extends LitElement {
 
   private get control(): HTMLInputElement | undefined {
     return this.shadowRoot?.querySelector('input') ?? undefined;
+  }
+
+  /* The hint of an option is the option's: the consumer writes the atom and the
+   * item assigns the slot, because the surrounding group must not adopt an
+   * option's hint as a message about the set. It takes no space while it holds
+   * no text, so a column of options stays tight. */
+  private readonly syncDescription = (): void => {
+    let describes = false;
+    for (const atom of this.descriptions()) {
+      if (atom.slot !== 'description') atom.slot = 'description';
+      if ((atom.textContent ?? '').trim() !== '') describes = true;
+    }
+    if (describes === this.hasDescription) return;
+    this.hasDescription = describes;
+    this.requestUpdate();
+  };
+
+  /* An atom of a nested item is that item's, the way the group leaves the atoms
+   * of its radios alone. */
+  private descriptions(): HTMLElement[] {
+    return Array.from(this.querySelectorAll<HTMLElement>('bk-field-description')).filter(
+      (atom) => atom.parentElement?.closest('bk-radio-group-item, bk-radio-group') === this,
+    );
   }
 
   private readonly handleClick = (event: MouseEvent): void => {

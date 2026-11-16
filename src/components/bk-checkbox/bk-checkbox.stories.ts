@@ -105,6 +105,20 @@ export const Required: Story = {
   args: { required: true, description: '', label: 'Accept the terms to continue' },
 };
 
+export const Description: Story = {
+  name: 'Description aligned with a resized box',
+  render: () => html`
+    <div style="--bk-checkbox-size: calc(var(--bk-space-4) * 1.5); width: 320px;">
+      <bk-field>
+        <bk-checkbox name="terms">
+          <bk-field-label>Accept the terms</bk-field-label>
+          <bk-field-description>You can change this later.</bk-field-description>
+        </bk-checkbox>
+      </bk-field>
+    </div>
+  `,
+};
+
 export const Mixed: Story = {
   render: () => html`
     <bk-field>

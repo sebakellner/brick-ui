@@ -45,7 +45,7 @@ because nothing is submitted.
 | Slot          | Content                | Notes                                                                                                                                                                                                           |
 | ------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `label`       | `bk-field-label`       | rendered inside the `<label>` that wraps the native input; the slot is the only label, and the box is unnamed while it is empty                                                                                 |
-| `description` | `bk-field-description` | the help text, under the label row; `aria-describedby` names the region while it has content                                                                                                                    |
+| `description` | `bk-field-description` | the help text, under the label row and indented to the label text; `aria-describedby` names the region while it has content                                                                                     |
 | `error`       | `bk-field-error`       | the problem, rendered outside the label; an atom with text **is** the box's error (marks the box invalid, blocks submission) and wins over the `error` property; the description is hidden while it has content |
 
 The error channel has two writers and one display: `error` from JavaScript, and
@@ -83,7 +83,7 @@ document.querySelector('bk-checkbox').addEventListener('bk-change', (event) => {
 | `input`       | the native `<input type="checkbox">`                                                |
 | `box`         | the painted square                                                                  |
 | `required`    | the `*` that marks a required box, `aria-hidden`                                    |
-| `message`     | the container of the two message regions                                            |
+| `message`     | the container of the two message regions, indented to the label text                |
 | `description` | the help region                                                                     |
 | `error`       | the error region, `role="status"`                                                   |
 
@@ -94,6 +94,15 @@ accessibility tree. The error region always carries `data-state="error"`, which
 names it as the region that paints a problem, whichever channel fills it; whether
 it holds a message is `data-empty`, not that attribute. The part names do not
 move with the state: `description` keeps its name while the error shows.
+
+The **message block starts where the label text starts**, not under the box: it is
+indented by `var(--bk-checkbox-size, var(--bk-checkbox-variant-size))` plus the row
+gap `--bk-space-2`, both read from the hook the box paints. A consumer who resizes
+the box through `--bk-checkbox-size` keeps the alignment, because one value paints
+the box and the indent. Both regions are indented, because a description and an
+error are one block about the same box. The rule is the checkbox's own and never
+the shared sheet: `bk-input` puts its label above its control and must not gain an
+indent.
 
 The label is inline beside the box by design. The row is the checkbox's own
 layout, so no `orientation` decides it and the field never reaches into it.

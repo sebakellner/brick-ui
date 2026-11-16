@@ -9,6 +9,13 @@ const innerInput = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('input
 const innerLabel = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('label')!;
 const innerBox = (el: BkRadioGroupItem) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
+const innerDescription = (el: BkRadioGroupItem) =>
+  el.shadowRoot!.querySelector<HTMLElement>('[part="description"]')!;
+
+const settle = async (el: BkRadioGroupItem) => {
+  await new Promise((resolve) => setTimeout(resolve, 0));
+  await el.updateComplete;
+};
 
 const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
 
@@ -256,5 +263,137 @@ describe('bk-radio-group-item', () => {
 
     expect(styled.width, 'the size hook paints the box').to.equal('24px');
     expect(styled.borderTopLeftRadius, 'the radius hook paints the corner').to.equal('0px');
+  });
+
+  it('should take a description from its own atom and align it with the label text', async () => {
+    const el = await fixture<BkRadioGroupItem>(html`
+      <bk-radio-group-item value="s">
+        <bk-field-label slot="label">Small</bk-field-label>
+        <bk-field-description>Fits most people.</bk-field-description>
+      </bk-radio-group-item>
+    `);
+    await settle(el);
+    const atom = el.querySelector('bk-field-description')!;
+    const regionSlot = el.shadowRoot!.querySelector<HTMLSlotElement>('slot[name="description"]')!;
+    const label = el.querySelector('bk-field-label')!.getBoundingClientRect();
+    const box = innerBox(el).getBoundingClientRect();
+    const description = innerDescription(el).getBoundingClientRect();
+
+    expect(
+      atom.getAttribute('slot'),
+      'the item writes the slot, the consumer markup does not',
+    ).to.equal('description');
+    expect(
+      regionSlot.assignedElements().includes(atom),
+      'the atom is the region of the item',
+    ).to.equal(true);
+    expect(box.left, 'the box starts the row').to.be.lessThan(label.left);
+    expect(description.top, 'the description sits under the label row').to.be.at.least(
+      label.bottom,
+    );
+    expect(
+      Math.abs(description.left - label.left),
+      'the description is indented by the box and the row gap, not rendered under the box',
+    ).to.be.at.most(1);
+  });
+
+  it('should keep the description aligned when the box is resized', async () => {
+    const el = await fixture<BkRadioGroupItem>(html`
+      <bk-radio-group-item value="s">
+        <bk-field-label slot="label">Small</bk-field-label>
+        <bk-field-description>Fits most people.</bk-field-description>
+      </bk-radio-group-item>
+    `);
+    await settle(el);
+    const before = innerDescription(el).getBoundingClientRect().left;
+
+    el.style.setProperty('--bk-radio-group-item-size', '24px');
+    await settle(el);
+
+    const label = el.querySelector('bk-field-label')!.getBoundingClientRect();
+    const description = innerDescription(el).getBoundingClientRect();
+
+    expect(description.left, 'the indent follows the size hook').to.be.greaterThan(before);
+    expect(
+      Math.abs(description.left - label.left),
+      'a resized box keeps the description on the label text',
+    ).to.be.at.most(1);
+  });
+
+  it('should add no vertical space while it carries no description', async () => {
+    const host = await fixture<HTMLElement>(html`
+      <div>
+        <bk-radio-group-item value="s">
+          <bk-field-label slot="label">Small</bk-field-label>
+          <bk-field-description>Fits most people.</bk-field-description>
+        </bk-radio-group-item>
+        <bk-radio-group-item value="m">
+          <bk-field-label slot="label">Medium</bk-field-label>
+        </bk-radio-group-item>
+        <div class="after"></div>
+      </div>
+    `);
+    const [withHint, withoutHint] = host.querySelectorAll<BkRadioGroupItem>('bk-radio-group-item');
+    await settle(withHint);
+    await settle(withoutHint);
+
+    const marker = host.querySelector<HTMLElement>('.after')!;
+    const row = innerLabel(withoutHint).getBoundingClientRect();
+    const below = () =>
+      marker.getBoundingClientRect().top - withoutHint.getBoundingClientRect().bottom;
+
+    expect(
+      getComputedStyle(innerDescription(withoutHint)).display,
+      'no region is laid out',
+    ).to.equal('none');
+    expect(withoutHint.getBoundingClientRect().height, 'the item is exactly its row').to.be.at.most(
+      row.height + 1,
+    );
+    expect(below(), 'nothing is left below it in the column').to.be.at.most(1);
+    expect(
+      withHint.getBoundingClientRect().height,
+      'the radio beside it, which has a description, is taller',
+    ).to.be.greaterThan(withoutHint.getBoundingClientRect().height);
+
+    const empty = document.createElement('bk-field-description');
+    withoutHint.append(empty);
+    await settle(withoutHint);
+
+    expect(below(), 'an empty description takes no space either').to.be.at.most(1);
+
+    empty.textContent = 'Added later.';
+    await settle(withoutHint);
+
+    expect(
+      withoutHint.getBoundingClientRect().height,
+      'the text is what takes the space, inside the item',
+    ).to.be.greaterThan(row.height + 1);
+    expect(below(), 'and nothing is left below it').to.be.at.most(1);
+  });
+
+  it('should describe the radio with its own hint and drop the reference while it is empty', async () => {
+    const el = await fixture<BkRadioGroupItem>(
+      html`<bk-radio-group-item
+        ><bk-field-label slot="label">Priority</bk-field-label></bk-radio-group-item
+      >`,
+    );
+    await settle(el);
+
+    expect(innerInput(el).hasAttribute('aria-describedby'), 'no hint, no reference').to.equal(
+      false,
+    );
+
+    const hint = document.createElement('bk-field-description');
+    hint.textContent = 'Ships first.';
+    el.append(hint);
+    await settle(el);
+
+    const resolved = el.shadowRoot!.getElementById(
+      innerInput(el).getAttribute('aria-describedby')!,
+    );
+    expect(
+      Boolean(resolved) && resolved === innerDescription(el),
+      'the reference resolves to the hint region in the same tree',
+    ).to.equal(true);
   });
 });

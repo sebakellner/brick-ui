@@ -101,6 +101,28 @@ export const DescriptionAndError: Story = {
   },
 };
 
+export const HintsPerOption: Story = {
+  name: 'Hints per option',
+  render: () => html`
+    <div style="width: 320px;">
+      <bk-radio-group name="delivery">
+        <bk-field-label>Delivery</bk-field-label>
+        <bk-radio-group-item value="standard">
+          <bk-field-label slot="label">Standard</bk-field-label>
+          <bk-field-description>Three to five working days.</bk-field-description>
+        </bk-radio-group-item>
+        <bk-radio-group-item value="express">
+          <bk-field-label slot="label">Express</bk-field-label>
+          <bk-field-description>Tomorrow, before noon.</bk-field-description>
+        </bk-radio-group-item>
+        <bk-radio-group-item value="pickup">
+          <bk-field-label slot="label">Pick up in the shop</bk-field-label>
+        </bk-radio-group-item>
+      </bk-radio-group>
+    </div>
+  `,
+};
+
 export const Disabled: Story = {
   args: { disabled: true, value: 'm', description: 'The set is disabled as a whole.' },
 };

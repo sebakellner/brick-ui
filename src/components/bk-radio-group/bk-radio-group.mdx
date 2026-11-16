@@ -37,6 +37,14 @@ text is the group's error: it is the message, it paints the label invalid, it se
 
 <Canvas of={RadioGroupStories.DescriptionAndError} />
 
+## Hints per option
+
+A description written **inside** an item is that option's hint: the item assigns
+the slot, the text starts where the label text starts, and the group never adopts
+it as a message about the set. An option with no hint takes no extra space.
+
+<Canvas of={RadioGroupStories.HintsPerOption} />
+
 ## Disabled
 
 A disabled group disables every radio it owns, keeps the tab stop out of the tab
