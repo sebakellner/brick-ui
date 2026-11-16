@@ -82,7 +82,10 @@ describe('bk-checkbox', () => {
     expect(innerLabel(el).htmlFor).to.equal(input.id);
     expect(input.id).to.not.equal('');
     expect(input.type).to.equal('checkbox');
-    expect(input.closest('label')).to.equal(innerLabel(el));
+    expect(
+      input.closest('label') === innerLabel(el),
+      'the input sits inside the label that names it',
+    ).to.equal(true);
   });
 
   it('should take the label only from the label slot, never from a label attribute', async () => {
@@ -117,7 +120,10 @@ describe('bk-checkbox', () => {
 
     el.focus();
 
-    expect(el.shadowRoot!.activeElement).to.equal(innerInput(el));
+    expect(
+      el.shadowRoot!.activeElement === innerInput(el),
+      'focus lands on the inner input',
+    ).to.equal(true);
   });
 
   it('should toggle from a click on the label text', async () => {
@@ -337,7 +343,10 @@ describe('bk-checkbox', () => {
     await sendKeys({ press: 'Tab' });
     await nextFrame();
 
-    expect(el.shadowRoot!.activeElement).to.equal(innerInput(el));
+    expect(
+      el.shadowRoot!.activeElement === innerInput(el),
+      'focus lands on the inner input',
+    ).to.equal(true);
     expect(getComputedStyle(box).outlineStyle).to.equal('solid');
     expect(getComputedStyle(box).outlineWidth, 'the ring has a width').to.not.equal('0px');
     expect(getComputedStyle(box).outlineColor).to.equal(await colorOf('var(--bk-focus-ring)'));
@@ -362,7 +371,7 @@ describe('bk-checkbox', () => {
     expect(changes).to.equal(0);
 
     el.focus();
-    expect(el.shadowRoot!.activeElement).to.equal(input);
+    expect(el.shadowRoot!.activeElement === input, 'focus stays on the input').to.equal(true);
   });
 
   it('should dim the row of a disabled box and leave the box surface alone', async () => {
@@ -1237,7 +1246,10 @@ describe('bk-checkbox', () => {
       expect(el.checked).to.equal(false);
 
       el.focus();
-      expect(el.shadowRoot!.activeElement).to.equal(innerInput(el));
+      expect(
+        el.shadowRoot!.activeElement === innerInput(el),
+        'focus lands on the inner input',
+      ).to.equal(true);
     });
   });
 });
