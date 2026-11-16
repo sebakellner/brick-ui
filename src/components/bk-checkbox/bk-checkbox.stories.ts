@@ -104,3 +104,14 @@ export const States: Story = {
 export const Required: Story = {
   args: { required: true, description: '', label: 'Accept the terms to continue' },
 };
+
+export const Mixed: Story = {
+  render: () => html`
+    <bk-field>
+      <bk-checkbox name="all" indeterminate>
+        <bk-field-label>Select all</bk-field-label>
+        <bk-field-description>The selection is partly made.</bk-field-description>
+      </bk-checkbox>
+    </bk-field>
+  `,
+};

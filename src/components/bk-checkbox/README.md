@@ -21,14 +21,24 @@ A checkbox with a real `<label>`, a description and an error slot, and a
 
 ## Attributes and properties
 
-| Property   | Attribute  | Type      | Default | Notes                                                                                                                                                                                                       |
-| ---------- | ---------- | --------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `error`    | `error`    | `string`  | `''`    | the message from JavaScript; a slotted `bk-field-error` with text wins over it; wins over the description and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input` |
-| `checked`  | `checked`  | `boolean` | `false` | the state. The attribute is the default the form returns to on reset, like the platform's `defaultChecked`; the property is not reflected, so the attribute stays what the author wrote                     |
-| `value`    | `value`    | `string`  | `''`    | submits as `on` while checked, and submits nothing while unchecked                                                                                                                                          |
-| `name`     | `name`     | `string`  | `''`    |                                                                                                                                                                                                             |
-| `disabled` | `disabled` | `boolean` | `false` | reflected; sets `aria-disabled` on the inner checkbox and blocks activation                                                                                                                                 |
-| `required` | `required` | `boolean` | `false` | reflected; announces the state and marks the label with a `*` when there is one                                                                                                                             |
+| Property        | Attribute       | Type      | Default | Notes                                                                                                                                                                                                       |
+| --------------- | --------------- | --------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `error`         | `error`         | `string`  | `''`    | the message from JavaScript; a slotted `bk-field-error` with text wins over it; wins over the description and over the native message; sets `aria-invalid="true"` and blocks submission; cleared on `input` |
+| `checked`       | `checked`       | `boolean` | `false` | the state. The attribute is the default the form returns to on reset, like the platform's `defaultChecked`; the property is not reflected, so the attribute stays what the author wrote                     |
+| `indeterminate` | `indeterminate` | `boolean` | `false` | reflected; the mixed state: paints a dash instead of the check, submits nothing while it holds, and a click resolves it to checked. The attribute is also what a reset returns to                           |
+| `value`         | `value`         | `string`  | `''`    | submits as `on` while checked, and submits nothing while unchecked                                                                                                                                          |
+| `name`          | `name`          | `string`  | `''`    |                                                                                                                                                                                                             |
+| `disabled`      | `disabled`      | `boolean` | `false` | reflected; sets `aria-disabled` on the inner checkbox and blocks activation                                                                                                                                 |
+| `required`      | `required`      | `boolean` | `false` | reflected; announces the state and marks the label with a `*` when there is one                                                                                                                             |
+
+The mixed state is a header over a set, not a value. While `indeterminate` holds,
+nothing is submitted, whatever `checked` says: the box reports the case the HTML
+specification gives for a select-all control, so `FormData` does not carry a key
+for it. A click resolves the state to checked and clears the flag, and
+`bk-change` reports `{ checked: true }` as usual — the control mirrors what the
+native input did rather than inventing a transition. It is not a validity state:
+a mixed box is not invalid, and a `required` mixed box is still `valueMissing`,
+because nothing is submitted.
 
 ## Slots
 
@@ -165,13 +175,11 @@ Set the two hooks above, not those.
   `name`, an unchecked one submits nothing, `required` reports `valueMissing`,
   `error` — or the text of a `bk-field-error` in the `error` slot — reports
   `customError`, a disabled `<fieldset>` disables the field, and `reset()`
-  restores the authored `checked` attribute and drops `error`. A disabled box
-  submits nothing and reports no error, like a native one.
+  restores the authored `checked` and `indeterminate` state and drops `error`. A
+  disabled box submits nothing and reports no error, like a native one.
 
 ## Limitations
 
-- No `indeterminate`. A tri-state box needs a decision on what it submits, and
-  that decision is not made yet.
 - No group here. Wrapping several boxes is `bk-checkbox-group`: this component is
   one box with its own label, message and validity, and it never reads an
   ancestor.

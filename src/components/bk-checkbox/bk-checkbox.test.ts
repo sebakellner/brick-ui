@@ -121,6 +121,60 @@ describe('bk-checkbox', () => {
     expect(innerInput(el).checked).to.equal(false);
   });
 
+  it('should follow the indeterminate property on the inner checkbox', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox indeterminate></bk-checkbox>`);
+
+    expect(el.indeterminate, 'the attribute is the property').to.equal(true);
+    expect(innerInput(el).indeterminate, 'the native control paints the dash').to.equal(true);
+
+    el.indeterminate = false;
+    await el.updateComplete;
+
+    expect(el.hasAttribute('indeterminate'), 'the property is reflected').to.equal(false);
+    expect(innerInput(el).indeterminate).to.equal(false);
+
+    el.indeterminate = true;
+    await el.updateComplete;
+
+    expect(el.hasAttribute('indeterminate')).to.equal(true);
+    expect(innerInput(el).indeterminate).to.equal(true);
+  });
+
+  it('should leave validity alone while it is mixed', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox indeterminate></bk-checkbox>`);
+
+    expect(innerInput(el).validity.valid, 'mixed is not a validity state').to.equal(true);
+    expect(el.validity.valid).to.equal(true);
+    expect(innerInput(el).getAttribute('aria-invalid')).to.equal(null);
+  });
+
+  it('should resolve to checked and report it when a mixed box is clicked', async () => {
+    const host = await fixture<HTMLElement>(html`
+      <div><bk-checkbox indeterminate>${labelAtom}</bk-checkbox></div>
+    `);
+    const el = host.querySelector<BkCheckbox>('bk-checkbox')!;
+    const details: unknown[] = [];
+    el.addEventListener('bk-change', (event) => {
+      details.push((event as CustomEvent).detail);
+    });
+    const box = innerBox(el).getBoundingClientRect();
+
+    await sendMouse({
+      type: 'click',
+      position: [Math.round(box.x + box.width / 2), Math.round(box.y + box.height / 2)],
+    });
+    await el.updateComplete;
+
+    expect(el.checked, 'the click resolves the mixed state to checked').to.equal(true);
+    expect(el.indeterminate, 'the browser cleared the mixed flag, and the box mirrors it').to.equal(
+      false,
+    );
+    expect(el.hasAttribute('indeterminate')).to.equal(false);
+    expect(innerInput(el).checked).to.equal(true);
+    expect(innerInput(el).indeterminate).to.equal(false);
+    expect(details).to.deep.equal([{ checked: true }]);
+  });
+
   it('should dispatch bk-change with the new state, bubbling and composed', async () => {
     const host = await fixture<HTMLElement>(html`<div><bk-checkbox></bk-checkbox></div>`);
     const el = host.querySelector<BkCheckbox>('bk-checkbox')!;
@@ -176,6 +230,40 @@ describe('bk-checkbox', () => {
 
     expect(check.borderInlineEndWidth).to.not.equal('0px');
     expect(check.borderBlockEndWidth).to.not.equal('0px');
+  });
+
+  it('should paint a dash and not the check while it is mixed', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox indeterminate></bk-checkbox>`);
+    await pastTransition();
+
+    const box = getComputedStyle(innerBox(el));
+    const mixed = getComputedStyle(innerBox(el), '::after');
+
+    expect(box.backgroundColor, 'the fill stays the accent surface').to.equal(
+      await colorOf('var(--bk-bg-accent)'),
+    );
+    expect(mixed.visibility, 'the mixed shape is painted').to.equal('visible');
+    expect(mixed.backgroundColor, 'the dash is a filled bar in the accent text role').to.equal(
+      await colorOf('var(--bk-text-on-accent)'),
+    );
+    expect(mixed.borderInlineEndWidth, 'the mixed shape has no chevron stroke').to.equal('0px');
+    expect(mixed.transform, 'the mixed shape is not rotated').to.equal('none');
+
+    el.indeterminate = false;
+    el.checked = true;
+    await el.updateComplete;
+    await pastTransition();
+
+    const check = getComputedStyle(innerBox(el), '::after');
+
+    expect(check.visibility, 'the checkmark is painted once it is only checked').to.equal(
+      'visible',
+    );
+    expect(check.backgroundColor, 'the checkmark is a stroke, not a filled bar').to.equal(
+      'rgba(0, 0, 0, 0)',
+    );
+    expect(check.borderInlineEndWidth).to.not.equal('0px');
+    expect(check.transform).to.not.equal('none');
   });
 
   it('should let the host override the box size and radius', async () => {
