@@ -396,4 +396,23 @@ describe('bk-radio-group-item', () => {
       'the reference resolves to the hint region in the same tree',
     ).to.equal(true);
   });
+
+  it('should not describe the radio with an atom nothing projects', async () => {
+    const el = await fixture<BkRadioGroupItem>(html`
+      <bk-radio-group-item>
+        <bk-field-label slot="label">Priority</bk-field-label>
+        <div><bk-field-description>Ships first.</bk-field-description></div>
+      </bk-radio-group-item>
+    `);
+    await settle(el);
+
+    expect(
+      innerInput(el).hasAttribute('aria-describedby'),
+      'text the item owns but cannot project does not describe it',
+    ).to.equal(false);
+    expect(
+      getComputedStyle(innerDescription(el)).display,
+      'and the region stays collapsed',
+    ).to.equal('none');
+  });
 });
