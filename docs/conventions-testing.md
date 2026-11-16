@@ -151,6 +151,49 @@ the flag is Blink-only: on an engine with no pointer the hover tests still decla
 **Enforced by.** `src/test/browser.test.ts`, plus the enabled-sibling control inside
 each hover test: the assertion cannot pass unless a hovered sibling really changed.
 
+## T8. Every component ships the same two suites, and a part only when it has behaviour
+
+**Rule.** A component ships `bk-<name>.test.ts` for its rules and
+`bk-<name>.register.test.ts` for the packaging contract — the package entry registers
+**none** of its tags, and its `define.js` registers **all** of them, which for a
+component with atoms is the whole list. A part gets a suite of its own when it has
+behaviour (the radio item's activation and tab stop, the select atoms' reflection); a
+part that only paints is covered where it is used (`bk-field-label` and its siblings
+inside `bk-field.test.ts`). A third file is added **by concern** — `.form`,
+`.field`, `.error` — and only when that concern has rules of its own and the main
+file has grown past a few hundred lines; the suffix names the concern, never a mood.
+
+**Why.** The register suite existed in four components of seven and the atom coverage
+in one of three, which is how a convention stops being one: each addition was locally
+reasonable and the set stopped matching. Its rule is not about the component at all —
+it is the packaging contract, and an atom whose tag nobody defined would stay inert —
+so it is the same test everywhere, and having it everywhere is what makes its absence
+visible. Reflection on a data atom is the same kind of fact: the select's mirror
+watches attributes, so a property an atom does not reflect is invisible to it, and
+that is worth pinning at the atom instead of inferring it from the parent.
+
+**Do** — the shape, identical in all seven:
+
+```ts
+const TAGS = ['bk-x', 'bk-x-atom'] as const;
+
+it('should register none of its tags when the package entry is imported', () => {
+  for (const tag of TAGS) expect(customElements.get(tag), tag).to.equal(undefined);
+});
+
+it('should register all of them when its define module is imported', async () => {
+  await import('./define.js');
+  for (const tag of TAGS) expect(customElements.get(tag) === undefined, tag).to.equal(false);
+});
+```
+
+**Don't** — a register suite that imports `define.js` statically: module evaluation
+runs before the first test, so "the entry does not register it" becomes untestable
+and the suite proves half of what it claims.
+
+**Enforced by.** The suites themselves; a missing one is visible in the inventory,
+which is how this rule was found.
+
 ## Commands
 
 | Command           | Use                |
