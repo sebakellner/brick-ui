@@ -10,19 +10,21 @@ type Args = {
   description: string;
   error: string;
   invalid: boolean;
+  required: boolean;
   orientation: BkCheckboxGroupOrientation;
   email: boolean;
   sms: boolean;
 };
 
 const meta: Meta<Args> = {
-  title: 'Components/Checkbox group',
+  title: 'Form/Checkbox group',
   component: 'bk-checkbox-group',
   args: {
     label: 'Notifications',
     description: 'Pick at least one.',
     error: '',
     invalid: false,
+    required: false,
     orientation: 'vertical',
     email: false,
     sms: false,
@@ -32,12 +34,13 @@ const meta: Meta<Args> = {
     description: { control: 'text' },
     error: { control: 'text' },
     invalid: { control: 'boolean' },
+    required: { control: 'boolean' },
     orientation: { control: 'inline-radio', options: ['vertical', 'horizontal'] },
     email: { control: 'boolean' },
     sms: { control: 'boolean' },
   },
-  render: ({ label, description, error, invalid, orientation, email, sms }) => html`
-    <bk-checkbox-group ?invalid=${invalid} orientation=${orientation}>
+  render: ({ label, description, error, invalid, required, orientation, email, sms }) => html`
+    <bk-checkbox-group ?invalid=${invalid} ?required=${required} orientation=${orientation}>
       <bk-field-label>${label}</bk-field-label>
       <bk-checkbox name="email" value="email" .checked=${email}>
         <bk-field-label slot="label">Email</bk-field-label>

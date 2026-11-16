@@ -25,7 +25,7 @@ const parts = (label: string, description: string) => html`
 `;
 
 const meta: Meta<Args> = {
-  title: 'Components/Input',
+  title: 'Form/Input',
   component: 'bk-input',
   args: {
     label: 'Email',

@@ -20,7 +20,7 @@ const parts = (label: string, description: string) => html`
 `;
 
 const meta: Meta<Args> = {
-  title: 'Components/Checkbox',
+  title: 'Form/Checkbox',
   component: 'bk-checkbox',
   args: {
     label: 'Accept the terms',

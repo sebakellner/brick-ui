@@ -10,7 +10,7 @@ type Args = {
 };
 
 const meta: Meta<Args> = {
-  title: 'Components/Button',
+  title: 'Form/Button',
   component: 'bk-button',
   args: { variant: 'primary', disabled: false, label: 'Save changes' },
   argTypes: {

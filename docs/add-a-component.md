@@ -52,7 +52,9 @@ component does not re-decide any of it.
 5. **Tests.** `bk-<name>.test.ts` next to the element, `before(loadTheme)`, and
    assertions on computed styles. See [conventions-testing.md](conventions-testing.md).
 
-6. **Stories.** `bk-<name>.stories.ts` with one story per variant and per state.
+6. **Stories.** `bk-<name>.stories.ts` with one story per variant and per state, and a
+   `title` that states the kind of component it is: `Form/<Name>` for anything that takes
+   part in a form. The sidebar groups by that first segment and sorts inside it.
    Stories are the only place where a raw `px` is acceptable — scaffolding, not
    design.
 
