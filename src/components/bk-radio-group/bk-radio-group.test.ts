@@ -83,6 +83,29 @@ describe('bk-radio-group', () => {
     ).to.equal(0);
   });
 
+  it('should leave a nested group’s label to that group', async () => {
+    const el = await fixture<BkRadioGroup>(html`
+      <bk-radio-group name="outer">
+        <bk-radio-group name="inner">
+          <bk-field-label>Inner</bk-field-label>
+          <bk-radio-group-item value="s"
+            ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+          >
+        </bk-radio-group>
+      </bk-radio-group>
+    `);
+    const inner = el.querySelector<BkRadioGroup>('bk-radio-group')!;
+    await settle(el);
+    await settle(inner);
+    await settle(el);
+    const label = inner.querySelector<HTMLElement>(':scope > bk-field-label')!;
+    const named = (group: BkRadioGroup) => Array.from(group.ariaLabelledByElements ?? []);
+
+    expect(named(el).length, 'the inner label does not name the outer group').to.equal(0);
+    expect(named(inner).length, 'the inner label names the inner group').to.equal(1);
+    expect(named(inner)[0] === label, 'by the consumer atom itself').to.equal(true);
+  });
+
   it('should describe itself with the consumer atoms and render no region of its own', async () => {
     const el = await fixture<BkRadioGroup>(html`
       <bk-radio-group name="size">

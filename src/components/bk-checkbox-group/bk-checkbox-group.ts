@@ -66,7 +66,7 @@ export class BkCheckboxGroup extends FieldControlMixin(LitElement) {
   /* TypeScript cannot see a protected member through the mixin's constructor
    * intersection, so the override of the mixin's getter carries no modifier. */
   protected get fieldConstraint(): FieldConstraint | undefined {
-    if (!this.required || this.boxes().some((box) => box.checked)) return undefined;
+    if (!this.required || this.boxes().some((box) => box.submittedValue !== null)) return undefined;
     return {
       flags: { valueMissing: true },
       message: this.fieldError || MISSING_VALUE_MESSAGE,

@@ -147,8 +147,12 @@ export class FieldRegionsController implements ReactiveController {
 
   private owned(tag: string): HTMLElement[] {
     return Array.from(this.host.querySelectorAll<HTMLElement>(tag)).filter((atom) => {
-      const owner = atom.parentElement?.closest(this.options.controlSelector);
-      return !owner || !this.host.contains(owner);
+      /* the nearest control or container decides: an atom of a nested group is
+       * that group's, and an atom this host parents directly is this host's */
+      const owner = atom.parentElement?.closest(
+        `${this.options.controlSelector}, ${this.host.localName}`,
+      );
+      return !owner || owner === this.host;
     });
   }
 

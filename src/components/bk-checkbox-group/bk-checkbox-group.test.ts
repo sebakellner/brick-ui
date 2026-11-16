@@ -601,6 +601,122 @@ describe('bk-checkbox-group', () => {
     );
   });
 
+  it('should leave a nested group’s label to that group', async () => {
+    const el = await fixture<BkCheckboxGroup>(html`
+      <bk-checkbox-group>
+        <bk-checkbox-group>
+          <bk-field-label>Inner</bk-field-label>
+          <bk-checkbox name="inner"
+            ><bk-field-label slot="label">Inner box</bk-field-label></bk-checkbox
+          >
+        </bk-checkbox-group>
+      </bk-checkbox-group>
+    `);
+    const inner = el.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
+    await settle(el);
+    await settle(inner);
+    await settle(el);
+    const label = inner.querySelector<HTMLElement>(':scope > bk-field-label')!;
+
+    expect(nameOf(el).length, 'the inner label does not name the outer group').to.equal(0);
+    expect(nameOf(inner).length, 'the inner label names the inner group').to.equal(1);
+    expect(nameOf(inner)[0] === label, 'by the consumer atom itself').to.equal(true);
+  });
+
+  it('should not describe itself with a nested group’s description', async () => {
+    const el = await fixture<BkCheckboxGroup>(html`
+      <bk-checkbox-group>
+        <bk-field-error></bk-field-error>
+        <bk-checkbox-group>
+          <bk-field-label>Inner</bk-field-label>
+          <bk-field-description>Inner only.</bk-field-description>
+          <bk-checkbox name="inner"
+            ><bk-field-label slot="label">Inner box</bk-field-label></bk-checkbox
+          >
+        </bk-checkbox-group>
+      </bk-checkbox-group>
+    `);
+    const inner = el.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
+    await settle(el);
+    await settle(inner);
+    await settle(el);
+    const ownError = el.querySelector<HTMLElement>(':scope > bk-field-error')!;
+    const description = inner.querySelector<HTMLElement>(':scope > bk-field-description')!;
+    const ownPrefix = ownError.id.replace(/-error$/, '');
+
+    expect(
+      Boolean(el.getAttribute('aria-describedby')),
+      'the outer group has no region of its own, so nothing describes it',
+    ).to.equal(false);
+    expect(describedNode(inner) === description, 'the inner group points at its own atom').to.equal(
+      true,
+    );
+    expect(
+      description.id === `${ownPrefix}-description`,
+      'the outer group did not adopt the inner atom',
+    ).to.equal(false);
+    expect(
+      description.hasAttribute('data-empty'),
+      'the atom has text and nobody marked it empty',
+    ).to.equal(false);
+  });
+
+  it('should keep a required group valueMissing while its only box is mixed', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <bk-checkbox-group name="channels" required>
+          <bk-field-label>Notifications</bk-field-label>
+          <bk-checkbox name="email" value="email" checked indeterminate
+            ><bk-field-label slot="label">Email</bk-field-label></bk-checkbox
+          >
+        </bk-checkbox-group>
+      </form>
+    `);
+    const el = form.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
+    await settleBoxes(el);
+    const [email] = boxesOf(el);
+    let submitted = false;
+    let invalidOn: EventTarget | null = null;
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      submitted = true;
+    });
+    form.addEventListener('invalid', (event) => (invalidOn = event.target), true);
+
+    expect(email.checked, 'the box is checked').to.equal(true);
+    expect(email.indeterminate, 'and mixed').to.equal(true);
+    expect(
+      el.validity.valueMissing,
+      'a mixed box submits no value, so the set has no answer',
+    ).to.equal(true);
+    expect(el.validity.valid).to.equal(false);
+    expect(form.checkValidity()).to.equal(false);
+
+    form.requestSubmit();
+    await settleBoxes(el);
+
+    expect(submitted, 'the submit never runs').to.equal(false);
+    expect(invalidOn === el, 'the group is what the submit rejected').to.equal(true);
+    expect(new FormData(form).get('email'), 'the mixed box submitted nothing').to.equal(null);
+
+    await toggle(el, email);
+
+    expect(email.indeterminate, 'the real activation resolved the mixed state').to.equal(false);
+    expect(email.checked, 'the click toggled the box checkedness, so it is unchecked now').to.equal(
+      false,
+    );
+    expect(el.validity.valueMissing, 'a resolved but unchecked box is still no answer').to.equal(
+      true,
+    );
+
+    await toggle(el, email);
+
+    expect(email.checked, 'the second activation checks the box for real').to.equal(true);
+    expect(el.validity.valueMissing, 'a checked box is the answer').to.equal(false);
+    expect(form.checkValidity(), 'the form now validates').to.equal(true);
+    expect(new FormData(form).get('email')).to.equal('email');
+  });
+
   it('should clear the name when the label atom is removed', async () => {
     const host = await fixture<HTMLElement>(html`
       <div>

@@ -48,8 +48,8 @@ group carries. With `required` and nothing checked the group reports
 `valueMissing` and the form refuses the submit; the moment one box it owns is
 checked the constraint clears, and it comes back when the last one is unchecked.
 
-There is no manual call: the group reads the boxes' `checked` property and
-re-evaluates on the `bk-change` every box already emits. The boxes stay
+There is no manual call: the group reads what each box submits — its
+`submittedValue` — and re-evaluates on the `bk-change` every box already emits. The boxes stay
 independent — the group writes nothing on them except `disabled` (see
 [Disabled](#disabled)), an unchecked box submits nothing, and no box knows it is
 in a group.
@@ -262,8 +262,8 @@ layout is the only thing `orientation` decides.
   so a required empty group with no error atom is not red, before an interaction
   or after it. Write an error atom, or set `error`, to mark the set and keep it
   marked.
-- **The group reads and writes as little as it can.** It reads the boxes'
-  `checked` property — never into a box's shadow root — and writes only
+- **The group reads and writes as little as it can.** It reads each box's
+  `submittedValue` — never into a box's shadow root — and writes only
   `disabled` on them. It never sets a box's `checked`, its `required` or its
   message, and an unchecked box still submits nothing.
 - **The inherited `value` is inert.** The group has no value of its own, so
