@@ -1,9 +1,27 @@
 import { colorOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
+import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.js';
+import { setTheme } from '../../../test/helpers/theme.js';
 import '.././define.js';
 import type { BkFieldDescription } from '.././bk-field-description.js';
 
 describe('bk-field-description', () => {
+  describe('accessibility', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      it(`should have no accessibility violations (${theme})`, async () => {
+        setTheme(theme);
+        const el = await fixture<BkFieldDescription>(
+          html`<bk-field-description>We never share it.</bk-field-description>`,
+        );
+
+        await expectRendered(el, 'slot');
+        await expectNoViolations(el);
+      });
+    }
+
+    afterEach(() => setTheme('light'));
+  });
+
   it('should paint the muted text role outside a field', async () => {
     const el = await fixture<BkFieldDescription>(
       html`<bk-field-description>We only use it for the receipt.</bk-field-description>`,
