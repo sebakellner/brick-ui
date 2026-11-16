@@ -58,6 +58,9 @@ export class BkNativeSelect extends FieldControlMixin(LitElement) {
     css`
       .control {
         border-radius: var(--bk-radius-md);
+        /* The native caret is drawn inside the end padding, so it needs more room
+         * than the text does or it sits against the border. */
+        padding-inline-end: calc(var(--bk-space-3) + var(--bk-space-2));
       }
     `,
   ];

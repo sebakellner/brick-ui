@@ -340,4 +340,20 @@ describe('bk-native-select', () => {
       'and the control is not left blank',
     ).to.equal(0);
   });
+
+  it('should leave the native caret more air than the text on the end side', async () => {
+    const el = await fixture<BkNativeSelect>(html`
+      <bk-native-select name="channel" placeholder="Choose a channel">
+        <bk-native-select-opt value="email">Email</bk-native-select-opt>
+      </bk-native-select>
+    `);
+    await el.updateComplete;
+    const select = el.shadowRoot!.querySelector('select')!;
+    const style = getComputedStyle(select);
+
+    expect(
+      parseFloat(style.paddingInlineEnd),
+      'the caret sits inside the end padding, so that side is wider',
+    ).to.be.greaterThan(parseFloat(style.paddingInlineStart));
+  });
 });
