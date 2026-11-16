@@ -6,23 +6,11 @@ or more widgets that the test composes lives under `src/test/integration/`, and 
 `sendMouse` plugin is what the hover and focus tests need. One engine is a decision, not
 an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 
-The eight numbered rules follow, each with what enforces it. The **three levels** after
-them are the frame the rules sit in: where a suite lives and what it is allowed to assert.
-They are not numbered because they are judged as a whole — a misplaced suite is caught by
-reading a diff, not by one assertion going red — while a rule is something a single test
-can name.
-
-| #   | Rule                                                        | Enforced by                             |
-| --- | ----------------------------------------------------------- | --------------------------------------- |
-| T1  | The runner page loads the theme, once                       | the suite — an unstyled read fails      |
-| T2  | Assert computed styles, not markup                          | review                                  |
-| T3  | Drive hover and focus with real input                       | review                                  |
-| T4  | The test page has no transition to wait for                 | review; the suite runtime shows it      |
-| T5  | Every fix is provable by mutation                           | review                                  |
-| T6  | Never put a DOM element on the tested side of a failure     | the suite — a violation is a hang       |
-| T7  | The runner claims a pointer, and the suite proves it        | `browser.test.ts` + the enabled sibling |
-| T8  | Two suites per component, a part only when it has behaviour | the suites, visible in the inventory    |
-| T9  | Use the testing library's own vocabulary, never an alias    | review                                  |
+The **three levels** come first, because they are the frame the rules sit in: where a
+suite lives and what it is allowed to assert. They are not numbered because they are judged
+as a whole — a misplaced suite is caught by reading a diff, not by one assertion going red
+— while a rule is something a single test can name. The fifteen numbered rules follow as a
+checklist, each with what enforces it, and each explained in turn after it.
 
 ## The three levels, and who decides the composition
 
@@ -30,11 +18,11 @@ The line between a unit test and an integration test is not "how many elements i
 imports" — almost every suite here imports an atom's `define.js`, because the atoms are
 the kit's vocabulary. The line is **who decides the composition**:
 
-| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                                                                |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------- |
-| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/test/bk-x.test.ts` (and its `register` suite beside it), `describe` per concern |
-| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                                                     |
-| **e2e** (later) | **the package on a real page**: entry, registration, `theme.css`, bundler                                                                                                        | the application | `e2e/` with Playwright, once the kit is consumed by an app                                           |
+| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                           |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | --------------------------------------------------------------- |
+| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/test/bk-x.test.ts`, `describe` per concern |
+| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                |
+| **e2e** (later) | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/` with Playwright, once the kit is consumed by an app      |
 
 **Where exactly the line falls: the level names whose contract the test writes down, not
 how many elements sit in the fixture.** That is the test of every doubtful case, and it
@@ -86,7 +74,15 @@ Three rules make the levels useful instead of decorative:
   `runFormControlBaseTests` and Material's `createFormTests` exist because their controls
   are uniform; ours already disagree, so the criterion for adopting one here is a
   **third** control with the same shape, not two.
-- **No mocks at any level** (T2). E2E included: a real page, a real package.
+- **No mocks at any level** (T13). E2E included: a real page, a real package.
+
+**What e2e adds, and what it will never repeat.** The package is the subject: the entry
+registers nothing, each `define.js` registers its tags, a page that links `theme.css` gets the
+theme, and the bundle the build produces loads. Google's size vocabulary is the same line —
+a Large test validates "the interaction of several distinct parts of the system" — and FAST
+runs its Playwright suite as a separate step after the unit suite, not as a bigger one. What
+it must not do is re-assert a component's rules: a computed style that a unit test already
+pins is not more true from a Playwright page.
 
 The placement rule worth stating — a suite under `src/test/integration/` composes at
 least two components, or the folder becomes a dumping ground — is enforced by **review,
@@ -96,6 +92,26 @@ costs nothing a consumer can feel teaches people to route around gates. A mislab
 suite reaches nobody; an undefined token reaches a consumer in runtime, which is why
 `check:tokens` earns its place and this did not.
 
+## The rules, and what enforces them
+
+| #   | Rule                                                                 | Enforced by                                |
+| --- | -------------------------------------------------------------------- | ------------------------------------------ |
+| T1  | The runner page loads the theme, once                                | the suite — an unstyled read fails         |
+| T2  | Assert computed styles, not markup                                   | review                                     |
+| T3  | Drive hover and focus with real input                                | review                                     |
+| T4  | The test page has no transition to wait for                          | review; the suite runtime shows it         |
+| T5  | Every fix is provable by mutation                                    | review                                     |
+| T6  | Never put a DOM element on the tested side of a failure              | the suite — a violation is a hang          |
+| T7  | The runner claims a pointer, and the suite proves it                 | `browser.test.ts` + the enabled sibling    |
+| T8  | One suite per component, a part only when it has behaviour           | the suites, visible in the inventory       |
+| T9  | Use the testing library's own vocabulary, never an alias             | review                                     |
+| T10 | A rule earns its path, and the case that refuses it                  | review                                     |
+| T11 | A defect is pinned before the fix, and the title names it            | review — the red before the green          |
+| T12 | Coverage is not a number, and that is a decision                     | review; no coverage tooling is installed   |
+| T13 | A suite does not mock, wait on a duration, or depend on order        | review                                     |
+| T14 | A suite is named after its element, and a case says what should hold | review                                     |
+| T15 | Accessibility is asserted by rule and by audit                       | `a11y.test.ts`, then every component suite |
+
 ## T1. The runner page loads the theme, once
 
 **Rule.** `web-test-runner.config.mjs` serves every suite from one page: it links
@@ -104,8 +120,10 @@ itself; when it needs the other theme it calls `setTheme('dark')` and nothing el
 
 **Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)), so
 a suite without the theme asserts against nothing — but that is a property of the page, not
-of twenty-two files. ADR 0002 still decides that the theme is required; only the loader it
-mentions (`before(loadTheme)`) is gone, and an accepted record is superseded, never edited. Fetching the same stylesheet from each of them was twenty-two chances
+of sixteen files. ADR 0002 still decides that the theme is required; the loader it
+mentions (`before(loadTheme)`) is gone, and
+[0015](adr/0015-the-page-loads-the-theme-the-suite-does-not.md) supersedes that part of
+it. Fetching the same stylesheet from each suite was sixteen chances
 to forget, and the copy that forgot failed with an unrelated-looking assertion.
 
 **Do** — switch the theme when the test is about the theme, and nothing otherwise:
@@ -283,6 +301,14 @@ src/components/bk-field/
 **Don't** — a `*.register.test.ts` beside a component. When a new component lands, its file is
 the suite; there is no list to extend and no second file to remember.
 
+**Accessibility is a concern, not a part.** The audit and the A-rule cases live inside the
+component's suite, under a `describe('accessibility')`, and not in a
+`bk-<name>.a11y.test.ts`. It was considered as an exception on 2026-11-16 and rejected: the
+whole suite runs in 5.2 s with the audit inside it, a failing case already prints the
+component's name, and a second file per component repeats verbatim the argument this rule
+exists to refuse for `.form` and `.error` files. A hang is the one thing that would reopen
+it — a hang in a shared file costs that file's whole signal, and axe has not produced one.
+
 **Enforced by.** The suites themselves; `sideEffects` for a bundler; review for the entry.
 
 ## T9. Use the testing library's own vocabulary, never an alias
@@ -309,6 +335,141 @@ describe('bk-input', () => {
 **Don't** — `const test = it;` and then a suite that calls `test(…)`.
 
 **Enforced by.** Review; the suite imports no such name.
+
+## T10. A rule earns its path, and the case that refuses it
+
+**Rule.** A rule the component documents is asserted on the path the consumer expects and on
+the case the rule itself names — the boundary, the empty state, or the refusal. A rule that
+names a refusal is not proved by the run where nothing is refused: `aria-disabled` is not
+proved by a click that lands, and an empty region is not proved by a reference that resolves.
+Two cases, not twenty: the matrix of every combination is a different project.
+
+**Why.** A suite of happy paths asserts what nobody doubted. The refusals are where this kit
+has actually broken — a slotted error atom that rendered while the field said valid, a
+disabled checkbox whose check was illegible at 1.09:1, an `aria-describedby` naming an empty
+region. Each was the case its own rule named and the suite did not run. Spectrum asks for
+"error handling and edge cases" and its review checklist for exercising "unhappy paths and
+error or empty states in good faith"; Shoelace asks for "all features advertised in the
+component's description".
+
+**Do** — the refusing case, named as such:
+
+```ts
+it('should ignore activation while aria-disabled', () => {});
+it('should reference no description while the region is empty', () => {});
+```
+
+**Don't** — a suite whose every title describes the success path, with the refusal left to
+whoever remembers.
+
+**Enforced by.** Review, against the rules each `README.md` documents.
+
+## T11. A defect is pinned before the fix, and the title names it
+
+**Rule.** A defect gets its test on the unfixed code and that test is seen red; the title says
+what the state does now, not what the fix did; the test lands in the same commit as the fix.
+No issue link is required in the title — this repository has no such convention, and the test
+name is what a later search finds.
+
+**Why.** "No bug is considered properly fixed without an automated regression test"
+(Fowler); "write a failing test that reproduces the bug" and watch it fail (Baloise); "all PRs
+that change behavior or fix bugs should have new or updated tests" (Lit). T5 already demands
+the mutation that proves a test is load-bearing; a defect is the one case where the red is
+given to you before the fix exists, so skipping it gives up the cheapest evidence in the
+repository.
+
+**Do** — `it('should keep the check legible on a disabled checked box')`, the state and its
+cost.
+
+**Don't** — `it('should fix #42')`, a number only the tracker can resolve.
+
+**Enforced by.** Review; the red before the green is the evidence, and the commit records it.
+
+## T12. Coverage is not a number, and that is a decision
+
+**Rule.** No coverage threshold, no coverage report in CI, no percentage quoted in a pull
+request. A suite is judged by whether each rule a component documents has a case, not by how
+much of a file it executes.
+
+**Why.** Google's testing chapter names the failure mode: engineers treat the number "like a
+ceiling … changes begin landing with no more than 80% coverage", and recommends measuring
+coverage from small tests only. Fowler: "test coverage is of little use as a numeric statement
+of how good your tests are". Shoelace's maintainer: "I don't care about the number of tests or
+even coverage — I care about sensibility". The counter-example is real and named honestly:
+Spectrum Web Components keeps 99% with an auto-ratchet, and also runs visual regression and a
+Playwright accessibility suite. This repository has neither, so a threshold here would be a
+target for a number no one reads, guarding rules the audit in T15 already reaches.
+
+**Do** — ask which documented rule has no case, and add that case.
+
+**Don't** — install `c8`/`istanbul` and a `thresholds` block to feel the same.
+
+**Enforced by.** Review, plus the absence of any coverage dependency in `package.json`.
+
+## T13. A suite does not mock, wait on a duration, or depend on order
+
+**Rule.** No `stub`, `spy`, `mock` or fake object, at any level, and no network: the test uses
+the real element and the real page. A test that must settle awaits `updateComplete`,
+`nextFrame()`, or a browser command; a zero-delay flush is a settle, but a chosen duration is
+not a wait (T4), and `setTimeout(…, 250)` with an assertion after it is a flaky test with a
+number in it. No suite depends on the order in which files run; the pointer is the one global,
+and it is reset in `afterEach`.
+
+**Why.** A mock asserts the mock: it answers whether the test agrees with itself, while the
+question is what Chrome paints. The transition lesson in T4 is the same one — a duration is an
+assumption about a machine — and the pointer leak is the same leak in another costume: three
+suites once read `:hover` left by the previous one.
+
+**Do** — `await el.updateComplete;` / `await nextFrame();` / `await sendKeys({ press: 'Tab' })`.
+
+**Don't** — `sinon.stub(el, 'focus')`, `await new Promise((r) => setTimeout(r, 250))`.
+
+**Enforced by.** Review; grep finds no mocking library in `package.json`.
+
+## T14. A suite is named after its element, and a case says what should hold
+
+**Rule.** The outer `describe` carries the tag (`bk-checkbox`, `bk-radio-group-item`), a
+concern is a nested `describe` named for the concern (`accessibility`, `form participation`,
+`.styles`), and every `it` begins with `should`, names the state it puts the element in and
+the effect it expects. When the theme matters, the theme is in the title — `(light)`,
+`(dark)` — because a pair runs twice and the second name is how a reader finds the one that
+failed.
+
+**Why.** The title is the entire output of a failing run: `expected 'none' to equal 'solid'`
+says nothing until you know which case produced it. Material Web's suite reads
+`describe('<md-filled-button>')` → `it('should not execute pre-bound click listeners when
+soft-disabled')`; Primer's reads `describe('Button')`; Shoelace asks contributors to "group
+multiple tests for one feature into describe blocks".
+
+**Do** — `it('should keep the box boundary at 3:1 against its own surface (dark)')`.
+
+**Don't** — `it('works')`, `it('test 3')`, `it('can be disabled and also focused')`.
+
+**Enforced by.** Review; the suites follow it today.
+
+## T15. Accessibility is asserted by rule and by audit
+
+**Rule.** A component suite carries both halves. The rules are cases like any other, from
+[conventions-accessibility.md](conventions-accessibility.md): the association, the reference
+that disappears with its content, the disabled state, the live region that stays, and every
+contrast pair A2 owes. The audit is one more case per theme: `await expectNoViolations(el)`
+from `src/test/helpers/a11y.ts`, running `wcag2a`, `wcag2aa` and `best-practice`. Neither half
+replaces the other — the audit cannot tell "renders nothing" from "clean", and no case can
+see the wiring nobody thought to name.
+
+**Why.** The audit caught what no single case owned: a label that resolves to nothing, an ARIA
+attribute pointing at no node. The pairs caught what the audit cannot see: the canvas it grades
+against is the painted page, and an unpainted page made it report 1.09:1 on a pair the kit
+paints at 8:1 — six findings, none of them a defect. Both lessons are now environment: the
+runner page paints `body` with `--bk-bg-surface`, and the gate's own suite proves it can fail.
+
+**Do** — the two halves, in the same suite, under `describe('accessibility')`.
+
+**Don't** — a green audit read as proof that the component rendered, or a contrast rule
+skipped because axe runs.
+
+**Enforced by.** `src/test/helpers/a11y.test.ts` proves the gate fails on a violation and
+passes an empty fixture; the component suites run it in both themes.
 
 ## Commands
 

@@ -15,6 +15,11 @@ invisible until someone cannot use the control.
 | A7  | A live region is never removed from the accessibility tree   | the suite, for what a test can see      |
 | A7a | A container of controls is named on its host                 | the suite, by resolving every reference |
 
+**The rules are asserted, and the component is also audited.** Each rule below has its own
+cases; on top of them, every component suite runs one axe audit per theme
+(`wcag2a`, `wcag2aa`, `best-practice`) through `src/test/helpers/a11y.ts`. Neither half
+replaces the other, and the split is `docs/conventions-testing.md` T15.
+
 ## A1. Native semantics first
 
 **Rule.** A real `<label>` with `for`, a native `<input>` or `<button>` inside the
