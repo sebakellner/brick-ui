@@ -1,3 +1,4 @@
+import { settle } from '../../../test/helpers/settle.js';
 import { resetMouse, sendKeys } from '@web/test-runner-commands';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
 import { colorOf, opacityOf } from '../../../test/helpers/style.js';
@@ -14,11 +15,6 @@ const innerBox = (el: BkRadioGroupItem) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
 const innerDescription = (el: BkRadioGroupItem) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="description"]')!;
-
-const settle = async (el: BkRadioGroupItem) => {
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  await el.updateComplete;
-};
 
 const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
 

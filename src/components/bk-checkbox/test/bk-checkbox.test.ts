@@ -1,7 +1,7 @@
+import { settle } from '../../../test/helpers/settle.js';
 import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
-import type { LitElement } from 'lit';
 import '.././define.js';
 import '../../bk-field/define.js';
 import type { BkField } from '../../bk-field/bk-field.js';
@@ -38,12 +38,6 @@ const slotted = (el: BkCheckbox, name: string) =>
 const describedNode = (el: BkCheckbox) => {
   const id = innerInput(el).getAttribute('aria-describedby');
   return id ? el.shadowRoot!.getElementById(id) : null;
-};
-
-const settle = async (el: LitElement) => {
-  await el.updateComplete;
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  await el.updateComplete;
 };
 
 const labelAtom = html`<bk-field-label slot="label">Accept terms</bk-field-label>`;
@@ -445,9 +439,7 @@ describe('bk-checkbox', () => {
     description.slot = 'description';
     description.textContent = 'You can change this later.';
     el.append(description);
-    await el.updateComplete;
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    await el.updateComplete;
+    await settle(el);
 
     expect(innerInput(el).getAttribute('aria-describedby')).to.equal(innerDescription(el).id);
     expect(projectedText(innerDescription(el))).to.equal('You can change this later.');

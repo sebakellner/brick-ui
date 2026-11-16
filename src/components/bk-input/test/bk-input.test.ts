@@ -1,7 +1,7 @@
+import { settle } from '../../../test/helpers/settle.js';
 import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
-import type { LitElement } from 'lit';
 import '.././define.js';
 import '../../bk-field/define.js';
 import type { BkField } from '../../bk-field/bk-field.js';
@@ -41,12 +41,6 @@ const slotted = (el: BkInput, name: string) =>
 const describedNode = (el: BkInput) => {
   const id = innerInput(el).getAttribute('aria-describedby');
   return id ? el.shadowRoot!.getElementById(id) : null;
-};
-
-const settle = async (el: LitElement) => {
-  await el.updateComplete;
-  await new Promise((resolve) => setTimeout(resolve, 0));
-  await el.updateComplete;
 };
 
 const type = async (el: BkInput, value: string) => {
@@ -753,9 +747,7 @@ describe('bk-input', () => {
       atom.slot = 'error';
       atom.textContent = 'Enter a valid address.';
       el.append(atom);
-      await el.updateComplete;
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      await el.updateComplete;
+      await settle(el);
 
       expect(getComputedStyle(error).position, 'content brings it back into the flow').to.not.equal(
         'absolute',
@@ -775,9 +767,7 @@ describe('bk-input', () => {
       atom.slot = 'label';
       atom.textContent = 'Email';
       el.append(atom);
-      await el.updateComplete;
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      await el.updateComplete;
+      await settle(el);
 
       expect(label.hasAttribute('hidden'), 'the label appears with its content').to.equal(false);
       expect(label.getBoundingClientRect().height).to.be.greaterThan(0);
