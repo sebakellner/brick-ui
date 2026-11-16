@@ -9,7 +9,7 @@ an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 The **three levels** come first, because they are the frame the rules sit in: where a
 suite lives and what it is allowed to assert. They are not numbered because they are judged
 as a whole — a misplaced suite is caught by reading a diff, not by one assertion going red
-— while a rule is something a single test can name. The fifteen numbered rules follow as a
+— while a rule is something a single test can name. The seventeen numbered rules follow as a
 checklist, each with what enforces it, and each explained in turn after it.
 
 ## The three levels, and who decides the composition
@@ -111,6 +111,14 @@ suite reaches nobody; an undefined token reaches a consumer in runtime, which is
 | T13 | A suite does not mock, wait on a duration, or depend on order        | review                                     |
 | T14 | A suite is named after its element, and a case says what should hold | review                                     |
 | T15 | Accessibility is asserted by rule and by audit                       | `a11y.test.ts`, then every component suite |
+| T16 | A suite proves its subject rendered                                  | review                                     |
+| T17 | `settle` is shared mechanics, and a suite writes no timer            | review; the helper lands with the refactor |
+
+The explanations below are **grouped by theme, not by number**. The numbers are stable
+identifiers: other documents, commit messages and reviews cite `T6` and `T15` by name, so
+a group changes the reading order and never the name of a rule.
+
+### The environment
 
 ## T1. The runner page loads the theme, once
 
@@ -135,6 +143,56 @@ setTheme('dark');
 **Don't** — inject a `<link>` from a test, or assert before the page has its stylesheet.
 
 **Enforced by.** The suite: a missing token read fails the assertion.
+
+## T4. The test page has no transition to wait for
+
+**Rule.** The runner page zeroes the kit's duration token (`--bk-transition: 0s`), so a
+transitioned property reaches its final value immediately and no test waits for it. A test
+that is _about_ a transition sets the token back to its real value and awaits
+`element.getAnimations()` — never a timer.
+
+**Why.** Sampling mid-transition returns an interpolated colour, which is what the old
+rule guarded against with a fixed 250 ms sleep; the sleep was the symptom, not the fix. It
+cost ten seconds across the suite, and it hid a real leak: with the pointer left where the
+previous test parked it, the next fixture inherited `:hover`, and only a delayed sample
+made that look stable.
+
+**Do** — assert the final value directly, and reset what the test moved:
+
+```ts
+expect(getComputedStyle(box).borderTopColor).to.equal(await colorOf('var(--bk-border-strong)'));
+```
+
+**Don't** — `await new Promise((resolve) => setTimeout(resolve, 250))`, and do not leave the
+pointer over a fixture: `afterEach(resetMouse)` is what keeps one test's hover out of the
+next one's colours.
+
+**Enforced by.** Review; the suite's runtime is the visible effect.
+
+## T7. The runner claims a pointer, and the suite proves it
+
+**Rule.** `web-test-runner.config.mjs` launches Chrome with
+`--blink-settings=primaryHoverType=2`, and `src/test/browser.test.ts` asserts that
+`matchMedia('(hover: hover)')` is true. A hover test that skips is a hover test that
+proves nothing, so the environment is a test like any other.
+
+**Why.** Headless Chrome has no pointer device and reports `(hover: none)`, so every
+`@media (hover: hover)` rule stays out of the cascade — tests asserting "nothing
+changed on hover" pass without ever hovering. It happened here: three suites went
+green that way and only the button's own positive control caught it. `2` is hover
+(`1` is none); emulating the feature through `emulateMedia` is not possible, which is
+why the flag is at the launch layer.
+
+**Two caveats, both learned from other projects the hard way.** Any viewport
+emulation — `setViewport` — rewrites the pointer and hover types and silently undoes
+the flag, so a test that resizes the viewport must not expect hover afterwards. And
+the flag is Blink-only: on an engine with no pointer the hover tests still declare
+`this.skip()` rather than assert anything.
+
+**Enforced by.** `src/test/browser.test.ts`, plus the enabled-sibling control inside
+each hover test: the assertion cannot pass unless a hovered sibling really changed.
+
+### What a case asserts
 
 ## T2. Assert computed styles, not markup
 
@@ -176,30 +234,33 @@ await sendMouse({ type: 'move', position: [x, y] });
 
 **Enforced by.** Review.
 
-## T4. The test page has no transition to wait for
+## T16. A suite proves its subject rendered
 
-**Rule.** The runner page zeroes the kit's duration token (`--bk-transition: 0s`), so a
-transitioned property reaches its final value immediately and no test waits for it. A test
-that is _about_ a transition sets the token back to its real value and awaits
-`element.getAnimations()` — never a timer.
+**Rule.** Before a suite asserts a negative — "nothing changed", "no reference", "no ring" —
+or hands the element to an audit, it asserts the subject exists: the element upgraded, the
+inner control is there, the case's own anchor is not `null`. A negative assertion is
+satisfied by a page where nothing rendered, so it proves nothing until its positive half
+sits in the same suite.
 
-**Why.** Sampling mid-transition returns an interpolated colour, which is what the old
-rule guarded against with a fixed 250 ms sleep; the sleep was the symptom, not the fix. It
-cost ten seconds across the suite, and it hid a real leak: with the pointer left where the
-previous test parked it, the next fixture inherited `:hover`, and only a delayed sample
-made that look stable.
+**Why.** The axe gate passes an empty `div`, and that limitation is now an explicit test
+rather than a silent hole — the gate cannot tell "renders nothing" from "clean". The same
+shape hides in every "should not change on hover" case: on a page where the element never
+upgraded, all of them are green. It is T6 in another costume, an assertion that cannot fail.
 
-**Do** — assert the final value directly, and reset what the test moved:
+**Do** — the subject, before the negative:
 
 ```ts
-expect(getComputedStyle(box).borderTopColor).to.equal(await colorOf('var(--bk-border-strong)'));
+expect(el.shadowRoot !== null, 'the element upgraded').to.equal(true);
+expect(Boolean(innerInput(el)), 'the inner control is there').to.equal(true);
 ```
 
-**Don't** — `await new Promise((resolve) => setTimeout(resolve, 250))`, and do not leave the
-pointer over a fixture: `afterEach(resetMouse)` is what keeps one test's hover out of the
-next one's colours.
+**Don't** — a case whose only assertion is that nothing changed, in a suite where nothing
+proves something ever rendered.
 
-**Enforced by.** Review; the suite's runtime is the visible effect.
+**Enforced by.** Review; `src/test/helpers/a11y.test.ts` pins what an audit reports with
+nothing to audit.
+
+### Traps that hide a regression
 
 ## T5. Every fix is provable by mutation
 
@@ -247,28 +308,7 @@ regression.
 **Enforced by.** The suite — a violation here is a hang, so this is the one rule
 that has to be read rather than observed.
 
-## T7. The runner claims a pointer, and the suite proves it
-
-**Rule.** `web-test-runner.config.mjs` launches Chrome with
-`--blink-settings=primaryHoverType=2`, and `src/test/browser.test.ts` asserts that
-`matchMedia('(hover: hover)')` is true. A hover test that skips is a hover test that
-proves nothing, so the environment is a test like any other.
-
-**Why.** Headless Chrome has no pointer device and reports `(hover: none)`, so every
-`@media (hover: hover)` rule stays out of the cascade — tests asserting "nothing
-changed on hover" pass without ever hovering. It happened here: three suites went
-green that way and only the button's own positive control caught it. `2` is hover
-(`1` is none); emulating the feature through `emulateMedia` is not possible, which is
-why the flag is at the launch layer.
-
-**Two caveats, both learned from other projects the hard way.** Any viewport
-emulation — `setViewport` — rewrites the pointer and hover types and silently undoes
-the flag, so a test that resizes the viewport must not expect hover afterwards. And
-the flag is Blink-only: on an engine with no pointer the hover tests still declare
-`this.skip()` rather than assert anything.
-
-**Enforced by.** `src/test/browser.test.ts`, plus the enabled-sibling control inside
-each hover test: the assertion cannot pass unless a hovered sibling really changed.
+### Structure, vocabulary and shared mechanics
 
 ## T8. One suite per component, a suite per part that has behaviour, and the packaging contract declared
 
@@ -335,6 +375,31 @@ describe('bk-input', () => {
 **Don't** — `const test = it;` and then a suite that calls `test(…)`.
 
 **Enforced by.** Review; the suite imports no such name.
+
+## T17. `settle` is shared mechanics, and a suite writes no timer
+
+**Rule.** The wait every suite repeats — `updateComplete`, then one microtask flush so a
+`MutationObserver` or a `slotchange` has landed — lives once in
+`src/test/helpers/settle.ts`, and a suite calls `settle(el)`. No file writes its own flush,
+and the number of flushes is not the suite's choice: `bk-native-select` needs two rounds
+because its mirror rebuilds inside an observer, and that requirement belongs in the helper
+instead of in eight copies that drifted.
+
+**Why.** Eight files carry their own `await new Promise((resolve) => setTimeout(resolve, 0))`
+today, some once and some twice. A copied settle is how a suite samples a half-rendered state
+and reports a failure that names nothing, and "share the mechanics, not the rules" is already
+the criterion the levels use — this is the first mechanic that had already drifted before
+anyone wrote it down.
+
+**Do** — `await settle(el);`
+
+**Don't** — `await new Promise((resolve) => setTimeout(resolve, 0));` in a test file, or a
+hand-picked duration anywhere (T4, T13).
+
+**Enforced by.** Review; the helper lands with the component-by-component refactor recorded
+in `odd/tasks/backlog.md` (D3).
+
+### The cases a rule earns
 
 ## T10. A rule earns its path, and the case that refuses it
 
