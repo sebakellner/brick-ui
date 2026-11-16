@@ -6,29 +6,11 @@ or more widgets that the test composes lives under `src/test/integration/`, and 
 `sendMouse` plugin is what the hover and focus tests need. One engine is a decision, not
 an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 
-The fifteen numbered rules follow, each with what enforces it. The **three levels** after
-them are the frame the rules sit in: where a suite lives and what it is allowed to assert.
-They are not numbered because they are judged as a whole — a misplaced suite is caught by
-reading a diff, not by one assertion going red — while a rule is something a single test
-can name.
-
-| #   | Rule                                                                 | Enforced by                                |
-| --- | -------------------------------------------------------------------- | ------------------------------------------ |
-| T1  | The runner page loads the theme, once                                | the suite — an unstyled read fails         |
-| T2  | Assert computed styles, not markup                                   | review                                     |
-| T3  | Drive hover and focus with real input                                | review                                     |
-| T4  | The test page has no transition to wait for                          | review; the suite runtime shows it         |
-| T5  | Every fix is provable by mutation                                    | review                                     |
-| T6  | Never put a DOM element on the tested side of a failure              | the suite — a violation is a hang          |
-| T7  | The runner claims a pointer, and the suite proves it                 | `browser.test.ts` + the enabled sibling    |
-| T8  | One suite per component, a part only when it has behaviour           | the suites, visible in the inventory       |
-| T9  | Use the testing library's own vocabulary, never an alias             | review                                     |
-| T10 | A rule earns its path, and the case that refuses it                  | review                                     |
-| T11 | A defect is pinned before the fix, and the title names it            | review — the red before the green          |
-| T12 | Coverage is not a number, and that is a decision                     | review; no coverage tooling is installed   |
-| T13 | A suite does not mock, wait on a duration, or depend on order        | review                                     |
-| T14 | A suite is named after its element, and a case says what should hold | review                                     |
-| T15 | Accessibility is asserted by rule and by audit                       | `a11y.test.ts`, then every component suite |
+The **three levels** come first, because they are the frame the rules sit in: where a
+suite lives and what it is allowed to assert. They are not numbered because they are judged
+as a whole — a misplaced suite is caught by reading a diff, not by one assertion going red
+— while a rule is something a single test can name. The fifteen numbered rules follow as a
+checklist, each with what enforces it, and each explained in turn after it.
 
 ## The three levels, and who decides the composition
 
@@ -109,6 +91,26 @@ installed (`no-restricted-imports` forbids, it does not count), and a gate whose
 costs nothing a consumer can feel teaches people to route around gates. A mislabeled
 suite reaches nobody; an undefined token reaches a consumer in runtime, which is why
 `check:tokens` earns its place and this did not.
+
+## The rules, and what enforces them
+
+| #   | Rule                                                                 | Enforced by                                |
+| --- | -------------------------------------------------------------------- | ------------------------------------------ |
+| T1  | The runner page loads the theme, once                                | the suite — an unstyled read fails         |
+| T2  | Assert computed styles, not markup                                   | review                                     |
+| T3  | Drive hover and focus with real input                                | review                                     |
+| T4  | The test page has no transition to wait for                          | review; the suite runtime shows it         |
+| T5  | Every fix is provable by mutation                                    | review                                     |
+| T6  | Never put a DOM element on the tested side of a failure              | the suite — a violation is a hang          |
+| T7  | The runner claims a pointer, and the suite proves it                 | `browser.test.ts` + the enabled sibling    |
+| T8  | One suite per component, a part only when it has behaviour           | the suites, visible in the inventory       |
+| T9  | Use the testing library's own vocabulary, never an alias             | review                                     |
+| T10 | A rule earns its path, and the case that refuses it                  | review                                     |
+| T11 | A defect is pinned before the fix, and the title names it            | review — the red before the green          |
+| T12 | Coverage is not a number, and that is a decision                     | review; no coverage tooling is installed   |
+| T13 | A suite does not mock, wait on a duration, or depend on order        | review                                     |
+| T14 | A suite is named after its element, and a case says what should hold | review                                     |
+| T15 | Accessibility is asserted by rule and by audit                       | `a11y.test.ts`, then every component suite |
 
 ## T1. The runner page loads the theme, once
 
