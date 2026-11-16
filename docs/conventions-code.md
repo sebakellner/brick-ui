@@ -10,6 +10,7 @@ Rules for the TypeScript, the stylesheets and the tooling. Token rules are in
 | C2  | No comments in CSS                                       | review           |
 | C3  | `strict`, `noUnusedLocals`, `noUnusedParameters` stay on | `pnpm typecheck` |
 | C4  | Token names in component styles stay plain CSS strings   | review           |
+| C5  | A disabled control has no hover and exactly one dim      | review           |
 
 ## C1. Imports of local modules carry `.js`
 
@@ -96,3 +97,55 @@ background: css`
 
 **Enforced by.** Review — and `check:tokens` covers the failure this would
 otherwise catch.
+
+## C5. A disabled control has no hover and exactly one dim
+
+**Rule.** A disabled control is drawn with `opacity: var(--bk-opacity-disabled)`
+and has no hover state: every hover rule is guarded by the disabled condition, so
+pointing at an unavailable control changes nothing. The dim is written once, at
+the container that owns the state — the control's own row, never the row and the
+label inside it. A message region (`bk-field-description`, `bk-field-error`, the
+`message` part) is never dimmed. A component hook may default to the primitive,
+but never repeats its value.
+
+The dim keys off the fact `disabled`, not off the painted state. `data-state`
+carries one value and `invalid` wins it, so a control that owns a dim writes
+`data-disabled` beside `data-state` and dims on that; the muted role is no longer
+what paints an unavailable thing.
+
+**Why.** WCAG exempts inactive components from its contrast minimums (1.4.3,
+1.4.11), so a dim is an honest "unavailable" rather than a contrast failure. But
+the dim does not inherit safely: opacity on the row and opacity on the label
+inside it compose, and two 0.5s draw the text at 0.25. Two names for one value
+drift the same way — the first retune leaves one of them behind.
+
+**Do** — one dim, on the element that owns the state, plus a guarded hover:
+
+```css
+.control:disabled {
+  cursor: not-allowed;
+  opacity: var(--bk-opacity-disabled);
+}
+
+.control:hover:not(:disabled):not([aria-invalid='true']) {
+  border-color: var(--bk-border-strong);
+}
+```
+
+**Don't** — dim the row and the label inside it, or paint the disabled state with
+the muted roles:
+
+```css
+.field[data-state='disabled'] {
+  color: var(--bk-text-muted);
+  background: var(--bk-bg-surface-muted);
+}
+
+.field[data-state='disabled'] .label {
+  opacity: 0.5;
+}
+```
+
+**Enforced by.** Review. The tests assert the computed opacity against the token,
+and that hovering a disabled control leaves its border and background where they
+were.

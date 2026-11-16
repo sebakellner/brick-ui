@@ -41,6 +41,7 @@ export class BkInput extends FieldControlMixin(LitElement) {
         part="label"
         for=${this.controlId}
         data-state=${this.fieldParts.labelState ?? nothing}
+        ?data-disabled=${this.fieldDisabled}
         ?hidden=${!this.fieldParts.labelled}
       >
         <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}></slot>

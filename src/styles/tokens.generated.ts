@@ -77,6 +77,7 @@ export const tokens = {
   transition: '--bk-transition',
   focusRingWidth: '--bk-focus-ring-width',
   focusRingOffset: '--bk-focus-ring-offset',
+  opacityDisabled: '--bk-opacity-disabled',
   fontSans: '--bk-font-sans',
   fontSizeSm: '--bk-font-size-sm',
   fontSizeMd: '--bk-font-size-md',

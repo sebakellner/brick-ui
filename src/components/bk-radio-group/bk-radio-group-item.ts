@@ -55,7 +55,7 @@ export class BkRadioGroupItem extends LitElement {
           background-color var(--bk-transition);
       }
 
-      .field:hover .box {
+      .field:not([data-disabled]):hover .box {
         border-color: var(--bk-border-strong);
       }
 
@@ -70,7 +70,6 @@ export class BkRadioGroupItem extends LitElement {
 
       .native[aria-disabled='true'] + .box {
         cursor: not-allowed;
-        background: var(--bk-bg-surface-muted);
       }
 
       .box::after {
@@ -87,10 +86,6 @@ export class BkRadioGroupItem extends LitElement {
       .native:checked + .box::after {
         visibility: visible;
       }
-
-      .native[aria-disabled='true'] + .box::after {
-        color: var(--bk-text-muted);
-      }
     `,
   ];
 
@@ -106,7 +101,7 @@ export class BkRadioGroupItem extends LitElement {
 
   override render() {
     return html`
-      <label class="field label" part="label" for=${this.controlId}>
+      <label class="field label" part="label" for=${this.controlId} ?data-disabled=${this.disabled}>
         <input
           part="input"
           class="native"

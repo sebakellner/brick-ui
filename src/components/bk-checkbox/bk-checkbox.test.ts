@@ -43,6 +43,12 @@ const colorOf = async (value: string): Promise<string> => {
   return getComputedStyle(probe).color;
 };
 
+const opacityOf = async (value: string): Promise<string> => {
+  const probe = await fixture<HTMLElement>(html`<span style="opacity: ${value}"></span>`);
+
+  return getComputedStyle(probe).opacity;
+};
+
 describe('bk-checkbox', () => {
   before(loadTheme);
 
@@ -346,12 +352,42 @@ describe('bk-checkbox', () => {
     expect(el.shadowRoot!.activeElement).to.equal(input);
   });
 
-  it('should paint the box muted while disabled', async () => {
+  it('should dim the row of a disabled box and leave the box surface alone', async () => {
     const el = await fixture<BkCheckbox>(html`<bk-checkbox disabled></bk-checkbox>`);
 
-    expect(getComputedStyle(innerBox(el)).backgroundColor).to.equal(
-      await colorOf('var(--bk-bg-surface-muted)'),
+    expect(
+      getComputedStyle(innerBox(el)).backgroundColor,
+      'the box keeps the surface role',
+    ).to.equal(await colorOf('var(--bk-bg-surface)'));
+    expect(getComputedStyle(innerLabel(el)).opacity, 'the row carries the dim').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
     );
+  });
+
+  it('should change nothing under the pointer while the box is disabled', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox disabled></bk-checkbox>`);
+    const box = innerBox(el);
+    const borderBefore = getComputedStyle(box).borderTopColor;
+    const backgroundBefore = getComputedStyle(box).backgroundColor;
+
+    expect(innerLabel(el).matches(':hover'), 'the pointer starts elsewhere').to.equal(false);
+
+    await hover(innerLabel(el));
+
+    expect(innerLabel(el).matches(':hover'), 'the pointer is on the disabled row').to.equal(true);
+    expect(getComputedStyle(box).borderTopColor, 'a disabled box has no hover border').to.equal(
+      borderBefore,
+    );
+    expect(getComputedStyle(box).backgroundColor, 'nor a hover background').to.equal(
+      backgroundBefore,
+    );
+  });
+
+  it('should take the disabled opacity from the shared primitive', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox disabled></bk-checkbox>`);
+    el.style.setProperty('--bk-opacity-disabled', '0.25');
+
+    expect(getComputedStyle(innerLabel(el)).opacity).to.equal('0.25');
   });
 
   it('should reference the message region only while it has text', async () => {
@@ -541,10 +577,16 @@ describe('bk-checkbox', () => {
     expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
   });
 
-  it('should paint the label muted while the box is disabled', async () => {
+  it('should dim the label while the box is disabled, keeping its text role', async () => {
     const el = await fixture<BkCheckbox>(html`<bk-checkbox disabled>${labelAtom}</bk-checkbox>`);
 
-    expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-muted)'));
+    expect(
+      getComputedStyle(innerLabel(el)).color,
+      'the label keeps the default text role',
+    ).to.equal(await colorOf('var(--bk-text-default)'));
+    expect(getComputedStyle(innerLabel(el)).opacity, 'the row carries the dim').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
   });
 
   it('should let invalid win over disabled on the label', async () => {
@@ -554,6 +596,26 @@ describe('bk-checkbox', () => {
     await el.updateComplete;
 
     expect(getComputedStyle(innerLabel(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
+  });
+
+  it('should still dim a box that is both disabled and invalid', async () => {
+    const el = await fixture<BkCheckbox>(html`<bk-checkbox disabled>${labelAtom}</bk-checkbox>`);
+
+    el.error = 'You have to accept the terms.';
+    await el.updateComplete;
+
+    const label = innerLabel(el);
+
+    expect(label.getAttribute('data-state'), 'invalid wins the state attribute').to.equal(
+      'invalid',
+    );
+    expect(
+      label.hasAttribute('data-disabled'),
+      'the dim keys off disabled, which the state precedence cannot take away',
+    ).to.equal(true);
+    expect(getComputedStyle(label).opacity, 'the row still dims').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
   });
 
   it('should paint a hosted label atom with the box state', async () => {
@@ -568,13 +630,21 @@ describe('bk-checkbox', () => {
     expect(getComputedStyle(atom).color).to.equal(await colorOf('var(--bk-text-danger)'));
   });
 
-  it('should paint a hosted label atom muted while the box is disabled', async () => {
+  it('should leave a hosted label atom undimmed while the box is disabled', async () => {
     const el = await fixture<BkCheckbox>(html`
       <bk-checkbox disabled><bk-field-label slot="label">Accept terms</bk-field-label></bk-checkbox>
     `);
     const atom = el.querySelector<BkFieldLabel>('bk-field-label')!;
 
-    expect(getComputedStyle(atom).color).to.equal(await colorOf('var(--bk-text-muted)'));
+    expect(getComputedStyle(atom).color, 'the atom keeps the default text role').to.equal(
+      await colorOf('var(--bk-text-default)'),
+    );
+    expect(getComputedStyle(atom).opacity, 'the atom is not dimmed on top of its row').to.equal(
+      '1',
+    );
+    expect(getComputedStyle(innerLabel(el)).opacity, 'the row owns the one dim').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
   });
 
   for (const theme of ['light', 'dark'] as const) {

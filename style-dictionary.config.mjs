@@ -153,6 +153,7 @@ export default {
           'transition',
           'focus-ring-width',
           'focus-ring-offset',
+          'opacity',
         ),
       ),
     ]),

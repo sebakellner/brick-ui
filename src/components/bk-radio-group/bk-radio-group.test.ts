@@ -30,6 +30,12 @@ const click = async (element: Element) => {
   });
 };
 
+const opacityOf = async (value: string): Promise<string> => {
+  const probe = await fixture<HTMLElement>(html`<span style="opacity: ${value}"></span>`);
+
+  return getComputedStyle(probe).opacity;
+};
+
 const settle = async (el: BkRadioGroup) => {
   await new Promise((resolve) => setTimeout(resolve, 0));
   await el.updateComplete;
@@ -415,6 +421,36 @@ describe('bk-radio-group', () => {
       new FormData(fieldset).get('size'),
       'a group disabled by its fieldset submits nothing either',
     ).to.equal(null);
+  });
+
+  it('should dim its own label row once while the group is disabled', async () => {
+    const el = await fixture<BkRadioGroup>(html`
+      <bk-radio-group name="size">
+        <bk-field-label>Size</bk-field-label>
+        <bk-radio-group-item value="s"
+          ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+        >
+      </bk-radio-group>
+    `);
+    await settle(el);
+    const row = el.shadowRoot!.querySelector<HTMLElement>('[part="label"]')!;
+
+    expect(getComputedStyle(row).opacity, 'an enabled group paints the row fully').to.equal('1');
+
+    el.disabled = true;
+    await settle(el);
+
+    expect(getComputedStyle(row).opacity, 'the group label dims with the primitive').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
+    expect(
+      getComputedStyle(el.querySelector('bk-field-label')!).opacity,
+      'the hosted atom is dimmed by its row, not a second time on its own',
+    ).to.equal('1');
+    expect(
+      getComputedStyle(radios(el)[0].shadowRoot!.querySelector('label')!).opacity,
+      'and each radio row dims on its own',
+    ).to.equal(await opacityOf('var(--bk-opacity-disabled)'));
   });
 
   it('should return the selection to the radio whose markup carried checked on reset', async () => {

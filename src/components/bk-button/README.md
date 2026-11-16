@@ -62,19 +62,19 @@ does nothing while the button is disabled or its fieldset is.
 
 Every visual value comes from a token; the component holds no literals.
 
-| Token                                                                                   | Paints                                       |
-| --------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `--bk-button-bg`, `--bk-button-bg-hover`                                                | background, resting and hovered              |
-| `--bk-button-fg`                                                                        | label color                                  |
-| `--bk-button-border`, `--bk-button-border-hover`                                        | border color                                 |
-| `--bk-button-radius`                                                                    | corner radius (defaults to `--bk-radius-md`) |
-| `--bk-button-disabled-opacity`                                                          | opacity while `aria-disabled`                |
-| `--bk-border-width`                                                                     | border width                                 |
-| `--bk-control-height`                                                                   | minimum height                               |
-| `--bk-space-2`, `--bk-space-4`                                                          | gap and horizontal padding                   |
-| `--bk-font-sans`, `--bk-font-size-md`, `--bk-line-height-md`, `--bk-font-weight-medium` | typography                                   |
-| `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset`                    | focus ring                                   |
-| `--bk-transition`                                                                       | hover transition                             |
+| Token                                                                                   | Paints                                                              |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `--bk-button-bg`, `--bk-button-bg-hover`                                                | background, resting and hovered                                     |
+| `--bk-button-fg`                                                                        | label color                                                         |
+| `--bk-button-border`, `--bk-button-border-hover`                                        | border color                                                        |
+| `--bk-button-radius`                                                                    | corner radius (defaults to `--bk-radius-md`)                        |
+| `--bk-button-disabled-opacity`                                                          | opacity while `aria-disabled` (defaults to `--bk-opacity-disabled`) |
+| `--bk-border-width`                                                                     | border width                                                        |
+| `--bk-control-height`                                                                   | minimum height                                                      |
+| `--bk-space-2`, `--bk-space-4`                                                          | gap and horizontal padding                                          |
+| `--bk-font-sans`, `--bk-font-size-md`, `--bk-line-height-md`, `--bk-font-weight-medium` | typography                                                          |
+| `--bk-focus-ring`, `--bk-focus-ring-width`, `--bk-focus-ring-offset`                    | focus ring                                                          |
+| `--bk-transition`                                                                       | hover transition                                                    |
 
 The default variant paints on the accent role (`--bk-bg-accent`, which the light
 theme resolves to `blue-600` and the dark one to `blue-600` as well); white text on
@@ -102,6 +102,8 @@ part of the API.
 - `disabled` sets `aria-disabled` instead of the native attribute: the button
   stays in the tab order and is announced as unavailable, while clicks and
   keyboard activation are blocked. A native `disabled` button is skipped
-  entirely, which hides it from someone navigating with a screen reader.
+  entirely, which hides it from someone navigating with a screen reader. It is
+  drawn with `--bk-opacity-disabled` through its hook and has no hover state, so
+  a pointer over it changes nothing.
 - The secondary border clears 3:1 against a white surface (WCAG 1.4.11), which
   the tests assert.

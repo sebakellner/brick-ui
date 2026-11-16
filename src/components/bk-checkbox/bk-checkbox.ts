@@ -48,7 +48,7 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
           background-color var(--bk-transition);
       }
 
-      .field:hover .box {
+      .field:not([data-disabled]):hover .box {
         border-color: var(--bk-border-strong);
       }
 
@@ -71,7 +71,6 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
 
       .native[aria-disabled='true'] + .box {
         cursor: not-allowed;
-        background: var(--bk-bg-surface-muted);
       }
 
       .box::after {
@@ -97,10 +96,6 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
         border: 0;
         background: currentColor;
         transform: none;
-      }
-
-      .native[aria-disabled='true'] + .box::after {
-        color: var(--bk-text-muted);
       }
     `,
   ];
@@ -133,6 +128,7 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
         part="label"
         for=${this.controlId}
         data-state=${this.fieldParts.labelState ?? nothing}
+        ?data-disabled=${this.fieldDisabled}
       >
         <input
           part="input"

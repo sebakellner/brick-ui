@@ -1,11 +1,25 @@
-import { expect, fixture, html } from '@open-wc/testing';
+import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import './define.js';
 import type { BkButton } from './bk-button.js';
 import { contrastRatio } from '../../test/helpers/contrast.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
-import { sendKeys } from '@web/test-runner-commands';
+import { sendKeys, sendMouse } from '@web/test-runner-commands';
 
 const innerButton = (el: BkButton) => el.shadowRoot!.querySelector('button')!;
+
+const pastTransition = async () => {
+  await nextFrame();
+  await new Promise((resolve) => setTimeout(resolve, 250));
+};
+
+const hover = async (element: Element) => {
+  const { x, y, width, height } = element.getBoundingClientRect();
+  await sendMouse({
+    type: 'move',
+    position: [Math.round(x + width / 2), Math.round(y + height / 2)],
+  });
+  await pastTransition();
+};
 
 const mount = (variant?: string) =>
   fixture<BkButton>(
@@ -26,6 +40,7 @@ describe('bk-button', () => {
       '--bk-text-default',
       '--bk-text-on-accent',
       '--bk-button-disabled-opacity',
+      '--bk-opacity-disabled',
       '--bk-font-weight-medium',
       'font-family',
     ]) {
@@ -128,6 +143,50 @@ describe('bk-button', () => {
     document.documentElement.style.setProperty('--bk-button-disabled-opacity', '0.25');
 
     expect(getComputedStyle(innerButton(button)).opacity).to.equal('0.25');
+  });
+
+  it('should default its disabled opacity to the base primitive', async () => {
+    const button = await mount();
+    button.disabled = true;
+    await button.updateComplete;
+
+    expect(
+      getComputedStyle(innerButton(button)).opacity,
+      'the hook holds no value of its own',
+    ).to.equal('0.5');
+  });
+
+  it('should follow the base primitive when a host moves it', async () => {
+    const button = await mount();
+    button.disabled = true;
+    await button.updateComplete;
+    document.documentElement.style.setProperty('--bk-opacity-disabled', '0.3');
+
+    expect(getComputedStyle(innerButton(button)).opacity).to.equal('0.3');
+  });
+
+  it('should change nothing under the pointer while the button is disabled', async () => {
+    const button = await mount();
+    button.disabled = true;
+    await button.updateComplete;
+    const inner = innerButton(button);
+    const backgroundBefore = getComputedStyle(inner).backgroundColor;
+    const borderBefore = getComputedStyle(inner).borderTopColor;
+
+    expect(
+      matchMedia('(hover: hover)').matches,
+      'the hover rule can apply in this browser at all',
+    ).to.equal(true);
+    expect(inner.matches(':hover'), 'the pointer starts elsewhere').to.equal(false);
+
+    await hover(inner);
+
+    expect(inner.matches(':hover'), 'the pointer is on the disabled button').to.equal(true);
+    expect(
+      getComputedStyle(inner).backgroundColor,
+      'a disabled button has no hover background',
+    ).to.equal(backgroundBefore);
+    expect(getComputedStyle(inner).borderTopColor, 'nor a hover border').to.equal(borderBefore);
   });
 
   it('should take the label colour from the on-accent role', async () => {

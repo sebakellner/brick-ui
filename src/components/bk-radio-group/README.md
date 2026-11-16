@@ -165,9 +165,11 @@ Set the two hooks above, not those.
 - **It is not in the tab order by itself.** `tabStop` is `false` until the group
   writes the roving tab stop, so the inner input is `tabindex="-1"` and the only
   way to it is a click or `focus()`.
-- **Its label does not mute while disabled.** The box carries the disabled paint;
-  the label atom is the consumer's and this element writes no `data-state` on it
-  (the group's own `data-state` marks only the group's label).
+- **Its label is dimmed with the row.** The row carries `data-disabled` while
+  the radio is disabled and is drawn with `--bk-opacity-disabled`, so the box and
+  the label beside it dim together, once. The label atom is the consumer's and
+  this element writes no `data-state` on it (the group's own `data-state` marks
+  only the group's label).
 
 ## Group-level messages
 
@@ -229,10 +231,13 @@ consumer's own atoms.
 
 The group writes its state on the `bk-field-label` it hosts, as `data-state`:
 
-| Value      | When                                                | Paints             |
-| ---------- | --------------------------------------------------- | ------------------ |
-| `invalid`  | an `error`, or a `bk-field-error` with text, shows  | `--bk-text-danger` |
-| `disabled` | the group is disabled, or is inside a disabled form | `--bk-text-muted`  |
+| Value      | When                                                | Paints                  |
+| ---------- | --------------------------------------------------- | ----------------------- |
+| `invalid`  | an `error`, or a `bk-field-error` with text, shows  | `--bk-text-danger`      |
+| `disabled` | the group is disabled, or is inside a disabled form | `--bk-opacity-disabled` |
+
+The dim is applied to the group's own label row and to the row of every radio it
+disables, each once; a hosted label atom is dimmed by the row it sits in.
 
 `aria-invalid` on the host follows the same flag: **it follows what is
 displayed.** A missing value with no message on screen is not painted as invalid;
@@ -252,12 +257,12 @@ No new token tier and no hook of the group's own: there is no
 `--bk-radio-group-*` name. The only hooks in the pair are the item's two
 ([The item](#the-item)), and the group paints no box.
 
-| The group paints          | With                                                                                                                                                                       |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| the gap between items     | `--bk-space-2`                                                                                                                                                             |
-| the first line of an atom | `--bk-space-1` above it, while the atom has text                                                                                                                           |
-| its label row             | the label roles: `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-weight-medium`, `--bk-text-default`, `--bk-text-danger` while invalid, `--bk-text-muted` while disabled |
-| the required mark         | `--bk-text-danger`                                                                                                                                                         |
+| The group paints          | With                                                                                                                                                                             |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| the gap between items     | `--bk-space-2`                                                                                                                                                                   |
+| the first line of an atom | `--bk-space-1` above it, while the atom has text                                                                                                                                 |
+| its label row             | the label roles: `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-weight-medium`, `--bk-text-default`, `--bk-text-danger` while invalid, `--bk-opacity-disabled` while disabled |
+| the required mark         | `--bk-text-danger`                                                                                                                                                               |
 
 The items, the description and the error paint themselves. Theming a group
 means theming the roles.

@@ -1,7 +1,7 @@
 {
   "button": {
     "disabled-opacity": {
-      "value": "0.55"
+      "value": "{opacity.disabled}"
     }
   }
 }
