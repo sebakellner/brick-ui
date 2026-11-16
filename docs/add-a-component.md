@@ -50,10 +50,7 @@ component does not re-decide any of it.
    asserted by the suite.
 
 5. **Tests.** `bk-<name>.test.ts` next to the element, `before(loadTheme)`, and
-   assertions on computed styles — plus `bk-<name>.register.test.ts` for the packaging
-   contract (the entry registers none of its tags, `define.js` registers all of them).
-   A part with behaviour of its own gets its own suite; a part that only paints is
-   covered where it is used. See [conventions-testing.md](conventions-testing.md), T8.
+   assertions on computed styles. See [conventions-testing.md](conventions-testing.md).
 
 6. **Stories.** `bk-<name>.stories.ts` with one story per variant and per state, and a
    `title` that states the kind of component it is: `Form/<Name>` for anything that takes
