@@ -3,9 +3,13 @@ import { property } from 'lit/decorators.js';
 import { formControlStyles } from '../shared/form-control/index.js';
 
 let instanceCount = 0;
-const nextInstanceId = () => `bk-radio-${++instanceCount}`;
+const nextInstanceId = () => `bk-radio-group-item-${++instanceCount}`;
 
-export class BkRadio extends LitElement {
+/* The box of one option, and a private part of the group: it is a custom element
+ * so that each box owns a shadow root and its own slotted label atom, and it is
+ * not exported, because a radio that only works inside its group is not a
+ * component a consumer imports. */
+export class BkRadioGroupItem extends LitElement {
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
     delegatesFocus: true,
@@ -15,8 +19,8 @@ export class BkRadio extends LitElement {
     formControlStyles,
     css`
       :host {
-        --bk-radio-variant-size: var(--bk-space-4);
-        --bk-radio-variant-radius: var(--bk-radius-lg);
+        --bk-radio-group-item-variant-size: var(--bk-space-4);
+        --bk-radio-group-item-variant-radius: var(--bk-radius-lg);
       }
 
       .field {
@@ -41,11 +45,11 @@ export class BkRadio extends LitElement {
         display: grid;
         flex: none;
         place-items: center;
-        inline-size: var(--bk-radio-size, var(--bk-radio-variant-size));
-        block-size: var(--bk-radio-size, var(--bk-radio-variant-size));
+        inline-size: var(--bk-radio-group-item-size, var(--bk-radio-group-item-variant-size));
+        block-size: var(--bk-radio-group-item-size, var(--bk-radio-group-item-variant-size));
         background: var(--bk-bg-surface);
         border: var(--bk-border-width) solid var(--bk-border-default);
-        border-radius: var(--bk-radio-radius, var(--bk-radio-variant-radius));
+        border-radius: var(--bk-radio-group-item-radius, var(--bk-radio-group-item-variant-radius));
         transition:
           border-color var(--bk-transition),
           background-color var(--bk-transition);
@@ -156,6 +160,6 @@ export class BkRadio extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'bk-radio': BkRadio;
+    'bk-radio-group-item': BkRadioGroupItem;
   }
 }

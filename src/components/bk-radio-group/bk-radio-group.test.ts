@@ -1,19 +1,20 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import { sendKeys, sendMouse } from '@web/test-runner-commands';
 import './define.js';
-import '../bk-radio/define.js';
 import '../bk-field/define.js';
-import type { BkRadio } from '../bk-radio/bk-radio.js';
+import type { BkRadioGroupItem } from './bk-radio-group-item.js';
 import type { BkRadioGroup } from './bk-radio-group.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
-const radios = (el: BkRadioGroup) => Array.from(el.querySelectorAll<BkRadio>('bk-radio'));
+const radios = (el: BkRadioGroup) =>
+  Array.from(el.querySelectorAll<BkRadioGroupItem>('bk-radio-group-item'));
 
-const innerInput = (radio: BkRadio) => radio.shadowRoot!.querySelector('input')!;
+const innerInput = (radio: BkRadioGroupItem) => radio.shadowRoot!.querySelector('input')!;
 
-const box = (radio: BkRadio) => radio.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
+const box = (radio: BkRadioGroupItem) =>
+  radio.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
 
-const tabIndex = (radio: BkRadio) => innerInput(radio).getAttribute('tabindex');
+const tabIndex = (radio: BkRadioGroupItem) => innerInput(radio).getAttribute('tabindex');
 
 /* The id the host points at, resolved in the document tree: never a string. */
 const describedNode = (el: BkRadioGroup): Element | null => {
@@ -39,9 +40,15 @@ const settle = async (el: BkRadioGroup) => {
 const threeRadios = html`
   <bk-radio-group name="size">
     <bk-field-label>Size</bk-field-label>
-    <bk-radio value="s"><bk-field-label slot="label">Small</bk-field-label></bk-radio>
-    <bk-radio value="m"><bk-field-label slot="label">Medium</bk-field-label></bk-radio>
-    <bk-radio value="l"><bk-field-label slot="label">Large</bk-field-label></bk-radio>
+    <bk-radio-group-item value="s"
+      ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+    >
+    <bk-radio-group-item value="m"
+      ><bk-field-label slot="label">Medium</bk-field-label></bk-radio-group-item
+    >
+    <bk-radio-group-item value="l"
+      ><bk-field-label slot="label">Large</bk-field-label></bk-radio-group-item
+    >
   </bk-radio-group>
 `;
 
@@ -64,7 +71,9 @@ describe('bk-radio-group', () => {
 
     const unlabelled = await fixture<BkRadioGroup>(html`
       <bk-radio-group name="size">
-        <bk-radio value="s"><bk-field-label slot="label">Small</bk-field-label></bk-radio>
+        <bk-radio-group-item value="s"
+          ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+        >
       </bk-radio-group>
     `);
     await settle(unlabelled);
@@ -79,7 +88,9 @@ describe('bk-radio-group', () => {
     const el = await fixture<BkRadioGroup>(html`
       <bk-radio-group name="size">
         <bk-field-label>Size</bk-field-label>
-        <bk-radio value="s"><bk-field-label slot="label">Small</bk-field-label></bk-radio>
+        <bk-radio-group-item value="s"
+          ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+        >
         <bk-field-description>Pick the one you wear.</bk-field-description>
         <bk-field-error>Pick a size.</bk-field-error>
       </bk-radio-group>
@@ -145,12 +156,18 @@ describe('bk-radio-group', () => {
       <form>
         <bk-radio-group name="size">
           <bk-field-label>Size</bk-field-label>
-          <bk-radio value="s"><bk-field-label slot="label">Small</bk-field-label></bk-radio>
-          <bk-radio value="m"><bk-field-label slot="label">Medium</bk-field-label></bk-radio>
+          <bk-radio-group-item value="s"
+            ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+          >
+          <bk-radio-group-item value="m"
+            ><bk-field-label slot="label">Medium</bk-field-label></bk-radio-group-item
+          >
         </bk-radio-group>
         <bk-radio-group name="other">
           <bk-field-label>Other</bk-field-label>
-          <bk-radio value="x"><bk-field-label slot="label">X</bk-field-label></bk-radio>
+          <bk-radio-group-item value="x"
+            ><bk-field-label slot="label">X</bk-field-label></bk-radio-group-item
+          >
         </bk-radio-group>
       </form>
     `);
@@ -174,7 +191,9 @@ describe('bk-radio-group', () => {
       <form>
         <bk-radio-group name="size" required>
           <bk-field-label>Size</bk-field-label>
-          <bk-radio value="s"><bk-field-label slot="label">Small</bk-field-label></bk-radio>
+          <bk-radio-group-item value="s"
+            ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+          >
         </bk-radio-group>
       </form>
     `);
@@ -227,11 +246,15 @@ describe('bk-radio-group', () => {
     const el = await fixture<BkRadioGroup>(html`
       <bk-radio-group name="size">
         <bk-field-label>Size</bk-field-label>
-        <bk-radio value="s"><bk-field-label slot="label">Small</bk-field-label></bk-radio>
-        <bk-radio value="m" disabled>
+        <bk-radio-group-item value="s"
+          ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+        >
+        <bk-radio-group-item value="m" disabled>
           <bk-field-label slot="label">Medium</bk-field-label>
-        </bk-radio>
-        <bk-radio value="l"><bk-field-label slot="label">Large</bk-field-label></bk-radio>
+        </bk-radio-group-item>
+        <bk-radio-group-item value="l"
+          ><bk-field-label slot="label">Large</bk-field-label></bk-radio-group-item
+        >
       </bk-radio-group>
     `);
     await settle(el);
@@ -293,11 +316,15 @@ describe('bk-radio-group', () => {
     const el = await fixture<BkRadioGroup>(html`
       <bk-radio-group name="size">
         <bk-field-label>Size</bk-field-label>
-        <bk-radio value="s" disabled>
+        <bk-radio-group-item value="s" disabled>
           <bk-field-label slot="label">Small</bk-field-label>
-        </bk-radio>
-        <bk-radio value="m"><bk-field-label slot="label">Medium</bk-field-label></bk-radio>
-        <bk-radio value="l"><bk-field-label slot="label">Large</bk-field-label></bk-radio>
+        </bk-radio-group-item>
+        <bk-radio-group-item value="m"
+          ><bk-field-label slot="label">Medium</bk-field-label></bk-radio-group-item
+        >
+        <bk-radio-group-item value="l"
+          ><bk-field-label slot="label">Large</bk-field-label></bk-radio-group-item
+        >
       </bk-radio-group>
     `);
     await settle(el);
@@ -325,11 +352,15 @@ describe('bk-radio-group', () => {
       <form>
         <bk-radio-group name="size">
           <bk-field-label>Size</bk-field-label>
-          <bk-radio value="s"><bk-field-label slot="label">Small</bk-field-label></bk-radio>
-          <bk-radio value="m"><bk-field-label slot="label">Medium</bk-field-label></bk-radio>
-          <bk-radio value="l" disabled>
+          <bk-radio-group-item value="s"
+            ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+          >
+          <bk-radio-group-item value="m"
+            ><bk-field-label slot="label">Medium</bk-field-label></bk-radio-group-item
+          >
+          <bk-radio-group-item value="l" disabled>
             <bk-field-label slot="label">Large</bk-field-label>
-          </bk-radio>
+          </bk-radio-group-item>
         </bk-radio-group>
       </form>
     `);
@@ -366,9 +397,9 @@ describe('bk-radio-group', () => {
         <fieldset disabled>
           <bk-radio-group name="size">
             <bk-field-label>Size</bk-field-label>
-            <bk-radio value="s" checked>
+            <bk-radio-group-item value="s" checked>
               <bk-field-label slot="label">Small</bk-field-label>
-            </bk-radio>
+            </bk-radio-group-item>
           </bk-radio-group>
         </fieldset>
       </form>
@@ -391,11 +422,15 @@ describe('bk-radio-group', () => {
       <form>
         <bk-radio-group name="size">
           <bk-field-label>Size</bk-field-label>
-          <bk-radio value="s"><bk-field-label slot="label">Small</bk-field-label></bk-radio>
-          <bk-radio value="m" checked>
+          <bk-radio-group-item value="s"
+            ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+          >
+          <bk-radio-group-item value="m" checked>
             <bk-field-label slot="label">Medium</bk-field-label>
-          </bk-radio>
-          <bk-radio value="l"><bk-field-label slot="label">Large</bk-field-label></bk-radio>
+          </bk-radio-group-item>
+          <bk-radio-group-item value="l"
+            ><bk-field-label slot="label">Large</bk-field-label></bk-radio-group-item
+          >
         </bk-radio-group>
       </form>
     `);

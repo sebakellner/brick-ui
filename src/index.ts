@@ -9,7 +9,6 @@ export { BkFieldDescription } from './components/bk-field/bk-field-description.j
 export { BkFieldError } from './components/bk-field/bk-field-error.js';
 export { BkFieldLabel } from './components/bk-field/bk-field-label.js';
 export { BkInput, type BkInputMode, type BkInputType } from './components/bk-input/bk-input.js';
-export { BkRadio } from './components/bk-radio/bk-radio.js';
 export {
   BkRadioGroup,
   type BkRadioGroupOrientation,

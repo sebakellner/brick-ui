@@ -2,12 +2,13 @@ import { expect, fixture, html } from '@open-wc/testing';
 import { sendMouse } from '@web/test-runner-commands';
 import './define.js';
 import '../bk-field/define.js';
-import type { BkRadio } from './bk-radio.js';
+import type { BkRadioGroupItem } from './bk-radio-group-item.js';
 import { loadTheme, setTheme } from '../../test/helpers/theme.js';
 
-const innerInput = (el: BkRadio) => el.shadowRoot!.querySelector('input')!;
-const innerLabel = (el: BkRadio) => el.shadowRoot!.querySelector('label')!;
-const innerBox = (el: BkRadio) => el.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
+const innerInput = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('input')!;
+const innerLabel = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('label')!;
+const innerBox = (el: BkRadioGroupItem) =>
+  el.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
 
 const clickAt = async (element: Element) => {
   const { x, y, width, height } = element.getBoundingClientRect();
@@ -19,17 +20,19 @@ const clickAt = async (element: Element) => {
 
 const labelAtom = html`<bk-field-label slot="label">Email</bk-field-label>`;
 
-describe('bk-radio', () => {
+describe('bk-radio-group-item', () => {
   before(loadTheme);
 
   afterEach(() => {
-    document.documentElement.style.removeProperty('--bk-radio-size');
-    document.documentElement.style.removeProperty('--bk-radio-radius');
+    document.documentElement.style.removeProperty('--bk-radio-group-item-size');
+    document.documentElement.style.removeProperty('--bk-radio-group-item-radius');
     setTheme('light');
   });
 
   it('should render a label that points at and contains the inner radio', async () => {
-    const el = await fixture<BkRadio>(html`<bk-radio>${labelAtom}</bk-radio>`);
+    const el = await fixture<BkRadioGroupItem>(
+      html`<bk-radio-group-item>${labelAtom}</bk-radio-group-item>`,
+    );
     const input = innerInput(el);
     const label = innerLabel(el);
 
@@ -46,7 +49,7 @@ describe('bk-radio', () => {
   });
 
   it('should delegate focus to the inner radio', async () => {
-    const el = await fixture<BkRadio>(html`<bk-radio></bk-radio>`);
+    const el = await fixture<BkRadioGroupItem>(html`<bk-radio-group-item></bk-radio-group-item>`);
     const input = innerInput(el);
 
     expect(Boolean(input), 'the radio renders a native control').to.equal(true);
@@ -57,7 +60,9 @@ describe('bk-radio', () => {
   });
 
   it('should follow the checked property on the inner radio', async () => {
-    const el = await fixture<BkRadio>(html`<bk-radio checked></bk-radio>`);
+    const el = await fixture<BkRadioGroupItem>(
+      html`<bk-radio-group-item checked></bk-radio-group-item>`,
+    );
 
     expect(el.checked, 'the attribute is the property').to.equal(true);
     expect(innerInput(el).checked, 'the markup reaches the native control').to.equal(true);
@@ -75,9 +80,9 @@ describe('bk-radio', () => {
 
   it('should report an activation and leave the selection to the group', async () => {
     const host = await fixture<HTMLElement>(html`
-      <div><bk-radio value="a">${labelAtom}</bk-radio></div>
+      <div><bk-radio-group-item value="a">${labelAtom}</bk-radio-group-item></div>
     `);
-    const el = host.querySelector<BkRadio>('bk-radio')!;
+    const el = host.querySelector<BkRadioGroupItem>('bk-radio-group-item')!;
     const details: unknown[] = [];
     host.addEventListener('bk-change', (event) => {
       details.push((event as CustomEvent).detail);
@@ -97,7 +102,9 @@ describe('bk-radio', () => {
   });
 
   it('should refuse to activate while disabled and stay focusable', async () => {
-    const el = await fixture<BkRadio>(html`<bk-radio disabled>${labelAtom}</bk-radio>`);
+    const el = await fixture<BkRadioGroupItem>(
+      html`<bk-radio-group-item disabled>${labelAtom}</bk-radio-group-item>`,
+    );
     const input = innerInput(el);
     let changes = 0;
     el.addEventListener('bk-change', () => {
@@ -119,7 +126,7 @@ describe('bk-radio', () => {
   });
 
   it('should move the inner tab stop with the tabStop property alone', async () => {
-    const el = await fixture<BkRadio>(html`<bk-radio></bk-radio>`);
+    const el = await fixture<BkRadioGroupItem>(html`<bk-radio-group-item></bk-radio-group-item>`);
 
     expect(innerInput(el).getAttribute('tabindex'), 'no tab stop until the group says so').to.equal(
       '-1',
@@ -140,7 +147,7 @@ describe('bk-radio', () => {
   });
 
   it('should paint a round box whose radius comes from the hook', async () => {
-    const el = await fixture<BkRadio>(html`<bk-radio></bk-radio>`);
+    const el = await fixture<BkRadioGroupItem>(html`<bk-radio-group-item></bk-radio-group-item>`);
     const box = innerBox(el);
     const size = box.getBoundingClientRect().width;
 
@@ -150,8 +157,8 @@ describe('bk-radio', () => {
       'a radio is round, not square',
     ).to.be.at.least(size / 2);
 
-    document.documentElement.style.setProperty('--bk-radio-size', '24px');
-    document.documentElement.style.setProperty('--bk-radio-radius', '0');
+    document.documentElement.style.setProperty('--bk-radio-group-item-size', '24px');
+    document.documentElement.style.setProperty('--bk-radio-group-item-radius', '0');
     await el.updateComplete;
 
     const styled = getComputedStyle(box);

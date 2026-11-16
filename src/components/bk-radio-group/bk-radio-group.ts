@@ -1,6 +1,6 @@
 import { LitElement, css, html, type PropertyValues } from 'lit';
 import { property } from 'lit/decorators.js';
-import type { BkRadio } from '../bk-radio/bk-radio.js';
+import type { BkRadioGroupItem } from './bk-radio-group-item.js';
 import {
   FieldControlMixin,
   FieldRegionsController,
@@ -42,12 +42,12 @@ export class BkRadioGroup extends FieldControlMixin(LitElement) {
   private readonly regions = new FieldRegionsController(this, {
     idPrefix: this.controlId,
     role: 'radiogroup',
-    controlSelector: 'bk-radio',
+    controlSelector: 'bk-radio-group-item',
   });
 
   /* The radios whose `disabled` this group wrote, so that leaving `disabled`
    * gives back only what it took and a radio disabled on its own stays so. */
-  private readonly disabledByGroup = new WeakSet<BkRadio>();
+  private readonly disabledByGroup = new WeakSet<BkRadioGroupItem>();
 
   private authoredRead = false;
 
@@ -112,8 +112,8 @@ export class BkRadioGroup extends FieldControlMixin(LitElement) {
   }
 
   /* A radio inside another group belongs to that group, not to this one. */
-  private radios(): BkRadio[] {
-    return Array.from(this.querySelectorAll<BkRadio>('bk-radio')).filter(
+  private radios(): BkRadioGroupItem[] {
+    return Array.from(this.querySelectorAll<BkRadioGroupItem>('bk-radio-group-item')).filter(
       (radio) => radio.parentElement?.closest('bk-radio-group') === this,
     );
   }
@@ -125,7 +125,7 @@ export class BkRadioGroup extends FieldControlMixin(LitElement) {
     return radio?.getAttribute('value') ?? '';
   }
 
-  private selected(radios: BkRadio[]): BkRadio | undefined {
+  private selected(radios: BkRadioGroupItem[]): BkRadioGroupItem | undefined {
     if (!this.value) return undefined;
     return radios.find((radio) => radio.value === this.value);
   }
@@ -145,7 +145,7 @@ export class BkRadioGroup extends FieldControlMixin(LitElement) {
     }
   }
 
-  private syncDisabled(radios: BkRadio[]): void {
+  private syncDisabled(radios: BkRadioGroupItem[]): void {
     for (const radio of radios) {
       if (this.fieldDisabled) {
         if (radio.disabled) continue;
@@ -160,7 +160,7 @@ export class BkRadioGroup extends FieldControlMixin(LitElement) {
   /* The radio reports an activation; the group is the one writer of the
    * selection, so the value lands here and every radio is written from it. */
   private readonly handleRadioChange = (event: Event): void => {
-    const radio = event.target as BkRadio;
+    const radio = event.target as BkRadioGroupItem;
     if (radio.disabled || !this.radios().includes(radio)) return;
     this.value = radio.value;
     this.syncRadios();
@@ -171,13 +171,13 @@ export class BkRadioGroup extends FieldControlMixin(LitElement) {
   private readonly handleKeyDown = (event: KeyboardEvent): void => {
     if (event.altKey || event.ctrlKey || event.metaKey) return;
     const owned = this.radios();
-    if (!owned.includes(event.target as BkRadio)) return;
+    if (!owned.includes(event.target as BkRadioGroupItem)) return;
     const enabled = owned.filter((radio) => !radio.disabled);
     if (enabled.length === 0) return;
 
-    const from = enabled.indexOf(event.target as BkRadio);
+    const from = enabled.indexOf(event.target as BkRadioGroupItem);
     const last = enabled.length - 1;
-    let next: BkRadio | undefined;
+    let next: BkRadioGroupItem | undefined;
 
     switch (event.key) {
       case 'ArrowDown':
@@ -202,7 +202,7 @@ export class BkRadioGroup extends FieldControlMixin(LitElement) {
     this.select(next);
   };
 
-  private select(radio: BkRadio): void {
+  private select(radio: BkRadioGroupItem): void {
     this.value = radio.value;
     this.syncRadios();
     radio.focus();
