@@ -16,7 +16,7 @@ import type { BkField } from '../../bk-field/bk-field.js';
 import type { BkFieldLabel } from '../../bk-field/bk-field-label.js';
 import type { BkInput } from '.././bk-input.js';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
-import { expectNoViolations } from '../../../test/helpers/a11y.js';
+import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.js';
 import { hover, hoverCapable } from '../../../test/helpers/pointer.js';
 import { setTheme } from '../../../test/helpers/theme.js';
 
@@ -57,14 +57,17 @@ const touch = async (el: BkInput) => {
 };
 
 describe('bk-input', () => {
-  for (const theme of ['light', 'dark'] as const) {
-    it(`should have no accessibility violations (${theme})`, async () => {
-      setTheme(theme);
-      const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
+  describe('accessibility', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      it(`should have no accessibility violations (${theme})`, async () => {
+        setTheme(theme);
+        const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
 
-      await expectNoViolations(el);
-    });
-  }
+        await expectRendered(el, 'input');
+        await expectNoViolations(el);
+      });
+    }
+  });
   afterEach(async () => {
     await resetMouse();
   });

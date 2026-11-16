@@ -47,3 +47,14 @@ export const expectNoViolations = async (element: Element) => {
 
   expect(violations.length, `axe reported:\n${report}`).to.equal(0);
 };
+
+/* The audit's precondition. axe passes an element that renders nothing, so every suite that
+ * audits has to say what it expected to exist first — otherwise a broken render is
+ * indistinguishable from a clean one (T16). */
+export const expectRendered = (el: Element, selector: string): void => {
+  expect(Boolean(el.shadowRoot), 'the element upgraded').to.equal(true);
+  expect(
+    Boolean(el.shadowRoot!.querySelector(selector)),
+    `the element rendered ${selector}`,
+  ).to.equal(true);
+};
