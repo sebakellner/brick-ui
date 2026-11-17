@@ -11,6 +11,7 @@ internals lives in [`docs/`](docs/README.md); the [README](README.md) covers usa
 | the rules the token layers obey          | [docs/conventions-tokens.md](docs/conventions-tokens.md)               |
 | the accessibility bar                    | [docs/conventions-accessibility.md](docs/conventions-accessibility.md) |
 | how to test, and what makes a test real  | [docs/conventions-testing.md](docs/conventions-testing.md)             |
+| how to document a component              | [docs/conventions-docs.md](docs/conventions-docs.md)                   |
 | TypeScript and tooling gotchas           | [docs/conventions-code.md](docs/conventions-code.md)                   |
 | add a token                              | [docs/add-a-token.md](docs/add-a-token.md)                             |
 | add a component                          | [docs/add-a-component.md](docs/add-a-component.md)                     |

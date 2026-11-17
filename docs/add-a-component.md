@@ -100,19 +100,12 @@ component does not re-decide any of it.
 
 ## What each component documents
 
-A component's `README.md` states, in this order:
-
-| Section                   | Content                                                               |
-| ------------------------- | --------------------------------------------------------------------- |
-| Summary                   | one sentence, what it is for                                          |
-| Attributes and properties | each one, its type, its default                                       |
-| Events                    | what fires, when, with what detail                                    |
-| Parts                     | every `::part()` escape hatch and what it reaches                     |
-| Override hooks            | every public custom property, read from `style-dictionary.config.mjs` |
-| Limitations               | what it does not do yet                                               |
-
-The Storybook page is the same document, rendered live. It is not a second place
-to maintain the API: it reads this file.
+The sections, their names and their order are fixed in
+[conventions-docs.md](conventions-docs.md), in "The README sections are a fixed set, in a
+fixed order", which also names the README to start from. This document does not repeat
+that list: a second copy is a second thing to keep true, and the copy that used to live
+here had already lost two sections. The Storybook page renders the same file, so it is
+never a second place to maintain the API.
 
 ## Verify
 
