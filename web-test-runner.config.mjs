@@ -1,6 +1,6 @@
 import { esbuildPlugin } from '@web/dev-server-esbuild';
-import { chromeLauncher } from '@web/test-runner-chrome';
 import { sendMousePlugin } from '@web/test-runner-commands/plugins';
+import { playwrightLauncher } from '@web/test-runner-playwright';
 
 export default {
   files: 'src/**/*.test.ts',
@@ -44,9 +44,11 @@ export default {
 </html>`,
   browserLogs: true,
   /* 2 is hover, 1 is none. Why the flag exists, and the two ways it breaks:
-   * docs/conventions-testing.md, T7. */
+   * docs/conventions-testing.md, T7. Playwright launches the Chromium its own
+   * version pins: docs/adr/0018-the-browser-the-suite-runs-is-the-one-the-lockfile-pins.md. */
   browsers: [
-    chromeLauncher({
+    playwrightLauncher({
+      product: 'chromium',
       launchOptions: { args: ['--blink-settings=primaryHoverType=2'] },
     }),
   ],
