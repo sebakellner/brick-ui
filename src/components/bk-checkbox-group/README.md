@@ -41,65 +41,6 @@ The rest of the form API is the shared contract, inherited from
 | `checkValidity()`, `reportValidity()`, `showValidationMessage()`                                       | the platform's constraint validation, and the message a touched field shows |
 | `formResetCallback()`, `formDisabledCallback()`, `formStateRestoreCallback()`                          | driven by the `<form>`, not by the consumer                                 |
 
-## What it enforces
-
-`required` means **at least one box checked**, and it is the only constraint the
-group carries. With `required` and nothing checked the group reports
-`valueMissing` and the form refuses the submit; the moment one box it owns is
-checked the constraint clears, and it comes back when the last one is unchecked.
-
-There is no manual call: the group reads what each box submits — its
-`submittedValue` — and re-evaluates on the `bk-change` every box already emits. The boxes stay
-independent — the group writes nothing on them except `disabled` (see
-[Disabled](#disabled)), an unchecked box submits nothing, and no box knows it is
-in a group.
-
-**It submits no value of its own.** The boxes submit theirs under their own
-`name`s; the group adds no entry to the form data. `new FormData(form)` has the
-checked boxes and no row for the group: it is a constraint in the payload, not a
-key.
-
-The message is the consumer's. The `error` property, or a `bk-field-error` atom
-with text, reports `customError` with that text, exactly as in any field
-([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
-With neither, the group falls back to a fixed English sentence — `Please select
-at least one option.` — which only the platform surfaces, through
-`validationMessage` and the browser's own validation UI on submit. A component
-does not translate; a consumer who wants text on the page writes it.
-
-**A nested group is its own widget.** A group writes `disabled` on the boxes it
-owns, and a group nested inside another is not owned by it: the outer `disabled`
-does not reach the inner one, and the inner boxes keep responding — which is what
-they look like, since nothing dims them. Disabling a whole subtree means disabling
-each group.
-
-## Disabled
-
-`disabled` flows to the boxes. The group writes `disabled` on every `bk-checkbox`
-it owns, and takes back only what it wrote: leaving `disabled` re-enables those
-boxes and leaves a box authored `disabled` disabled. Each box then refuses the
-pointer and reports `aria-disabled` on its own inner input, which is the disabled
-they already carry
-([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)).
-A group that looks unavailable while its boxes still respond is the lie
-[Conventions C5](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-code.md#c5-a-disabled-control-keeps-its-muted-text-loses-its-hover-and-carries-one-dim)
-exists to prevent.
-
-A disabled `<fieldset>` reaches the group too, through `formDisabledCallback`, and
-the group flows it to the boxes the same way. Each box also honours the fieldset
-on its own, so both routes leave the set inert:
-
-```html
-<fieldset disabled>
-  <bk-checkbox-group required>
-    <bk-field-label>Notifications</bk-field-label>
-    <bk-checkbox name="email" value="email">
-      <bk-field-label slot="label">Email</bk-field-label>
-    </bk-checkbox>
-  </bk-checkbox-group>
-</fieldset>
-```
-
 ## Slots
 
 | Slot          | Content                | Notes                                                                                                       |
@@ -114,44 +55,6 @@ name, at any depth, the way `bk-field` does. A box keeps its own atoms — the
 group never routes or paints what a `bk-checkbox` hosts, so a box's label is
 written with `slot="label"` on the box itself, or left bare inside a `bk-field`.
 
-## Group-level messages
-
-The consumer's atoms **are** the regions. The group does not render a region of
-its own and does not wrap them: a container cannot reference a region inside its
-own shadow root, because `aria-labelledby`/`aria-describedby` resolve per tree.
-So the group writes on the atom what a region would otherwise carry, and the
-atom stays in the document tree where an IDREF finds it:
-
-| The group writes   | On                 | When                                                                        |
-| ------------------ | ------------------ | --------------------------------------------------------------------------- |
-| `id`               | description, error | always, if the atom has none: `<group id>-description`/`-error`             |
-| `role="status"`    | error              | always, if the atom has no role of its own                                  |
-| `data-empty`       | description, error | while `textContent.trim()` is empty                                         |
-| `hidden`           | description        | while the error atom has text                                               |
-| `aria-describedby` | the host           | the error id while the error has text, else the description id, else absent |
-
-An empty atom is clipped, never removed: it keeps its 1px box, its place in the
-flow and its place in the accessibility tree, so the live region is already
-there when the error arrives. `data-empty` is what the atom paints — the atom
-stays presentational, it never decides that it is empty.
-
-`hidden` is a different job and only the description gets it: while the error has
-text the description gives it the row, exactly as a field's two regions behave,
-and it comes back when the error empties. Neither atom is ever removed.
-
-When an atom leaves the group, the group takes its `role` and its `data-empty`
-back; the `id` it assigned can stay.
-
-**This is a deliberate departure from A7's "never `role="status"` on slotted
-content".** A7 keeps the live region on the control's own shadow region, which
-works because the control's references live in the same tree as that region. A
-group is a different shape: the element a screen reader lands on is the host,
-and the host's `aria-describedby` cannot reach into its own shadow root —
-measured, the reference resolves to nothing. Putting the role and the id on the
-atom the consumer wrote is the only shape that both resolves and keeps the
-region in the tree, and the cost is that the group writes on a node it does not
-own. It writes only these four facts, never text, never state a box reads.
-
 ## Parts
 
 | Part       | Element                                                                                 |
@@ -164,27 +67,7 @@ There is no `message`, `description` or `error` part: those regions are the
 consumer's own atoms, styled by the atoms and by the group's `::slotted` rules.
 They are always there, because the group never removes them.
 
-## Label state
-
-The group writes its state on the `bk-field-label` it hosts, as `data-state`, and
-`data-disabled` on its own label row; it writes neither on a box, nor on the
-label of one:
-
-| Value      | When                                                     | Paints                  |
-| ---------- | -------------------------------------------------------- | ----------------------- |
-| `invalid`  | `invalid` is set, or the field derives it from its error | `--bk-text-danger`      |
-| `disabled` | the group is disabled, or is inside a disabled form      | `--bk-opacity-disabled` |
-
-A label with no state keeps `--bk-text-default`, which is what the atom paints
-from its own `:host` rules. The dim is written once, on the row: the hosted atom
-is dimmed by the row it sits in and not a second time on its own.
-
-A missing answer with no message on screen is **not** painted invalid: `data-state`
-follows what is displayed, so a required empty group with no error atom shows the
-`*` and the platform's message and nothing red
-([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
-
-## Tokens
+## Tokens and hooks
 
 No new token tier. The group reads the roles and primitives the atoms already
 read — `--bk-space-2` for the gap between the boxes, and the atoms' own
@@ -274,3 +157,120 @@ layout is the only thing `orientation` decides.
   message, and an unchecked box still submits nothing.
 - **The inherited `value` is inert.** The group has no value of its own, so
   assigning `value` changes nothing it submits.
+
+## What it enforces
+
+`required` means **at least one box checked**, and it is the only constraint the
+group carries. With `required` and nothing checked the group reports
+`valueMissing` and the form refuses the submit; the moment one box it owns is
+checked the constraint clears, and it comes back when the last one is unchecked.
+
+There is no manual call: the group reads what each box submits — its
+`submittedValue` — and re-evaluates on the `bk-change` every box already emits. The boxes stay
+independent — the group writes nothing on them except `disabled` (see
+[Disabled](#disabled)), an unchecked box submits nothing, and no box knows it is
+in a group.
+
+**It submits no value of its own.** The boxes submit theirs under their own
+`name`s; the group adds no entry to the form data. `new FormData(form)` has the
+checked boxes and no row for the group: it is a constraint in the payload, not a
+key.
+
+The message is the consumer's. The `error` property, or a `bk-field-error` atom
+with text, reports `customError` with that text, exactly as in any field
+([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
+With neither, the group falls back to a fixed English sentence — `Please select
+at least one option.` — which only the platform surfaces, through
+`validationMessage` and the browser's own validation UI on submit. A component
+does not translate; a consumer who wants text on the page writes it.
+
+**A nested group is its own widget.** A group writes `disabled` on the boxes it
+owns, and a group nested inside another is not owned by it: the outer `disabled`
+does not reach the inner one, and the inner boxes keep responding — which is what
+they look like, since nothing dims them. Disabling a whole subtree means disabling
+each group.
+
+## Disabled
+
+`disabled` flows to the boxes. The group writes `disabled` on every `bk-checkbox`
+it owns, and takes back only what it wrote: leaving `disabled` re-enables those
+boxes and leaves a box authored `disabled` disabled. Each box then refuses the
+pointer and reports `aria-disabled` on its own inner input, which is the disabled
+they already carry
+([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)).
+A group that looks unavailable while its boxes still respond is the lie
+[Conventions C5](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-code.md#c5-a-disabled-control-keeps-its-muted-text-loses-its-hover-and-carries-one-dim)
+exists to prevent.
+
+A disabled `<fieldset>` reaches the group too, through `formDisabledCallback`, and
+the group flows it to the boxes the same way. Each box also honours the fieldset
+on its own, so both routes leave the set inert:
+
+```html
+<fieldset disabled>
+  <bk-checkbox-group required>
+    <bk-field-label>Notifications</bk-field-label>
+    <bk-checkbox name="email" value="email">
+      <bk-field-label slot="label">Email</bk-field-label>
+    </bk-checkbox>
+  </bk-checkbox-group>
+</fieldset>
+```
+
+## Group-level messages
+
+The consumer's atoms **are** the regions. The group does not render a region of
+its own and does not wrap them: a container cannot reference a region inside its
+own shadow root, because `aria-labelledby`/`aria-describedby` resolve per tree.
+So the group writes on the atom what a region would otherwise carry, and the
+atom stays in the document tree where an IDREF finds it:
+
+| The group writes   | On                 | When                                                                        |
+| ------------------ | ------------------ | --------------------------------------------------------------------------- |
+| `id`               | description, error | always, if the atom has none: `<group id>-description`/`-error`             |
+| `role="status"`    | error              | always, if the atom has no role of its own                                  |
+| `data-empty`       | description, error | while `textContent.trim()` is empty                                         |
+| `hidden`           | description        | while the error atom has text                                               |
+| `aria-describedby` | the host           | the error id while the error has text, else the description id, else absent |
+
+An empty atom is clipped, never removed: it keeps its 1px box, its place in the
+flow and its place in the accessibility tree, so the live region is already
+there when the error arrives. `data-empty` is what the atom paints — the atom
+stays presentational, it never decides that it is empty.
+
+`hidden` is a different job and only the description gets it: while the error has
+text the description gives it the row, exactly as a field's two regions behave,
+and it comes back when the error empties. Neither atom is ever removed.
+
+When an atom leaves the group, the group takes its `role` and its `data-empty`
+back; the `id` it assigned can stay.
+
+**This is a deliberate departure from A7's "never `role="status"` on slotted
+content".** A7 keeps the live region on the control's own shadow region, which
+works because the control's references live in the same tree as that region. A
+group is a different shape: the element a screen reader lands on is the host,
+and the host's `aria-describedby` cannot reach into its own shadow root —
+measured, the reference resolves to nothing. Putting the role and the id on the
+atom the consumer wrote is the only shape that both resolves and keeps the
+region in the tree, and the cost is that the group writes on a node it does not
+own. It writes only these four facts, never text, never state a box reads.
+
+## Label state
+
+The group writes its state on the `bk-field-label` it hosts, as `data-state`, and
+`data-disabled` on its own label row; it writes neither on a box, nor on the
+label of one:
+
+| Value      | When                                                     | Paints                  |
+| ---------- | -------------------------------------------------------- | ----------------------- |
+| `invalid`  | `invalid` is set, or the field derives it from its error | `--bk-text-danger`      |
+| `disabled` | the group is disabled, or is inside a disabled form      | `--bk-opacity-disabled` |
+
+A label with no state keeps `--bk-text-default`, which is what the atom paints
+from its own `:host` rules. The dim is written once, on the row: the hosted atom
+is dimmed by the row it sits in and not a second time on its own.
+
+A missing answer with no message on screen is **not** painted invalid: `data-state`
+follows what is displayed, so a required empty group with no error atom shows the
+`*` and the platform's message and nothing red
+([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).

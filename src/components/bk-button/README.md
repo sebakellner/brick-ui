@@ -11,7 +11,7 @@ A button that delegates focus to its inner native `<button>`.
 <bk-button disabled>Disabled</bk-button>
 ```
 
-## Properties
+## Attributes and properties
 
 | Property   | Attribute  | Type                                  | Default     | Notes                                                                                     |
 | ---------- | ---------- | ------------------------------------- | ----------- | ----------------------------------------------------------------------------------------- |
@@ -20,45 +20,13 @@ A button that delegates focus to its inner native `<button>`.
 | `label`    | `label`    | `string`                              | `''`        | accessible name for a button that shows an icon and no text; mirrored to the inner button |
 | `disabled` | `disabled` | `boolean`                             | `false`     | reflected; sets `aria-disabled` on the inner button and blocks activation                 |
 
-## Content
-
-A single default slot: the label.
-
-## Forms
-
-`type` defaults to `'button'`, not to the platform default of `'submit'`: a button
-that is usually a plain action should not send a form by accident.
-
-The element is **form-associated**, the same way `bk-input` is, so it finds its
-form the same way and needs no lookup of its own: a `form="other-id"` attribute
-works, and a `<fieldset disabled>` disables it just as it disables the fields
-beside it. The fieldset state is kept apart from the author `disabled` and
-neither implies the other.
-
-`type="submit"` calls `requestSubmit()` and `type="reset"` calls `reset()`, so
-validation and resetting still happen through the platform.
-
-**It is not the form's default submit button.** The inner `<button>` lives in the
-shadow root and therefore has no form owner, so pressing Enter in a text field
-elsewhere in the form does not route to it, and a form with more than one field
-will not submit from the keyboard at all. Keep a native
-`<button type="submit">` in any form that has to submit that way.
-
-One limit remains, and it is the platform's: `requestSubmit()` runs without a
-submitter, so `event.submitter` is `null` and the button's own `name` and `value`
-do not travel with the submission. Passing a custom element as the submitter
-throws, by design.
-
-A programmatic `el.click()` runs exactly the activation a real click runs, and
-does nothing while the button is disabled or its fieldset is.
-
 ## Parts
 
 | Part     | Element                     |
 | -------- | --------------------------- |
 | `button` | the inner native `<button>` |
 
-## Tokens
+## Tokens and hooks
 
 Every visual value comes from a token; the component holds no literals.
 
@@ -107,3 +75,35 @@ part of the API.
   a pointer over it changes nothing.
 - The secondary border clears 3:1 against a white surface (WCAG 1.4.11), which
   the tests assert.
+
+## Content
+
+A single default slot: the label.
+
+## Forms
+
+`type` defaults to `'button'`, not to the platform default of `'submit'`: a button
+that is usually a plain action should not send a form by accident.
+
+The element is **form-associated**, the same way `bk-input` is, so it finds its
+form the same way and needs no lookup of its own: a `form="other-id"` attribute
+works, and a `<fieldset disabled>` disables it just as it disables the fields
+beside it. The fieldset state is kept apart from the author `disabled` and
+neither implies the other.
+
+`type="submit"` calls `requestSubmit()` and `type="reset"` calls `reset()`, so
+validation and resetting still happen through the platform.
+
+**It is not the form's default submit button.** The inner `<button>` lives in the
+shadow root and therefore has no form owner, so pressing Enter in a text field
+elsewhere in the form does not route to it, and a form with more than one field
+will not submit from the keyboard at all. Keep a native
+`<button type="submit">` in any form that has to submit that way.
+
+One limit remains, and it is the platform's: `requestSubmit()` runs without a
+submitter, so `event.submitter` is `null` and the button's own `name` and `value`
+do not travel with the submission. Passing a custom element as the submitter
+throws, by design.
+
+A programmatic `el.click()` runs exactly the activation a real click runs, and
+does nothing while the button is disabled or its fieldset is.

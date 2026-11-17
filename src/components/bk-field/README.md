@@ -14,62 +14,7 @@ written as elements instead of strings, and `bk-field` stacks them.
 </bk-field>
 ```
 
-## The shape
-
-The three atoms are children of the control, and the control is a child of
-`bk-field`. The nesting is the rule, not a style: a `<slot>` only sees the host's
-own light children, so an atom written as a sibling of the control never reaches
-it, and the control builds its `<label for>` and `aria-describedby` from ids in
-its own shadow root. Written flat, the input keeps its visual label and loses its
-accessible name — [ADR 0009](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0009-nest-the-field-parts-inside-the-control.md)
-records the alternatives and why they lost.
-
-## What the field does
-
-Three things, and nothing else:
-
-- It stacks label, control, description and error in that order, one
-  `--bk-space-1` gap apart, whatever order they were written in.
-- On `slotchange` it assigns `slot="label"`, `slot="description"` and
-  `slot="error"` to the parts it recognises by tag, so the consumer writes the
-  element and never the attribute.
-- It reflects its boolean `invalid` into `data-state="invalid"` on those parts.
-- An atom paints `invalid` and nothing else. `data-state="disabled"` is written by
-  the control that hosts the atom — it reports the state, and the row that owns the
-  dim is what paints it ([C5](../conventions-code.md)).
-
-It has no `role`, computes no accessible name and carries no validity. The role
-belongs to the widget; `bk-field` is structure.
-
-## The parts
-
-`bk-field-label`, `bk-field-description` and `bk-field-error` are presentational.
-They own their type and colour from semantic roles, carry no logic, and work
-outside a field — one rendered on its own still lays out and still paints.
-
-| Atom                   | Assigned slot | Paints with                        |
-| ---------------------- | ------------- | ---------------------------------- |
-| `bk-field-label`       | `label`       | `--bk-text-default`, medium weight |
-| `bk-field-description` | `description` | `--bk-text-muted`                  |
-| `bk-field-error`       | `error`       | `--bk-text-danger`                 |
-
-## The control's slots
-
-The control renders the parts inside its own shadow root, so the association
-never crosses a root.
-
-| Slot          | Rendered in                       | Falls back to                                 |
-| ------------- | --------------------------------- | --------------------------------------------- |
-| `label`       | the `<label>` bound with `for`    | nothing: the slot is the label                |
-| `description` | the description region            | nothing: the slot is the description          |
-| `error`       | the error region, `role="status"` | the `error` property, then the native message |
-
-There is no attribute a field can be labelled with or described by. The slots
-are the label and the description, so the control's name is the text the consumer
-puts in `label` and its description is the text in `description`. While the error
-region has content the description region is hidden; neither is deleted.
-
-## Properties
+## Attributes and properties
 
 | Property  | Attribute | Type      | Default | Notes                                                                     |
 | --------- | --------- | --------- | ------- | ------------------------------------------------------------------------- |
@@ -87,7 +32,7 @@ styled through that element — `bk-input::part(error)`, never `bk-field::part(e
 The field's own hooks are its atoms' tags, which are elements a consumer can
 target directly.
 
-## Tokens
+## Tokens and hooks
 
 `bk-field` has no tokens of its own. It paints semantic roles and its only
 geometry is the gap between the parts.
@@ -136,3 +81,58 @@ theming the roles.
   consumer's attribute, so `bk-field invalid` can paint the atoms of a field whose
   control is valid, and a control can be invalid while `bk-field` reports
   nothing. Two statements, two owners.
+
+## The shape
+
+The three atoms are children of the control, and the control is a child of
+`bk-field`. The nesting is the rule, not a style: a `<slot>` only sees the host's
+own light children, so an atom written as a sibling of the control never reaches
+it, and the control builds its `<label for>` and `aria-describedby` from ids in
+its own shadow root. Written flat, the input keeps its visual label and loses its
+accessible name — [ADR 0009](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0009-nest-the-field-parts-inside-the-control.md)
+records the alternatives and why they lost.
+
+## What the field does
+
+Three things, and nothing else:
+
+- It stacks label, control, description and error in that order, one
+  `--bk-space-1` gap apart, whatever order they were written in.
+- On `slotchange` it assigns `slot="label"`, `slot="description"` and
+  `slot="error"` to the parts it recognises by tag, so the consumer writes the
+  element and never the attribute.
+- It reflects its boolean `invalid` into `data-state="invalid"` on those parts.
+- An atom paints `invalid` and nothing else. `data-state="disabled"` is written by
+  the control that hosts the atom — it reports the state, and the row that owns the
+  dim is what paints it ([C5](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-code.md#c5-a-disabled-control-keeps-its-muted-text-loses-its-hover-and-carries-one-dim)).
+
+It has no `role`, computes no accessible name and carries no validity. The role
+belongs to the widget; `bk-field` is structure.
+
+## The parts
+
+`bk-field-label`, `bk-field-description` and `bk-field-error` are presentational.
+They own their type and colour from semantic roles, carry no logic, and work
+outside a field — one rendered on its own still lays out and still paints.
+
+| Atom                   | Assigned slot | Paints with                        |
+| ---------------------- | ------------- | ---------------------------------- |
+| `bk-field-label`       | `label`       | `--bk-text-default`, medium weight |
+| `bk-field-description` | `description` | `--bk-text-muted`                  |
+| `bk-field-error`       | `error`       | `--bk-text-danger`                 |
+
+## The control's slots
+
+The control renders the parts inside its own shadow root, so the association
+never crosses a root.
+
+| Slot          | Rendered in                       | Falls back to                                 |
+| ------------- | --------------------------------- | --------------------------------------------- |
+| `label`       | the `<label>` bound with `for`    | nothing: the slot is the label                |
+| `description` | the description region            | nothing: the slot is the description          |
+| `error`       | the error region, `role="status"` | the `error` property, then the native message |
+
+There is no attribute a field can be labelled with or described by. The slots
+are the label and the description, so the control's name is the text the consumer
+puts in `label` and its description is the text in `description`. While the error
+region has content the description region is hidden; neither is deleted.

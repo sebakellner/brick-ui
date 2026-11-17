@@ -18,19 +18,7 @@ elements inside the shadow root.
 </bk-field>
 ```
 
-## Why the options are atoms
-
-A `<select>` accepts no slots: its only children are `option`, `optgroup` and
-`hr`. So the declarative shape lives outside the select — the consumer writes
-`bk-native-select-opt` and `bk-native-select-opt-group` — and the component
-builds the real options inside it. The consumer's nodes are never moved and never
-removed; they are read, and the mirror is rebuilt from them.
-
-A custom-drawn select is a different component. This one shows the real
-`<select>`, so there is no overlay, no display input and no keyboard
-reimplementation.
-
-## Properties
+## Attributes and properties
 
 | Property      | Attribute     | Type      | Default | Notes                                                                                                                                                                                           |
 | ------------- | ------------- | --------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -89,20 +77,6 @@ document.querySelector('bk-native-select').addEventListener('bk-change', (event)
 });
 ```
 
-## Form API
-
-Inherited from `FormControlMixin`, the same surface a native control offers:
-`form`, `validity`, `validationMessage`, `checkValidity()`, `reportValidity()`,
-`showValidationMessage()`, `fieldMessage`, `fieldError`, `fieldInvalid`.
-
-`submittedValue` is the selected value, and a select with nothing selected
-contributes no entry at all — the hidden placeholder is not an answer. A
-disabled select submits nothing, and a disabled one reports no error, so it never
-blocks a submit it cannot take part in.
-
-`value` reports the option the platform selected: with no placeholder the
-browser selects the first option, so that option's value is the field's value.
-
 ## Parts
 
 | Part          | Element                                                                                                              |
@@ -117,7 +91,7 @@ browser selects the first option, so that option's value is the field's value.
 The label state, the message regions and the `*` are the shared field anatomy:
 `bk-input` and this component paint them the same way, from the same code.
 
-## Tokens
+## Tokens and hooks
 
 | Token                                                                                                        | Paints                                       |
 | ------------------------------------------------------------------------------------------------------------ | -------------------------------------------- |
@@ -171,3 +145,29 @@ already paints, and theming the select means theming those roles.
   `<optgroup>`, so the inner group and its options do not reach the mirror.
 - The options are text only. An `<option>` cannot carry an element, so no atom
   inside `bk-native-select-opt` is rendered.
+
+## Why the options are atoms
+
+A `<select>` accepts no slots: its only children are `option`, `optgroup` and
+`hr`. So the declarative shape lives outside the select — the consumer writes
+`bk-native-select-opt` and `bk-native-select-opt-group` — and the component
+builds the real options inside it. The consumer's nodes are never moved and never
+removed; they are read, and the mirror is rebuilt from them.
+
+A custom-drawn select is a different component. This one shows the real
+`<select>`, so there is no overlay, no display input and no keyboard
+reimplementation.
+
+## Form API
+
+Inherited from `FormControlMixin`, the same surface a native control offers:
+`form`, `validity`, `validationMessage`, `checkValidity()`, `reportValidity()`,
+`showValidationMessage()`, `fieldMessage`, `fieldError`, `fieldInvalid`.
+
+`submittedValue` is the selected value, and a select with nothing selected
+contributes no entry at all — the hidden placeholder is not an answer. A
+disabled select submits nothing, and a disabled one reports no error, so it never
+blocks a submit it cannot take part in.
+
+`value` reports the option the platform selected: with no placeholder the
+browser selects the first option, so that option's value is the field's value.
