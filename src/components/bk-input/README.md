@@ -210,10 +210,12 @@ values: theming the input means theming the roles, not the field.
   unavailable — [ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)
   records why the two shapes differ. A disabled field also submits nothing and
   reports no error, so it never blocks a submit it cannot take part in.
-- `reset()` restores the initial value synchronously, so a reset handler can read
-  `FormData` or submit immediately. It also drops `error` and the touched state,
-  so a reset form does not come back red. A value the browser restores is not an
-  interaction, so it leaves the field untouched.
+- `reset()` restores the default: the `value` attribute, read when the reset
+  happens — the contract a native `<input>` has for its `defaultValue`, not a
+  snapshot of the value the field held when it mounted. It is synchronous, so a
+  reset handler can read `FormData` or submit immediately. It also drops `error`
+  and the touched state, so a reset form does not come back red. A value the
+  browser restores is not an interaction, so it leaves the field untouched.
 - The author's `disabled` and a `<fieldset>` disabling the field are separate
   states: re-enabling the fieldset never clears an author-disabled field.
 - The field border clears 3:1 against a white surface (WCAG 1.4.11), which the

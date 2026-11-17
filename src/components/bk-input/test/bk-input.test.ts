@@ -1408,6 +1408,25 @@ describe('bk-input', () => {
       expect(el.value).to.equal('default@b.c');
       expect(new FormData(form).get('email')).to.equal('default@b.c');
     });
+
+    it('should read the value attribute when the reset happens, not the one it mounted with', async () => {
+      const form = await fixture<HTMLFormElement>(html`<form></form>`);
+      const el = document.createElement('bk-input') as BkInput;
+      el.setAttribute('name', 'email');
+      el.setAttribute('label', 'Email');
+      el.setAttribute('value', 'mounted@b.c');
+      form.append(el);
+      await el.updateComplete;
+
+      el.value = 'typed@b.c';
+      el.setAttribute('value', 'changed@b.c');
+      await el.updateComplete;
+
+      form.reset();
+
+      expect(el.value).to.equal('changed@b.c');
+      expect(new FormData(form).get('email')).to.equal('changed@b.c');
+    });
   });
 
   describe('platform validity', () => {
