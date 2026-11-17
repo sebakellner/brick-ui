@@ -25,6 +25,11 @@ already imports the README, so the only way a table can disagree with itself is 
 writes a second one in the `.mdx`. The rule this repository learned the hard way: `bk-field`
 documented three parts it never rendered, so `bk-field::part(error)` styled nothing.
 
+The same file is read in three places — on GitHub, in Storybook, and on this library's
+documentation page once it exists — so every link it carries is an **absolute URL**: a
+relative path resolves under one renderer and breaks under the others, which is how
+`bk-field`'s link to these conventions was broken on GitHub while nobody was looking.
+
 **Do** — one README, rendered by the page, and a `.mdx` that only sequences canvases.
 
 **Don't** — restate a token table, an attribute list or a limitation in the `.mdx`.

@@ -104,7 +104,7 @@ Three things, and nothing else:
 - It reflects its boolean `invalid` into `data-state="invalid"` on those parts.
 - An atom paints `invalid` and nothing else. `data-state="disabled"` is written by
   the control that hosts the atom — it reports the state, and the row that owns the
-  dim is what paints it ([C5](../conventions-code.md)).
+  dim is what paints it ([C5](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-code.md#c5-a-disabled-control-keeps-its-muted-text-loses-its-hover-and-carries-one-dim)).
 
 It has no `role`, computes no accessible name and carries no validity. The role
 belongs to the widget; `bk-field` is structure.
