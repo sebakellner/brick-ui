@@ -31,6 +31,8 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: the browser the suite runs is the one the lockfile pins
+        run: npx playwright install --with-deps chromium
       - run: pnpm test
       - run: pnpm build-storybook
       - run: grep -rq 'customElements.define' storybook-static/assets || (echo 'the storybook build registers no element; a story renders bare text when its element never upgraded' && exit 1)

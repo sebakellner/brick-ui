@@ -4,7 +4,9 @@ Date: 2026-11-16
 
 ## Status
 
-accepted; supersedes in part [0005](0005-test-in-chrome-only.md)
+accepted; supersedes in part [0005](0005-test-in-chrome-only.md); superseded in part by
+[0018](0018-the-browser-the-suite-runs-is-the-one-the-lockfile-pins.md) — the pointer claim
+and the enabled sibling still hold; the launcher this record names does not.
 
 ## Context
 
