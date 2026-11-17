@@ -5,6 +5,12 @@ and its stories. Token rules are in [conventions-tokens.md](conventions-tokens.m
 testing is in [conventions-testing.md](conventions-testing.md), and the rules for the
 documents in this directory are in [README.md](README.md).
 
+**Scope: the web components package.** These rules describe a custom element, so they use
+the platform's vocabulary — attributes, properties, events, slots, `part`s and custom
+properties. A React or a Vue package arrives later with its own README per component and its
+own words for the same ideas; what stays shared between them is the contract, not the
+wording.
+
 | #   | Rule                                                                     | Enforced by                             |
 | --- | ------------------------------------------------------------------------ | --------------------------------------- |
 | D1  | One fact, one home: the README states, the page renders, the story shows | review, and the page imports the README |
@@ -12,6 +18,7 @@ documents in this directory are in [README.md](README.md).
 | D3  | Every name the README documents exists in the code, and has a case       | the testing rules, and review           |
 | D4  | A story is one decision, and its name says which                         | review                                  |
 | D5  | The page connects; the README and the ADRs explain                       | review                                  |
+| D6  | The contract is shared; the idiom is not                                 | the component manifest                  |
 
 ## D1. One fact, one home
 
@@ -126,3 +133,28 @@ why. A reason stored in the least durable of the three is a reason about to be l
 recorded only here.
 
 **Enforced by.** Review.
+
+## D6. The contract is shared; the idiom is not
+
+**Rule.** A second technology gets its own package and its own README per component, because
+its vocabulary differs: React has props and children, Vue has props, emits and scoped slots,
+a custom element has attributes, properties, events, slots and `part`s. What every package
+must state identically is the **contract** — the names that exist, what each one does, its
+default, the events and their payloads, the accessibility commitments, the limitations. That
+part is declared once, in the component manifest, and each package renders it; only the
+idiomatic usage, the snippet a consumer of that technology writes, is authored per package.
+
+**Why.** Two hand-written READMEs per component are two documents per fact per technology,
+and the first divergence will be a default or an event name. The rule that keeps them honest
+is the one this folder already uses: a fact true of every technology belongs to the manifest,
+and a fact true of one technology belongs to that package.
+
+**Do** — a React README whose tables are generated from the manifest and whose `## Usage`
+shows `<BkInput onChange>`; a custom element README whose tables come from the same manifest
+and whose `## Usage` shows `<bk-input>` with a listener.
+
+**Don't** — copy a table by hand into a second package, or rename a contract name to fit the
+idiom: `disabled` stays `disabled`, and how you _set_ it is the package's business.
+
+**Enforced by.** The manifest check: a contract name missing from a package's generated table
+fails, and a table row with no component behind it fails too.
