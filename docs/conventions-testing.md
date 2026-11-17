@@ -96,25 +96,25 @@ suite reaches nobody; an undefined token reaches a consumer in runtime, which is
 
 ## The rules, and what enforces them
 
-| #   | Rule                                                                 | Enforced by                                |
-| --- | -------------------------------------------------------------------- | ------------------------------------------ |
-| T1  | The runner page loads the theme, once                                | the suite — an unstyled read fails         |
-| T2  | Assert computed styles, not markup                                   | review                                     |
-| T3  | Drive hover and focus with real input                                | review                                     |
-| T4  | The test page has no transition to wait for                          | review; the suite runtime shows it         |
-| T5  | Every fix is provable by mutation                                    | review                                     |
-| T6  | Never put a DOM element on the tested side of a failure              | the suite — a violation is a hang          |
-| T7  | The runner claims a pointer, and the suite proves it                 | `browser.test.ts` + the enabled sibling    |
-| T8  | One suite per component, a part only when it has behaviour           | the suites, visible in the inventory       |
-| T9  | Use the testing library's own vocabulary, never an alias             | review                                     |
-| T10 | A rule earns its path, and the case that refuses it                  | review                                     |
-| T11 | A defect is pinned before the fix, and the title names it            | review — the red before the green          |
-| T12 | Coverage is not a number, and that is a decision                     | review; no coverage tooling is installed   |
-| T13 | A suite does not mock, wait on a duration, or depend on order        | review                                     |
-| T14 | A suite is named after its element, and a case says what should hold | review                                     |
-| T15 | Accessibility is asserted by rule and by audit                       | `a11y.test.ts`, then every component suite |
-| T16 | A suite proves its subject rendered                                  | review                                     |
-| T17 | Every documented name has a case                                     | review against the README tables           |
+| #   | Rule                                                                 | Enforced by                                           |
+| --- | -------------------------------------------------------------------- | ----------------------------------------------------- |
+| T1  | The runner page loads the theme, once                                | the suite — an unstyled read fails                    |
+| T2  | Assert computed styles, not markup                                   | review                                                |
+| T3  | Drive hover and focus with real input                                | review                                                |
+| T4  | The test page has no transition to wait for                          | review; the suite runtime shows it                    |
+| T5  | Every fix is provable by mutation                                    | review                                                |
+| T6  | Never put a DOM element on the tested side of a failure              | the suite — a violation is a hang                     |
+| T7  | The runner claims a pointer, and the suite proves it                 | `browser.test.ts` + the enabled sibling               |
+| T8  | One suite per component, a part only when it has behaviour           | the suites, visible in the inventory                  |
+| T9  | Use the testing library's own vocabulary, never an alias             | review                                                |
+| T10 | A rule earns its path, and the case that refuses it                  | review                                                |
+| T11 | A defect is pinned before the fix, and the title names it            | review — the red before the green                     |
+| T12 | Coverage is not a number, and that is a decision                     | review; no coverage tooling is installed              |
+| T13 | A suite does not mock, wait on a duration, or depend on order        | review                                                |
+| T14 | A suite is named after its element, and a case says what should hold | review                                                |
+| T15 | Accessibility is asserted by rule and by audit                       | `a11y.test.ts`, then every suite whose subject paints |
+| T16 | A suite proves its subject rendered                                  | review                                                |
+| T17 | Every documented name has a case                                     | review against the README tables                      |
 
 The explanations below are **grouped by theme, not by number**. The numbers are stable
 identifiers: other documents, commit messages and reviews cite `T6` and `T15` by name, so
@@ -510,6 +510,13 @@ from `src/test/helpers/a11y.ts`, running `wcag2a`, `wcag2aa` and `best-practice`
 replaces the other — the audit cannot tell "renders nothing" from "clean", and no case can
 see the wiring nobody thought to name.
 
+**An atom that paints nothing is not audited.** A private atom that lives `display: none`
+inside another control — `bk-native-select-opt` and `bk-native-select-opt-group` are data
+for the select, which paints the `<option>`s itself — gets no audit of its own: axe skips
+what does not render, so the case would pass without auditing anything, the vacuous green
+T16 exists to prevent. Its coverage is the audit of the control that paints it; what the
+atom still owes is T16, a case saying its fixture rendered.
+
 **Why.** The audit caught what no single case owned: a label that resolves to nothing, an ARIA
 attribute pointing at no node. The pairs caught what the audit cannot see: the canvas it grades
 against is the painted page, and an unpainted page made it report 1.09:1 on a pair the kit
@@ -522,7 +529,8 @@ runner page paints `body` with `--bk-bg-surface`, and the gate's own suite prove
 skipped because axe runs.
 
 **Enforced by.** `src/test/helpers/a11y.test.ts` proves the gate fails on a violation and
-passes an empty fixture; the component suites run it in both themes.
+passes an empty fixture; every suite whose subject paints runs it in both themes, and the
+suites of atoms that do not paint carry T16 instead.
 
 ## T17. Every documented name has a case
 

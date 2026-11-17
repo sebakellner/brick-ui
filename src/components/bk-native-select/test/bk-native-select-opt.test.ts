@@ -1,4 +1,5 @@
 import { expect, fixture, html } from '@open-wc/testing';
+import { expectRendered } from '../../../test/helpers/a11y.js';
 import type { BkNativeSelectOpt } from '.././bk-native-select-opt.js';
 import '.././define.js';
 
@@ -8,6 +9,14 @@ const atom = (markup = 'Email') =>
   );
 
 describe('bk-native-select-opt', () => {
+  /* T16: an atom that paints nothing still has to say its render happened, or the suite
+   * is asserting against a tree that may not exist. */
+  it('should render the slot that carries its text', async () => {
+    const el = await atom();
+
+    expectRendered(el, 'slot');
+  });
+
   it('should keep the label as its own text, readable while it paints nothing', async () => {
     const el = await atom();
 
