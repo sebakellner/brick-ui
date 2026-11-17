@@ -269,189 +269,189 @@ describe('bk-button', () => {
 
     expect(getComputedStyle(innerButton(secondary)).color).to.equal('rgb(9, 9, 9)');
   });
-});
 
-describe('bk-button in a form', () => {
-  const inForm = (button: unknown) =>
-    fixture<HTMLFormElement>(html`<form>${button}<input name="field" value="initial" /></form>`);
+  describe('in a form', () => {
+    const inForm = (button: unknown) =>
+      fixture<HTMLFormElement>(html`<form>${button}<input name="field" value="initial" /></form>`);
 
-  it('should default to type button, so it never submits a form by accident', async () => {
-    const button = await mount();
+    it('should default to type button, so it never submits a form by accident', async () => {
+      const button = await mount();
 
-    expect(button.type).to.equal('button');
-    expect(innerButton(button).type).to.equal('button');
-  });
-
-  it('should not submit the form it sits in unless asked to', async () => {
-    const form = await inForm(html`<bk-button>Save</bk-button>`);
-    const watch = watchSubmit(form);
-
-    innerButton(form.querySelector('bk-button')!).click();
-
-    expect(watch.count).to.equal(0);
-  });
-
-  it('should not submit from Enter pressed in another field', async () => {
-    const form = await fixture<HTMLFormElement>(html`
-      <form>
-        <input name="first" value="one" />
-        <input name="second" value="two" />
-        <bk-button type="submit">Save</bk-button>
-      </form>
-    `);
-    const button = form.querySelector('bk-button') as BkButton;
-    const watch = watchSubmit(form);
-
-    expect(Boolean(innerButton(button)), 'the button rendered').to.equal(true);
-
-    form.querySelector('input')!.focus();
-    await sendKeys({ press: 'Enter' });
-    await button.updateComplete;
-    await nextFrame();
-
-    expect(watch.count, 'the shadow button is not the form’s default submit').to.equal(0);
-  });
-
-  it('should submit the form when type is submit', async () => {
-    const form = await inForm(html`<bk-button type="submit">Save</bk-button>`);
-    const watch = watchSubmit(form);
-
-    innerButton(form.querySelector('bk-button')!).click();
-
-    expect(watch.count).to.equal(1);
-  });
-
-  it('should reset the form when type is reset', async () => {
-    const form = await inForm(html`<bk-button type="reset">Reset</bk-button>`);
-    const field = form.querySelector('input')!;
-    field.value = 'changed';
-
-    innerButton(form.querySelector('bk-button')!).click();
-
-    expect(field.value).to.equal('initial');
-  });
-});
-
-describe('bk-button activation', () => {
-  it('should ignore a programmatic click while disabled', async () => {
-    const button = await mount();
-    button.disabled = true;
-    await button.updateComplete;
-    let clicks = 0;
-    button.addEventListener('click', () => (clicks += 1));
-
-    button.click();
-
-    expect(clicks).to.equal(0);
-  });
-
-  it('should still deliver a programmatic click when enabled', async () => {
-    const button = await mount();
-    let clicks = 0;
-    button.addEventListener('click', () => (clicks += 1));
-
-    button.click();
-
-    expect(clicks).to.equal(1);
-  });
-
-  it('should carry its label to the button that takes focus', async () => {
-    const button = await fixture<BkButton>(html`<bk-button label="Close">x</bk-button>`);
-
-    expect(innerButton(button).getAttribute('aria-label')).to.equal('Close');
-  });
-
-  it('should activate from Enter and Space', async () => {
-    const button = await mount();
-    let clicks = 0;
-    button.addEventListener('click', () => (clicks += 1));
-    button.focus();
-
-    await sendKeys({ press: 'Enter' });
-    await sendKeys({ press: 'Space' });
-
-    expect(clicks).to.equal(2);
-  });
-
-  it('should not activate from the keyboard while disabled', async () => {
-    const button = await mount();
-    button.disabled = true;
-    await button.updateComplete;
-    let clicks = 0;
-    button.addEventListener('click', () => (clicks += 1));
-    button.focus();
-
-    await sendKeys({ press: 'Enter' });
-
-    expect(clicks).to.equal(0);
-  });
-});
-
-describe('bk-button as a form control', () => {
-  it('should run the activation a real click runs', async () => {
-    const form = await fixture<HTMLFormElement>(
-      html`<form><bk-button type="submit">Save</bk-button></form>`,
-    );
-    const button = form.querySelector('bk-button') as BkButton;
-    const watch = watchSubmit(form);
-
-    button.click();
-
-    expect(watch.count).to.equal(1);
-  });
-
-  it('should submit with no submitter, so its name and value do not travel', async () => {
-    const form = await fixture<HTMLFormElement>(html`
-      <form>
-        <input name="field" value="initial" />
-        <bk-button type="submit" name="action" value="save">Save</bk-button>
-      </form>
-    `);
-    const button = form.querySelector('bk-button') as BkButton;
-    const watch = watchSubmit(form);
-    let submitter: HTMLElement | null | undefined;
-    let data: FormData | undefined;
-    form.addEventListener('submit', (event) => {
-      submitter = (event as SubmitEvent).submitter;
-      data = new FormData(form);
+      expect(button.type).to.equal('button');
+      expect(innerButton(button).type).to.equal('button');
     });
 
-    innerButton(button).click();
-    await button.updateComplete;
+    it('should not submit the form it sits in unless asked to', async () => {
+      const form = await inForm(html`<bk-button>Save</bk-button>`);
+      const watch = watchSubmit(form);
 
-    expect(watch.count, 'the submit arrived').to.equal(1);
-    expect(submitter === null, 'requestSubmit() ran without a submitter').to.equal(true);
-    expect(data!.has('action'), 'the button name does not travel with it').to.equal(false);
+      innerButton(form.querySelector('bk-button')!).click();
+
+      expect(watch.count).to.equal(0);
+    });
+
+    it('should not submit from Enter pressed in another field', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <input name="first" value="one" />
+          <input name="second" value="two" />
+          <bk-button type="submit">Save</bk-button>
+        </form>
+      `);
+      const button = form.querySelector('bk-button') as BkButton;
+      const watch = watchSubmit(form);
+
+      expect(Boolean(innerButton(button)), 'the button rendered').to.equal(true);
+
+      form.querySelector('input')!.focus();
+      await sendKeys({ press: 'Enter' });
+      await button.updateComplete;
+      await nextFrame();
+
+      expect(watch.count, 'the shadow button is not the form’s default submit').to.equal(0);
+    });
+
+    it('should submit the form when type is submit', async () => {
+      const form = await inForm(html`<bk-button type="submit">Save</bk-button>`);
+      const watch = watchSubmit(form);
+
+      innerButton(form.querySelector('bk-button')!).click();
+
+      expect(watch.count).to.equal(1);
+    });
+
+    it('should reset the form when type is reset', async () => {
+      const form = await inForm(html`<bk-button type="reset">Reset</bk-button>`);
+      const field = form.querySelector('input')!;
+      field.value = 'changed';
+
+      innerButton(form.querySelector('bk-button')!).click();
+
+      expect(field.value).to.equal('initial');
+    });
   });
 
-  it('should be disabled by the fieldset that contains it', async () => {
-    const form = await fixture<HTMLFormElement>(html`
-      <form>
-        <fieldset disabled><bk-button type="submit">Save</bk-button></fieldset>
-      </form>
-    `);
-    const button = form.querySelector('bk-button') as BkButton;
-    const watch = watchSubmit(form);
-    await button.updateComplete;
+  describe('activation', () => {
+    it('should ignore a programmatic click while disabled', async () => {
+      const button = await mount();
+      button.disabled = true;
+      await button.updateComplete;
+      let clicks = 0;
+      button.addEventListener('click', () => (clicks += 1));
 
-    expect(innerButton(button).getAttribute('aria-disabled')).to.equal('true');
-    innerButton(button).click();
-    expect(watch.count).to.equal(0);
+      button.click();
+
+      expect(clicks).to.equal(0);
+    });
+
+    it('should still deliver a programmatic click when enabled', async () => {
+      const button = await mount();
+      let clicks = 0;
+      button.addEventListener('click', () => (clicks += 1));
+
+      button.click();
+
+      expect(clicks).to.equal(1);
+    });
+
+    it('should carry its label to the button that takes focus', async () => {
+      const button = await fixture<BkButton>(html`<bk-button label="Close">x</bk-button>`);
+
+      expect(innerButton(button).getAttribute('aria-label')).to.equal('Close');
+    });
+
+    it('should activate from Enter and Space', async () => {
+      const button = await mount();
+      let clicks = 0;
+      button.addEventListener('click', () => (clicks += 1));
+      button.focus();
+
+      await sendKeys({ press: 'Enter' });
+      await sendKeys({ press: 'Space' });
+
+      expect(clicks).to.equal(2);
+    });
+
+    it('should not activate from the keyboard while disabled', async () => {
+      const button = await mount();
+      button.disabled = true;
+      await button.updateComplete;
+      let clicks = 0;
+      button.addEventListener('click', () => (clicks += 1));
+      button.focus();
+
+      await sendKeys({ press: 'Enter' });
+
+      expect(clicks).to.equal(0);
+    });
   });
 
-  it('should act on the form named by the form attribute', async () => {
-    const wrapper = await fixture<HTMLDivElement>(html`
-      <div>
-        <form id="target"></form>
-        <bk-button type="submit" form="target">Save</bk-button>
-      </div>
-    `);
-    const form = wrapper.querySelector('form') as HTMLFormElement;
-    const button = wrapper.querySelector('bk-button') as BkButton;
-    const watch = watchSubmit(form);
+  describe('as a form control', () => {
+    it('should run the activation a real click runs', async () => {
+      const form = await fixture<HTMLFormElement>(
+        html`<form><bk-button type="submit">Save</bk-button></form>`,
+      );
+      const button = form.querySelector('bk-button') as BkButton;
+      const watch = watchSubmit(form);
 
-    innerButton(button).click();
+      button.click();
 
-    expect(watch.count).to.equal(1);
+      expect(watch.count).to.equal(1);
+    });
+
+    it('should submit with no submitter, so its name and value do not travel', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <input name="field" value="initial" />
+          <bk-button type="submit" name="action" value="save">Save</bk-button>
+        </form>
+      `);
+      const button = form.querySelector('bk-button') as BkButton;
+      const watch = watchSubmit(form);
+      let submitter: HTMLElement | null | undefined;
+      let data: FormData | undefined;
+      form.addEventListener('submit', (event) => {
+        submitter = (event as SubmitEvent).submitter;
+        data = new FormData(form);
+      });
+
+      innerButton(button).click();
+      await button.updateComplete;
+
+      expect(watch.count, 'the submit arrived').to.equal(1);
+      expect(submitter === null, 'requestSubmit() ran without a submitter').to.equal(true);
+      expect(data!.has('action'), 'the button name does not travel with it').to.equal(false);
+    });
+
+    it('should be disabled by the fieldset that contains it', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <fieldset disabled><bk-button type="submit">Save</bk-button></fieldset>
+        </form>
+      `);
+      const button = form.querySelector('bk-button') as BkButton;
+      const watch = watchSubmit(form);
+      await button.updateComplete;
+
+      expect(innerButton(button).getAttribute('aria-disabled')).to.equal('true');
+      innerButton(button).click();
+      expect(watch.count).to.equal(0);
+    });
+
+    it('should act on the form named by the form attribute', async () => {
+      const wrapper = await fixture<HTMLDivElement>(html`
+        <div>
+          <form id="target"></form>
+          <bk-button type="submit" form="target">Save</bk-button>
+        </div>
+      `);
+      const form = wrapper.querySelector('form') as HTMLFormElement;
+      const button = wrapper.querySelector('bk-button') as BkButton;
+      const watch = watchSubmit(form);
+
+      innerButton(button).click();
+
+      expect(watch.count).to.equal(1);
+    });
   });
 });
