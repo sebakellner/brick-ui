@@ -1,0 +1,41 @@
+version: 2
+
+updates:
+  # One ecosystem per lockfile this repository has: the pnpm one, and the actions
+  # the workflows call. Both weekly, because a dependency PR is a review, and a
+  # review nobody has time for is worse than a version that waits a week.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    groups:
+      # Development tooling moves together and is verified by the suite in one run;
+      # a patch and a minor of the same tool never deserve two PRs.
+      dev-minor-and-patch:
+        dependency-type: development
+        update-types:
+          - minor
+          - patch
+      production:
+        dependency-type: production
+    ignore:
+      # Playwright's own version pins the browser revision the suite runs, so a bump
+      # is a change of engine rather than a dependency update — it is decided in
+      # docs/adr/0018-the-browser-the-suite-runs-is-the-one-the-lockfile-pins.md, by a
+      # person, with a CI run that installs the new browser.
+      - dependency-name: playwright
+      - dependency-name: '@web/test-runner-playwright'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - ci
