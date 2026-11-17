@@ -157,4 +157,6 @@ and whose `## Usage` shows `<bk-input>` with a listener.
 idiom: `disabled` stays `disabled`, and how you _set_ it is the package's business.
 
 **Enforced by.** The manifest check: a contract name missing from a package's generated table
-fails, and a table row with no component behind it fails too.
+fails, and a table row with no component behind it fails too. Which surfaces the manifest
+carries from code and which are annotated is the decision in
+[ADR 0020](adr/0020-the-component-manifest-is-generated-and-the-readme-renders-it.md).
