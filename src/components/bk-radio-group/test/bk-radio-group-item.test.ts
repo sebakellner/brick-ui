@@ -4,8 +4,10 @@ import { labelAtom } from '../../../test/helpers/atoms.js';
 import { contrastRatio } from '../../../test/helpers/contrast.js';
 import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
+import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.js';
 import '.././define.js';
 import '../../bk-field/define.js';
+import type { BkRadioGroup } from '.././bk-radio-group.js';
 import type { BkRadioGroupItem } from '.././bk-radio-group-item.js';
 import { clickAt, hover, hoverCapable } from '../../../test/helpers/pointer.js';
 import { setTheme } from '../../../test/helpers/theme.js';
@@ -26,6 +28,30 @@ describe('bk-radio-group-item', () => {
     document.documentElement.style.removeProperty('--bk-radio-group-item-size');
     document.documentElement.style.removeProperty('--bk-radio-group-item-radius');
     setTheme('light');
+  });
+
+  describe('accessibility', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      it(`should have no accessibility violations (${theme})`, async () => {
+        setTheme(theme);
+        const group = await fixture<BkRadioGroup>(html`
+          <bk-radio-group value="m">
+            <bk-field-label slot="label">Size</bk-field-label>
+            <bk-radio-group-item value="s">
+              <bk-field-label slot="label">Small</bk-field-label>
+            </bk-radio-group-item>
+            <bk-radio-group-item value="m">
+              <bk-field-label slot="label">Medium</bk-field-label>
+            </bk-radio-group-item>
+          </bk-radio-group>
+        `);
+        await settle(group);
+        const el = group.querySelector<BkRadioGroupItem>('bk-radio-group-item')!;
+
+        expectRendered(el, 'input');
+        await expectNoViolations(el);
+      });
+    }
   });
 
   for (const theme of ['light', 'dark'] as const) {
