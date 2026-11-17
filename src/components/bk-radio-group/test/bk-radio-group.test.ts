@@ -320,7 +320,7 @@ describe('bk-radio-group', () => {
     await settle(el);
 
     expect(watch.count).to.equal(0);
-    expect(watch.invalidOn === el, 'the group is what the submit rejected').to.equal(true);
+    expect(watch.invalidOrder[0] === el, 'the group is what the submit rejected').to.equal(true);
 
     const error = document.createElement('bk-field-error');
     error.textContent = 'Pick a size.';
