@@ -1,19 +1,18 @@
 const cache = new Map<string, string>();
 
-let probe: HTMLElement | undefined;
-
-/* One probe for the whole run, one read per value. Reading a custom property means
- * resolving it through an element, and the earlier version did that inside a fixture
- * for every single assertion. */
+/* One element per distinct value, removed before the value is returned: reading a custom
+ * property means resolving it through an element, and one left in the body outlives every
+ * fixture that asked for it. The cache keeps the cost at one read per value. */
 const computed = (property: 'color' | 'opacity', value: string): string => {
   const key = `${property}:${value}`;
   const cached = cache.get(key);
   if (cached !== undefined) return cached;
 
-  probe ??= document.body.appendChild(document.createElement('span'));
+  const probe = document.createElement('span');
   probe.style.setProperty(property, value);
+  document.body.append(probe);
   const resolved = getComputedStyle(probe)[property];
-  probe.style.removeProperty(property);
+  probe.remove();
   cache.set(key, resolved);
 
   return resolved;
