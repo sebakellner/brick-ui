@@ -385,7 +385,7 @@ describe('bk-native-select', () => {
     await settle(el);
 
     expect(watch.count, 'the submit never runs').to.equal(0);
-    expect(watch.invalidOn === el, 'the select is what the submit rejected').to.equal(true);
+    expect(watch.invalidOrder[0] === el, 'the select is what the submit rejected').to.equal(true);
 
     await choose(el, 'email');
 

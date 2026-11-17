@@ -521,7 +521,9 @@ describe('bk-checkbox', () => {
     await el.updateComplete;
     await other.updateComplete;
 
-    expect(watch.invalidOn, 'the invalid event fires on the box that failed').to.equal(el);
+    expect(watch.invalidOrder[0] === el, 'the invalid event fires on the box that failed').to.equal(
+      true,
+    );
     expect(watch.count).to.equal(0);
     expect(innerError(el).textContent!.trim(), 'the native message is what shows').to.equal(
       innerInput(el).validationMessage,
@@ -1148,7 +1150,10 @@ describe('bk-checkbox', () => {
       await el.updateComplete;
 
       expect(watch.count).to.equal(0);
-      expect(watch.invalidOn).to.equal(el);
+      expect(
+        watch.invalidOrder[0] === el,
+        'the indeterminate box is what the submit rejected',
+      ).to.equal(true);
 
       el.indeterminate = false;
       el.checked = true;

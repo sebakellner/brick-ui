@@ -10,12 +10,17 @@
  * page away from the fixture, and the failure named nothing.
  *
  * `invalid` is captured because it does not bubble — the form only hears it on the way down,
- * so a non-capturing listener on the form never fires. */
+ * so a non-capturing listener on the form never fires.
+ *
+ * The rejected controls are a list, not a culprit: the browser reports every invalid
+ * control in document order and moves the user to the first, so a single field would
+ * answer with the last one. `invalidOrder[0]` is what blocked the submit and the length is
+ * how many did. */
 
-export type SubmitWatch = { count: number; invalidOn: EventTarget | null };
+export type SubmitWatch = { count: number; invalidOrder: EventTarget[] };
 
 export const watchSubmit = (form: HTMLFormElement): SubmitWatch => {
-  const watch: SubmitWatch = { count: 0, invalidOn: null };
+  const watch: SubmitWatch = { count: 0, invalidOrder: [] };
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -25,7 +30,7 @@ export const watchSubmit = (form: HTMLFormElement): SubmitWatch => {
   form.addEventListener(
     'invalid',
     (event) => {
-      watch.invalidOn = event.target;
+      if (event.target) watch.invalidOrder.push(event.target);
     },
     true,
   );

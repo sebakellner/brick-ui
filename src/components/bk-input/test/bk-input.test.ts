@@ -1307,7 +1307,9 @@ describe('bk-input', () => {
         expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
         expect(innerError(el).textContent!.trim()).to.equal('That address looks wrong.');
         expect(form.checkValidity()).to.equal(false);
-        expect(watch.invalidOn).to.equal(el);
+        expect(watch.invalidOrder[0] === el, 'the field is what the submit rejected').to.equal(
+          true,
+        );
         expect(watch.count).to.equal(0);
       });
 

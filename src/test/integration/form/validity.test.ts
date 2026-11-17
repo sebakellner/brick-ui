@@ -37,24 +37,6 @@ const submitted = (form: HTMLFormElement, name: string): string | null => {
   return value === null ? null : String(value);
 };
 
-/* `watchSubmit` remembers the last control the platform reported, which is not the
- * question a submit asks: the browser reports every invalid control, in document order,
- * and the first of them is the one it moves the user to. The order needs its own
- * capture; the count stays the helper's. */
-const invalidOrder = (form: HTMLFormElement): EventTarget[] => {
-  const reported: EventTarget[] = [];
-
-  form.addEventListener(
-    'invalid',
-    (event) => {
-      if (event.target) reported.push(event.target);
-    },
-    true,
-  );
-
-  return reported;
-};
-
 const twoRequired = html`
   <form>
     <bk-input name="email" required>${labelAtom('Email')}</bk-input>
@@ -75,7 +57,6 @@ describe('form validity', () => {
     await settle(email);
     await settle(channel);
     const watch = watchSubmit(form);
-    const reported = invalidOrder(form);
 
     expect(Boolean(innerInput(email)), 'the required field rendered').to.equal(true);
     expect(Boolean(innerSelect(channel)), 'the required select rendered').to.equal(true);
@@ -86,19 +67,20 @@ describe('form validity', () => {
     expect(channel.validity.valueMissing, 'and so is the empty required select').to.equal(true);
     expect(form.checkValidity(), 'so the form reports itself invalid').to.equal(false);
 
-    reported.length = 0;
+    watch.invalidOrder.length = 0;
     form.requestSubmit();
     await settle(email);
 
     expect(watch.count, 'the submit never reached the form').to.equal(0);
-    expect(reported.length, 'both empty required widgets were reported').to.equal(2);
+    expect(watch.invalidOrder.length, 'both empty required widgets were reported').to.equal(2);
     expect(
-      reported[0] === email,
+      watch.invalidOrder[0] === email,
       'the first widget in document order is the one reported first',
     ).to.equal(true);
-    expect(reported[1] === channel, 'and the select is reported after it, never before').to.equal(
-      true,
-    );
+    expect(
+      watch.invalidOrder[1] === channel,
+      'and the select is reported after it, never before',
+    ).to.equal(true);
   });
 
   it('should stay invalid on the second widget once the first is satisfied', async () => {
@@ -115,12 +97,13 @@ describe('form validity', () => {
     expect(channel.validity.valueMissing, 'the select still is').to.equal(true);
     expect(form.checkValidity(), 'so the form is still invalid').to.equal(false);
 
+    watch.invalidOrder.length = 0;
     form.requestSubmit();
     await settle(channel);
 
     expect(watch.count, 'the submit is still refused').to.equal(0);
     expect(
-      watch.invalidOn === channel,
+      watch.invalidOrder[0] === channel,
       'and the invalid event has moved on to the second widget',
     ).to.equal(true);
   });
