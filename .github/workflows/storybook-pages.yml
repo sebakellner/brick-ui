@@ -28,7 +28,7 @@ jobs:
           version: 12.14.0
       - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: the browser the suite runs is the one the lockfile pins

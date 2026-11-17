@@ -62,7 +62,7 @@ Load the theme once, then use the elements:
 The theme is required: components carry no fallback values, so a page without
 `theme.css` renders visibly unstyled.
 
-Requirements: Node 22+, pnpm, and Chrome for the test runner.
+Requirements: Node 26, pnpm, and Chrome for the test runner.
 
 ## Development
 
