@@ -8,7 +8,9 @@ describe('bk-native-select-opt-group', () => {
    * is asserting against a tree that may not exist. */
   it('should render the slot that holds its options', async () => {
     const el = await fixture<BkNativeSelectOptGroup>(html`
-      <bk-native-select-opt-group label="Instant"></bk-native-select-opt-group>
+      <bk-native-select-opt-group label="Instant">
+        <bk-native-select-opt value="sms">SMS</bk-native-select-opt>
+      </bk-native-select-opt-group>
     `);
 
     expectRendered(el, 'slot');
