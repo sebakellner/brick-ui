@@ -107,35 +107,7 @@ indent.
 The label is inline beside the box by design. The row is the checkbox's own
 layout, so no `orientation` decides it and the field never reaches into it.
 
-## Label state
-
-The control writes its state on its own label row — this `<label>`, and a
-`bk-field-label` hosted through the `label` slot — as `data-state`:
-
-| Value      | When                                               | Paints                  |
-| ---------- | -------------------------------------------------- | ----------------------- |
-| `invalid`  | `error` is set, or the native message is showing   | `--bk-text-danger`      |
-| `disabled` | `disabled`, or the field is inside a disabled form | `--bk-opacity-disabled` |
-
-A box that is both is painted with the danger colour and still dimmed: the colour
-is the state's and the dim is the fact's. `data-state` carries one value and
-`invalid` wins it, so the row also carries `data-disabled` while the box is
-unavailable, and both the row and the box are dimmed from that.
-
-A label with no state keeps `--bk-text-default`, and a standalone
-`bk-field-label` paints the same way from its own `data-state`. The row is the
-one container that dims: the box and the label inside it are not dimmed twice,
-and a `bk-field-label` hosted through the `label` slot is dimmed by the row it
-sits in.
-
-A `required` box marks its label with a `*` (`part="required"`,
-`aria-hidden="true"`) in `--bk-text-danger`, the same role as the error text. It
-sits on the label's line, beside the box, so a slotted `bk-field-label` does not
-push it to its own row. The mark is not rendered while the box has no label, and
-it is never the only signal — the native `required` attribute is what announces
-the state.
-
-## Override hooks
+## Tokens and hooks
 
 | Hook                   | Paints                                                   |
 | ---------------------- | -------------------------------------------------------- |
@@ -203,3 +175,31 @@ Set the two hooks above, not those.
   ancestor.
 - A value the browser restores after a navigation comes back as the submitted
   `value`, not as `checked`, so a restored box can render unchecked.
+
+## Label state
+
+The control writes its state on its own label row — this `<label>`, and a
+`bk-field-label` hosted through the `label` slot — as `data-state`:
+
+| Value      | When                                               | Paints                  |
+| ---------- | -------------------------------------------------- | ----------------------- |
+| `invalid`  | `error` is set, or the native message is showing   | `--bk-text-danger`      |
+| `disabled` | `disabled`, or the field is inside a disabled form | `--bk-opacity-disabled` |
+
+A box that is both is painted with the danger colour and still dimmed: the colour
+is the state's and the dim is the fact's. `data-state` carries one value and
+`invalid` wins it, so the row also carries `data-disabled` while the box is
+unavailable, and both the row and the box are dimmed from that.
+
+A label with no state keeps `--bk-text-default`, and a standalone
+`bk-field-label` paints the same way from its own `data-state`. The row is the
+one container that dims: the box and the label inside it are not dimmed twice,
+and a `bk-field-label` hosted through the `label` slot is dimmed by the row it
+sits in.
+
+A `required` box marks its label with a `*` (`part="required"`,
+`aria-hidden="true"`) in `--bk-text-danger`, the same role as the error text. It
+sits on the label's line, beside the box, so a slotted `bk-field-label` does not
+push it to its own row. The mark is not rendered while the box has no label, and
+it is never the only signal — the native `required` attribute is what announces
+the state.

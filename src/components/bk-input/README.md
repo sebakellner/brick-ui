@@ -19,7 +19,65 @@ and a `bk-change` event.
 </bk-field>
 ```
 
-## Properties
+## Usage
+
+A required field, with the browser's own message:
+
+```html
+<bk-field>
+  <bk-input name="email" type="email" required>
+    <bk-field-label>Email</bk-field-label>
+  </bk-input>
+</bk-field>
+```
+
+The message appears once the field is touched or after a failed submit;
+`showValidationMessage()` asks for it earlier.
+
+A message your own validation produces:
+
+```html
+<bk-field>
+  <bk-input name="email" error="That address looks wrong.">
+    <bk-field-label>Email</bk-field-label>
+  </bk-input>
+</bk-field>
+```
+
+`error` wins over the description and over the native message, and it clears on `input`:
+set it again from the schema result or the rejection.
+
+A message that lives in markup, when the problem has to exist before any JavaScript runs:
+
+```html
+<bk-field>
+  <bk-input name="email">
+    <bk-field-label>Email</bk-field-label>
+    <bk-field-error>Enter the address on your account.</bk-field-error>
+  </bk-input>
+</bk-field>
+```
+
+An atom with text **is** the field's error and outranks `error`; an atom with no text is
+not content, so the field stays valid.
+
+Blocked by the form rather than by the field:
+
+```html
+<form>
+  <fieldset disabled>
+    <bk-field>
+      <bk-input name="email"><bk-field-label>Email</bk-field-label></bk-input>
+    </bk-field>
+  </fieldset>
+</form>
+```
+
+The inner native field is the one that is disabled, so the field leaves the tab order —
+unlike `bk-button` and `bk-checkbox`, which keep it and announce `aria-disabled`
+([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)).
+
+## Attributes and properties
 
 | Property       | Attribute      | Type                                                                                        | Default  | Notes                                                                                                                                                                                                           |
 | -------------- | -------------- | ------------------------------------------------------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -62,52 +120,6 @@ document.querySelector('bk-input').addEventListener('bk-change', (event) => {
 });
 ```
 
-## Form API
-
-Inherited from `FormControlMixin`, the same surface a native control offers:
-
-| Member                                | What it does                                                                                                    |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `form`                                | the owning `<form>`, or `null`                                                                                  |
-| `validity`, `validationMessage`       | the delegated validity state and its message                                                                    |
-| `checkValidity()`, `reportValidity()` | the platform validation calls                                                                                   |
-| `showValidationMessage()`             | marks the field touched, so the native message appears                                                          |
-| `fieldMessage`                        | the native message the field would show, or `''`                                                                |
-| `fieldError`                          | the message the field owns: the text of the `error` slot when it has any, otherwise `error`                     |
-| `fieldInvalid`                        | whether the message region is currently reporting a problem                                                     |
-| `submittedValue`                      | what `setFormValue` submits; `value` by default, overridden by `bk-checkbox` to submit only while it is checked |
-
-`error` wins over `required`: a field with a message is invalid because of it, and
-its validity carries `customError`. A `required` field with no value reports
-`valueMissing`.
-
-## The two channels
-
-The field shows one message at a time, from one of three sources:
-
-| Source                       | Produced by                                                   | Shows                                                   |
-| ---------------------------- | ------------------------------------------------------------- | ------------------------------------------------------- |
-| native constraints           | the browser: `required`, `type=email`, `pattern`, `minlength` | after the field is touched, or after a failed submit    |
-| `error`                      | the consumer, from a schema result or a rejection             | immediately, and it wins while it is set                |
-| a `bk-field-error` with text | the consumer, in markup                                       | immediately, and it wins over `error` while it has text |
-
-The atom outranks the property because markup is the more specific statement. A
-template that writes both had not decided, and the sentence the consumer left
-next to the control is the one that shows, announces and blocks.
-
-The native message is the browser's own, in the browser's locale.
-`showValidationMessage()` reports the native message explicitly, for the submits
-the browser cannot run: an intercepted submit, or a form with `novalidate`.
-
-```js
-const result = schema.safeParse({ email });
-emailInput.error = result.success ? '' : result.error.issues[0].message;
-```
-
-A form with `novalidate` never shows a native message, so only `error` appears
-there. The store stays the consumer's: the field does not call a schema, run an
-async rule, or translate a message.
-
 ## Parts
 
 | Part          | Element                                                                                                              |
@@ -126,36 +138,7 @@ accessibility tree. The error region always carries `data-state="error"`, which
 names it as the region that paints a problem, whichever channel fills it; whether
 it holds a message is `data-empty`, not that attribute.
 
-## Label state
-
-The control writes its state on its own label — this `<label>`, and a
-`bk-field-label` hosted through the `label` slot — as `data-state`:
-
-| Value      | When                                               | Paints                  |
-| ---------- | -------------------------------------------------- | ----------------------- |
-| `invalid`  | `error` is set, or the native message is showing   | `--bk-text-danger`      |
-| `disabled` | `disabled`, or the field is inside a disabled form | `--bk-opacity-disabled` |
-
-A field that is both is painted with the danger colour and still dimmed: the
-colour is the state's and the dim is the fact's. `data-state` carries one value
-and `invalid` wins it, so the label also carries `data-disabled` while the field
-is unavailable, and the dim is read from that. The field itself takes the same
-opacity through `:disabled`.
-
-A label with no state keeps `--bk-text-default`, and a standalone
-`bk-field-label` paints the same way from its own `data-state`.
-
-The dim is applied where the state is: the label row and the `<input>` each take
-it once, and a `bk-field-label` hosted through the `label` slot is dimmed by the
-row it sits in, not a second time on its own.
-
-A `required` field marks its label with a `*` (`part="required"`,
-`aria-hidden="true"`) in `--bk-text-danger`, the same role as the error text. It
-sits on the label's line, so a slotted `bk-field-label` does not push it to its
-own row. The mark is not rendered while the field has no label, and it is never
-the only signal — the native `required` attribute is what announces the state.
-
-## Tokens
+## Tokens and hooks
 
 | Token                                                                                                        | Paints                                         |
 | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
@@ -221,3 +204,78 @@ values: theming the input means theming the roles, not the field.
 - The field border clears 3:1 against a white surface (WCAG 1.4.11), which the
   tests assert.
 - Focus is delegated to the native input.
+
+## Form API
+
+Inherited from `FormControlMixin`, the same surface a native control offers:
+
+| Member                                | What it does                                                                                                    |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `form`                                | the owning `<form>`, or `null`                                                                                  |
+| `validity`, `validationMessage`       | the delegated validity state and its message                                                                    |
+| `checkValidity()`, `reportValidity()` | the platform validation calls                                                                                   |
+| `showValidationMessage()`             | marks the field touched, so the native message appears                                                          |
+| `fieldMessage`                        | the native message the field would show, or `''`                                                                |
+| `fieldError`                          | the message the field owns: the text of the `error` slot when it has any, otherwise `error`                     |
+| `fieldInvalid`                        | whether the message region is currently reporting a problem                                                     |
+| `submittedValue`                      | what `setFormValue` submits; `value` by default, overridden by `bk-checkbox` to submit only while it is checked |
+
+`error` wins over `required`: a field with a message is invalid because of it, and
+its validity carries `customError`. A `required` field with no value reports
+`valueMissing`.
+
+## The two channels
+
+The field shows one message at a time, from one of three sources:
+
+| Source                       | Produced by                                                   | Shows                                                   |
+| ---------------------------- | ------------------------------------------------------------- | ------------------------------------------------------- |
+| native constraints           | the browser: `required`, `type=email`, `pattern`, `minlength` | after the field is touched, or after a failed submit    |
+| `error`                      | the consumer, from a schema result or a rejection             | immediately, and it wins while it is set                |
+| a `bk-field-error` with text | the consumer, in markup                                       | immediately, and it wins over `error` while it has text |
+
+The atom outranks the property because markup is the more specific statement. A
+template that writes both had not decided, and the sentence the consumer left
+next to the control is the one that shows, announces and blocks.
+
+The native message is the browser's own, in the browser's locale.
+`showValidationMessage()` reports the native message explicitly, for the submits
+the browser cannot run: an intercepted submit, or a form with `novalidate`.
+
+```js
+const result = schema.safeParse({ email });
+emailInput.error = result.success ? '' : result.error.issues[0].message;
+```
+
+A form with `novalidate` never shows a native message, so only `error` appears
+there. The store stays the consumer's: the field does not call a schema, run an
+async rule, or translate a message.
+
+## Label state
+
+The control writes its state on its own label — this `<label>`, and a
+`bk-field-label` hosted through the `label` slot — as `data-state`:
+
+| Value      | When                                               | Paints                  |
+| ---------- | -------------------------------------------------- | ----------------------- |
+| `invalid`  | `error` is set, or the native message is showing   | `--bk-text-danger`      |
+| `disabled` | `disabled`, or the field is inside a disabled form | `--bk-opacity-disabled` |
+
+A field that is both is painted with the danger colour and still dimmed: the
+colour is the state's and the dim is the fact's. `data-state` carries one value
+and `invalid` wins it, so the label also carries `data-disabled` while the field
+is unavailable, and the dim is read from that. The field itself takes the same
+opacity through `:disabled`.
+
+A label with no state keeps `--bk-text-default`, and a standalone
+`bk-field-label` paints the same way from its own `data-state`.
+
+The dim is applied where the state is: the label row and the `<input>` each take
+it once, and a `bk-field-label` hosted through the `label` slot is dimmed by the
+row it sits in, not a second time on its own.
+
+A `required` field marks its label with a `*` (`part="required"`,
+`aria-hidden="true"`) in `--bk-text-danger`, the same role as the error text. It
+sits on the label's line, so a slotted `bk-field-label` does not push it to its
+own row. The mark is not rendered while the field has no label, and it is never
+the only signal — the native `required` attribute is what announces the state.

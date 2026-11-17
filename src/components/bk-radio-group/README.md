@@ -29,24 +29,6 @@ regions.
 the group's `define.ts` registers its tag beside the group's own, the package
 entry exports only the group, and [The item](#the-item) describes what it carries.
 
-## What it owns
-
-- **One value.** `value` is the selection, and it is the only place the selection
-  lives. The group writes `checked` on each item on every update; an item reports
-  an activation with `bk-change` and the group moves the value. A
-  `<form>` submits the selected item's `value` under the group's `name`, or
-  nothing while nothing is selected.
-- **The validity.** `required` with no selection reports `valueMissing`, blocks
-  the submit and fires `invalid` at the group; `error`, or a `bk-field-error` with
-  text, reports `customError` with that text. A disabled group reports nothing and
-  submits nothing.
-- **The tab stop.** Exactly one item is in the tab order: the selected one, or
-  the first enabled one while nothing is selected, and none while every item is
-  disabled. A disabled group keeps no tab stop at all.
-- **The keyboard.** The platform's radio grouping by `name` does not cross shadow
-  roots, because each `bk-radio-group-item` encapsulates its `<input>`, so the
-  group handles the arrow keys itself.
-
 ## Attributes and properties
 
 | Property      | Attribute     | Type                         | Default    | Notes                                                                                                                                                                   |
@@ -88,6 +70,106 @@ written for a box needs no slot either, because the item assigns
 `bk-field-description` to its own `description` slot. The group stops at the
 nearest item, so an atom inside an item is never adopted as a message about the
 set, and a bare `bk-field-label` inside the group names the group.
+
+## Parts
+
+| Part       | Element                                                                                 |
+| ---------- | --------------------------------------------------------------------------------------- |
+| `label`    | the row holding the label slot and the required mark, hidden while the group is unnamed |
+| `radios`   | the flow container of the default slot, `flex-direction` from `orientation`             |
+| `required` | the `*` that marks a required group, `aria-hidden`                                      |
+
+There is no `message`, `description` or `error` part: those regions are the
+consumer's own atoms.
+
+**A nested group is its own widget.** A group writes `disabled` on the boxes it
+owns, and a group nested inside another is not owned by it: the outer `disabled`
+does not reach the inner one, and the inner boxes keep responding — which is what
+they look like, since nothing dims them. Disabling a whole subtree means disabling
+each group.
+
+## Tokens and hooks
+
+No new token tier and no hook of the group's own: there is no
+`--bk-radio-group-*` name. The only hooks in the pair are the item's two
+([The item](#the-item)), and the group paints no box.
+
+| The group paints          | With                                                                                                                                                                             |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| the gap between items     | `--bk-space-2`                                                                                                                                                                   |
+| the first line of an atom | `--bk-space-1` above it, while the atom has text                                                                                                                                 |
+| its label row             | the label roles: `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-weight-medium`, `--bk-text-default`, `--bk-text-danger` while invalid, `--bk-opacity-disabled` while disabled |
+| the required mark         | `--bk-text-danger`                                                                                                                                                               |
+
+The items, the description and the error paint themselves. Theming a group
+means theming the roles.
+
+## Accessibility
+
+- The host is the widget: it carries `role="radiogroup"`, so a screen reader
+  announces the bounds of the set, and its name is the slotted `bk-field-label`
+  assigned with `ariaLabelledByElements`. No id is written for the name and no
+  reference crosses a shadow root.
+- `aria-describedby` on the host names the **consumer's** error atom while it has
+  text, otherwise the consumer's description atom, and neither while both are
+  empty. The atom is in the document tree, so the IDREF resolves; the error atom
+  carries `role="status"` and stays in the accessibility tree while it is
+  visually collapsed.
+- The keyboard is the group's, not the platform's: arrows select and move focus,
+  `Home`/`End` jump, the ends wrap, and a disabled radio is skipped. Exactly one
+  radio's inner input has `tabindex="0"` — and none while every radio is
+  disabled — so the set is one stop in the tab order rather than one per button.
+- `disabled` writes `aria-disabled` on each owned radio's inner input rather than
+  the native attribute, so the radios stay focusable and discoverable, and the
+  group removes the tab stop while disabled.
+- `aria-invalid` and the label's `data-state` are set only while a message is
+  displayed, so the flag never describes a state the page does not show.
+- **Form-associated** through `ElementInternals`: the selection submits under
+  `name`, `required` reports `valueMissing`, an `error` or an error atom reports
+  `customError`, a disabled `<fieldset>` disables the group and cancels the
+  submit, and `reset()` restores the authored selection.
+
+## Limitations
+
+- **The group cannot display a message it does not own.** A `required` group with
+  nothing selected blocks the submit and reports `valueMissing`, but the visible
+  sentence is the consumer's: the `error` property or a `bk-field-error` atom. The
+  built-in default — `Please select an option.` — is English, fixed, and only the
+  platform surfaces it, through `validationMessage` and the browser's own
+  validation UI on submit. A consumer who wants text on the page writes an atom
+  (and it becomes the message and the blocking constraint, as in any field).
+- **The label is not painted invalid for a missing value.** `aria-invalid` and
+  `data-state="invalid"` follow what is displayed ([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)),
+  so a required empty group with no error atom shows the `*` and the platform's
+  message and nothing red — before the interaction and after it. Write an error
+  atom, or set `error`, to mark the set and keep it marked.
+- **A radio with no `value` cannot hold the selection.** The selection is matched
+  by value, and an empty value reads as "nothing selected".
+- **Nested groups each own their nearest radios.** A radio belongs to its
+  closest `bk-radio-group` ancestor, so an inner group keeps the buttons inside
+  it and the outer one never writes to them. Nothing else about nesting is
+  supported or proved.
+- **The keyboard is implemented, not native.** A new key that native radio groups
+  support in some engine is the group's to add here, and the suite is where that
+  claim is proved.
+
+## What it owns
+
+- **One value.** `value` is the selection, and it is the only place the selection
+  lives. The group writes `checked` on each item on every update; an item reports
+  an activation with `bk-change` and the group moves the value. A
+  `<form>` submits the selected item's `value` under the group's `name`, or
+  nothing while nothing is selected.
+- **The validity.** `required` with no selection reports `valueMissing`, blocks
+  the submit and fires `invalid` at the group; `error`, or a `bk-field-error` with
+  text, reports `customError` with that text. A disabled group reports nothing and
+  submits nothing.
+- **The tab stop.** Exactly one item is in the tab order: the selected one, or
+  the first enabled one while nothing is selected, and none while every item is
+  disabled. A disabled group keeps no tab stop at all.
+- **The keyboard.** The platform's radio grouping by `name` does not cross shadow
+  roots, because each `bk-radio-group-item` encapsulates its `<input>`, so the
+  group handles the arrow keys itself.
 
 ## The item
 
@@ -251,23 +333,6 @@ consumer's node and the consumer empties it.
 - The group listens for the composed `keydown`, so the key presses that reach it
   are the ones the radios' inner inputs report.
 
-## Parts
-
-| Part       | Element                                                                                 |
-| ---------- | --------------------------------------------------------------------------------------- |
-| `label`    | the row holding the label slot and the required mark, hidden while the group is unnamed |
-| `radios`   | the flow container of the default slot, `flex-direction` from `orientation`             |
-| `required` | the `*` that marks a required group, `aria-hidden`                                      |
-
-There is no `message`, `description` or `error` part: those regions are the
-consumer's own atoms.
-
-**A nested group is its own widget.** A group writes `disabled` on the boxes it
-owns, and a group nested inside another is not owned by it: the outer `disabled`
-does not reach the inner one, and the inner boxes keep responding — which is what
-they look like, since nothing dims them. Disabling a whole subtree means disabling
-each group.
-
 ## Label state
 
 The group writes its state on the `bk-field-label` it hosts, as `data-state`:
@@ -291,68 +356,3 @@ shows.
 group's error state, moves the tab stop with the restored selection and submits
 the restored value. The group writes the property and never the attribute, so the
 authored state stays readable for the next reset.
-
-## Tokens
-
-No new token tier and no hook of the group's own: there is no
-`--bk-radio-group-*` name. The only hooks in the pair are the item's two
-([The item](#the-item)), and the group paints no box.
-
-| The group paints          | With                                                                                                                                                                             |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| the gap between items     | `--bk-space-2`                                                                                                                                                                   |
-| the first line of an atom | `--bk-space-1` above it, while the atom has text                                                                                                                                 |
-| its label row             | the label roles: `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-weight-medium`, `--bk-text-default`, `--bk-text-danger` while invalid, `--bk-opacity-disabled` while disabled |
-| the required mark         | `--bk-text-danger`                                                                                                                                                               |
-
-The items, the description and the error paint themselves. Theming a group
-means theming the roles.
-
-## Accessibility
-
-- The host is the widget: it carries `role="radiogroup"`, so a screen reader
-  announces the bounds of the set, and its name is the slotted `bk-field-label`
-  assigned with `ariaLabelledByElements`. No id is written for the name and no
-  reference crosses a shadow root.
-- `aria-describedby` on the host names the **consumer's** error atom while it has
-  text, otherwise the consumer's description atom, and neither while both are
-  empty. The atom is in the document tree, so the IDREF resolves; the error atom
-  carries `role="status"` and stays in the accessibility tree while it is
-  visually collapsed.
-- The keyboard is the group's, not the platform's: arrows select and move focus,
-  `Home`/`End` jump, the ends wrap, and a disabled radio is skipped. Exactly one
-  radio's inner input has `tabindex="0"` — and none while every radio is
-  disabled — so the set is one stop in the tab order rather than one per button.
-- `disabled` writes `aria-disabled` on each owned radio's inner input rather than
-  the native attribute, so the radios stay focusable and discoverable, and the
-  group removes the tab stop while disabled.
-- `aria-invalid` and the label's `data-state` are set only while a message is
-  displayed, so the flag never describes a state the page does not show.
-- **Form-associated** through `ElementInternals`: the selection submits under
-  `name`, `required` reports `valueMissing`, an `error` or an error atom reports
-  `customError`, a disabled `<fieldset>` disables the group and cancels the
-  submit, and `reset()` restores the authored selection.
-
-## Limitations
-
-- **The group cannot display a message it does not own.** A `required` group with
-  nothing selected blocks the submit and reports `valueMissing`, but the visible
-  sentence is the consumer's: the `error` property or a `bk-field-error` atom. The
-  built-in default — `Please select an option.` — is English, fixed, and only the
-  platform surfaces it, through `validationMessage` and the browser's own
-  validation UI on submit. A consumer who wants text on the page writes an atom
-  (and it becomes the message and the blocking constraint, as in any field).
-- **The label is not painted invalid for a missing value.** `aria-invalid` and
-  `data-state="invalid"` follow what is displayed ([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)),
-  so a required empty group with no error atom shows the `*` and the platform's
-  message and nothing red — before the interaction and after it. Write an error
-  atom, or set `error`, to mark the set and keep it marked.
-- **A radio with no `value` cannot hold the selection.** The selection is matched
-  by value, and an empty value reads as "nothing selected".
-- **Nested groups each own their nearest radios.** A radio belongs to its
-  closest `bk-radio-group` ancestor, so an inner group keeps the buttons inside
-  it and the outer one never writes to them. Nothing else about nesting is
-  supported or proved.
-- **The keyboard is implemented, not native.** A new key that native radio groups
-  support in some engine is the group's to add here, and the suite is where that
-  claim is proved.
