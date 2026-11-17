@@ -381,11 +381,13 @@ describe('bk-native-select', () => {
     expect(el.validity.valueMissing, 'an empty placeholder is a missing answer').to.equal(true);
     expect(form.checkValidity()).to.equal(false);
 
+    watch.invalidOrder.length = 0;
     form.requestSubmit();
     await settle(el);
 
     expect(watch.count, 'the submit never runs').to.equal(0);
     expect(watch.invalidOrder[0] === el, 'the select is what the submit rejected').to.equal(true);
+    expect(watch.invalidOrder.length, 'the check before the submit is not counted').to.equal(1);
 
     await choose(el, 'email');
 

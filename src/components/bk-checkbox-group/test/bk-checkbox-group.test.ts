@@ -360,11 +360,13 @@ describe('bk-checkbox-group', () => {
     expect(el.validity.valid).to.equal(false);
     expect(form.checkValidity()).to.equal(false);
 
+    watch.invalidOrder.length = 0;
     form.requestSubmit();
     await settle(el);
 
     expect(watch.count, 'the submit never runs').to.equal(0);
     expect(watch.invalidOrder[0] === el, 'the group is what the submit rejected').to.equal(true);
+    expect(watch.invalidOrder.length, 'the check before the submit is not counted').to.equal(1);
     expect(el.validationMessage, 'the fixed English default').to.equal(
       'Please select at least one option.',
     );
@@ -721,11 +723,13 @@ describe('bk-checkbox-group', () => {
     expect(el.validity.valid).to.equal(false);
     expect(form.checkValidity()).to.equal(false);
 
+    watch.invalidOrder.length = 0;
     form.requestSubmit();
     await settleBoxes(el);
 
     expect(watch.count, 'the submit never runs').to.equal(0);
     expect(watch.invalidOrder[0] === el, 'the group is what the submit rejected').to.equal(true);
+    expect(watch.invalidOrder.length, 'the check before the submit is not counted').to.equal(1);
     expect(new FormData(form).get('email'), 'the mixed box submitted nothing').to.equal(null);
 
     await toggle(el, email);
