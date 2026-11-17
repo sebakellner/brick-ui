@@ -40,7 +40,8 @@ Component modules carry **no side effects**. Registration lives in a `define.ts`
 
 ## Setup
 
-Node 22+, pnpm, and the Playwright browser for the test runner
+Node 26 — the exact version is in [`.nvmrc`](.nvmrc), so `nvm use` puts you on it —
+pnpm, and the Playwright browser for the test runner
 (`npx playwright install --with-deps chromium`, once).
 
 ```bash
