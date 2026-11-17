@@ -14,8 +14,6 @@ const part = <T extends Element>(el: BkField, tag: string) => el.querySelector<T
 
 const PARTS = ['bk-field-label', 'bk-field-description', 'bk-field-error'];
 
-const states = (el: BkField) => PARTS.map((tag) => part(el, tag).getAttribute('data-state'));
-
 const top = (el: BkField, tag: string) => part(el, tag).getBoundingClientRect().top;
 
 describe('bk-field', () => {
@@ -144,7 +142,7 @@ describe('bk-field', () => {
     expect(el.hasAttribute('invalid'), 'and paints no state').to.equal(false);
   });
 
-  it('should put data-state on every part while invalid and take it away again', async () => {
+  it('should paint every part it states while invalid, and take the paint away again', async () => {
     const el = await fixture<BkField>(html`
       <bk-field>
         <bk-field-label>Email</bk-field-label>
@@ -159,35 +157,26 @@ describe('bk-field', () => {
     await el.updateComplete;
 
     expect(el.hasAttribute('invalid'), 'the attribute reflects the property').to.equal(true);
-    expect(states(el)).to.deep.equal(['invalid', 'invalid', 'invalid']);
+    expect(getComputedStyle(part(el, 'bk-field-label')).color, 'the label paints danger').to.equal(
+      await colorOf('var(--bk-text-danger)'),
+    );
+    expect(
+      getComputedStyle(part(el, 'bk-field-description')).color,
+      'the description keeps its muted role: the state names, it does not repaint it',
+    ).to.equal(await colorOf('var(--bk-text-muted)'));
+    expect(
+      getComputedStyle(part(el, 'bk-field-error')).color,
+      'and the error is danger with or without the state',
+    ).to.equal(await colorOf('var(--bk-text-danger)'));
 
     el.invalid = false;
     await el.updateComplete;
 
     expect(el.hasAttribute('invalid'), 'the attribute follows the property').to.equal(false);
-    expect(states(el)).to.deep.equal([null, null, null]);
-  });
-
-  it('should paint the label atom from the state, not only name it', async () => {
-    const el = await fixture<BkField>(html`
-      <bk-field>
-        <bk-field-label>Email</bk-field-label>
-        <bk-input name="email"></bk-input>
-      </bk-field>
-    `);
-    await el.updateComplete;
-
-    const label = part(el, 'bk-field-label');
-    expect(getComputedStyle(label).color, 'a field with no state paints the default role').to.equal(
-      await colorOf('var(--bk-text-default)'),
-    );
-
-    el.invalid = true;
-    await el.updateComplete;
-
-    expect(getComputedStyle(label).color, 'invalid reaches the atom through the paint').to.equal(
-      await colorOf('var(--bk-text-danger)'),
-    );
+    expect(
+      getComputedStyle(part(el, 'bk-field-label')).color,
+      'and the paint goes away with it',
+    ).to.equal(await colorOf('var(--bk-text-default)'));
   });
 
   it('should space the parts from the field and not from the atoms', async () => {
@@ -230,9 +219,16 @@ describe('bk-field', () => {
     await nextFrame();
 
     const hosted = el.querySelector('bk-field-label')!;
+
+    /* The atom paints the same either way — the dim belongs to the row (C5) — so the
+     * attribute is the only witness that the control, not the field, owns the state. */
     expect(
       hosted.getAttribute('data-state'),
       'the control owns the state of the label it hosts, and invalid does not overwrite it',
     ).to.equal('disabled');
+    expect(
+      getComputedStyle(hosted).color,
+      'and the invalid on the field never reaches the hosted atom',
+    ).to.equal(await colorOf('var(--bk-text-default)'));
   });
 });
