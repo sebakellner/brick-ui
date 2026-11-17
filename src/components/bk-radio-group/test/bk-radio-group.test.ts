@@ -316,11 +316,13 @@ describe('bk-radio-group', () => {
     expect(el.validationMessage, 'the fixed English default').to.equal('Please select an option.');
     expect(form.checkValidity()).to.equal(false);
 
+    watch.invalidOrder.length = 0;
     form.requestSubmit();
     await settle(el);
 
     expect(watch.count).to.equal(0);
     expect(watch.invalidOrder[0] === el, 'the group is what the submit rejected').to.equal(true);
+    expect(watch.invalidOrder.length, 'the check before the submit is not counted').to.equal(1);
 
     const error = document.createElement('bk-field-error');
     error.textContent = 'Pick a size.';
