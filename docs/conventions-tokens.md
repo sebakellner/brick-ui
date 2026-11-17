@@ -111,7 +111,9 @@ to say what the value is for, because that is what a consumer greps for.
 
 **Don't** — name the appearance: `--bk-blue-surface`.
 
-**Enforced by.** Review.
+**Enforced by.** Review. What a breaking rename obliges — an alias, or a release note that
+names the old token — is the decision in
+[ADR 0019](adr/0019-the-token-graph-is-the-public-contract.md).
 
 ## R5. A role is read under the property it belongs to
 
@@ -144,4 +146,6 @@ theme switches, with nothing to notice it.
 
 **Don't** — `background: var(--bk-palette-blue-600);`
 
-**Enforced by.** `pnpm check:tokens`.
+**Enforced by.** `pnpm check:tokens`. Why the primitives a component reads stay single-purpose
+— one axis each, never merged — is the decision in
+[ADR 0019](adr/0019-the-token-graph-is-the-public-contract.md).
