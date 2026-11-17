@@ -454,11 +454,11 @@ describe('bk-input', () => {
 
       await hover(controlField);
 
+      expect(controlField.matches(':hover'), 'the pointer reaches an enabled field').to.equal(true);
       expect(
-        controlField.matches(':hover') &&
-          getComputedStyle(controlField).borderTopColor !== controlRestingBorder,
-        'the pointer repaints an enabled field, so the hover rule runs in this browser',
-      ).to.equal(true);
+        getComputedStyle(controlField).borderTopColor,
+        'and repaints it, so the hover rule runs in this browser',
+      ).to.not.equal(controlRestingBorder);
 
       await hover(field);
 
@@ -581,6 +581,8 @@ describe('bk-input', () => {
     );
     const label = innerLabel(el);
 
+    /* The paint is asserted and the internal `data-state` is not; `data-disabled` stays an
+     * assertion because C5 documents it as the hook a consumer styles the atom on. */
     expect(getComputedStyle(label).color, 'invalid wins the state the label paints').to.equal(
       await colorOf('var(--bk-text-danger)'),
     );
