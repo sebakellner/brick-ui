@@ -440,14 +440,35 @@ describe('bk-input', () => {
       if (!hoverCapable()) this.skip();
 
       setTheme(theme);
-      const el = await fixture<BkInput>(html`<bk-input>${labelAtom('Email')}</bk-input>`);
+      const host = await fixture<HTMLElement>(html`
+        <div>
+          <bk-input>${labelAtom('Email')}</bk-input>
+          <bk-input>${labelAtom('Email')}</bk-input>
+        </div>
+      `);
+      const [el, control] = host.querySelectorAll<BkInput>('bk-input');
       const field = innerInput(el);
+      const controlField = innerInput(control);
+      const restingBorder = getComputedStyle(field).borderTopColor;
+      const controlRestingBorder = getComputedStyle(controlField).borderTopColor;
+
+      await hover(controlField);
+
+      expect(
+        controlField.matches(':hover') &&
+          getComputedStyle(controlField).borderTopColor !== controlRestingBorder,
+        'the pointer repaints an enabled field, so the hover rule runs in this browser',
+      ).to.equal(true);
 
       await hover(field);
 
       expect(field.matches(':hover'), 'the pointer reaches the field').to.equal(true);
       const style = getComputedStyle(field);
 
+      expect(
+        style.borderTopColor !== restingBorder,
+        'the border under the assertion is the hovered one, not the resting one',
+      ).to.equal(true);
       expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
     });
   }
@@ -560,8 +581,8 @@ describe('bk-input', () => {
     );
     const label = innerLabel(el);
 
-    expect(label.getAttribute('data-state'), 'invalid wins the state attribute').to.equal(
-      'invalid',
+    expect(getComputedStyle(label).color, 'invalid wins the state the label paints').to.equal(
+      await colorOf('var(--bk-text-danger)'),
     );
     expect(
       label.hasAttribute('data-disabled'),
