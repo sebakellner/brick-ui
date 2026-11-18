@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Brick — a small web components kit built with Lit and TypeScript",
+  "description": "Brick \u2014 a small web components kit built with Lit and TypeScript",
   "engines": {
     "node": ">=26"
   },
@@ -12,6 +12,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:tokens": "style-dictionary build --config style-dictionary.config.mjs",
+    "build:manifest": "cem analyze --config custom-elements-manifest.config.mjs && node scripts/normalize-manifest.mjs",
     "check:tokens": "node scripts/check-token-usage.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -25,6 +26,7 @@
     "lit": "^3.3.3"
   },
   "devDependencies": {
+    "@custom-elements-manifest/analyzer": "^0.11.0",
     "@open-wc/testing": "^5.0.0",
     "@storybook/addon-docs": "^10.6.7",
     "@storybook/web-components-vite": "^10.6.7",
@@ -44,5 +46,6 @@
   "sideEffects": [
     "**/define.js",
     "**/define.ts"
-  ]
+  ],
+  "customElements": "src/custom-elements.json"
 }

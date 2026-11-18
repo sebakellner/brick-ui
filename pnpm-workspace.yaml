@@ -1,2 +1,7 @@
 allowBuilds:
   esbuild: true
+  # `@custom-elements-manifest/analyzer` pulls this native lexer, and manifest generation
+  # works from its prebuilt binary: the postinstall never runs, so no build script is
+  # approved here. If that stops being true the analyzer fails and CI says so, which is the
+  # moment to decide again rather than before.
+  rs-module-lexer: false
