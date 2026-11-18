@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
-import type { BkInput, BkInputMode, BkInputType } from './bk-input.js';
+import type { BkInputMode, BkInputType } from './bk-input.js';
 import '../bk-button/define.js';
 import '../bk-field/define.js';
 import './define.js';
@@ -28,14 +28,14 @@ const meta: Meta<Args> = {
   title: 'Form/Input',
   component: 'bk-input',
   args: {
-    label: 'Email',
-    description: 'We never share it.',
+    label: 'Username',
+    description: 'This is the name other people see.',
     error: '',
     value: '',
-    placeholder: 'you@brick.dev',
-    name: 'email',
-    type: 'email',
-    autocomplete: 'email',
+    placeholder: '',
+    name: 'username',
+    type: 'text',
+    autocomplete: 'username',
     inputMode: '',
     disabled: false,
     required: false,
@@ -93,113 +93,56 @@ export default meta;
 
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
-
-export const States: Story = {
+export const Basic: Story = {
   render: () => html`
-    <div style="display: flex; flex-direction: column; gap: 20px; width: 320px;">
-      <bk-field>
-        <bk-input name="email" placeholder="you@brick.dev">
-          <bk-field-label>Email</bk-field-label>
-          <bk-field-description>We never share it.</bk-field-description>
-        </bk-input>
-      </bk-field>
-      <bk-field>
-        <bk-input name="email" error="That address looks wrong." value="you@brick">
-          <bk-field-label>Email</bk-field-label>
-          <bk-field-description>We never share it.</bk-field-description>
-        </bk-input>
-      </bk-field>
-      <bk-field>
-        <bk-input name="email" value="you@brick.dev" disabled>
-          <bk-field-label>Email</bk-field-label>
-        </bk-input>
-      </bk-field>
+    <div style="width: 320px;">
+      <bk-input name="email" type="email" placeholder="you@brick.dev"></bk-input>
     </div>
   `,
 };
 
-const readout = (form: HTMLFormElement, prefix: string) => {
-  const output = form.querySelector('output');
-  if (!output) return;
-  const entries = [...new FormData(form).entries()].map(
-    ([key, value]) => `${key}=${String(value) || '(empty)'}`,
-  );
-  output.textContent = `${prefix}: ${entries.join(' · ') || 'no entries'}`;
+export const Field: Story = {};
+
+export const Disabled: Story = {
+  args: { disabled: true, value: 'you@brick' },
 };
 
-export const NativeValidation: Story = {
-  name: 'Native message and error',
-  render: () => html`
-    <div style="display: grid; gap: var(--bk-space-4);">
-      <form style="display: grid; gap: var(--bk-space-3);">
-        <bk-field>
-          <bk-input name="native" type="email" required>
-            <bk-field-label>Native channel</bk-field-label>
-            <bk-field-description
-              >Leave it empty and blur or submit: the browser's own message
-              shows.</bk-field-description
-            >
-          </bk-input>
-        </bk-field>
-        <bk-button type="submit">Submit</bk-button>
-      </form>
-      <form
-        novalidate
-        style="display: grid; gap: var(--bk-space-3);"
-        @submit=${(event: Event) => {
-          event.preventDefault();
-          const form = event.currentTarget as HTMLFormElement;
-          const field = form.querySelector('bk-input') as BkInput;
-          const valid = /^[^@]+@[^@]+$/.test(field.value);
-          field.error = valid ? '' : 'That address needs an @.';
-        }}
-      >
-        <bk-field>
-          <bk-input name="schema" type="email" required>
-            <bk-field-label>novalidate, only error</bk-field-label>
-            <bk-field-description>No native message ever shows here.</bk-field-description>
-          </bk-input>
-        </bk-field>
-        <bk-button type="submit">Submit</bk-button>
-      </form>
-    </div>
-  `,
+export const Invalid: Story = {
+  args: { error: 'That name is taken.', value: 'you@brick' },
 };
 
-export const InAForm: Story = {
-  name: 'In a form: name, inputMode, reset',
+export const Required: Story = {
+  args: { required: true },
+};
+
+export const Form: Story = {
   render: () => html`
     <form
       style="display: grid; gap: var(--bk-space-4); width: 320px;"
-      @reset=${(event: Event) => {
-        const form = event.currentTarget as HTMLFormElement;
-        requestAnimationFrame(() => readout(form, 'FormData after reset'));
-      }}
-      @bk-change=${(event: CustomEvent<{ value: string }>) => {
-        readout(event.currentTarget as HTMLFormElement, `bk-change ${event.detail.value}`);
-      }}
+      @submit=${(event: Event) => event.preventDefault()}
     >
       <bk-field>
-        <bk-input name="email" type="email" autocomplete="email" required value="you@brick.dev">
-          <bk-field-label>Email</bk-field-label>
-          <bk-field-description>Named for the form.</bk-field-description>
+        <bk-input name="username" autocomplete="username" required>
+          <bk-field-label>Username</bk-field-label>
+          <bk-field-description>This is the name other people see.</bk-field-description>
         </bk-input>
       </bk-field>
       <bk-field>
-        <bk-input name="phone" type="tel" autocomplete="tel" inputMode="tel">
-          <bk-field-label>Phone</bk-field-label>
-          <bk-field-description>A numeric keypad on a phone.</bk-field-description>
+        <bk-input name="email" type="email" autocomplete="email" required>
+          <bk-field-label>Email</bk-field-label>
+          <bk-field-description>We never share it.</bk-field-description>
+        </bk-input>
+      </bk-field>
+      <bk-field>
+        <bk-input name="password" type="password" autocomplete="new-password" required>
+          <bk-field-label>Password</bk-field-label>
+          <bk-field-description>At least 8 characters.</bk-field-description>
         </bk-input>
       </bk-field>
       <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
-        <bk-button type="reset" variant="secondary">Reset</bk-button>
+        <bk-button type="submit">Submit</bk-button>
+        <bk-button type="reset" variant="secondary">Cancel</bk-button>
       </div>
-      <output
-        style="font: var(--bk-font-size-sm) var(--bk-font-sans); color: var(--bk-text-muted);"
-      >
-        Change a field or reset to read FormData.
-      </output>
     </form>
   `,
 };
