@@ -7,6 +7,18 @@ const nextInstanceId = () => `bk-radio-group-item-${++instanceCount}`;
 
 /* An element because each box needs its own shadow root and its own slotted
  * label; private because a radio alone is not a component: ADR 0012. */
+/**
+ * One radio of a `bk-radio-group`: the native `<input type="radio">` behind a painted circle, with
+ * the option's own label and hint. It is the group's markup, not a component to import.
+ *
+ * @slot label - The label atom that names the option.
+ * @slot description - The hint of this option, which is its accessible description.
+ * @csspart label - The `<label>` row: the hidden input, the box and the label.
+ * @csspart input - The native `<input type="radio">`, visually hidden and still focusable.
+ * @csspart box - The painted circle, with the dot drawn in it while it is selected.
+ * @csspart description - The region of the option's hint, hidden while it holds no text.
+ * @fires bk-change - The option was activated; the group is what keeps the selection.
+ */
 export class BkRadioGroupItem extends LitElement {
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
