@@ -47,6 +47,22 @@ const sameMirror = (one: MirrorEntry[], other: MirrorEntry[]): boolean =>
 const renderOption = (option: MirrorOption) =>
   html`<option value=${option.value} ?disabled=${option.disabled}>${option.label}</option>`;
 
+/**
+ * The platform's `<select>`, with its options written as atoms that the element mirrors into real
+ * `<option>` and `<optgroup>` nodes.
+ *
+ * @slot label - The label atom that names the field.
+ * @slot description - The help text, named by `aria-describedby` while it has content.
+ * @slot error - The problem, announced from the status region; text in it is the field's error.
+ * @csspart label - The `<label>` row, carrying `data-state` while the field is invalid or disabled.
+ * @csspart input - The native `<select>`.
+ * @csspart caret - The arrow the element draws, since the platform's caret cannot be inset.
+ * @csspart required - The `*` that marks a required field.
+ * @csspart message - The container of the help and error regions.
+ * @csspart description - The help region.
+ * @csspart error - The error region.
+ * @fires bk-change - The selected value changed, with the new value in `detail.value`.
+ */
 export class BkNativeSelect extends FieldControlMixin(LitElement) {
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
