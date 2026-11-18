@@ -20,6 +20,7 @@ const hooks = {
   buttonBorderHover: '--bk-button-border-hover',
   buttonRadius: '--bk-button-radius',
   inputRadius: '--bk-input-radius',
+  textareaRadius: '--bk-textarea-radius',
   checkboxSize: '--bk-checkbox-size',
   checkboxRadius: '--bk-checkbox-radius',
   checkboxVariantSize: '--bk-checkbox-variant-size',
