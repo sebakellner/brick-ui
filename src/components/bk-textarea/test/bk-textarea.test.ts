@@ -858,6 +858,51 @@ describe('bk-textarea', () => {
         region(el, 'description')!.id,
       ]);
     });
+
+    it('should share the row with the help text, help left and count right', async () => {
+      const el = await fixture<BkTextarea>(html`
+        <bk-textarea maxlength="20" value="Hello">
+          ${labelAtom('Bio')}
+          <bk-field-description>Tell us more.</bk-field-description>
+        </bk-textarea>
+      `);
+
+      const counter = region(el, 'counter')!;
+      const row = counter.parentElement!;
+      const regions = row.querySelector('.regions')!;
+
+      expect(getComputedStyle(row).display, 'the count and the regions are one flex row').to.equal(
+        'flex',
+      );
+      expect(
+        Boolean(regions.querySelector('slot[name="description"]')),
+        'the help text is projected inside that row, not above it',
+      ).to.equal(true);
+      expect(
+        Boolean(counter.compareDocumentPosition(regions) & Node.DOCUMENT_POSITION_PRECEDING),
+        'the count follows the help, so it paints on the right',
+      ).to.equal(true);
+    });
+
+    it('should keep that row when the error takes the help text away', async () => {
+      const el = await fixture<BkTextarea>(html`
+        <bk-textarea maxlength="20" value="Hello" error="Too short."
+          >${labelAtom('Bio')}</bk-textarea
+        >
+      `);
+
+      const counter = region(el, 'counter')!;
+      const row = counter.parentElement!;
+
+      expect(
+        getComputedStyle(row).display,
+        'the error does not give the count a row of its own',
+      ).to.equal('flex');
+      expect(
+        row.querySelector('.regions')!.contains(region(el, 'error')),
+        'and the error is the other half of the same row',
+      ).to.equal(true);
+    });
   });
 
   it('should pass minlength through to the inner field, and only while it bounds', async () => {

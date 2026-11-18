@@ -42,13 +42,28 @@ export class BkTextarea extends FieldControlMixin(LitElement) {
         resize: none;
       }
 
+      /* The counter shares the row with the help text, as Material 3 puts it: help on the left,
+       * count on the right, and the error takes the left when it shows without moving the count. */
+      .footer {
+        display: flex;
+        gap: var(--bk-space-2);
+        align-items: baseline;
+        justify-content: space-between;
+      }
+
+      .footer > .regions {
+        flex: 1 1 auto;
+        min-inline-size: 0;
+      }
+
       .counter {
+        flex: 0 0 auto;
         margin-block-start: var(--bk-space-1);
         font-family: var(--bk-font-sans);
         font-size: var(--bk-font-size-sm);
         line-height: var(--bk-line-height-md);
         color: var(--bk-text-muted);
-        text-align: end;
+        white-space: nowrap;
       }
     `,
   ];
@@ -104,14 +119,16 @@ export class BkTextarea extends FieldControlMixin(LitElement) {
         @input=${this.handleInput}
         @change=${this.handleChange}
       ></textarea>
-      ${this.fieldParts.messages}
-      ${
-        this.counted
-          ? html`<div class="counter" part="counter" id=${this.counterId} role="status">
-              ${this.value.length} / ${this.maxlength}
-            </div>`
-          : nothing
-      }
+      <div class="footer">
+        <div class="regions">${this.fieldParts.messages}</div>
+        ${
+          this.counted
+            ? html`<div class="counter" part="counter" id=${this.counterId} role="status">
+                ${this.value.length} / ${this.maxlength}
+              </div>`
+            : nothing
+        }
+      </div>
     `;
   }
 

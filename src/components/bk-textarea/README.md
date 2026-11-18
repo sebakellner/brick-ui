@@ -158,6 +158,10 @@ accessibility tree. The error region always carries `data-state="error"`, which
 names it as the region that paints a problem, whichever channel fills it; whether
 it holds a message is `data-empty`, not that attribute.
 
+The counter shares the row under the control with the description and the error: the message
+takes the left, the count sits on the right, and an error taking the description's place does
+not move it.
+
 The counter is the one part that is not always there: it exists while
 `maxlength` bounds the value and is removed when the bound goes, so `::part(counter)`
 styles a count that is on screen and nothing else.
