@@ -139,6 +139,10 @@ const documented = new Map();
 for (const path of readmes) {
   const text = await readFile(new URL(`../${path}`, import.meta.url), 'utf8');
   const ownTag = path.split('/').at(-2);
+  /* A README under a directory the manifest does not declare documents an element with no source
+   * behind it. It used to be skipped, which let a whole component document anything it liked. */
+  const unknownTag = !byTag.has(ownTag);
+  if (unknownTag) problem(`${ownTag}: ${path} documents an element the manifest does not declare`);
   const { headings, tables } = parse(text);
 
   for (const heading of headings) {
@@ -217,7 +221,10 @@ for (const path of readmes) {
 
   for (const [tag, surfaces] of observed) {
     const declaration = byTag.get(tag);
-    if (!declaration) continue;
+    if (!declaration) {
+      if (!unknownTag) problem(`${tag}: documented under ${path}, not in the manifest`);
+      continue;
+    }
 
     for (const [surface, config] of Object.entries(SURFACES)) {
       const documentedNames = surfaces.get(surface) ?? new Map();
