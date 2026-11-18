@@ -145,6 +145,18 @@ for (const path of readmes) {
   if (unknownTag) problem(`${ownTag}: ${path} documents an element the manifest does not declare`);
   const { headings, tables } = parse(text);
 
+  /* D8: a component README explains itself. An ADR is cited from `docs/` and from other ADRs,
+   * where a maintainer is already reading reasoning; a consumer cannot act on "see ADR 0012",
+   * and this file is also the Storybook page, which cannot follow the link anywhere useful. */
+  text.split('\n').forEach((line, index) => {
+    const adr = /docs\/adr\/(\d{4})-[a-z0-9-]+\.md/.exec(line);
+    if (adr) {
+      problem(
+        `${ownTag}: ${path}:${index + 1} links ADR ${adr[1]}; the README states the reason itself (D8)`,
+      );
+    }
+  });
+
   for (const heading of headings) {
     if (heading.level !== 3) continue;
     if (!/^`?bk-[a-z-]+`?$/.test(heading.text)) continue;

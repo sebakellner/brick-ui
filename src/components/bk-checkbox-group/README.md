@@ -151,11 +151,9 @@ primitives its atoms already read:
   requirement lives in the consumer's description text and in the constraint. See
   [Accessibility](#accessibility).
 - **The label is not painted invalid for a missing answer.** `data-state` and
-  `invalid` follow what is displayed
-  ([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)),
-  so a required empty group with no error atom is not red, before an interaction
-  or after it. Write an error atom, or set `error`, to mark the set and keep it
-  marked.
+  `invalid` follow what is displayed, so a required empty group with no error atom
+  is not red, before an interaction or after it. Write an error atom, or set
+  `error`, to mark the set and keep it marked.
 - **The group reads and writes as little as it can.** It reads each box's
   `submittedValue` — never into a box's shadow root — and writes only
   `disabled` on them. It never sets a box's `checked`, its `required` or its
@@ -184,8 +182,7 @@ checked boxes and no row for the group: it is a constraint in the payload, not a
 key.
 
 The message is the consumer's. The `error` property, or a `bk-field-error` atom
-with text, reports `customError` with that text, exactly as in any field
-([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
+with text, reports `customError` with that text, exactly as in any field.
 With neither, the group falls back to a fixed English sentence — `Please select
 at least one option.` — which only the platform surfaces, through
 `validationMessage` and the browser's own validation UI on submit. A component
@@ -203,8 +200,7 @@ each group.
 it owns, and takes back only what it wrote: leaving `disabled` re-enables those
 boxes and leaves a box authored `disabled` disabled. Each box then refuses the
 pointer and reports `aria-disabled` on its own inner input, which is the disabled
-they already carry
-([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)).
+they already carry.
 A group that looks unavailable while its boxes still respond is the lie
 [Conventions C5](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-code.md#c5-a-disabled-control-keeps-its-muted-text-loses-its-hover-and-carries-one-dim)
 exists to prevent.
@@ -279,5 +275,4 @@ is dimmed by the row it sits in and not a second time on its own.
 
 A missing answer with no message on screen is **not** painted invalid: `data-state`
 follows what is displayed, so a required empty group with no error atom shows the
-`*` and the platform's message and nothing red
-([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
+`*` and the platform's message and nothing red.

@@ -51,8 +51,7 @@ because nothing is submitted.
 The error channel has two writers and one display: `error` from JavaScript, and
 a `bk-field-error` with text in the `error` slot. When both are set the atom
 wins, and the property comes back when the atom's text goes; an atom with no text
-is not content and says nothing about validity
-([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
+is not content and says nothing about validity.
 
 The atoms need no `slot` attribute inside a `bk-field`, which assigns them by
 tag name. Rendered straight as a child of the control they do, because the
@@ -122,8 +121,7 @@ of the muted ones.
 
 `--bk-checkbox-variant-size` and `--bk-checkbox-variant-radius` are the internal
 defaults the two hooks fall back to, so an override set on an ancestor still
-wins ([ADR 0002](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0002-require-the-theme.md)).
-Set the two hooks above, not those.
+wins. Set the two hooks above, not those.
 
 ```css
 .checkout {

@@ -74,8 +74,7 @@ Blocked by the form rather than by the field:
 ```
 
 The inner native field is the one that is disabled, so the field leaves the tab order —
-unlike `bk-button` and `bk-checkbox`, which keep it and announce `aria-disabled`
-([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)).
+unlike `bk-button` and `bk-checkbox`, which keep it and announce `aria-disabled`.
 
 ## Attributes and properties
 
@@ -88,7 +87,7 @@ unlike `bk-button` and `bk-checkbox`, which keep it and announce `aria-disabled`
 | `placeholder`  | `placeholder`  | `string`                                                                                    | `''`     |                                                                                                                                                                                                                 |
 | `autocomplete` | `autocomplete` | `string`                                                                                    | `''`     | forwarded to the field (WCAG 1.3.5)                                                                                                                                                                             |
 | `inputMode`    | `inputMode`    | `'text' \| 'tel' \| 'url' \| 'email' \| 'numeric' \| 'decimal' \| 'search' \| 'none' \| ''` | `''`     | sets `inputmode` on the field                                                                                                                                                                                   |
-| `disabled`     | `disabled`     | `boolean`                                                                                   | `false`  | reflected; sets the native `disabled` attribute on the inner field ([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md))           |
+| `disabled`     | `disabled`     | `boolean`                                                                                   | `false`  | reflected; sets the native `disabled` attribute on the inner field                                                                                                                                              |
 | `required`     | `required`     | `boolean`                                                                                   | `false`  | reflected; announces the state and marks the label with a `*` when there is one                                                                                                                                 |
 
 ## Slots
@@ -103,10 +102,8 @@ What the description and the error slots hold is the consumer's text. A
 `bk-field-error` with text is the field's error, and `error` is the same channel
 written from JavaScript: the atom wins while it has text, and the property comes
 back when the atom's text goes. An atom with no text is not content — nothing is
-referenced and the field stays valid
-([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
-The atoms need no `slot` attribute inside a `bk-field`, which assigns them by
-tag name.
+referenced and the field stays valid. The atoms need no `slot` attribute inside a
+`bk-field`, which assigns them by tag name.
 
 ## Events
 
@@ -171,13 +168,12 @@ values: theming the input means theming the roles, not the field.
   not marked. The error region is `role="status"` and stays in the accessibility
   tree while empty (visually collapsed instead of `display: none`), so an
   announcement is not lost when the text appears.
-- A slotted `bk-field-error` with text is the field's error
-  ([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)):
-  the same text is what the region shows, what `aria-invalid` marks and what
-  `customError` blocks the submit with, so the announcement and the form cannot
-  disagree. An empty atom is invisible to assistive technology — no reference and
-  no invalidity — and the control watches the text of the atom it was given, so an
-  edit to the node updates the validity without a re-assignment.
+- A slotted `bk-field-error` with text is the field's error: the same text is
+  what the region shows, what `aria-invalid` marks and what `customError` blocks
+  the submit with, so the announcement and the form cannot disagree. An empty atom
+  is invisible to assistive technology — no reference and no invalidity — and the
+  control watches the text of the atom it was given, so an edit to the node updates
+  the validity without a re-assignment.
 - `autocomplete` and `inputMode` are forwarded, so a field can identify its
   purpose (WCAG 1.3.5).
 - The label colour is reinforcement, never the signal (WCAG 1.4.1): the border,
@@ -190,9 +186,10 @@ values: theming the input means theming the roles, not the field.
   the pointer and constraint validation are the browser's to refuse, and the field
   leaves the tab order. That is unlike `bk-button` and `bk-checkbox`, which keep
   `aria-disabled` so a keyboard user can still reach them and be told why they are
-  unavailable — [ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)
-  records why the two shapes differ. A disabled field also submits nothing and
-  reports no error, so it never blocks a submit it cannot take part in.
+  unavailable: the split follows what is blocked, and only a control whose job is
+  an action has to stay reachable to answer for itself. A disabled field also
+  submits nothing and reports no error, so it never blocks a submit it cannot take
+  part in.
 - `reset()` restores the default: the `value` attribute, read when the reset
   happens — the contract a native `<input>` has for its `defaultValue`, not a
   snapshot of the value the field held when it mounted. It is synchronous, so a
