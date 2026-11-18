@@ -20,13 +20,31 @@ const byTag = new Map(declarations.map((declaration) => [declaration.tagName, de
 
 const slotName = (slot) => (slot.name && slot.name.length ? slot.name : '(default)');
 
+/* A property declared with `attribute: false` is still a property the README documents, and the
+ * manifest keeps it out of `attributes`: `bk-radio-group-item`'s `tabStop` is written by the group
+ * and never by an attribute. Public instance fields are the properties a consumer sees; `static`
+ * members, the `private`/`protected` ones and the ones a mixin contributes are not — the shared
+ * form API has its own `Member` table, which this check leaves alone. */
+const publicFields = (declaration) =>
+  (declaration.members ?? [])
+    .filter(
+      (member) =>
+        member.kind === 'field' &&
+        !member.static &&
+        !member.inheritedFrom &&
+        member.privacy !== 'private' &&
+        member.privacy !== 'protected',
+    )
+    .map((member) => member.name);
+
 const SURFACES = {
   attributes: {
     header: ['Property', 'Attribute', 'Type', 'Default', 'Notes'],
     columns: [
       {
         column: 'Property',
-        declared: (d) => (d.attributes ?? []).map((a) => a.fieldName).filter(Boolean),
+        declared: (d) =>
+          [...(d.attributes ?? []).map((a) => a.fieldName), ...publicFields(d)].filter(Boolean),
       },
       { column: 'Attribute', declared: (d) => (d.attributes ?? []).map((a) => a.name) },
     ],
