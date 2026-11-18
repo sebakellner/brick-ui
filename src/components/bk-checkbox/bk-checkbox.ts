@@ -2,6 +2,22 @@ import { LitElement, css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 import { FieldControlMixin, formControlStyles } from '../shared/form-control/index.js';
 
+/**
+ * A checkbox: the native `<input>` hidden behind a painted box, in the `<label>` row that carries
+ * the label, the required mark and the field's message regions.
+ *
+ * @slot label - The label atom that names the box.
+ * @slot description - The help text, named by `aria-describedby` while it has content.
+ * @slot error - The problem, announced from the status region; text in it is the box's error.
+ * @csspart label - The `<label>` row, carrying `data-state` while the box is invalid or disabled.
+ * @csspart input - The native `<input type="checkbox">`, visually hidden and still focusable.
+ * @csspart box - The painted square, with the check or the mixed state drawn in it.
+ * @csspart required - The `*` that marks a required box.
+ * @csspart message - The container of the help and error regions, indented to the label text.
+ * @csspart description - The help region.
+ * @csspart error - The error region.
+ * @fires bk-change - The state changed, with `detail.checked`.
+ */
 export class BkCheckbox extends FieldControlMixin(LitElement) {
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,

@@ -12,6 +12,15 @@ const PART_SLOTS = [
   { tag: 'bk-field-error', slot: 'error' },
 ] as const;
 
+/**
+ * Stacks a field's parts and routes each one to its slot. It renders no control and carries no
+ * validity: the element put inside it does.
+ *
+ * @slot - The control.
+ * @slot label - The label atom.
+ * @slot description - The help text atom.
+ * @slot error - The message atom.
+ */
 export class BkField extends LitElement {
   static override styles = css`
     :host {

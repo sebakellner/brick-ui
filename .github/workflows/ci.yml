@@ -49,7 +49,7 @@ jobs:
           cp src/custom-elements.json "$RUNNER_TEMP/manifest-once.json"
           pnpm build:manifest
           cmp "$RUNNER_TEMP/manifest-once.json" src/custom-elements.json
-          node -e "const m=require('./src/custom-elements.json');const n=m.modules.flatMap(x=>x.declarations||[]).filter(d=>d.tagName).length;if(n<13){console.error('the manifest declares '+n+' elements, expected at least 13');process.exit(1)}"
+          node scripts/check-manifest.mjs
       - run: pnpm check:tokens
       - run: pnpm typecheck
       - run: pnpm test

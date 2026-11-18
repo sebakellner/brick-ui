@@ -1,6 +1,12 @@
 import { LitElement, css, html } from 'lit';
 import { BkField } from './bk-field.js';
 
+/**
+ * The problem a field reports. An atom with text **is** the field's error: it marks the field
+ * invalid and blocks submission.
+ *
+ * @slot - The message.
+ */
 export class BkFieldError extends LitElement {
   static override styles = css`
     :host {

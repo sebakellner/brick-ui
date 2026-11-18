@@ -15,6 +15,18 @@ export type BkRadioGroupOrientation = 'vertical' | 'horizontal';
  * error atom. */
 const MISSING_VALUE_MESSAGE = 'Please select an option.';
 
+/**
+ * One value shared by several `bk-radio-group-item` boxes: the group owns the selection, the tab
+ * stop, the keyboard and the message regions.
+ *
+ * @slot - The `bk-radio-group-item` elements of the group.
+ * @slot label - The label atom that names the group.
+ * @slot description - The consumer's own help atom, which is the group's description region.
+ * @slot error - The consumer's own error atom, which is the group's live region.
+ * @csspart label - The row holding the label slot and the `*`, hidden while the group is unnamed.
+ * @csspart radios - The flow container of the radios, vertical or horizontal by `orientation`.
+ * @csspart required - The `*` that marks a required group.
+ */
 export class BkRadioGroup extends FieldControlMixin(LitElement) {
   static override styles = [
     formControlStyles,

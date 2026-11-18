@@ -7,6 +7,21 @@ export type BkInputType = 'text' | 'email' | 'password' | 'search' | 'tel' | 'ur
 export type BkInputMode =
   'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
 
+/**
+ * A text field: the platform's `<input>` with the field's label, help text and error regions
+ * around it.
+ *
+ * @slot label - The label atom that names the field.
+ * @slot description - The help text, named by `aria-describedby` while it has content.
+ * @slot error - The problem, announced from the status region; text in it is the field's error.
+ * @csspart label - The `<label>` row, carrying `data-state` while the field is invalid or disabled.
+ * @csspart input - The native `<input>`.
+ * @csspart required - The `*` that marks a required field.
+ * @csspart message - The container of the help and error regions.
+ * @csspart description - The help region.
+ * @csspart error - The error region.
+ * @fires bk-change - The value changed, with the new value in `detail.value`.
+ */
 export class BkInput extends FieldControlMixin(LitElement) {
   static override shadowRootOptions = {
     ...LitElement.shadowRootOptions,
