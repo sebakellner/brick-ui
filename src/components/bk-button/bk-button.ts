@@ -4,6 +4,13 @@ import { property, state } from 'lit/decorators.js';
 export type BkButtonVariant = 'primary' | 'secondary' | 'ghost';
 export type BkButtonType = 'submit' | 'reset' | 'button';
 
+/**
+ * A button that delegates focus to its inner native `<button>`. The default slot is its content,
+ * and `type` decides which form action the activation runs.
+ *
+ * @slot - The content of the button: its text, or an icon.
+ * @csspart button - The native `<button>`, carrying `aria-disabled` while it is unavailable.
+ */
 export class BkButton extends LitElement {
   static formAssociated = true;
 
