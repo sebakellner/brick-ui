@@ -50,8 +50,7 @@ The rest of the form API is the shared contract, inherited from
 | `formResetCallback()`, `formDisabledCallback()`, `formStateRestoreCallback()`                          | driven by the `<form>`, not by the consumer                                 |
 
 The group is the only form participant of the pair; `bk-radio-group-item` has no
-form API
-([ADR 0012](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0012-a-radio-group-is-a-widget-not-a-container.md)).
+form API.
 
 ## Slots
 
@@ -139,10 +138,10 @@ means theming the roles.
   validation UI on submit. A consumer who wants text on the page writes an atom
   (and it becomes the message and the blocking constraint, as in any field).
 - **The label is not painted invalid for a missing value.** `aria-invalid` and
-  `data-state="invalid"` follow what is displayed ([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)),
-  so a required empty group with no error atom shows the `*` and the platform's
-  message and nothing red — before the interaction and after it. Write an error
-  atom, or set `error`, to mark the set and keep it marked.
+  `data-state="invalid"` follow what is displayed, so a required empty group with
+  no error atom shows the `*` and the platform's message and nothing red — before
+  the interaction and after it. Write an error atom, or set `error`, to mark the
+  set and keep it marked.
 - **A radio with no `value` cannot hold the selection.** The selection is matched
   by value, and an empty value reads as "nothing selected".
 - **Nested groups each own their nearest radios.** A radio belongs to its
@@ -186,8 +185,7 @@ It stays a custom element because each box needs its own shadow root — the nat
 — and its own slotted label atom. It is not a public component because a radio
 that only works inside its group promises a use that does not exist: nothing
 outside a `bk-radio-group` keeps its selection, submits it or reaches it with the
-keyboard, and a public tag whose only correct context is one container is a trap
-([ADR 0012](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0012-a-radio-group-is-a-widget-not-a-container.md)).
+keyboard, and a public tag whose only correct context is one container is a trap.
 
 The item is form-inert: no `name`, no `required`, no `error`, no `submittedValue`,
 no validity and no error region. Validity is the group's. The one message region
@@ -228,8 +226,7 @@ The item also takes two slots:
 ### The hint of an option
 
 The item takes a **description, never an error**: why one option is the better
-choice belongs to that option, while validity belongs to the set
-([ADR 0014](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0014-an-option-can-carry-its-own-hint.md)).
+choice belongs to that option, while validity belongs to the set.
 It renders under the label row, styled like any other message region (small and
 muted, `--bk-space-1` above it), and it starts where the label text starts: the
 region is indented by `var(--bk-radio-group-item-size,
@@ -260,9 +257,7 @@ means theming the roles, not the box.
 
 `--bk-radio-group-item-variant-size` and `--bk-radio-group-item-variant-radius`
 are the internal defaults the two hooks fall back to, so an override set on an
-ancestor still wins
-([ADR 0002](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0002-require-the-theme.md)).
-Set the two hooks above, not those.
+ancestor still wins. Set the two hooks above, not those.
 
 ```css
 .compact {
@@ -291,8 +286,9 @@ Set the two hooks above, not those.
 - **The hint is referenced, and it is the region the item renders.** The `<input>` and the
   region sit in the same shadow root, so `aria-describedby` resolves and the hint is the
   radio's accessible description while it has text. It is dropped when the hint empties (A4).
-  [ADR 0009](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0009-nest-the-field-parts-inside-the-control.md)
-  could not resolve. The hint is read where it is, next to the option.
+  A reference resolves only inside the tree of the element that carries it, and the item
+  renders the region in its own shadow root, next to the input, so the `<input>`'s
+  reference never leaves that tree. The hint is read where it is, next to the option.
 
 ## Group-level messages
 
@@ -307,15 +303,14 @@ inside its own shadow root — `aria-labelledby`/`aria-describedby` resolve per 
 | `hidden`           | description        | while the error atom has text                                               |
 | `aria-describedby` | the host           | the error id while the error has text, else the description id, else absent |
 
-The rule and its reason are
-[ADR 0010](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0010-name-a-group-on-its-host-and-let-its-atoms-be-the-regions.md)'s;
-the group hosts the label the same way and assigns it with
+Every reference the group makes lives in the document tree, so the host's
+`aria-describedby` resolves; the label is named on the host the same way, through
 `ariaLabelledByElements`. Its atoms mark their own emptiness with `data-empty`;
 the group only reads the mark to give a region its `--bk-space-1` once it has text.
 
 **An error atom with text is the group's error**: it reports `customError`, paints
 the label invalid and sets `aria-invalid="true"` on the host, exactly as the
-`error` property does ([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
+`error` property does.
 The property is cleared by an `input` event from an interaction; the atom is the
 consumer's node and the consumer empties it.
 

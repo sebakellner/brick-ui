@@ -20,6 +20,7 @@ wording.
 | D5  | The page connects; the README and the ADRs explain                       | review                                  |
 | D6  | The contract is shared; the idiom is not                                 | `pnpm check:readmes`                    |
 | D7  | Documentation in code earns its place like a comment does                | review                                  |
+| D8  | The README explains itself; it never sends the reader to an ADR          | `pnpm check:readmes`                    |
 
 ## D1. One fact, one home
 
@@ -184,3 +185,26 @@ the least reviewed line in the file.
 
 **Enforced by.** Review. The budget for an ordinary comment is the rule in
 [conventions-code.md](conventions-code.md) about what a comment is allowed to say.
+
+## D8. The README explains itself; it never sends the reader to an ADR
+
+**Rule.** A component README states its contract and the reasons it needs **in its own words**.
+It carries no link to an [ADR](adr/): an ADR is cited from `docs/` and from other ADRs, where a
+maintainer is already reading reasoning. What D5 says still holds — the explanation belongs to the
+README or to an ADR — with one clause added: when it is the README, the README says it.
+
+**Why.** Two readers, two jobs. The README is read before adopting, by someone who cannot act on
+"see ADR 0012" — and in this repository it is also the Storybook page, so the link leaves the
+reader mid-sentence to go somewhere the page cannot take them. It was also a link to `main` on
+GitHub, so it aged with the branch. The twenty-four links this rule replaces were each a fact the
+README could not state by itself: a limitation whose reason was one click away, in a document
+written for someone deciding whether to change the code.
+
+**Do** — state the limitation: _"A radio group is a widget, not a container: nothing outside it
+keeps its selection, submits it or reaches it with the keyboard."_
+
+**Don't** — `it is not a public component, see [ADR 0012](https://github.com/…/docs/adr/0012-….md)`.
+
+**Enforced by.** `pnpm check:readmes`, which fails naming the file, the line and the ADR. The
+reasoning a README points at is still one directory away for the maintainer who wants it; what
+the rule forbids is asking a consumer to go there.

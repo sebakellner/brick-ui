@@ -25,7 +25,7 @@ elements inside the shadow root.
 | `value`       | `value`       | `string`  | `''`    | the selected atom's value; setting it selects the matching `<option>`, and a value set before the options exist is applied as soon as they arrive                                               |
 | `placeholder` | `placeholder` | `string`  | `''`    | renders a first `<option value="" disabled hidden>` with that text, so "nothing selected" has a face; with no placeholder the first option is what the user sees, exactly as in a native select |
 | `name`        | `name`        | `string`  | `''`    | the entry the value submits under                                                                                                                                                               |
-| `disabled`    | `disabled`    | `boolean` | `false` | reflected; the native attribute on the inner `<select>` ([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md))      |
+| `disabled`    | `disabled`    | `boolean` | `false` | reflected; the native attribute on the inner `<select>`                                                                                                                                         |
 | `required`    | `required`    | `boolean` | `false` | reflected; the native attribute on the inner `<select>`, so `valueMissing` is the browser's                                                                                                     |
 | `error`       | `error`       | `string`  | `''`    | the message from JavaScript; paints the label, fills the error region, sets `aria-invalid="true"` and blocks submission                                                                         |
 
@@ -133,8 +133,7 @@ already paints, and theming the select means theming those roles.
   an attribute.
 - `disabled` is the native attribute on the inner select: the platform removes it
   from the tab order, and constraint validation is the browser's. A select is
-  text-field-shaped, so it follows the input and not the button
-  ([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md)).
+  text-field-shaped, so it follows the input and not the button.
 - `aria-describedby` points at the error region while it has content, otherwise
   at the description region. `aria-invalid` follows what the error region
   displays.

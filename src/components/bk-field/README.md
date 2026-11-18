@@ -79,15 +79,14 @@ theming the roles.
   to a 1px box while empty, so the announcement is not lost when the text
   appears. [Conventions A7](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-accessibility.md)
 - The flat shape is not supported: written as siblings, the atoms make the input
-  visually labelled and silently unnamed — [ADR 0009](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0009-nest-the-field-parts-inside-the-control.md).
+  visually labelled and silently unnamed.
 
 ## Limitations
 
 - `bk-field-error` is the control's error, not this field's. The control reads
   the text of the atom assigned to its `error` slot, marks itself `aria-invalid`
   and reports that text as `customError`, so the atom alone writes an invalid
-  field: no `error` property, no duplicate
-  ([ADR 0011](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0011-a-slotted-error-atom-is-the-fields-error.md)).
+  field: no `error` property, no duplicate.
   An atom with no text is not content — nothing is referenced and the field stays
   valid — and a `bk-field-error` is never decorative for a control: writing one is
   a declaration that the field has a problem.
@@ -103,8 +102,7 @@ The three atoms are children of the control, and the control is a child of
 own light children, so an atom written as a sibling of the control never reaches
 it, and the control builds its `<label for>` and `aria-describedby` from ids in
 its own shadow root. Written flat, the input keeps its visual label and loses its
-accessible name — [ADR 0009](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0009-nest-the-field-parts-inside-the-control.md)
-records the alternatives and why they lost.
+accessible name.
 
 ## What the field does
 
