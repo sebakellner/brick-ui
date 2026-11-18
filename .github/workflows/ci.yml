@@ -39,6 +39,8 @@ jobs:
             echo "::error::generated token CSS is out of date; run pnpm build:tokens and commit the result"
             exit 1
           fi
+      - name: the browser image is the one the lockfile pins
+        run: node scripts/check-playwright-image.mjs
       - name: the component manifest is generated from the code, and twice the same
         run: |
           pnpm build:manifest
