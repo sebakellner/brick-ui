@@ -11,17 +11,19 @@ const byTag = new Map(declarations.filter((d) => d.tagName).map((d) => [d.tagNam
 const slotName = (slot) => (slot.name && slot.name.length ? slot.name : '(default)');
 
 const problems = [];
+const surfaces = {
+  attributes: (declaration) => (declaration.attributes ?? []).map((a) => a.name),
+  slots: (declaration) => (declaration.slots ?? []).map(slotName),
+  cssParts: (declaration) => (declaration.cssParts ?? []).map((p) => p.name),
+  events: (declaration) => (declaration.events ?? []).map((e) => e.name),
+};
+
 const expect = (tag, surface, names) => {
   const declaration = byTag.get(tag);
   if (!declaration) return problems.push(`${tag}: not in the manifest`);
-  const had =
-    surface === 'attributes'
-      ? declaration.attributes.map((a) => a.name)
-      : surface === 'slots'
-        ? declaration.slots.map(slotName)
-        : surface === 'cssParts'
-          ? declaration.cssParts.map((p) => p.name)
-          : declaration.events.map((e) => e.name);
+  const read = surfaces[surface];
+  if (!read) return problems.push(`${tag}: unknown surface "${surface}"`);
+  const had = read(declaration);
   for (const name of names) {
     if (!had.includes(name)) problems.push(`${tag}: ${surface} is missing ${name}`);
   }
