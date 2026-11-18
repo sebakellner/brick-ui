@@ -14,11 +14,11 @@ wording.
 | #   | Rule                                                                     | Enforced by                             |
 | --- | ------------------------------------------------------------------------ | --------------------------------------- |
 | D1  | One fact, one home: the README states, the page renders, the story shows | review, and the page imports the README |
-| D2  | The README sections are a fixed set, in a fixed order                    | review; the manifest when it lands      |
-| D3  | Every name the README documents exists in the code, and has a case       | the testing rules, and review           |
+| D2  | The README sections are a fixed set, in a fixed order                    | `pnpm check:readmes`                    |
+| D3  | Every name the README documents exists in the code, and has a case       | `pnpm check:readmes`, the testing rules |
 | D4  | A story is one decision, and its name says which                         | review                                  |
 | D5  | The page connects; the README and the ADRs explain                       | review                                  |
-| D6  | The contract is shared; the idiom is not                                 | the component manifest                  |
+| D6  | The contract is shared; the idiom is not                                 | `pnpm check:readmes`                    |
 | D7  | Documentation in code earns its place like a comment does                | review                                  |
 
 ## D1. One fact, one home
@@ -85,8 +85,10 @@ and the property is the JavaScript one, and a consumer needs both columns.
 
 **Don't** — invent a section name for one component, or reorder the standard ones.
 
-**Enforced by.** Review today. When the component manifest lands, the tables are
-generated from it and a heading that does not belong to the set fails the check.
+**Enforced by.** `pnpm check:readmes`, which reads the generated manifest and every component
+README: a `##` heading that does not belong to the set, or that breaks the order, fails; so
+does a table whose header is not the one the section asks for. The rows stay hand-written —
+the check fixes the names and the headers, not the prose.
 
 ## D3. Every name the README documents exists in the code, and has a case
 
@@ -97,8 +99,9 @@ limitation the README declares gets a case too, the one that shows the limit.
 **Why.** Prose earns nothing. A name in a table with no case behind it is the same false
 statement as an `Enforced by` column that names a check nobody runs.
 
-**Enforced by.** The rule in [conventions-testing.md](conventions-testing.md) that gives
-every documented name a case, and review.
+**Enforced by.** `pnpm check:readmes` proves the name is in the code and in the table; the
+rule in [conventions-testing.md](conventions-testing.md) that gives every documented name a
+case proves the rest, and review guards the case that exists without a name.
 
 ## D4. A story is one decision, and its name says which
 
@@ -157,9 +160,9 @@ and whose `## Usage` shows `<bk-input>` with a listener.
 **Don't** — copy a table by hand into a second package, or rename a contract name to fit the
 idiom: `disabled` stays `disabled`, and how you _set_ it is the package's business.
 
-**Enforced by.** The manifest check: a contract name missing from a package's generated table
-fails, and a table row with no component behind it fails too. Which surfaces the manifest
-carries from code and which are annotated is the decision in
+**Enforced by.** `pnpm check:readmes`, in both directions: a contract name the manifest
+declares and no table carries fails, and a table row with no name behind it fails too. Which
+surfaces the manifest carries from code and which are annotated is the decision in
 [ADR 0020](adr/0020-the-component-manifest-is-generated-and-the-readme-renders-it.md).
 
 ## D7. Documentation in code earns its place like a comment does

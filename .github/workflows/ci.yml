@@ -48,6 +48,8 @@ jobs:
           pnpm build:manifest
           cmp "$RUNNER_TEMP/manifest-once.json" src/custom-elements.json
           node scripts/check-manifest.mjs
+      - name: the READMEs and the manifest agree, in both directions
+        run: node scripts/check-readmes.mjs
       - run: pnpm check:tokens
       - run: pnpm typecheck
       - run: pnpm test

@@ -61,17 +61,18 @@ you are about to change, and never edit an accepted ADR — supersede it.
 
 ## Commands
 
-| Command             | Use                                                                           |
-| ------------------- | ----------------------------------------------------------------------------- |
-| `pnpm test`         | the suite, in real Chrome                                                     |
-| `pnpm test:watch`   | the suite, watching                                                           |
-| `pnpm typecheck`    | `tsc --noEmit`, with `strict`, `noUnusedLocals`, `noUnusedParameters`         |
-| `pnpm build:tokens` | regenerate the CSS and `tokens.generated.ts`; commit the result               |
-| `pnpm check:tokens` | every `--bk-*` name a component reads exists, and every semantic role is read |
-| `pnpm format`       | rewrite the files Prettier owns                                               |
-| `pnpm format:check` | fail if any of them is not formatted                                          |
-| `pnpm dev`          | the playground                                                                |
-| `pnpm storybook`    | component stories                                                             |
+| Command              | Use                                                                                                                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm test`          | the suite, in real Chrome                                                                                                                                                |
+| `pnpm test:watch`    | the suite, watching                                                                                                                                                      |
+| `pnpm typecheck`     | `tsc --noEmit`, with `strict`, `noUnusedLocals`, `noUnusedParameters`                                                                                                    |
+| `pnpm build:tokens`  | regenerate the CSS and `tokens.generated.ts`; commit the result                                                                                                          |
+| `pnpm check:tokens`  | every `--bk-*` name a component reads exists, and every semantic role is read                                                                                            |
+| `pnpm check:readmes` | every name the manifest declares is in the README, every name the README has is in the manifest, and the sections and table headers are the ones the conventions ask for |
+| `pnpm format`        | rewrite the files Prettier owns                                                                                                                                          |
+| `pnpm format:check`  | fail if any of them is not formatted                                                                                                                                     |
+| `pnpm dev`           | the playground                                                                                                                                                           |
+| `pnpm storybook`     | component stories                                                                                                                                                        |
 
 ## Change workflow
 
@@ -94,8 +95,8 @@ you are about to change, and never edit an accepted ADR — supersede it.
 ## Definition of done
 
 - [ ] The new test fails without the change and passes with it.
-- [ ] `pnpm test`, `pnpm typecheck`, `pnpm check:tokens`, `pnpm format:check`
-      all green.
+- [ ] `pnpm test`, `pnpm typecheck`, `pnpm check:tokens`, `pnpm check:readmes`,
+      `pnpm format:check` all green.
 - [ ] Token output regenerated and committed, if `tokens/` changed.
 - [ ] The component's `README.md` updated if its public surface changed:
       attributes, properties, events, `part`s or override hooks.
