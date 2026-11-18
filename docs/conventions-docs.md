@@ -196,7 +196,7 @@ README or to an ADR — with one clause added: when it is the README, the README
 **Why.** Two readers, two jobs. The README is read before adopting, by someone who cannot act on
 "see ADR 0012" — and in this repository it is also the Storybook page, so the link leaves the
 reader mid-sentence to go somewhere the page cannot take them. It was also a link to `main` on
-GitHub, so it aged with the branch. The twenty-seven links this rule replaces were each a fact the
+GitHub, so it aged with the branch. The twenty-four links this rule replaces were each a fact the
 README could not state by itself: a limitation whose reason was one click away, in a document
 written for someone deciding whether to change the code.
 
