@@ -126,7 +126,10 @@ belongs to the widget; `bk-field` is structure.
 `bk-field-label`, `bk-field-description` and `bk-field-error` are presentational.
 They own their type and colour from semantic roles, carry no logic, and work
 outside a field — one rendered on its own still lays out and still paints. Each
-projects its own text and nothing else.
+projects its own text and nothing else, and each one that can be clipped says
+for itself that it is empty: `bk-field-description` and `bk-field-error` read
+their own light DOM and carry `data-empty` while they hold no text, so the mark no
+longer depends on a container noticing it.
 
 ### `bk-field-label`
 

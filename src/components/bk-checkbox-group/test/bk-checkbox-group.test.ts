@@ -155,9 +155,10 @@ describe('bk-checkbox-group', () => {
     expect(getComputedStyle(atom).position, 'an atom with text takes its place').to.not.equal(
       'absolute',
     );
-    expect(atom.hasAttribute('data-empty'), 'an atom with text is not marked empty').to.equal(
-      false,
-    );
+    expect(
+      atom.hasAttribute('data-empty'),
+      'the atom with text writes no mark of its own',
+    ).to.equal(false);
   });
 
   it('should point at the error atom while it has text and keep the description', async () => {
@@ -199,18 +200,26 @@ describe('bk-checkbox-group', () => {
     await settle(el);
     const atom = descriptionAtom(el)!;
 
-    expect(atom.hasAttribute('data-empty'), 'the empty atom says so').to.equal(true);
+    expect(atom.hasAttribute('data-empty'), 'the empty atom says so itself').to.equal(true);
     expect(getComputedStyle(atom).position, 'an empty atom takes no space').to.equal('absolute');
+    expect(
+      getComputedStyle(atom).marginBlockStart,
+      'and the group gives no leading margin to a marked atom',
+    ).to.equal('0px');
     expect(Boolean(atom.isConnected), 'the empty atom keeps its place in the tree').to.equal(true);
     expect(Boolean(describedNode(el)), 'an empty atom describes nothing').to.equal(false);
 
     atom.textContent = 'Pick at least one.';
     await settle(el);
 
-    expect(atom.hasAttribute('data-empty'), 'text clears the mark').to.equal(false);
+    expect(atom.hasAttribute('data-empty'), 'text clears the mark the atom wrote').to.equal(false);
     expect(getComputedStyle(atom).position, 'text gives the atom its place back').to.not.equal(
       'absolute',
     );
+    expect(
+      getComputedStyle(atom).marginBlockStart,
+      'and the group’s slotted rule now gives it the leading margin',
+    ).to.equal('4px');
     expect(resolved(el, atom), 'the atom now describes the group').to.equal(true);
   });
 
@@ -235,7 +244,7 @@ describe('bk-checkbox-group', () => {
     expect(Boolean(describedNode(el)), 'an empty error describes nothing').to.equal(false);
   });
 
-  it('should take back the role and the empty mark when an atom leaves the group', async () => {
+  it('should take back the role and leave the atom the empty mark it wrote', async () => {
     const el = await fixture<BkCheckboxGroup>(html`
       <bk-checkbox-group>
         <bk-field-label>Notifications</bk-field-label>
@@ -248,7 +257,7 @@ describe('bk-checkbox-group', () => {
     const error = errorAtom(el)!;
 
     expect(resolved(el, error), 'the error atom describes the group').to.equal(true);
-    expect(description.hasAttribute('data-empty'), 'the empty description is marked').to.equal(
+    expect(description.hasAttribute('data-empty'), 'the empty description marks itself').to.equal(
       true,
     );
 
@@ -257,9 +266,10 @@ describe('bk-checkbox-group', () => {
     await settle(el);
 
     expect(error.hasAttribute('role'), 'the live-region role was the group’s').to.equal(false);
-    expect(description.hasAttribute('data-empty'), 'the empty mark was the group’s').to.equal(
-      false,
-    );
+    expect(
+      description.hasAttribute('data-empty'),
+      'the empty mark was the atom’s, so leaving the group does not take it away',
+    ).to.equal(true);
     expect(Boolean(error.id) && Boolean(description.id), 'the ids stay').to.equal(true);
     expect(Boolean(el.getAttribute('aria-describedby')), 'nothing describes the group').to.equal(
       false,
@@ -692,10 +702,9 @@ describe('bk-checkbox-group', () => {
       description.id === `${ownPrefix}-description`,
       'the outer group did not adopt the inner atom',
     ).to.equal(false);
-    expect(
-      description.hasAttribute('data-empty'),
-      'the atom has text and nobody marked it empty',
-    ).to.equal(false);
+    expect(description.hasAttribute('data-empty'), 'the atom has text and writes no mark').to.equal(
+      false,
+    );
   });
 
   it('should keep a required group valueMissing while its only box is mixed', async () => {

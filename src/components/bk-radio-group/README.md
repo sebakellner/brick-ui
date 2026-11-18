@@ -300,13 +300,13 @@ inside its own shadow root — `aria-labelledby`/`aria-describedby` resolve per 
 | ------------------ | ------------------ | --------------------------------------------------------------------------- |
 | `id`               | description, error | always, if the atom has none: `<group id>-description`/`-error`             |
 | `role="status"`    | error              | always, if the atom has no role of its own                                  |
-| `data-empty`       | description, error | while `textContent.trim()` is empty                                         |
 | `hidden`           | description        | while the error atom has text                                               |
 | `aria-describedby` | the host           | the error id while the error has text, else the description id, else absent |
 
 Every reference the group makes lives in the document tree, so the host's
 `aria-describedby` resolves; the label is named on the host the same way, through
-`ariaLabelledByElements`.
+`ariaLabelledByElements`. Its atoms mark their own emptiness with `data-empty`;
+the group only reads the mark to give a region its `--bk-space-1` once it has text.
 
 **An error atom with text is the group's error**: it reports `customError`, paints
 the label invalid and sets `aria-invalid="true"` on the host, exactly as the
