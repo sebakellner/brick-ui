@@ -36,8 +36,9 @@ elements inside the shadow root.
 | `value`    | `value`    | `string`  | `''`    | the `<option>`'s value                     |
 | `disabled` | `disabled` | `boolean` | `false` | reflected; the `<option>`'s disabled state |
 
-Its text content is the label of the option. There is no rich content: an
-`<option>` holds text, and an element inside it is silently lost.
+| Slot        | Content                | Notes                                                                                                                   |
+| ----------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| _(default)_ | the text of the option | it is the option's label. There is no rich content: an `<option>` holds text, and an element inside it is silently lost |
 
 ### `bk-native-select-opt-group`
 
@@ -45,6 +46,10 @@ Its text content is the label of the option. There is no rich content: an
 | ---------- | ---------- | --------- | ------- | -------------------------------------------- |
 | `label`    | `label`    | `string`  | `''`    | the `<optgroup>`'s label                     |
 | `disabled` | `disabled` | `boolean` | `false` | reflected; the `<optgroup>`'s disabled state |
+
+| Slot        | Content                             | Notes                                  |
+| ----------- | ----------------------------------- | -------------------------------------- |
+| _(default)_ | the `bk-native-select-opt` children | they become the `<optgroup>`'s options |
 
 It holds `bk-native-select-opt` children. A group inside a group is not
 rendered: the platform has no nested `<optgroup>`, so the inner group and its
