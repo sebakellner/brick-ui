@@ -1,6 +1,12 @@
 import { LitElement, css, html } from 'lit';
 import { BkField } from './bk-field.js';
 
+/**
+ * The label a field renders inside its `<label>`. Its text is the name the control is
+ * announced by.
+ *
+ * @slot - The label text.
+ */
 export class BkFieldLabel extends LitElement {
   static override styles = css`
     :host {

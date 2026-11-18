@@ -1,6 +1,11 @@
 import { LitElement, css, html } from 'lit';
 import { BkField } from './bk-field.js';
 
+/**
+ * The help text under a field, referenced by `aria-describedby` while it has content.
+ *
+ * @slot - The help text.
+ */
 export class BkFieldDescription extends LitElement {
   static override styles = css`
     :host {
