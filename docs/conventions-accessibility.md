@@ -117,10 +117,12 @@ region stops being announced and the visual hiding also silenced it.
 
 **Do** — the `.message` blocks in
 `src/components/shared/form-control/form-control.styles.ts` are the reference
-implementation. `:empty` cannot see slotted content, so the region is collapsed
-from `data-empty` as well, which `FieldMessagesController` sets from
-`assignedNodes()`. `1px` there is the geometry the technique requires, not a
-design value
+implementation. `:empty` cannot see slotted content, so a region is collapsed
+from `data-empty` as well: a control marks its own `.message` wrapper, which
+`FieldMessagesController` sets from `assignedNodes()`, and an atom marks itself,
+reading its own light DOM with `SlottedTextController`
+([ADR 0022](adr/0022-an-element-marks-only-itself.md)). Each host marks only what
+it hosts. `1px` there is the geometry the technique requires, not a design value
 ([ADR 0004](adr/0004-forbid-style-literals-in-components.md)).
 
 **Enforced by.** The suite, for the part a test can see: the region keeps

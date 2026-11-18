@@ -236,21 +236,21 @@ atom stays in the document tree where an IDREF finds it:
 | ------------------ | ------------------ | --------------------------------------------------------------------------- |
 | `id`               | description, error | always, if the atom has none: `<group id>-description`/`-error`             |
 | `role="status"`    | error              | always, if the atom has no role of its own                                  |
-| `data-empty`       | description, error | while `textContent.trim()` is empty                                         |
 | `hidden`           | description        | while the error atom has text                                               |
 | `aria-describedby` | the host           | the error id while the error has text, else the description id, else absent |
 
 An empty atom is clipped, never removed: it keeps its 1px box, its place in the
 flow and its place in the accessibility tree, so the live region is already
-there when the error arrives. `data-empty` is what the atom paints — the atom
-stays presentational, it never decides that it is empty.
+there when the error arrives. `data-empty` is the atom's own statement: it reads
+its own light DOM and marks itself while it is empty,
+and the group only reads it to give the region its `--bk-space-1` once it has text.
 
 `hidden` is a different job and only the description gets it: while the error has
 text the description gives it the row, exactly as a field's two regions behave,
 and it comes back when the error empties. Neither atom is ever removed.
 
-When an atom leaves the group, the group takes its `role` and its `data-empty`
-back; the `id` it assigned can stay.
+When an atom leaves the group, the group takes its `role` back; the `id` it
+assigned can stay, and `data-empty` was never the group's to take.
 
 **This is a deliberate departure from A7's "never `role="status"` on slotted
 content".** A7 keeps the live region on the control's own shadow region, which
