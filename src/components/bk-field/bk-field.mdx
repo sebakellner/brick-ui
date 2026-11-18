@@ -6,19 +6,27 @@ import readme from './README.md?raw';
 
 <Markdown>{readme}</Markdown>
 
-## Default
+## Input
 
-<Canvas of={FieldStories.Default} />
+<Canvas of={FieldStories.Input} />
+
+## Select
+
+<Canvas of={FieldStories.Select} />
+
+## Checkbox
+
+<Canvas of={FieldStories.Checkbox} />
+
+## Radio group
+
+<Canvas of={FieldStories.RadioGroup} />
 
 ## Label only
 
 The description slot may be empty; the field still stacks what is there.
 
 <Canvas of={FieldStories.LabelOnly} />
-
-## A description that wraps
-
-<Canvas of={FieldStories.LongDescription} />
 
 ## Invalid, with the error atom
 
@@ -27,10 +35,3 @@ The description slot may be empty; the field still stacks what is there.
 together until the form-error model gives the atom a validity source.
 
 <Canvas of={FieldStories.Invalid} />
-
-## In a form
-
-The nesting changes nothing about form association: the control still submits
-under its `name`, and `FormData` reads the same entries.
-
-<Canvas of={FieldStories.InAForm} />

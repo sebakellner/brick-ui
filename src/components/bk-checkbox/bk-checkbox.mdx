@@ -6,21 +6,18 @@ import readme from './README.md?raw';
 
 <Markdown>{readme}</Markdown>
 
-## Default
+## Basic
 
-<Canvas of={CheckboxStories.Default} />
+<Canvas of={CheckboxStories.Basic} />
 
-## Checked
+## Description
 
-<Canvas of={CheckboxStories.Checked} />
+<Canvas of={CheckboxStories.Description} />
 
-## States
+## Disabled
 
-<Canvas of={CheckboxStories.States} />
+<Canvas of={CheckboxStories.Disabled} />
 
-## Required
+## Invalid
 
-The native constraint, not a message: an unchecked required box reports
-`valueMissing`, and the browser's own message appears once the field is touched.
-
-<Canvas of={CheckboxStories.Required} />
+<Canvas of={CheckboxStories.Invalid} />

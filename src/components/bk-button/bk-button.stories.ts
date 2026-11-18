@@ -27,12 +27,14 @@ export default meta;
 
 type Story = StoryObj<Args>;
 
+const VARIANTS: BkButtonVariant[] = ['primary', 'secondary', 'ghost'];
+
+export const Default: Story = {};
+
 export const Variants: Story = {
   render: () => html`
-    <div style="display: flex; gap: 12px; align-items: center;">
-      <bk-button>Save changes</bk-button>
-      <bk-button variant="secondary">Cancel</bk-button>
-      <bk-button variant="ghost">Learn more</bk-button>
+    <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
+      ${VARIANTS.map((variant) => html`<bk-button variant=${variant}>Save changes</bk-button>`)}
     </div>
   `,
 };
@@ -41,8 +43,7 @@ export const Disabled: Story = {
   args: { disabled: true },
 };
 
-export const Themed: Story = {
-  name: 'Theming: role, then hook',
+export const Custom: Story = {
   render: () => html`
     <div style="display: grid; gap: var(--bk-space-4); justify-items: start;">
       <section
