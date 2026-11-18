@@ -20,8 +20,7 @@
     "test": "web-test-runner",
     "test:watch": "web-test-runner --watch",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "prepack": "pnpm build:manifest"
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "lit": "^3.3.3"

@@ -1,8 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
 /* The analyzer orders modules by whatever the filesystem returned, so two runs of the same
- * source produced two different files. Sorting is what makes the committed manifest and the
- * staleness gate in CI mean anything. */
+ * source produced two different files. Sorting makes the build reproducible and lets CI prove
+ * it by generating twice and comparing. */
 const path = new URL('../src/custom-elements.json', import.meta.url);
 const manifest = JSON.parse(await readFile(path, 'utf8'));
 

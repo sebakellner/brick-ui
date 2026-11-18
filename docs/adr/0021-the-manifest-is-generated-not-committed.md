@@ -47,9 +47,11 @@ generated lines; there is no staleness to keep; and the generated file cannot dr
 code because it does not exist until something builds it.
 
 Harder: a reader of the repository cannot open the manifest without running the command —
-and neither can a tool that expects the file to be present in a checkout. When the package is
-published, the file ships in it and that is where consumers, IDEs and Storybook find it, which
-is also how the three libraries above behave.
+and neither can a tool that expects the file to be present in a checkout.
 
-Debt accepted: until there is a published package, Storybook and editors get the manifest only
-from a local `pnpm build:manifest`.
+Debt accepted, and it is two facts rather than one: the package is private and publishes
+nothing, so `package.json`'s `customElements` pointer is satisfied by a local build and by
+nothing else; and because a `.gitignore` rule excludes the file, npm's packlist falls back to
+that same rule, so publishing it takes an explicit `files` entry. The three libraries above
+ship the manifest in their published packages, and this is the step that would make us match
+them — today there is no package to ship.
