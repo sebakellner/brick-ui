@@ -24,6 +24,20 @@ written as elements instead of strings, and `bk-field` stacks them.
 derive it from the control: it does not read the control's validity, and the
 control does not read the field's attribute.
 
+## Slots
+
+| Slot          | Content                | Notes                                                                                               |
+| ------------- | ---------------------- | --------------------------------------------------------------------------------------------------- |
+| _(default)_   | the control            | the one child `bk-field` stacks with the atoms; the atoms have to be its children, not its siblings |
+| `label`       | `bk-field-label`       | assigned by tag on `slotchange`, so the consumer writes the element and never the attribute         |
+| `description` | `bk-field-description` | the help text of the control                                                                        |
+| `error`       | `bk-field-error`       | the message of the control                                                                          |
+
+There is no attribute a field can be labelled with or described by. The slots
+are the label and the description, so the control's name is the text the consumer
+puts in `label` and its description is the text in `description`. While the error
+region has content the description region is hidden; neither is deleted.
+
 ## Parts
 
 **`bk-field` exposes no parts.** It stacks and it routes slots; the regions, the
@@ -109,30 +123,27 @@ Three things, and nothing else:
 It has no `role`, computes no accessible name and carries no validity. The role
 belongs to the widget; `bk-field` is structure.
 
-## The parts
+## The atoms
 
 `bk-field-label`, `bk-field-description` and `bk-field-error` are presentational.
 They own their type and colour from semantic roles, carry no logic, and work
-outside a field — one rendered on its own still lays out and still paints.
+outside a field — one rendered on its own still lays out and still paints. Each
+projects its own text and nothing else.
 
-| Atom                   | Assigned slot | Paints with                        |
-| ---------------------- | ------------- | ---------------------------------- |
-| `bk-field-label`       | `label`       | `--bk-text-default`, medium weight |
-| `bk-field-description` | `description` | `--bk-text-muted`                  |
-| `bk-field-error`       | `error`       | `--bk-text-danger`                 |
+### `bk-field-label`
 
-## The control's slots
+| Slot        | Content        | Notes                                          |
+| ----------- | -------------- | ---------------------------------------------- |
+| _(default)_ | the label text | paints with `--bk-text-default`, medium weight |
 
-The control renders the parts inside its own shadow root, so the association
-never crosses a root.
+### `bk-field-description`
 
-| Slot          | Rendered in                       | Falls back to                                 |
-| ------------- | --------------------------------- | --------------------------------------------- |
-| `label`       | the `<label>` bound with `for`    | nothing: the slot is the label                |
-| `description` | the description region            | nothing: the slot is the description          |
-| `error`       | the error region, `role="status"` | the `error` property, then the native message |
+| Slot        | Content       | Notes                         |
+| ----------- | ------------- | ----------------------------- |
+| _(default)_ | the help text | paints with `--bk-text-muted` |
 
-There is no attribute a field can be labelled with or described by. The slots
-are the label and the description, so the control's name is the text the consumer
-puts in `label` and its description is the text in `description`. While the error
-region has content the description region is hidden; neither is deleted.
+### `bk-field-error`
+
+| Slot        | Content     | Notes                          |
+| ----------- | ----------- | ------------------------------ |
+| _(default)_ | the message | paints with `--bk-text-danger` |

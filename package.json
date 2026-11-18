@@ -14,6 +14,7 @@
     "build:tokens": "style-dictionary build --config style-dictionary.config.mjs",
     "build:manifest": "cem analyze --config custom-elements-manifest.config.mjs && node scripts/normalize-manifest.mjs",
     "check:tokens": "node scripts/check-token-usage.mjs",
+    "check:readmes": "node scripts/check-readmes.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",

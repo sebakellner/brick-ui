@@ -94,12 +94,12 @@ No new token tier and no hook of the group's own: there is no
 `--bk-radio-group-*` name. The only hooks in the pair are the item's two
 ([The item](#the-item)), and the group paints no box.
 
-| The group paints          | With                                                                                                                                                                             |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| the gap between items     | `--bk-space-2`                                                                                                                                                                   |
-| the first line of an atom | `--bk-space-1` above it, while the atom has text                                                                                                                                 |
-| its label row             | the label roles: `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-weight-medium`, `--bk-text-default`, `--bk-text-danger` while invalid, `--bk-opacity-disabled` while disabled |
-| the required mark         | `--bk-text-danger`                                                                                                                                                               |
+| Token                                                                                                                                                           | Paints                                                   |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `--bk-space-2`                                                                                                                                                  | the gap between items                                    |
+| `--bk-space-1`                                                                                                                                                  | above the first line of an atom, while the atom has text |
+| `--bk-font-sans`, `--bk-font-size-sm`, `--bk-font-weight-medium`, `--bk-text-default`, `--bk-text-danger` while invalid, `--bk-opacity-disabled` while disabled | its label row                                            |
+| `--bk-text-danger`                                                                                                                                              | the required mark                                        |
 
 The items, the description and the error paint themselves. Theming a group
 means theming the roles.
@@ -194,7 +194,7 @@ no validity and no error region. Validity is the group's. The one message region
 the item carries is the **description of its own option**, and the group never
 adopts it.
 
-### Properties
+### `bk-radio-group-item`
 
 | Property   | Attribute  | Type      | Default | Notes                                                                                                                                                                                                                          |
 | ---------- | ---------- | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -218,6 +218,12 @@ The item also takes two slots:
 | `input`       | the native `<input type="radio">`, visually hidden and still focusable          |
 | `box`         | the painted circle, `aria-hidden` decoration                                    |
 | `description` | the region of the option's hint, hidden while the option carries no description |
+
+### The item's event
+
+| Event       | Detail                 | Notes                                                                                              |
+| ----------- | ---------------------- | -------------------------------------------------------------------------------------------------- |
+| `bk-change` | `{ checked: boolean }` | `bubbles: true`, `composed: true`; fires when the option is activated and the item is not disabled |
 
 ### The hint of an option
 

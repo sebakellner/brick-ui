@@ -23,14 +23,15 @@ no value of its own — every box submits its own.
 
 ## Attributes and properties
 
-| Property      | Attribute     | Type                         | Default    | Notes                                                                                                                                                                              |
-| ------------- | ------------- | ---------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`        | `name`        | `string`                     | `''`       | carried by the shared form API. The group submits nothing, so the name adds no entry to the form data                                                                              |
-| `required`    | `required`    | `boolean`                    | `false`    | reflected; with nothing checked it reports `valueMissing` and blocks the submit, and marks its label with a `*` while it has one                                                   |
-| `disabled`    | `disabled`    | `boolean`                    | `false`    | reflected; disables every `bk-checkbox` it owns, submits nothing and reports no error. It takes back only the `disabled` it wrote itself                                           |
-| `error`       | `error`       | `string`                     | `''`       | the message from JavaScript; a slotted `bk-field-error` with text wins over it; reports `customError` with that text                                                               |
-| `invalid`     | `invalid`     | `boolean`                    | `false`    | reflected; the consumer's own statement, beside the invalid state the field derives from its error. Either one paints the group's own `bk-field-label` and writes nothing on a box |
-| `orientation` | `orientation` | `'vertical' \| 'horizontal'` | `vertical` | reflected; the direction the boxes flow in. The only layout difference                                                                                                             |
+| Property      | Attribute     | Type                         | Default    | Notes                                                                                                                                                                                    |
+| ------------- | ------------- | ---------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`        | `name`        | `string`                     | `''`       | carried by the shared form API. The group submits nothing, so the name adds no entry to the form data                                                                                    |
+| `value`       | `value`       | `string`                     | `''`       | carried by the shared form API and **inert**: the group has no value of its own, so assigning it changes nothing it submits and reading it returns what was written, never the selection |
+| `required`    | `required`    | `boolean`                    | `false`    | reflected; with nothing checked it reports `valueMissing` and blocks the submit, and marks its label with a `*` while it has one                                                         |
+| `disabled`    | `disabled`    | `boolean`                    | `false`    | reflected; disables every `bk-checkbox` it owns, submits nothing and reports no error. It takes back only the `disabled` it wrote itself                                                 |
+| `error`       | `error`       | `string`                     | `''`       | the message from JavaScript; a slotted `bk-field-error` with text wins over it; reports `customError` with that text                                                                     |
+| `invalid`     | `invalid`     | `boolean`                    | `false`    | reflected; the consumer's own statement, beside the invalid state the field derives from its error. Either one paints the group's own `bk-field-label` and writes nothing on a box       |
+| `orientation` | `orientation` | `'vertical' \| 'horizontal'` | `vertical` | reflected; the direction the boxes flow in. The only layout difference                                                                                                                   |
 
 The rest of the form API is the shared contract, inherited from
 `FieldControlMixin`:
@@ -69,13 +70,17 @@ They are always there, because the group never removes them.
 
 ## Tokens and hooks
 
-No new token tier. The group reads the roles and primitives the atoms already
-read — `--bk-space-2` for the gap between the boxes, and the atoms' own
-`--bk-text-muted`, `--bk-text-danger` and `--bk-text-default` — plus the ones the
-shared label styles paint with now that the group has a label state: the
-`*`'s `--bk-text-danger` and the row's `--bk-opacity-disabled` while disabled. It
-declares **no override hook**: there is no `--bk-checkbox-group-*` name, and
-layout is the only thing `orientation` decides.
+No new token tier and **no override hook**: there is no `--bk-checkbox-group-*` name,
+and layout is the only thing `orientation` decides. The group reads the roles and
+primitives its atoms already read:
+
+| Token                   | Paints                                                                |
+| ----------------------- | --------------------------------------------------------------------- |
+| `--bk-space-2`          | the gap between the boxes                                             |
+| `--bk-text-default`     | the atoms' own label text                                             |
+| `--bk-text-muted`       | their hint, and the value of a disabled box                           |
+| `--bk-text-danger`      | their error, the `*` of a required group, and the label while invalid |
+| `--bk-opacity-disabled` | the label row while disabled                                          |
 
 ```css
 /* theming a group means theming the role, not the group */
@@ -155,8 +160,10 @@ layout is the only thing `orientation` decides.
   `submittedValue` — never into a box's shadow root — and writes only
   `disabled` on them. It never sets a box's `checked`, its `required` or its
   message, and an unchecked box still submits nothing.
-- **The inherited `value` is inert.** The group has no value of its own, so
-  assigning `value` changes nothing it submits.
+- **The group never holds the selection.** There is no array and no `selectedValue`:
+  a consumer reads each box's `checked`, or listens for the `bk-change` the boxes
+  already emit. The `value` in the table above is the field contract's, not an
+  answer.
 
 ## What it enforces
 
