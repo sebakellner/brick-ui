@@ -5,8 +5,7 @@ import { SlottedTextController, formControlStyles } from '../shared/form-control
 let instanceCount = 0;
 const nextInstanceId = () => `bk-radio-group-item-${++instanceCount}`;
 
-/* An element because each box needs its own shadow root and its own slotted
- * label; private because a radio alone is not a component: ADR 0012. */
+/* Private because a radio alone is not a component: ADR 0012. */
 /**
  * One radio of a `bk-radio-group`: the native `<input type="radio">` behind a painted circle, with
  * the option's own label and hint. It is the group's markup, not a component to import.
