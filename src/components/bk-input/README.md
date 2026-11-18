@@ -87,7 +87,7 @@ unlike `bk-button` and `bk-checkbox`, which keep it and announce `aria-disabled`
 | `type`         | `type`         | `'text' \| 'email' \| 'password' \| 'search' \| 'tel' \| 'url'`                             | `'text'` |                                                                                                                                                                                                                 |
 | `placeholder`  | `placeholder`  | `string`                                                                                    | `''`     |                                                                                                                                                                                                                 |
 | `autocomplete` | `autocomplete` | `string`                                                                                    | `''`     | forwarded to the field (WCAG 1.3.5)                                                                                                                                                                             |
-| `inputMode`    | —              | `'text' \| 'tel' \| 'url' \| 'email' \| 'numeric' \| 'decimal' \| 'search' \| 'none' \| ''` | `''`     | sets `inputmode` on the field                                                                                                                                                                                   |
+| `inputMode`    | `inputMode`    | `'text' \| 'tel' \| 'url' \| 'email' \| 'numeric' \| 'decimal' \| 'search' \| 'none' \| ''` | `''`     | sets `inputmode` on the field                                                                                                                                                                                   |
 | `disabled`     | `disabled`     | `boolean`                                                                                   | `false`  | reflected; sets the native `disabled` attribute on the inner field ([ADR 0008](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md))           |
 | `required`     | `required`     | `boolean`                                                                                   | `false`  | reflected; announces the state and marks the label with a `*` when there is one                                                                                                                                 |
 
@@ -209,7 +209,7 @@ values: theming the input means theming the roles, not the field.
 
 Inherited from `FormControlMixin`, the same surface a native control offers:
 
-| Member                                | What it does                                                                                                    |
+| Member                                | Notes                                                                                                           |
 | ------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `form`                                | the owning `<form>`, or `null`                                                                                  |
 | `validity`, `validationMessage`       | the delegated validity state and its message                                                                    |
