@@ -19,6 +19,7 @@ wording.
 | D4  | A story is one decision, and its name says which                         | review                                  |
 | D5  | The page connects; the README and the ADRs explain                       | review                                  |
 | D6  | The contract is shared; the idiom is not                                 | the component manifest                  |
+| D7  | Documentation in code earns its place like a comment does                | review                                  |
 
 ## D1. One fact, one home
 
@@ -160,3 +161,23 @@ idiom: `disabled` stays `disabled`, and how you _set_ it is the package's busine
 fails, and a table row with no component behind it fails too. Which surfaces the manifest
 carries from code and which are annotated is the decision in
 [ADR 0020](adr/0020-the-component-manifest-is-generated-and-the-readme-renders-it.md).
+
+## D7. Documentation in code earns its place like a comment does
+
+**Rule.** The JSDoc a name carries — the tags the manifest renders, and the sentence above a
+declaration — says what the name means for a consumer, in one line. It never explains how the
+code works, never restates a type the signature already shows, and never narrates a decision
+that belongs in an ADR. What is not needed to use the name is not written.
+
+**Why.** Doc prose is read once and believed forever, so the second copy of a fact is a second
+thing to keep true — the same reason the README is rendered rather than retyped. An annotation
+that restates the signature goes stale at the first refactor and nobody notices, because it is
+the least reviewed line in the file.
+
+**Do** — `@slot error The problem, rendered in the status region.`
+
+**Don't** — an `@example` block that repeats the whole README `## Usage`, or a `@param` for
+`value` saying "the value".
+
+**Enforced by.** Review. The budget for an ordinary comment is the rule in
+[conventions-code.md](conventions-code.md) about what a comment is allowed to say.
