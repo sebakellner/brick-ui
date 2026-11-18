@@ -14,6 +14,7 @@ export {
   BkRadioGroup,
   type BkRadioGroupOrientation,
 } from './components/bk-radio-group/bk-radio-group.js';
+export { BkTextarea, type BkTextareaResize } from './components/bk-textarea/bk-textarea.js';
 export {
   FormControlMixin,
   formControlStyles,
