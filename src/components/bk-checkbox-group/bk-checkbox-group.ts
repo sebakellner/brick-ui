@@ -15,6 +15,18 @@ export type BkCheckboxGroupOrientation = 'vertical' | 'horizontal';
  * it in the error atom. */
 const MISSING_VALUE_MESSAGE = 'Please select at least one option.';
 
+/**
+ * Names and arranges several `bk-checkbox` elements. The boxes submit their own values; the group
+ * carries the name, the message regions and the "at least one" constraint.
+ *
+ * @slot - The `bk-checkbox` elements of the group.
+ * @slot label - The label atom that names the group.
+ * @slot description - The consumer's own help atom, which is the group's description region.
+ * @slot error - The consumer's own error atom, which is the group's live region.
+ * @csspart label - The row holding the label slot and the `*`, hidden while the group is unnamed.
+ * @csspart boxes - The flow container, vertical or horizontal by `orientation`.
+ * @csspart required - The `*` that marks a required group.
+ */
 export class BkCheckboxGroup extends FieldControlMixin(LitElement) {
   static override styles = [
     formControlStyles,
