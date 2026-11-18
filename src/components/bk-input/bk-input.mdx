@@ -6,18 +6,26 @@ import readme from './README.md?raw';
 
 <Markdown>{readme}</Markdown>
 
-## Default
+## Basic
 
-<Canvas of={InputStories.Default} />
+<Canvas of={InputStories.Basic} />
 
-## States
+## Field
 
-<Canvas of={InputStories.States} />
+<Canvas of={InputStories.Field} />
 
-## Native message and error
+## Disabled
 
-Two channels, one message slot: the browser's own message after a blur or a
-failed submit, `error` from a schema or a rejection. A `novalidate` form shows
-only `error`.
+<Canvas of={InputStories.Disabled} />
 
-<Canvas of={InputStories.NativeValidation} />
+## Invalid
+
+<Canvas of={InputStories.Invalid} />
+
+## Required
+
+<Canvas of={InputStories.Required} />
+
+## Form
+
+<Canvas of={InputStories.Form} />

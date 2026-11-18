@@ -44,9 +44,11 @@ const meta: Meta<Args> = {
       <bk-field-label>${label}</bk-field-label>
       <bk-checkbox name="email" value="email" .checked=${email}>
         <bk-field-label slot="label">Email</bk-field-label>
+        <bk-field-description>Where the receipt and the invoice go.</bk-field-description>
       </bk-checkbox>
       <bk-checkbox name="sms" value="sms" .checked=${sms}>
         <bk-field-label slot="label">SMS</bk-field-label>
+        <bk-field-description>Only for delivery updates.</bk-field-description>
       </bk-checkbox>
       ${description ? html`<bk-field-description>${description}</bk-field-description>` : ''}
       ${error ? html`<bk-field-error>${error}</bk-field-error>` : ''}

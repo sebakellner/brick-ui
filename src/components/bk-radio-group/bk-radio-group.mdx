@@ -6,65 +6,22 @@ import readme from './README.md?raw';
 
 <Markdown>{readme}</Markdown>
 
-## Default
+## Description
 
-Vertical, one value, nothing selected: the first enabled radio takes the tab stop
-and the arrows select as they move.
+<Canvas of={RadioGroupStories.Description} />
 
-<Canvas of={RadioGroupStories.Default} />
+## Field
 
-## Horizontal
-
-`orientation="horizontal"` flows the radios in a row. The arrow keys keep working
-on both axes, so the axis is never the reason a user cannot move.
-
-<Canvas of={RadioGroupStories.Horizontal} />
-
-## Required, blocked submit
-
-`required` is the group's, and an empty group reports `valueMissing`. Press
-**Submit**: the platform's own message appears and the form does not submit. The
-group paints no visible error of its own — that sentence is the consumer's
-`bk-field-error`, as the next story shows.
-
-<Canvas of={RadioGroupStories.Required} />
-
-## Description and error atom
-
-The description and the error are the consumer's atoms, and an `error` atom with
-text is the group's error: it is the message, it paints the label invalid, it sets
-`aria-invalid`, and it reports `customError`.
-
-<Canvas of={RadioGroupStories.DescriptionAndError} />
-
-## Hints per option
-
-A description written **inside** an item is that option's hint: the item assigns
-the slot, the text starts where the label text starts, and the group never adopts
-it as a message about the set. An option with no hint takes no extra space.
-
-<Canvas of={RadioGroupStories.HintsPerOption} />
+<Canvas of={RadioGroupStories.Field} />
 
 ## Disabled
 
-A disabled group disables every radio it owns, keeps the tab stop out of the tab
-order and submits nothing, while the selection it remembers stays visible.
-
 <Canvas of={RadioGroupStories.Disabled} />
 
-## The item: checked, disabled and resized
+## Invalid
 
-`bk-radio-group-item` is the private box of one option: it is part of the group's
-markup, not a component you import or register. This story shows the three states
-that matter — a selected item, one disabled on its own, which the arrows skip —
-and the box painted through `--bk-radio-group-item-size` and
-`--bk-radio-group-item-radius`, set once on the ancestor.
+<Canvas of={RadioGroupStories.Invalid} />
 
-<Canvas of={RadioGroupStories.TheItem} />
+## Horizontal
 
-## In a form: submit and reset
-
-The selection submits under the group's `name`. The radio marked up with
-`checked` is what a reset returns to, and `bk-change` bubbles out of the group.
-
-<Canvas of={RadioGroupStories.InAForm} />
+<Canvas of={RadioGroupStories.Horizontal} />

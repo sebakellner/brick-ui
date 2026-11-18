@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
-import '../bk-button/define.js';
 import '../bk-checkbox/define.js';
+import '../bk-checkbox-group/define.js';
 import '../bk-input/define.js';
+import '../bk-native-select/define.js';
+import '../bk-radio-group/define.js';
 import './define.js';
 
 type Args = {
@@ -46,34 +48,111 @@ export default meta;
 
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
-
-export const LabelOnly: Story = {
-  name: 'Label only',
-  args: { description: '' },
+export const Input: Story = {
+  render: () => html`
+    <div style="display: grid; gap: var(--bk-space-4); width: 360px;">
+      <bk-field>
+        <bk-input name="username" autocomplete="username">
+          <bk-field-label>Username</bk-field-label>
+          <bk-field-description>This is the name other people see.</bk-field-description>
+        </bk-input>
+      </bk-field>
+      <bk-field>
+        <bk-input name="password" type="password" autocomplete="current-password">
+          <bk-field-label>Password</bk-field-label>
+          <bk-field-description>At least 8 characters.</bk-field-description>
+        </bk-input>
+      </bk-field>
+    </div>
+  `,
 };
 
-export const Checkbox: Story = {
-  name: 'A checkbox, its label beside the box',
+export const Select: Story = {
   render: () => html`
     <div style="width: 360px;">
       <bk-field>
-        <bk-checkbox name="terms" required>
-          <bk-field-label>Accept the terms</bk-field-label>
-          <bk-field-description>You can change this later.</bk-field-description>
+        <bk-native-select name="country" placeholder="Choose a country">
+          <bk-field-label>Country</bk-field-label>
+          <bk-field-description
+            >It decides the tax that applies to the invoice.</bk-field-description
+          >
+          <bk-native-select-opt value="ar">Argentina</bk-native-select-opt>
+          <bk-native-select-opt value="br">Brazil</bk-native-select-opt>
+          <bk-native-select-opt value="cl">Chile</bk-native-select-opt>
+          <bk-native-select-opt value="uy">Uruguay</bk-native-select-opt>
+        </bk-native-select>
+      </bk-field>
+    </div>
+  `,
+};
+
+export const Checkbox: Story = {
+  render: () => html`
+    <div style="display: grid; gap: var(--bk-space-4); width: 360px;">
+      <bk-field>
+        <bk-checkbox-group name="desktop-items">
+          <bk-field-label>Show these items on the desktop</bk-field-label>
+          <bk-field-description
+            >Select the items you want to show on the desktop.</bk-field-description
+          >
+          <bk-checkbox value="hard-disks">
+            <bk-field-label>Hard disks</bk-field-label>
+          </bk-checkbox>
+          <bk-checkbox value="external-disks">
+            <bk-field-label>External disks</bk-field-label>
+          </bk-checkbox>
+          <bk-checkbox value="cds">
+            <bk-field-label>CDs, DVDs, and iPods</bk-field-label>
+          </bk-checkbox>
+          <bk-checkbox value="servers">
+            <bk-field-label>Connected servers</bk-field-label>
+          </bk-checkbox>
+        </bk-checkbox-group>
+      </bk-field>
+      <hr
+        style="border: 0; border-block-start: var(--bk-border-width) solid var(--bk-border-default); margin: 0;"
+      />
+      <bk-field>
+        <bk-checkbox name="sync" value="sync" checked>
+          <bk-field-label>Sync Desktop &amp; Documents folders</bk-field-label>
+          <bk-field-description>
+            Your Desktop &amp; Documents folders are being synced with iCloud Drive. You can access
+            them from other devices.
+          </bk-field-description>
         </bk-checkbox>
       </bk-field>
     </div>
   `,
 };
 
-export const LongDescription: Story = {
-  name: 'A description that wraps',
-  args: {
-    label: 'Tax identifier',
-    description:
-      'The number on the invoice. For a company it is the VAT id and it usually starts with the country code. We ask once and never again.',
-  },
+export const RadioGroup: Story = {
+  render: () => html`
+    <div style="width: 360px;">
+      <bk-field>
+        <bk-radio-group name="storage">
+          <bk-field-label>Store the files</bk-field-label>
+          <bk-field-description>You can move them to another drive later.</bk-field-description>
+          <bk-radio-group-item value="local">
+            <bk-field-label>On this Mac</bk-field-label>
+          </bk-radio-group-item>
+          <bk-radio-group-item value="icloud">
+            <bk-field-label>In iCloud Drive</bk-field-label>
+            <bk-field-description
+              >They sync to your other devices and take no local space.</bk-field-description
+            >
+          </bk-radio-group-item>
+          <bk-radio-group-item value="external">
+            <bk-field-label>On an external drive</bk-field-label>
+          </bk-radio-group-item>
+        </bk-radio-group>
+      </bk-field>
+    </div>
+  `,
+};
+
+export const LabelOnly: Story = {
+  name: 'Label only',
+  args: { description: '' },
 };
 
 export const Invalid: Story = {
@@ -91,75 +170,6 @@ export const Invalid: Story = {
           <bk-field-error>${error}</bk-field-error>
         </bk-input>
       </bk-field>
-    </div>
-  `,
-};
-
-export const PropsSideBySide: Story = {
-  name: 'Atoms, and the properties they replace',
-  render: () => html`
-    <div style="display: grid; gap: var(--bk-space-4); width: 360px;">
-      <bk-field>
-        <bk-input name="composed" type="email">
-          <bk-field-label>Composed</bk-field-label>
-          <bk-field-description>Label and description are slotted content.</bk-field-description>
-        </bk-input>
-      </bk-field>
-    </div>
-  `,
-};
-
-const readout = (form: HTMLFormElement) => {
-  const output = form.parentElement?.querySelector('output');
-  if (!output) return;
-  const entries = [...new FormData(form).entries()].map(
-    ([key, value]) => `${key}=${String(value) || '(empty)'}`,
-  );
-  output.textContent = entries.join(' · ') || 'no entries';
-};
-
-export const InAForm: Story = {
-  name: 'In a form',
-  render: () => html`
-    <div style="display: grid; gap: var(--bk-space-4); width: 360px;">
-      <form
-        style="display: grid; gap: var(--bk-space-4);"
-        @submit=${(event: Event) => {
-          event.preventDefault();
-          readout(event.target as HTMLFormElement);
-        }}
-        @reset=${(event: Event) => {
-          requestAnimationFrame(() => readout(event.target as HTMLFormElement));
-        }}
-      >
-        <bk-field>
-          <bk-input name="email" type="email" autocomplete="email" required>
-            <bk-field-label>Email</bk-field-label>
-            <bk-field-description>Where the receipt goes.</bk-field-description>
-          </bk-input>
-        </bk-field>
-        <bk-field>
-          <bk-input name="company" autocomplete="organization">
-            <bk-field-label>Company</bk-field-label>
-            <bk-field-description>Optional. It goes on the invoice.</bk-field-description>
-          </bk-input>
-        </bk-field>
-        <bk-field>
-          <bk-checkbox name="terms" value="accepted">
-            <bk-field-label>Accept the terms</bk-field-label>
-            <bk-field-description>You can change this later.</bk-field-description>
-          </bk-checkbox>
-        </bk-field>
-        <div style="display: flex; gap: var(--bk-space-3); align-items: center;">
-          <bk-button type="submit">Submit</bk-button>
-          <bk-button type="reset" variant="secondary">Reset</bk-button>
-        </div>
-      </form>
-      <output
-        style="font: var(--bk-font-size-sm) var(--bk-font-sans); color: var(--bk-text-muted);"
-      >
-        Submit to read FormData. The checkbox submits only while it is checked.
-      </output>
     </div>
   `,
 };
