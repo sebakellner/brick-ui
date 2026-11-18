@@ -42,7 +42,7 @@ expect('bk-button', 'cssParts', ['button']);
 expect('bk-button', 'slots', ['(default)']);
 expect('bk-field', 'slots', ['label', 'description', 'error']);
 
-if (byTag.size < 13) problems.push(`only ${byTag.size} elements declared, expected 13`);
+if (byTag.size < 13) problems.push(`only ${byTag.size} elements declared, expected at least 13`);
 
 if (problems.length) {
   console.error(problems.join('\n'));
