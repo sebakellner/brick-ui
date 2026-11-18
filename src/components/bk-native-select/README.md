@@ -83,6 +83,7 @@ document.querySelector('bk-native-select').addEventListener('bk-change', (event)
 | ------------- | -------------------------------------------------------------------------------------------------------------------- |
 | `label`       | the `<label>`, carrying `data-state` when the field is invalid or disabled, and `data-disabled` while it is disabled |
 | `input`       | the native `<select>`                                                                                                |
+| `caret`       | the arrow drawn over the native `<select>`, `aria-hidden`                                                            |
 | `required`    | the `*` that marks a required field, `aria-hidden`                                                                   |
 | `message`     | the container of the two regions                                                                                     |
 | `description` | the help region                                                                                                      |

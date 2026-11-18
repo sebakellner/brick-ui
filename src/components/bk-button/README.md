@@ -20,6 +20,12 @@ A button that delegates focus to its inner native `<button>`.
 | `label`    | `label`    | `string`                              | `''`        | accessible name for a button that shows an icon and no text; mirrored to the inner button |
 | `disabled` | `disabled` | `boolean`                             | `false`     | reflected; sets `aria-disabled` on the inner button and blocks activation                 |
 
+## Slots
+
+| Slot        | Content | Notes                                    |
+| ----------- | ------- | ---------------------------------------- |
+| _(default)_ | text    | the label; a button with no text is bare |
+
 ## Parts
 
 | Part     | Element                     |
@@ -75,10 +81,6 @@ part of the API.
   a pointer over it changes nothing.
 - The secondary border clears 3:1 against a white surface (WCAG 1.4.11), which
   the tests assert.
-
-## Content
-
-A single default slot: the label.
 
 ## Forms
 
