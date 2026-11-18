@@ -113,8 +113,6 @@ export class FieldRegionsController implements ReactiveController {
 
   private adopt(atom: HTMLElement, name: RegionName): void {
     if (!atom.id) atom.id = `${this.options.idPrefix}-${name}`;
-    if (this.text.nodeHasText(atom)) atom.removeAttribute('data-empty');
-    else atom.setAttribute('data-empty', '');
     if (name !== 'error' || atom.hasAttribute('role')) return;
     atom.setAttribute('role', 'status');
     liveRegions.add(atom);
@@ -122,13 +120,12 @@ export class FieldRegionsController implements ReactiveController {
 
   private release(atom: HTMLElement): void {
     /* an atom another container adopted is that container's to re-state, so
-     * only an atom that left every container gives the mark and the role back */
+     * only an atom that left every container gives the role back */
     if (atom.closest(this.host.localName) !== null) return;
     if (liveRegions.has(atom)) {
       atom.removeAttribute('role');
       liveRegions.delete(atom);
     }
-    atom.removeAttribute('data-empty');
     atom.removeAttribute('hidden');
   }
 

@@ -4,8 +4,6 @@ import { expectNoViolations, expectRendered } from '../../../test/helpers/a11y.j
 import { setTheme } from '../../../test/helpers/theme.js';
 import { settle } from '../../../test/helpers/settle.js';
 import '.././define.js';
-import '../../bk-checkbox-group/define.js';
-import type { BkCheckboxGroup } from '../../bk-checkbox-group/bk-checkbox-group.js';
 import type { BkFieldDescription } from '.././bk-field-description.js';
 
 describe('bk-field-description', () => {
@@ -40,39 +38,40 @@ describe('bk-field-description', () => {
     ).to.be.greaterThan(0);
   });
 
-  it('should collapse to no space while the group that owns it marks it empty', async () => {
+  it('should clip itself to no space while it has no text, with no container involved', async () => {
     const container = await fixture<HTMLDivElement>(html`
       <div>
-        <bk-checkbox-group>
-          <bk-field-label>Notifications</bk-field-label>
-          <bk-field-description></bk-field-description>
-        </bk-checkbox-group>
-        <bk-checkbox-group>
-          <bk-field-label>Notifications</bk-field-label>
-          <bk-field-description>Pick at least one.</bk-field-description>
-        </bk-checkbox-group>
+        <bk-field-description></bk-field-description>
+        <bk-field-description>Pick at least one.</bk-field-description>
       </div>
     `);
-    const empty = container.querySelector<BkCheckboxGroup>('bk-checkbox-group')!;
-    const filled = container.querySelector<BkCheckboxGroup>('bk-checkbox-group:last-child')!;
-    await settle(empty);
-    await settle(filled);
-    const el = empty.querySelector<BkFieldDescription>(':scope > bk-field-description')!;
-    const control = filled.querySelector<BkFieldDescription>(':scope > bk-field-description')!;
+    const [el, control] = Array.from(
+      container.querySelectorAll<BkFieldDescription>('bk-field-description'),
+    );
+    await settle(el);
+    await settle(control);
     const style = getComputedStyle(el);
 
-    expect(style.position, 'the empty region the group marks is clipped, not removed').to.equal(
-      'absolute',
-    );
+    expect(el.hasAttribute('data-empty'), 'the empty atom is the one that says so').to.equal(true);
+    expect(style.position, 'the empty description is clipped, not removed').to.equal('absolute');
     expect(style.width).to.equal('1px');
     expect(style.height).to.equal('1px');
     expect(Boolean(el.isConnected), 'the empty description stays in the tree').to.equal(true);
 
     expect(
-      getComputedStyle(control).position,
-      'the sibling with text is not clipped: the mark came from the group',
-    ).to.not.equal('absolute');
+      control.hasAttribute('data-empty'),
+      'the sibling with text carries no mark, and no container wrote one',
+    ).to.equal(false);
+    expect(getComputedStyle(control).position, 'so it is not clipped').to.not.equal('absolute');
     expect(getComputedStyle(control).display, 'and it lays out').to.equal('block');
+
+    el.textContent = 'Now it has text.';
+    await settle(el);
+
+    expect(el.hasAttribute('data-empty'), 'its own text clears the mark').to.equal(false);
+    expect(getComputedStyle(el).position, 'and gives the atom its place back').to.not.equal(
+      'absolute',
+    );
   });
 
   it('should hide while it carries the hidden attribute', async () => {

@@ -304,14 +304,14 @@ inside its own shadow root — `aria-labelledby`/`aria-describedby` resolve per 
 | ------------------ | ------------------ | --------------------------------------------------------------------------- |
 | `id`               | description, error | always, if the atom has none: `<group id>-description`/`-error`             |
 | `role="status"`    | error              | always, if the atom has no role of its own                                  |
-| `data-empty`       | description, error | while `textContent.trim()` is empty                                         |
 | `hidden`           | description        | while the error atom has text                                               |
 | `aria-describedby` | the host           | the error id while the error has text, else the description id, else absent |
 
 The rule and its reason are
 [ADR 0010](https://github.com/sebakellner/brick-ui/blob/main/docs/adr/0010-name-a-group-on-its-host-and-let-its-atoms-be-the-regions.md)'s;
 the group hosts the label the same way and assigns it with
-`ariaLabelledByElements`.
+`ariaLabelledByElements`. Its atoms mark their own emptiness with `data-empty`;
+the group only reads the mark to give a region its `--bk-space-1` once it has text.
 
 **An error atom with text is the group's error**: it reports `customError`, paints
 the label invalid and sets `aria-invalid="true"` on the host, exactly as the

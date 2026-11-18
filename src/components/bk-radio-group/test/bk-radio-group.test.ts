@@ -184,7 +184,10 @@ describe('bk-radio-group', () => {
       true,
     );
     expect(hint.id, 'the hint of a radio is not adopted: it is given no id').to.equal('');
-    expect(hint.hasAttribute('data-empty'), 'nor the empty mark the group writes').to.equal(false);
+    expect(
+      hint.hasAttribute('data-empty'),
+      'nor one the atom writes for itself: the hint has text',
+    ).to.equal(false);
     expect(hint.getAttribute('slot'), 'the item owns the slot assignment of its own atom').to.equal(
       'description',
     );

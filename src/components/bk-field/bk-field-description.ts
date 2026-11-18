@@ -1,4 +1,5 @@
 import { LitElement, css, html } from 'lit';
+import { SlottedTextController } from '../shared/form-control/index.js';
 import { BkField } from './bk-field.js';
 
 /**
@@ -31,10 +32,22 @@ export class BkFieldDescription extends LitElement {
     }
   `;
 
+  /* The text the atom holds, which no container can read for it: it is this
+   * element's light DOM. Why the atom, and not its container, decides: ADR 0022. */
+  private readonly text = new SlottedTextController(this);
+
   override connectedCallback(): void {
     super.connectedCallback();
     const field = this.closest('bk-field');
     if (field instanceof BkField) field.registerPart(this);
+    this.text.watchNodes([this]);
+  }
+
+  /* `data-empty` stays present-while-empty, so the `::slotted(:not([data-empty]))`
+   * of a group that consumes this atom keeps reading it. */
+  protected override willUpdate(): void {
+    if (this.text.nodeHasText(this)) this.removeAttribute('data-empty');
+    else this.setAttribute('data-empty', '');
   }
 
   override render() {
