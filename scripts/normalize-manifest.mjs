@@ -6,6 +6,12 @@ import { readFile, writeFile } from 'node:fs/promises';
 const path = new URL('../src/custom-elements.json', import.meta.url);
 const manifest = JSON.parse(await readFile(path, 'utf8'));
 
-manifest.modules.sort((a, b) => (a.path ?? '').localeCompare(b.path ?? ''));
+const byPath = (a, b) => {
+  const left = a.path ?? '';
+  const right = b.path ?? '';
+  return left < right ? -1 : left > right ? 1 : 0;
+};
+
+manifest.modules.sort(byPath);
 
 await writeFile(path, `${JSON.stringify(manifest, null, 2)}\n`);

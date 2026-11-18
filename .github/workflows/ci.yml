@@ -38,8 +38,12 @@ jobs:
             echo "::error::generated token CSS is out of date; run pnpm build:tokens and commit the result"
             exit 1
           fi
-      - name: the component manifest is generated from the code
-        run: pnpm build:manifest
+      - name: the component manifest is generated from the code, and twice the same
+        run: |
+          pnpm build:manifest
+          cp src/custom-elements.json "$RUNNER_TEMP/manifest-once.json"
+          pnpm build:manifest
+          cmp "$RUNNER_TEMP/manifest-once.json" src/custom-elements.json
       - run: pnpm check:tokens
       - run: pnpm typecheck
       - run: pnpm test
