@@ -101,6 +101,18 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         border-radius: var(--bk-slider-radius, var(--bk-slider-variant-radius));
       }
 
+      :host(:not([orientation='vertical'])) .rail:not([data-two]) .fill {
+        margin-inline-start: calc(
+          var(--bk-slider-thumb-size, var(--bk-slider-variant-thumb-size)) / -2
+        );
+      }
+
+      :host([orientation='vertical']) .rail:not([data-two]) .fill {
+        margin-block-end: calc(
+          var(--bk-slider-thumb-size, var(--bk-slider-variant-thumb-size)) / -2
+        );
+      }
+
       .thumb-input {
         position: absolute;
         inset-inline: 0;
@@ -133,10 +145,12 @@ export class BkSlider extends FieldControlMixin(LitElement) {
       }
 
       .thumb-input::-webkit-slider-thumb {
+        box-sizing: border-box;
         inline-size: var(--bk-slider-thumb-size, var(--bk-slider-variant-thumb-size));
         block-size: var(--bk-slider-thumb-size, var(--bk-slider-variant-thumb-size));
         appearance: none;
         background: var(--bk-bg-surface);
+        border: var(--bk-border-width) solid var(--bk-border-strong);
         border-radius: 100%;
         cursor: pointer;
       }

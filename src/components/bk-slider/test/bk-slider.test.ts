@@ -247,18 +247,29 @@ describe('bk-slider', () => {
     it('should paint the run from the start of the track to the thumb', async () => {
       const el = await fixture<BkSlider>(html`<bk-slider value="0"></bk-slider>`);
 
-      expect(fillOf(el).getBoundingClientRect().width, 'nothing is filled yet').to.equal(0);
+      const atMin = fillOf(el).getBoundingClientRect();
+      const railAtMin = el.shadowRoot!.querySelector('[part="track"]')!.getBoundingClientRect();
+      const thumbSize = el.shadowRoot!.querySelector('input')!.getBoundingClientRect().height;
+
+      expect(
+        atMin.width,
+        'the run reaches the thumb centre, which is half a thumb wide from the edge',
+      ).to.be.closeTo(thumbSize / 2, 1);
+      expect(atMin.left, 'and it starts at the rail edge, with no nub').to.equal(railAtMin.left);
 
       el.value = 50;
       await el.updateComplete;
 
-      expect(fillOf(el).getBoundingClientRect().width).to.be.closeTo(laneOf(el) / 2, 1);
+      expect(
+        fillOf(el).getBoundingClientRect().width,
+        'half the lane plus the cap that reaches the rail edge',
+      ).to.be.closeTo(laneOf(el) / 2 + thumbSize / 2, 1);
 
       el.value = 100;
       await el.updateComplete;
 
-      expect(fillOf(el).getBoundingClientRect().width, 'the whole lane').to.be.closeTo(
-        laneOf(el),
+      expect(fillOf(el).getBoundingClientRect().width, 'the whole lane and its cap').to.be.closeTo(
+        laneOf(el) + thumbSize / 2,
         1,
       );
     });
@@ -786,6 +797,37 @@ describe('bk-slider', () => {
         new FormData(form).get('price'),
         'a field the fieldset disabled must not submit, as every other field here',
       ).to.equal(null);
+    });
+  });
+
+  describe('paint', () => {
+    it('should start the run at the rail edge, never at the thumb centre', async () => {
+      const el = await fixture<BkSlider>(html`<bk-slider value="40"></bk-slider>`);
+      const rail = el.shadowRoot!.querySelector('[part="track"]')!.getBoundingClientRect();
+      const fill = el.shadowRoot!.querySelector('[part="fill"]')!.getBoundingClientRect();
+
+      expect(fill.left, 'no nub of track before the run').to.equal(rail.left);
+      expect(fill.right, 'and it ends under the thumb').to.be.lessThan(rail.right);
+    });
+
+    it('should ring the thumb so it reads against the page', async () => {
+      for (const theme of ['light', 'dark'] as const) {
+        setTheme(theme);
+        const el = await fixture<BkSlider>(html`<bk-slider value="40"></bk-slider>`);
+        const rule = [...el.shadowRoot!.adoptedStyleSheets]
+          .flatMap((sheet) => [...sheet.cssRules].map((entry) => entry.cssText))
+          .find((text) => text.includes('::-webkit-slider-thumb {'));
+
+        expect(rule, 'the thumb rule is the one with an edge').to.contain('border');
+        expect(rule).to.contain('--bk-border-strong');
+        expect(
+          contrastRatio(
+            await colorOf('var(--bk-border-strong)'),
+            await colorOf('var(--bk-bg-surface)'),
+          ),
+          `the edge clears 3:1 against the page (${theme})`,
+        ).to.be.at.least(3);
+      }
     });
   });
 });
