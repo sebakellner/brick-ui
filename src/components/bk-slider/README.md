@@ -243,7 +243,12 @@ disabled>` contains it, because the value getter asks `fieldDisabled` before it 
 ## Ticks and the readout
 
 `ticks` draws one mark per `step` from `min` to `max` on the rail, and `tooltip` echoes
-the value on the knob. Both are decoration: the tick layer and the bubble are
+the value on the knob. **The readout is not a tooltip**, and it is not built from one:
+MUI and Shoelace both ship a tooltip component and both render the slider's readout
+inside the slider instead, and only Ant Design reuses its popup. A tooltip is a described
+popup — a trigger, a delay, a dismissal, an anchor, `aria-describedby` — and none of that
+belongs here, where the bubble follows the knob on every move and the announcement is
+`aria-valuetext`. Both are decoration: the tick layer and the bubble are
 `aria-hidden`, neither is focusable, and neither is reachable with the keyboard. What a
 screen reader hears is `value-text` — which is why the readout is its visual echo and
 not a second channel — and with no `value-text` the announcement is the platform's own
