@@ -109,13 +109,18 @@ never a second place to maintain the API.
 
 ## Verify
 
-- `pnpm test`, `pnpm typecheck`, `pnpm check:tokens` all green.
-- The new element has a `README.md` and a Storybook page, and the documentation
-  table in the root README reaches it.
+- Every gate in the [definition of done](../AGENTS.md#definition-of-done) is green. A
+  component that fails `check:readmes` is one whose README and manifest disagree, which
+  no test catches, so it is worth knowing that the check exists before the merge rather
+  than after it.
+- The new element has its own `README.md` and a Storybook page. The root README's
+  documentation table reaches it through the `src/components/*/README.md` row, so nothing
+  is added to the root README per component — the component's own README is what has to
+  exist.
 - A keyboard-only pass: tab to it, focus ring visible, `aria-disabled` controls
   reachable and inert.
-- Every new token is read by the component, and every new name resolves: the suite
-  and `check:tokens` say so.
+- Every new token is read by the component, and every new name resolves: the suite and
+  `check:tokens` say so.
 
 ## Related
 
