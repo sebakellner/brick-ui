@@ -155,8 +155,10 @@ export const Tooltip: Story = {
   args: { tooltip: 'always' },
 };
 
-/* The readout follows `bk-change`, and the value text follows the value: a thumb that has
- * moved to 24 is announced as "24 °C", never as a stale "21 °C" and never as a bare 24. */
+/* The readout follows `bk-input`, the continuous channel, so the number moves with the
+ * thumb instead of jumping when it is released; `bk-change` would only report the end of
+ * the gesture. The value text follows the same event: a thumb that has moved to 24 is
+ * announced as "24 °C", never as a stale "21 °C" and never as a bare 24. */
 export const Controlled: Story = {
   args: {
     label: 'Temperature',
@@ -182,14 +184,14 @@ export const Controlled: Story = {
             min=${min}
             max=${max}
             value-text="${value} °C"
-            @bk-change=${(event: Event) => {
+            @bk-input=${(event: Event) => {
               const slider = event.currentTarget as BkSlider;
               const detail = (event as CustomEvent<{ value: number }>).detail;
               slider.valueText = `${detail.value} °C`;
               say(detail.value);
             }}
           >
-            ${parts(label, 'The readout under the track follows bk-change.')}
+            ${parts(label, 'The readout under the track follows bk-input, every move.')}
           </bk-slider>
           <p ${ref((element) => (readout = element instanceof HTMLElement ? element : null))}>
             ${value} °C
