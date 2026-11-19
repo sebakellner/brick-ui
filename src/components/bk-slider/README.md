@@ -105,15 +105,22 @@ pseudo-element, so no `part` reaches it — see "Limitations".
 | Hook                       | Paints                                                                                                                 |
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | `--bk-slider-thumb-size`   | the diameter of the thumb, and the height of the box the input hit-tests (defaults to `--bk-space-4`)                  |
-| `--bk-slider-track-height` | the height of the painted track (defaults to `--bk-space-2`)                                                           |
+| `--bk-slider-track-height` | the height of the painted track (defaults to `--bk-space-1`, so 4px)                                                   |
 | `--bk-slider-radius`       | the corner radius of the track and of the run (defaults to `--bk-radius-lg`)                                           |
 | `--bk-slider-length`       | the length of a vertical slider, which is the rail's inline span in that orientation (defaults to `--bk-space-4` × 15) |
 
 Everything else the slider paints is a shared role or base token: the track is
 `--bk-bg-surface-strong` and steps to `--bk-bg-surface-strong-hover` under the
-pointer, the run is `--bk-bg-accent`, the thumb is `--bk-bg-surface`, and the focus
-ring is `--bk-focus-ring`. A disabled slider dims the whole track with
-`--bk-opacity-disabled`, thumb and run included, so nothing about it looks
+pointer, the run is `--bk-bg-accent`, and the focus ring is `--bk-focus-ring`. The
+thumb is the **run colour** — `--bk-bg-accent` — with a one-pixel
+`--bk-border-on-accent` edge, because a knob painted a separate colour reads as a
+second object rather than as the end of the run. That edge is what separates the knob
+from the track and from the run it caps: it is white on the light theme and
+`neutral-900` on the dark one, so it reads 4.80:1 against the light track and 6.93:1
+against the dark one, and 5.17:1 and 3.38:1 against the knob itself. Under the pointer
+the edge doubles to two pixels, which keeps the knob's outer size because the box is
+`border-box`. A disabled slider dims the whole
+track with `--bk-opacity-disabled`, thumb and run included, so nothing about it looks
 operable.
 
 `--bk-slider-variant-thumb-size`, `--bk-slider-variant-track-height` and

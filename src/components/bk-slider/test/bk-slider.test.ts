@@ -201,8 +201,12 @@ describe('bk-slider', () => {
 
       expect(el.shadowRoot!.querySelector('[part="thumb"]')).to.equal(null);
       expect(paintOf(ruleOf(el, '::-webkit-slider-thumb'), 'background')).to.equal(
-        'var(--bk-bg-surface)',
+        'var(--bk-bg-accent)',
       );
+      expect(
+        paintOf(ruleOf(el, '::-webkit-slider-thumb'), 'border'),
+        'the knob is the run colour, so its edge is what separates the two',
+      ).to.contain('var(--bk-border-on-accent)');
     });
   });
 
@@ -629,19 +633,41 @@ describe('bk-slider', () => {
         ).to.be.at.least(3);
       });
 
-      it(`should keep the thumb at 3:1 against the track and the run (${theme})`, async () => {
+      it(`should separate the knob from the track with its edge (${theme})`, async () => {
         setTheme(theme);
+        clearStyleCache();
         const el = await fixture<BkSlider>(html`<bk-slider value="40" value-end="80"></bk-slider>`);
-        const thumb = await colorOf(paintOf(ruleOf(el, '::-webkit-slider-thumb'), 'background'));
+        const rule = ruleOf(el, '::-webkit-slider-thumb');
+        const edge = await colorOf(
+          paintOf(rule, 'border').match(/solid\s+(var\(--bk-[a-z-]+\))/)![1],
+        );
+        const knob = await colorOf(paintOf(rule, 'background'));
+        const rail = getComputedStyle(railOf(el)).backgroundColor;
 
         expect(
-          contrastRatio(thumb, getComputedStyle(railOf(el)).backgroundColor),
-          'the thumb against the unfilled track',
+          contrastRatio(edge, rail),
+          'the edge against the unfilled track the knob caps',
+        ).to.be.at.least(3);
+        expect(contrastRatio(edge, knob), 'and against the knob it wraps').to.be.at.least(3);
+        expect(
+          contrastRatio(knob, await colorOf('var(--bk-bg-surface)')),
+          'the knob against the page it overflows onto',
         ).to.be.at.least(3);
         expect(
-          contrastRatio(thumb, getComputedStyle(fillOf(el)).backgroundColor),
-          'and against the run it ends',
-        ).to.be.at.least(3);
+          contrastRatio(knob, getComputedStyle(fillOf(el)).backgroundColor),
+          'the knob is the run colour by design, which is why the edge carries the separation',
+        ).to.be.below(3);
+      });
+
+      it(`should thicken the knob edge under the pointer (${theme})`, async () => {
+        setTheme(theme);
+        const el = await fixture<BkSlider>(html`<bk-slider value="40"></bk-slider>`);
+
+        const hover = [...el.shadowRoot!.adoptedStyleSheets]
+          .flatMap((sheet) => [...sheet.cssRules].map((entry) => entry.cssText))
+          .find((text) => text.includes(':hover::-webkit-slider-thumb'));
+
+        expect(hover, 'a hover rule exists for the knob').to.contain('border-width');
       });
 
       it(`should keep the fill at 3:1 against the surface (${theme})`, async () => {
@@ -819,13 +845,13 @@ describe('bk-slider', () => {
           .find((text) => text.includes('::-webkit-slider-thumb {'));
 
         expect(rule, 'the thumb rule is the one with an edge').to.contain('border');
-        expect(rule).to.contain('--bk-border-strong');
+        expect(rule).to.contain('--bk-border-on-accent');
         expect(
           contrastRatio(
-            await colorOf('var(--bk-border-strong)'),
-            await colorOf('var(--bk-bg-surface)'),
+            await colorOf('var(--bk-border-on-accent)'),
+            getComputedStyle(el.shadowRoot!.querySelector('[part="track"]')!).backgroundColor,
           ),
-          `the edge clears 3:1 against the page (${theme})`,
+          `the edge clears 3:1 against the track it caps (${theme})`,
         ).to.be.at.least(3);
       }
     });

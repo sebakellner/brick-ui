@@ -38,6 +38,9 @@
       }
     },
     "border": {
+      "on-accent": {
+        "value": "{palette.neutral-900}"
+      },
       "default": {
         "value": "{palette.neutral-500}"
       },

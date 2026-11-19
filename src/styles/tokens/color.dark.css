@@ -10,6 +10,7 @@
   --bk-text-muted: var(--bk-palette-neutral-400);
   --bk-text-on-accent: var(--bk-palette-white);
   --bk-text-danger: var(--bk-palette-red-400);
+  --bk-border-on-accent: var(--bk-palette-neutral-900);
   --bk-border-default: var(--bk-palette-neutral-500);
   --bk-border-strong: var(--bk-palette-neutral-400);
   --bk-border-danger: var(--bk-palette-red-400);
