@@ -772,5 +772,20 @@ describe('bk-slider', () => {
       expect(endInputOf(el)!.value).to.equal('80');
       expect(el.error, 'a reset clears the error').to.equal('');
     });
+
+    it('should submit nothing while a disabled fieldset disables it', async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <fieldset disabled><bk-slider name="price" value="30"></bk-slider></fieldset>
+        </form>
+      `);
+      const el = form.querySelector<BkSlider>('bk-slider')!;
+      await settle(el);
+
+      expect(
+        new FormData(form).get('price'),
+        'a field the fieldset disabled must not submit, as every other field here',
+      ).to.equal(null);
+    });
   });
 });

@@ -102,11 +102,12 @@ pseudo-element, so no `part` reaches it — see "Limitations".
 
 ## Tokens and hooks
 
-| Hook                       | Paints                                                                                                |
-| -------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `--bk-slider-thumb-size`   | the diameter of the thumb, and the height of the box the input hit-tests (defaults to `--bk-space-4`) |
-| `--bk-slider-track-height` | the height of the painted track (defaults to `--bk-space-2`)                                          |
-| `--bk-slider-radius`       | the corner radius of the track and of the run (defaults to `--bk-radius-lg`)                          |
+| Hook                       | Paints                                                                                                                 |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `--bk-slider-thumb-size`   | the diameter of the thumb, and the height of the box the input hit-tests (defaults to `--bk-space-4`)                  |
+| `--bk-slider-track-height` | the height of the painted track (defaults to `--bk-space-2`)                                                           |
+| `--bk-slider-radius`       | the corner radius of the track and of the run (defaults to `--bk-radius-lg`)                                           |
+| `--bk-slider-length`       | the length of a vertical slider, which is the rail's inline span in that orientation (defaults to `--bk-space-4` × 15) |
 
 Everything else the slider paints is a shared role or base token: the track is
 `--bk-bg-surface-strong` and steps to `--bk-bg-surface-strong-hover` under the
@@ -183,6 +184,9 @@ override set on an ancestor still wins. Set the three hooks above, not those.
   only the thumbs take the pointer; a click between the two thumbs hits the track
   and moves nothing. With one thumb the input is the whole track, and a click jumps
   the thumb there, as the platform does.
+- **A disabled fieldset disables it.** The control submits nothing while a `<fieldset
+disabled>` contains it, because the value getter asks `fieldDisabled` before it builds
+  the form value — the same guard `bk-native-select` carries.
 - **No `required`.** The HTML specification excludes `range`: a range always has a
   value, the browser defaults it to the midpoint without the user touching it, so
   `valueMissing` can never fire; none of the established libraries in this space

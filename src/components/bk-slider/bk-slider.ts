@@ -60,6 +60,7 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         --bk-slider-variant-thumb-size: var(--bk-space-4);
         --bk-slider-variant-track-height: var(--bk-space-2);
         --bk-slider-variant-radius: var(--bk-radius-lg);
+        --bk-slider-variant-length: calc(var(--bk-space-4) * 15);
       }
 
       .rail {
@@ -73,7 +74,7 @@ export class BkSlider extends FieldControlMixin(LitElement) {
       }
 
       :host([orientation='vertical']) .rail {
-        inline-size: calc(var(--bk-space-4) * 15);
+        inline-size: var(--bk-slider-length, var(--bk-slider-variant-length));
         writing-mode: vertical-rl;
         direction: rtl;
       }
@@ -178,9 +179,12 @@ export class BkSlider extends FieldControlMixin(LitElement) {
   }
 
   /* The platform clamps a value outside `min`/`max` in the input that holds it, so the input
-   * is the truth about what the control shows. With two thumbs the browser keeps both under
-   * `name` as repeated keys, which is what `FormData.getAll` reads back. */
+   * is the truth about what the control shows. With two thumbs this getter assembles the
+   * `FormData` and appends both values under `name`, which is what makes them repeated keys
+   * for `FormData.getAll`; a disabled field, or one with no name, contributes nothing. */
   override get submittedValue(): string | FormData | null {
+    if (this.fieldDisabled) return null;
+
     const value = this.rangeInput?.value ?? String(this.value);
     if (this.valueEnd === null) return value;
     if (this.name === '') return value;
