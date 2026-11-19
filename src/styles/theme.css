@@ -29,3 +29,15 @@
     color-scheme: dark;
   }
 }
+
+/* Motion is one composite token, so one rule retimes the whole kit: a host that asks
+   for reduced motion still gets the state change, just without the tween. 1ms and not
+   0 because a zero duration drops `transitionend`, which a consumer may be listening
+   for. The selector is zero-specificity, like the ones above, so a host can opt out. */
+@media (prefers-reduced-motion: reduce) {
+  :where(:root),
+  :where([data-theme='light']),
+  :where([data-theme='dark']) {
+    --bk-transition: 1ms;
+  }
+}

@@ -4,14 +4,16 @@ Rules for the token source in `tokens/*.json` and for the layers it generates.
 The pipeline is explained in [ADR 0001](adr/0001-generate-token-css-from-json.md);
 why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 
-| #   | Rule                                                                    | Enforced by         |
-| --- | ----------------------------------------------------------------------- | ------------------- |
-| R1  | A semantic role exists only while a component reads it directly         | `pnpm check:tokens` |
-| R2  | References point downwards, one hop, never at a role                    | review              |
-| R3  | The palette is a reference ramp, not a usage list                       | review              |
-| R4  | The token path is the public name                                       | review              |
-| R5  | A role is read under the property it belongs to                         | `pnpm check:tokens` |
-| R6  | A component reads a role for colour and a primitive for everything else | `pnpm check:tokens` |
+| #   | Rule                                                                     | Enforced by         |
+| --- | ------------------------------------------------------------------------ | ------------------- |
+| R1  | A semantic role exists only while a component reads it directly          | `pnpm check:tokens` |
+| R2  | References point downwards, one hop, never at a role                     | review              |
+| R3  | The palette is a reference ramp, not a usage list                        | review              |
+| R4  | The token path is the public name                                        | review              |
+| R5  | A role is read under the property it belongs to                          | `pnpm check:tokens` |
+| R6  | A component reads a role for colour and a primitive for everything else  | `pnpm check:tokens` |
+| R7  | Motion is one composite token, and reduced motion zeroes it at the theme | review              |
+| R8  | There is no shadow layer until something paints a shadow                 | review              |
 
 Before any of these rules, `pnpm check:tokens` asserts **existence**: every
 `--bk-*` name read inside a CSS string must be a declared token or a hook. No
@@ -149,3 +151,32 @@ theme switches, with nothing to notice it.
 **Enforced by.** `pnpm check:tokens`. Why the primitives a component reads stay single-purpose
 — one axis each, never merged — is the decision in
 [ADR 0019](adr/0019-the-token-graph-is-the-public-contract.md).
+
+## R7. Motion is one composite token, and reduced motion zeroes it at the theme
+
+**Rule.** `--bk-transition` is the only timing a component reads, and it carries the
+duration and the easing together. `theme.css` sets it to `1ms` under
+`prefers-reduced-motion: reduce`, and no component writes a duration of its own.
+
+**Why.** One value read everywhere means one rule retimes the whole kit, which is the
+property a host needs in order to opt out of motion without auditing every component.
+`1ms` rather than `0` because a zero duration never fires `transitionend`, and the
+consumer listening for it would wait forever.
+
+**Enforced by.** Review, and the suite: the test page zeroes `--bk-transition`, which is
+the same mechanism the media query uses.
+
+## R8. There is no shadow layer until something paints a shadow
+
+**Rule.** No `box-shadow` in the control layer, and no shadow token. A shadow is a
+composite value — offset, blur, spread and colour — which this token pipeline cannot
+express as references to the layer below, and which `check:tokens` cannot verify: a role
+read under `box-shadow` is already rejected by R5.
+
+**Why.** A composite string is a value nothing can check. Fluent and Ant Design both
+carry theirs that way, and Material avoids the problem by tokenising elevation as a level
+plus a colour. Until this kit paints depth, a shadow token would be the one unchecked
+thing in the layer.
+
+**Enforced by.** Review. The day elevation arrives, it arrives with an ADR, with the
+`box-shadow` question in `check:tokens` answered first.
