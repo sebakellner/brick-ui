@@ -10,6 +10,9 @@
       "surface-hover": {
         "value": "{palette.neutral-700}"
       },
+      "surface-strong": {
+        "value": "{palette.neutral-400}"
+      },
       "accent": {
         "value": "{palette.blue-600}"
       },

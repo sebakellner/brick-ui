@@ -72,9 +72,11 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
         flex: none;
         inline-size: var(--bk-switch-thumb-size, var(--bk-switch-variant-thumb-size));
         block-size: var(--bk-switch-thumb-size, var(--bk-switch-variant-thumb-size));
-        background: var(--bk-bg-surface);
+        background: var(--bk-bg-surface-strong);
         border-radius: 100%;
-        transition: transform var(--bk-transition);
+        transition:
+          transform var(--bk-transition),
+          background-color var(--bk-transition);
       }
 
       .field:not([data-disabled]):hover .track {
@@ -86,6 +88,7 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
       }
 
       .native:checked + .track .thumb {
+        background: var(--bk-bg-surface);
         transform: translateX(
           calc(
             var(--bk-switch-track-width, var(--bk-switch-variant-track-width)) - var(
@@ -107,6 +110,11 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
 
       .native[aria-disabled='true'] + .track {
         cursor: not-allowed;
+      }
+
+      .native[aria-disabled='true'] + .track,
+      .native[aria-disabled='true'] + .track .thumb {
+        background: var(--bk-bg-surface-muted);
       }
 
       [part='message'] {

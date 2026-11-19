@@ -1,5 +1,5 @@
 import { settle } from '../../../test/helpers/settle.js';
-import { colorOf } from '../../../test/helpers/style.js';
+import { colorOf, opacityOf } from '../../../test/helpers/style.js';
 import { projectedText, slotIn } from '../../../test/helpers/dom.js';
 import { labelAtom } from '../../../test/helpers/atoms.js';
 import { watchSubmit } from '../../../test/helpers/form.js';
@@ -308,6 +308,22 @@ describe('bk-switch', () => {
     expect(el.shadowRoot!.activeElement === input, 'focus stays on the input').to.equal(true);
   });
 
+  it('should fade the track and the thumb while disabled', async () => {
+    const el = await fixture<BkSwitch>(html`<bk-switch checked disabled></bk-switch>`);
+    const track = getComputedStyle(innerTrack(el));
+    const thumb = getComputedStyle(innerThumb(el));
+
+    expect(track.backgroundColor, 'a disabled track stops painting the state').to.equal(
+      await colorOf('var(--bk-bg-surface-muted)'),
+    );
+    expect(thumb.backgroundColor, 'and so does the thumb').to.equal(
+      await colorOf('var(--bk-bg-surface-muted)'),
+    );
+    expect(getComputedStyle(innerLabel(el)).opacity, 'the row is dimmed on top of that').to.equal(
+      await opacityOf('var(--bk-opacity-disabled)'),
+    );
+  });
+
   it('should show the error, mark the field invalid and colour the message', async () => {
     const el = await fixture<BkSwitch>(html`<bk-switch></bk-switch>`);
     const error = 'Turn this on to continue.';
@@ -380,6 +396,28 @@ describe('bk-switch', () => {
 
   describe('contrast', () => {
     for (const theme of ['light', 'dark'] as const) {
+      it(`should keep the off thumb at 3:1 against the surface (${theme})`, async () => {
+        setTheme(theme);
+        const el = await fixture<BkSwitch>(html`<bk-switch></bk-switch>`);
+
+        expect(
+          contrastRatio(
+            getComputedStyle(innerThumb(el)).backgroundColor,
+            await colorOf('var(--bk-bg-surface)'),
+          ),
+          'the thumb is the part of a flat track a reader can find',
+        ).to.be.at.least(3);
+      });
+
+      it(`should keep the thumb at 3:1 against the off track (${theme})`, async () => {
+        setTheme(theme);
+        const el = await fixture<BkSwitch>(html`<bk-switch></bk-switch>`);
+        const track = getComputedStyle(innerTrack(el));
+        const thumb = getComputedStyle(innerThumb(el));
+
+        expect(contrastRatio(thumb.backgroundColor, track.backgroundColor)).to.be.at.least(3);
+      });
+
       it(`should keep the on fill at 3:1 against the surface (${theme})`, async () => {
         setTheme(theme);
         const el = await fixture<BkSwitch>(html`<bk-switch checked></bk-switch>`);

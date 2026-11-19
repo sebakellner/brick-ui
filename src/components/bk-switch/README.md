@@ -108,9 +108,13 @@ alignment, because one value paints the track and the indent.
 | `--bk-switch-radius`      | the corner radius of the track (defaults to `--bk-radius-lg`)                            |
 
 Everything else the switch paints is a shared role or base token: theming the
-switch means theming the roles, not the field. The off track is
-`--bk-bg-surface-muted`, the on track is `--bk-bg-accent`, the thumb is
-`--bk-bg-surface`, and nothing is outlined: the track is a flat fill.
+switch means theming the roles, not the field. The track is the pale fill —
+`--bk-bg-surface-muted` while off and `--bk-bg-accent` while on, with
+`--bk-bg-surface-hover` and `--bk-bg-accent-hover` under the pointer — and the thumb
+is the part that carries the contrast: `--bk-bg-surface-strong` while off, which
+resolves to a mid tone in each theme, and `--bk-bg-surface` while on. Nothing is
+outlined: the track is a flat fill, so the thumb is what a reader finds, at 4.80:1
+against the light surface and 6.93:1 against the dark one.
 
 **The height follows the thumb.** The track is the thumb plus a `--bk-space-1` gap split
 between its two ends, so a consumer who resizes the thumb gets a track that still
@@ -152,11 +156,15 @@ override set on an ancestor still wins. Set the three hooks above, not those.
   the `*` is `aria-hidden` decoration. A flat track paints no error colour of its own.
 - The focus ring is drawn on the track through `:focus-visible` on the input, so it
   appears for keyboard focus and not for a mouse click.
-- The on fill against the page surface, the thumb against the on track and the focus
-  ring each clear 3:1, and the suite asserts all three in both themes (WCAG 1.4.11).
-  The off state is a flat fill on the surface and does not: see Limitations. The
-  state is never carried by colour alone in the on direction — the thumb has moved,
-  and the two ends are the two states.
+- The off thumb against the surface and against its own track, the on fill against
+  the surface, the thumb against the on track and the focus ring each clear 3:1, and
+  the suite asserts all five in both themes (WCAG 1.4.11). The off **track** is a
+  pale fill by design — 1.09:1 in the light theme, 1.15:1 in the dark one — so the
+  boundary the bar measures is the thumb, which is the part of a flat switch a
+  reader locates; the track is reinforcement. The state is never carried by colour
+  alone: the thumb has moved, and the two ends are the two states.
+- A disabled switch paints its track and its thumb with `--bk-bg-surface-muted` in
+  both states and is dimmed on top of that, so nothing about it looks operable.
 - `disabled` sets `aria-disabled` on the inner input and cancels the click: the
   control stays in the tab order and is announced as unavailable, while Space and
   the label stop changing it. A native `disabled` input would be skipped entirely,
@@ -175,14 +183,6 @@ override set on an ancestor still wins. Set the three hooks above, not those.
 
 ## Limitations
 
-- **The off track does not clear the non-text contrast bar.** A flat fill with no
-  border puts the off state at 1.09:1 against the light surface (the muted role) and
-  1.15:1 against the dark one, against the 3:1 WCAG 1.4.11 asks of a control
-  boundary; the white thumb on it is 1.09:1 in the light theme. The on state, the
-  thumb against it and the focus ring are asserted and pass in both themes. Raising
-  the two off values to a mid tone (the `neutral-500` step of the palette) puts the
-  track at 4.80:1 in light and 3.65:1 in dark, on the same flat shape, at the cost of
-  the pale grey the design shows.
 - **No mixed state.** A switch answers on or off, and the ARIA pattern for it
   defines nothing else. A "select all" header over a set is `bk-checkbox` with
   `indeterminate`.
@@ -211,5 +211,8 @@ colour is the state's and the dim is the fact's. `data-state` carries one value 
 `invalid` wins it, so the row also carries `data-disabled` while the switch is
 unavailable.
 
-The track keeps its fill while the switch is disabled — the dim is the row's, not
-the track's — so a disabled on switch still reads as on.
+A disabled switch is the one that drops its state colour: the track and the thumb
+both paint `--bk-bg-surface-muted`, whichever end the thumb is at, and the row dims
+on top of that with `--bk-opacity-disabled`. An enabled switch keeps its fill — the
+row is the one container that dims, and a disabled track that kept the accent would
+still read as on.
