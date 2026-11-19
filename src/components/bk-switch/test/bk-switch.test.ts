@@ -131,18 +131,33 @@ describe('bk-switch', () => {
     ).to.equal(true);
   });
 
-  it('should paint the track muted while off and accent while on', async () => {
+  it('should paint the track with the strong role while off and accent while on', async () => {
     const el = await fixture<BkSwitch>(html`<bk-switch></bk-switch>`);
     const track = innerTrack(el);
 
     expect(getComputedStyle(track).backgroundColor).to.equal(
-      await colorOf('var(--bk-bg-surface-muted)'),
+      await colorOf('var(--bk-bg-surface-strong)'),
     );
 
     el.checked = true;
     await el.updateComplete;
 
     expect(getComputedStyle(track).backgroundColor).to.equal(await colorOf('var(--bk-bg-accent)'));
+  });
+
+  it('should paint the thumb with the surface role in both states', async () => {
+    const el = await fixture<BkSwitch>(html`<bk-switch></bk-switch>`);
+
+    expect(getComputedStyle(innerThumb(el)).backgroundColor).to.equal(
+      await colorOf('var(--bk-bg-surface)'),
+    );
+
+    el.checked = true;
+    await el.updateComplete;
+
+    expect(getComputedStyle(innerThumb(el)).backgroundColor).to.equal(
+      await colorOf('var(--bk-bg-surface)'),
+    );
   });
 
   it('should move the thumb to the far end while on and back while off', async () => {
@@ -243,8 +258,8 @@ describe('bk-switch', () => {
 
     expect(
       getComputedStyle(innerTrack(el)).backgroundColor,
-      'an off track answers the pointer',
-    ).to.equal(await colorOf('var(--bk-bg-surface-hover)'));
+      'an off track answers the pointer with the stronger step',
+    ).to.equal(await colorOf('var(--bk-bg-surface-strong-hover)'));
 
     el.checked = true;
     await el.updateComplete;
@@ -305,6 +320,18 @@ describe('bk-switch', () => {
     expect(changes).to.equal(0);
 
     el.focus();
+    await nextFrame();
+    await sendKeys({ press: ' ' });
+    await el.updateComplete;
+
+    expect(el.checked, 'the keyboard is refused too').to.equal(false);
+    expect(input.checked).to.equal(false);
+
+    innerLabel(el).click();
+    await el.updateComplete;
+
+    expect(el.checked, 'and so is the label').to.equal(false);
+    expect(changes).to.equal(0);
     expect(el.shadowRoot!.activeElement === input, 'focus stays on the input').to.equal(true);
   });
 
@@ -316,9 +343,10 @@ describe('bk-switch', () => {
     expect(track.backgroundColor, 'a disabled track stops painting the state').to.equal(
       await colorOf('var(--bk-bg-surface-muted)'),
     );
-    expect(thumb.backgroundColor, 'and so does the thumb').to.equal(
-      await colorOf('var(--bk-bg-surface-muted)'),
-    );
+    expect(
+      thumb.backgroundColor,
+      'the thumb keeps its own fill so the end it sits at stays readable',
+    ).to.equal(await colorOf('var(--bk-bg-surface-strong)'));
     expect(getComputedStyle(innerLabel(el)).opacity, 'the row is dimmed on top of that').to.equal(
       await opacityOf('var(--bk-opacity-disabled)'),
     );
@@ -396,26 +424,27 @@ describe('bk-switch', () => {
 
   describe('contrast', () => {
     for (const theme of ['light', 'dark'] as const) {
-      it(`should keep the off thumb at 3:1 against the surface (${theme})`, async () => {
+      it(`should keep the off track at 3:1 against the surface (${theme})`, async () => {
         setTheme(theme);
         const el = await fixture<BkSwitch>(html`<bk-switch></bk-switch>`);
 
         expect(
           contrastRatio(
-            getComputedStyle(innerThumb(el)).backgroundColor,
+            getComputedStyle(innerTrack(el)).backgroundColor,
             await colorOf('var(--bk-bg-surface)'),
           ),
-          'the thumb is the part of a flat track a reader can find',
+          'a flat boundary has to read against the surface on its own',
         ).to.be.at.least(3);
       });
 
-      it(`should keep the thumb at 3:1 against the off track (${theme})`, async () => {
+      it(`should keep the thumb inside the track at the far end (${theme})`, async () => {
         setTheme(theme);
-        const el = await fixture<BkSwitch>(html`<bk-switch></bk-switch>`);
-        const track = getComputedStyle(innerTrack(el));
-        const thumb = getComputedStyle(innerThumb(el));
+        const el = await fixture<BkSwitch>(html`<bk-switch checked></bk-switch>`);
+        const box = innerTrack(el).getBoundingClientRect();
+        const thumb = innerThumb(el).getBoundingClientRect();
 
-        expect(contrastRatio(thumb.backgroundColor, track.backgroundColor)).to.be.at.least(3);
+        expect(thumb.left).to.be.at.least(box.left);
+        expect(thumb.right, 'the thumb never hangs over the edge').to.be.at.most(box.right);
       });
 
       it(`should keep the on fill at 3:1 against the surface (${theme})`, async () => {

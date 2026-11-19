@@ -67,6 +67,7 @@
   --bk-bg-surface-muted: var(--bk-palette-neutral-100);
   --bk-bg-surface-hover: var(--bk-palette-neutral-200);
   --bk-bg-surface-strong: var(--bk-palette-neutral-500);
+  --bk-bg-surface-strong-hover: var(--bk-palette-neutral-600);
   --bk-bg-accent: var(--bk-palette-blue-600);
   --bk-bg-accent-hover: var(--bk-palette-blue-700);
   --bk-text-default: var(--bk-palette-neutral-900);

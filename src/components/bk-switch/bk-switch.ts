@@ -62,7 +62,7 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
           var(--bk-switch-thumb-size, var(--bk-switch-variant-thumb-size)) + var(--bk-space-1)
         );
         padding-inline-start: calc(var(--bk-space-1) / 2);
-        background: var(--bk-bg-surface-muted);
+        background: var(--bk-bg-surface-strong);
         border-radius: var(--bk-switch-radius, var(--bk-switch-variant-radius));
         transition: background-color var(--bk-transition);
       }
@@ -72,7 +72,7 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
         flex: none;
         inline-size: var(--bk-switch-thumb-size, var(--bk-switch-variant-thumb-size));
         block-size: var(--bk-switch-thumb-size, var(--bk-switch-variant-thumb-size));
-        background: var(--bk-bg-surface-strong);
+        background: var(--bk-bg-surface);
         border-radius: 100%;
         transition:
           transform var(--bk-transition),
@@ -80,7 +80,7 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
       }
 
       .field:not([data-disabled]):hover .track {
-        background: var(--bk-bg-surface-hover);
+        background: var(--bk-bg-surface-strong-hover);
       }
 
       .native:checked + .track {
@@ -88,7 +88,6 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
       }
 
       .native:checked + .track .thumb {
-        background: var(--bk-bg-surface);
         transform: translateX(
           calc(
             var(--bk-switch-track-width, var(--bk-switch-variant-track-width)) - var(
@@ -112,9 +111,12 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
         cursor: not-allowed;
       }
 
-      .native[aria-disabled='true'] + .track,
-      .native[aria-disabled='true'] + .track .thumb {
+      .native[aria-disabled='true'] + .track {
         background: var(--bk-bg-surface-muted);
+      }
+
+      .native[aria-disabled='true'] + .track .thumb {
+        background: var(--bk-bg-surface-strong);
       }
 
       [part='message'] {
