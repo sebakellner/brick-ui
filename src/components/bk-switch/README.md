@@ -109,12 +109,16 @@ alignment, because one value paints the track and the indent.
 
 Everything else the switch paints is a shared role or base token: theming the
 switch means theming the roles, not the field. The track is `--bk-bg-surface-strong`
-while off and `--bk-bg-accent` while on, with `--bk-bg-surface-strong-hover` and
-`--bk-bg-accent-hover` under the pointer; the thumb is `--bk-bg-surface` in both
-states. Nothing is outlined: the track is a flat fill, and because that boundary has
-to read on its own it is a mid tone, at 4.80:1 against the light surface and 6.93:1
-against the dark one. The thumb is the surface, so it reads against the track at the
-same 4.80:1 and 6.93:1.
+while off and `--bk-bg-accent` while on, with `--bk-bg-surface-strong-hover` under the
+pointer while it is off; the thumb is `--bk-bg-surface` in both states. Nothing is
+outlined: the track is a flat fill, and because that boundary has to read on its own
+it is a mid tone, at 4.80:1 against the light surface and 6.93:1 against the dark one.
+The thumb is the surface, so it reads against the track at the same 4.80:1 and 6.93:1.
+
+An on track keeps the accent fill under the pointer instead of stepping to the accent
+hover role: in the dark theme that step is darker than the thumb it holds, and the
+pair falls to 2.61:1. The off track can step, because its hover role moves away from
+the surface the thumb is painted with in both themes.
 
 **The height follows the thumb.** The track is the thumb plus a `--bk-space-1` gap split
 between its two ends, so a consumer who resizes the thumb gets a track that still

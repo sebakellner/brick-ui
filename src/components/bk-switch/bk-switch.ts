@@ -79,7 +79,7 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
           background-color var(--bk-transition);
       }
 
-      .field:not([data-disabled]):hover .track {
+      .field:not([data-disabled]):hover .native:not(:checked) + .track {
         background: var(--bk-bg-surface-strong-hover);
       }
 
@@ -96,10 +96,6 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
               ) - var(--bk-space-1)
           )
         );
-      }
-
-      .field:not([data-disabled]):hover .native:checked + .track {
-        background: var(--bk-bg-accent-hover);
       }
 
       .native:focus-visible + .track {

@@ -266,8 +266,8 @@ describe('bk-switch', () => {
 
     expect(
       getComputedStyle(innerTrack(el)).backgroundColor,
-      'an on track answers it with the accent hover role',
-    ).to.equal(await colorOf('var(--bk-bg-accent-hover)'));
+      'an on track keeps the accent fill: the hover step would drop the thumb below 3:1',
+    ).to.equal(await colorOf('var(--bk-bg-accent)'));
   });
 
   it('should draw the focus ring on the track when the switch is reached by keyboard', async () => {
