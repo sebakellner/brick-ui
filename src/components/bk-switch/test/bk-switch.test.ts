@@ -151,6 +151,10 @@ describe('bk-switch', () => {
     expect(getComputedStyle(innerThumb(el)).backgroundColor).to.equal(
       await colorOf('var(--bk-bg-surface)'),
     );
+    expect(
+      getComputedStyle(innerThumb(el)).backgroundColor,
+      'the thumb never borrows the fill it sits on',
+    ).to.not.equal(getComputedStyle(innerTrack(el)).backgroundColor);
 
     el.checked = true;
     await el.updateComplete;
@@ -158,6 +162,10 @@ describe('bk-switch', () => {
     expect(getComputedStyle(innerThumb(el)).backgroundColor).to.equal(
       await colorOf('var(--bk-bg-surface)'),
     );
+    expect(
+      getComputedStyle(innerThumb(el)).backgroundColor,
+      'and keeps it against the accent track',
+    ).to.not.equal(getComputedStyle(innerTrack(el)).backgroundColor);
   });
 
   it('should move the thumb to the far end while on and back while off', async () => {
@@ -347,6 +355,10 @@ describe('bk-switch', () => {
       thumb.backgroundColor,
       'the thumb keeps its own fill so the end it sits at stays readable',
     ).to.equal(await colorOf('var(--bk-bg-surface-strong)'));
+    expect(
+      track.backgroundColor,
+      'and the track drops the state colour an enabled switch would paint',
+    ).to.not.equal(await colorOf('var(--bk-bg-surface-strong)'));
     expect(getComputedStyle(innerLabel(el)).opacity, 'the row is dimmed on top of that').to.equal(
       await opacityOf('var(--bk-opacity-disabled)'),
     );
@@ -393,6 +405,16 @@ describe('bk-switch', () => {
       'The atom is the error.',
     );
     expect(innerError(el).textContent!.trim()).to.equal('The atom is the error.');
+
+    const afterAtom = watchSubmit(form);
+    form.requestSubmit();
+    await el.updateComplete;
+
+    expect(
+      afterAtom.invalidOrder[0] === el,
+      'the atom blocks the submit, not only the property',
+    ).to.equal(true);
+    expect(afterAtom.count).to.equal(0);
   });
 
   it('should mark a required switch with the label glyph', async () => {
@@ -443,8 +465,34 @@ describe('bk-switch', () => {
         const box = innerTrack(el).getBoundingClientRect();
         const thumb = innerThumb(el).getBoundingClientRect();
 
+        expect(
+          new DOMMatrix(getComputedStyle(innerThumb(el)).transform).m41,
+          'the thumb actually moved: containment alone also holds at zero',
+        ).to.be.above(0);
         expect(thumb.left).to.be.at.least(box.left);
         expect(thumb.right, 'the thumb never hangs over the edge').to.be.at.most(box.right);
+      });
+
+      it(`should hold the ratios the README states (${theme})`, async () => {
+        const stated = { light: { off: 4.8, on: 5.17 }, dark: { off: 6.93, on: 3.38 } } as const;
+        setTheme(theme);
+        const el = await fixture<BkSwitch>(html`<bk-switch></bk-switch>`);
+        const surface = await colorOf('var(--bk-bg-surface)');
+        const off = getComputedStyle(innerTrack(el));
+
+        expect(contrastRatio(off.backgroundColor, surface)).to.be.closeTo(stated[theme].off, 0.05);
+        expect(
+          contrastRatio(getComputedStyle(innerThumb(el)).backgroundColor, off.backgroundColor),
+        ).to.be.closeTo(stated[theme].off, 0.05);
+
+        el.checked = true;
+        await el.updateComplete;
+        const on = getComputedStyle(innerTrack(el));
+
+        expect(contrastRatio(on.backgroundColor, surface)).to.be.closeTo(stated[theme].on, 0.05);
+        expect(
+          contrastRatio(getComputedStyle(innerThumb(el)).backgroundColor, on.backgroundColor),
+        ).to.be.closeTo(stated[theme].on, 0.05);
       });
 
       it(`should keep the on fill at 3:1 against the surface (${theme})`, async () => {

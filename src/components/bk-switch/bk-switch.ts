@@ -104,11 +104,8 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
       }
 
       .native[aria-disabled='true'] + .track {
-        cursor: not-allowed;
-      }
-
-      .native[aria-disabled='true'] + .track {
         background: var(--bk-bg-surface-muted);
+        cursor: not-allowed;
       }
 
       .native[aria-disabled='true'] + .track .thumb {
