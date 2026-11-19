@@ -26,6 +26,19 @@ const railOf = (el: BkSlider) => el.shadowRoot!.querySelector<HTMLElement>('[par
 
 const fillOf = (el: BkSlider) => el.shadowRoot!.querySelector<HTMLElement>('[part="fill"]')!;
 
+const ticksLayerOf = (el: BkSlider) => el.shadowRoot!.querySelector<HTMLElement>('[part="ticks"]');
+
+const ticksOf = (el: BkSlider) =>
+  Array.from(el.shadowRoot!.querySelectorAll<HTMLElement>('[part="tick"]'));
+
+const readoutOf = (el: BkSlider) => el.shadowRoot!.querySelector<HTMLElement>('[part="tooltip"]');
+
+const middleOf = (element: Element): [number, number] => {
+  const { left, top, width, height } = element.getBoundingClientRect();
+
+  return [left + width / 2, top + height / 2];
+};
+
 const descriptionOf = (el: BkSlider) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="description"]')!;
 
@@ -68,6 +81,20 @@ describe('bk-slider', () => {
         await expectNoViolations(el);
       });
     }
+
+    for (const theme of ['light', 'dark'] as const) {
+      it(`should have no accessibility violations with ticks and a readout (${theme})`, async () => {
+        setTheme(theme);
+        const el = await fixture<BkSlider>(html`
+          <bk-slider ticks min="0" max="10" step="1" tooltip="always" value-text="5 of 10">
+            ${labelAtom('Volume')}
+          </bk-slider>
+        `);
+
+        await expectRendered(el, 'input');
+        await expectNoViolations(el);
+      });
+    }
   });
   afterEach(async () => {
     await resetMouse();
@@ -78,6 +105,7 @@ describe('bk-slider', () => {
       '--bk-slider-thumb-size',
       '--bk-slider-track-height',
       '--bk-slider-radius',
+      '--bk-slider-tick-size',
     ]) {
       document.documentElement.style.removeProperty(property);
     }
@@ -292,6 +320,232 @@ describe('bk-slider', () => {
     });
   });
 
+  describe('ticks', () => {
+    it('should draw one tick per step across the run', async () => {
+      const el = await fixture<BkSlider>(
+        html`<bk-slider ticks min="0" max="10" step="1"></bk-slider>`,
+      );
+      const ticks = ticksOf(el);
+      const rail = railOf(el).getBoundingClientRect();
+      const start = rail.left + thumbOf(el) / 2;
+
+      expect(Boolean(ticksLayerOf(el)), 'the layer has its own part').to.equal(true);
+      expect(ticks.length, 'the count is (max - min) / step').to.equal(10);
+      expect(middleOf(ticks[0]!)[0], 'the first mark is the minimum').to.be.closeTo(start, 1);
+      expect(
+        middleOf(ticks[1]!)[0],
+        'and each step moves one mark by a tenth of the lane',
+      ).to.be.closeTo(start + laneOf(el) * 0.1, 1);
+      expect(middleOf(ticks[9]!)[0], 'the last one is a step short of the maximum').to.be.closeTo(
+        start + laneOf(el) * 0.9,
+        1,
+      );
+    });
+
+    it('should draw nothing from step alone', async () => {
+      const el = await fixture<BkSlider>(html`<bk-slider step="5"></bk-slider>`);
+
+      expect(Boolean(ticksLayerOf(el)), 'step without ticks draws no layer').to.equal(false);
+      expect(ticksOf(el).length).to.equal(0);
+    });
+
+    it('should hide the tick layer from assistive technology', async () => {
+      const el = await fixture<BkSlider>(html`
+        <bk-slider ticks min="0" max="4" step="1" value="2" value-text="2 of 4"></bk-slider>
+      `);
+
+      expect(
+        ticksLayerOf(el)!.getAttribute('aria-hidden'),
+        'the ticks are decoration, not a second value',
+      ).to.equal('true');
+      expect(
+        inputOf(el).getAttribute('aria-valuetext'),
+        'the value text stays the announcement',
+      ).to.equal('2 of 4');
+    });
+
+    it('should place the ticks along the run in vertical', async () => {
+      const el = await fixture<BkSlider>(html`
+        <bk-slider ticks min="0" max="4" step="1" orientation="vertical"></bk-slider>
+      `);
+      const ticks = ticksOf(el);
+      const rail = railOf(el).getBoundingClientRect();
+      const thumb = inputOf(el).getBoundingClientRect().width;
+      const lane = rail.height - thumb;
+
+      expect(ticks.length).to.equal(4);
+      expect(middleOf(ticks[0]!)[1], 'the minimum is the bottom end').to.be.closeTo(
+        rail.bottom - thumb / 2,
+        1,
+      );
+      expect(middleOf(ticks[3]!)[1], 'and the run climbs with the value').to.be.closeTo(
+        rail.bottom - thumb / 2 - lane * 0.75,
+        1,
+      );
+      expect(middleOf(ticks[0]!)[0], 'on the rail').to.be.closeTo(rail.left + rail.width / 2, 1);
+    });
+
+    it('should size the ticks through the hook', async () => {
+      document.documentElement.style.setProperty('--bk-slider-tick-size', '8px');
+      const el = await fixture<BkSlider>(
+        html`<bk-slider ticks min="0" max="3" step="1"></bk-slider>`,
+      );
+      const tick = ticksOf(el)[0]!.getBoundingClientRect();
+
+      expect(tick.height, 'the tick hook sizes the mark').to.equal(8);
+      expect(tick.width).to.equal(8);
+    });
+  });
+
+  describe('tooltip', () => {
+    it('should render no readout while tooltip is none', async () => {
+      const el = await fixture<BkSlider>(
+        html`<bk-slider value="40" value-text="40 %"></bk-slider>`,
+      );
+      await el.updateComplete;
+
+      expect(el.tooltip, 'none is the default').to.equal('none');
+      expect(Boolean(readoutOf(el)), 'and it draws nothing').to.equal(false);
+    });
+
+    it('should read the value text, or the value without one, while always', async () => {
+      const labelled = await fixture<BkSlider>(
+        html`<bk-slider tooltip="always" value="40" value-text="40 %"></bk-slider>`,
+      );
+
+      expect(readoutOf(labelled)!.textContent!.trim(), 'the value text when there is one').to.equal(
+        '40 %',
+      );
+      expect(
+        readoutOf(labelled)!.getAttribute('aria-hidden'),
+        'the readout is the visual echo of the announcement',
+      ).to.equal('true');
+      expect(
+        inputOf(labelled).getAttribute('aria-valuetext'),
+        'which stays the value text on the knob',
+      ).to.equal('40 %');
+
+      const bare = await fixture<BkSlider>(
+        html`<bk-slider tooltip="always" value="40"></bk-slider>`,
+      );
+
+      expect(readoutOf(bare)!.textContent!.trim(), 'the value without a value text').to.equal('40');
+    });
+
+    it('should read the lower thumb while a pair is set', async () => {
+      const el = await fixture<BkSlider>(html`
+        <bk-slider
+          tooltip="always"
+          value="20"
+          value-end="80"
+          value-text="20"
+          value-text-end="80"
+        ></bk-slider>
+      `);
+
+      expect(readoutOf(el)!.textContent!.trim(), 'one readout, on the lower thumb').to.equal('20');
+    });
+
+    it('should keep the readout hidden until the knob is hovered in hover mode', async function () {
+      if (!hoverCapable()) this.skip();
+
+      const el = await fixture<BkSlider>(html`<bk-slider tooltip="hover" value="50"></bk-slider>`);
+
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'hidden at rest').to.equal('0');
+
+      await hover(inputOf(el));
+
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'shown under the pointer').to.equal('1');
+
+      await sendMouse({ type: 'move', position: [0, 0] });
+      await nextFrame();
+
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'hidden when the pointer leaves').to.equal(
+        '0',
+      );
+    });
+
+    it('should show the readout while the knob has focus in hover mode', async () => {
+      const host = await fixture<HTMLElement>(html`
+        <div><button type="button">before</button><bk-slider tooltip="hover"></bk-slider></div>
+      `);
+      const el = host.querySelector<BkSlider>('bk-slider')!;
+
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'hidden before the key').to.equal('0');
+
+      host.querySelector<HTMLElement>('button')!.focus();
+      await sendKeys({ press: 'Tab' });
+      await nextFrame();
+
+      expect(inputOf(el).matches(':focus'), 'the key reached the knob').to.equal(true);
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'and the readout with it').to.equal('1');
+    });
+
+    it('should reflect the mode and never write an invalid one', async () => {
+      const el = await fixture<BkSlider>(html`<bk-slider></bk-slider>`);
+      await el.updateComplete;
+
+      expect(el.getAttribute('tooltip'), 'the default is reflected').to.equal('none');
+
+      el.setAttribute('tooltip', 'whenever');
+      await el.updateComplete;
+
+      expect(el.tooltip, 'an unknown mode reads as none').to.equal('none');
+      expect(el.getAttribute('tooltip'), 'and the attribute never carries it').to.equal('none');
+
+      el.tooltip = 'hover';
+      await el.updateComplete;
+
+      expect(el.getAttribute('tooltip'), 'a real mode is reflected').to.equal('hover');
+    });
+
+    it('should sit above the knob and follow it along the run', async () => {
+      const el = await fixture<BkSlider>(
+        html`<bk-slider tooltip="always" value="40" value-text="40 degrees"></bk-slider>`,
+      );
+      const rail = railOf(el).getBoundingClientRect();
+      const readout = readoutOf(el)!.getBoundingClientRect();
+      const knob = rail.left + thumbOf(el) / 2 + laneOf(el) * 0.4;
+
+      expect(readout.bottom, 'the bubble clears the rail it points at').to.be.at.most(rail.top);
+      expect(rail.top - readout.bottom, 'by the gap the rail gives it').to.be.at.least(4);
+      expect(middleOf(readoutOf(el)!)[0], 'and is centred over the knob').to.be.closeTo(knob, 1);
+    });
+
+    it('should keep the readout off the label row', async () => {
+      const el = await fixture<BkSlider>(html`
+        <bk-slider tooltip="always" value="40" value-text="40 %">${labelAtom('Volume')}</bk-slider>
+      `);
+
+      expect(Boolean(readoutOf(el)), 'the readout rendered').to.equal(true);
+      expect(
+        readoutOf(el)!.getBoundingClientRect().top,
+        'the rail makes the readout room above it',
+      ).to.be.at.least(labelOf(el).getBoundingClientRect().bottom);
+    });
+
+    it('should sit beside the knob in vertical', async () => {
+      const el = await fixture<BkSlider>(html`
+        <bk-slider tooltip="always" value="40" orientation="vertical"></bk-slider>
+      `);
+      const rail = railOf(el).getBoundingClientRect();
+      const thumb = inputOf(el).getBoundingClientRect().width;
+      const lane = rail.height - thumb;
+      const readout = readoutOf(el)!.getBoundingClientRect();
+
+      expect(readout.right, 'the bubble clears the rail').to.be.at.most(rail.left);
+      expect(rail.left - readout.right, 'by the gap it leaves').to.be.at.least(4);
+      expect(middleOf(readoutOf(el)!)[1], 'and is centred on the knob').to.be.closeTo(
+        rail.bottom - thumb / 2 - lane * 0.4,
+        1,
+      );
+      expect(
+        getComputedStyle(readoutOf(el)!).writingMode,
+        'the rail writes vertically; the readout does not',
+      ).to.equal('horizontal-tb');
+    });
+  });
+
   describe('events', () => {
     it('should report the value after a key, the input before the change', async () => {
       const host = await fixture<HTMLElement>(html`
@@ -480,11 +734,20 @@ describe('bk-slider', () => {
       const fill = fillOf(el).getBoundingClientRect();
       const lane = rail.height - inputOf(el).getBoundingClientRect().width;
 
+      const cap = inputOf(el).getBoundingClientRect().width / 2;
+
       expect(
         rail.bottom - fill.top,
         'the run ends a quarter of the lane above the bottom the keys call the minimum',
-      ).to.be.closeTo(lane * 0.25 + inputOf(el).getBoundingClientRect().width / 2, 1);
-      expect(fill.height, 'and starts at the bottom of the lane').to.be.closeTo(lane * 0.25, 1);
+      ).to.be.closeTo(lane * 0.25 + cap, 1);
+      expect(fill.height, 'and its length carries the cap back to the edge').to.be.closeTo(
+        lane * 0.25 + cap,
+        1,
+      );
+      expect(fill.bottom, 'so the run reaches the rail, with no nub below it').to.be.closeTo(
+        rail.bottom,
+        1,
+      );
 
       const bottom: [number, number] = [
         Math.round(rail.left + rail.width / 2),
@@ -703,6 +966,41 @@ describe('bk-slider', () => {
           ),
           `the ring the rule paints is the role the kit resolves (${paintOf(ring, 'outline')})`,
         ).to.be.at.least(3);
+      });
+
+      it(`should keep the ticks readable against the rail (${theme})`, async () => {
+        setTheme(theme);
+        clearStyleCache();
+        const el = await fixture<BkSlider>(html`
+          <bk-slider ticks min="0" max="4" step="1" value="2"></bk-slider>
+        `);
+        const tick = getComputedStyle(ticksOf(el)[0]!);
+
+        expect(Boolean(ticksLayerOf(el)), 'the ticks rendered').to.equal(true);
+        expect(
+          contrastRatio(tick.backgroundColor, getComputedStyle(railOf(el)).backgroundColor),
+          'a mark on the rail clears 3:1 against it',
+        ).to.be.at.least(3);
+        expect(tick.backgroundColor, 'and the role that does it').to.equal(
+          await colorOf('var(--bk-bg-surface)'),
+        );
+      });
+
+      it(`should paint the readout as a surface with text on it (${theme})`, async () => {
+        setTheme(theme);
+        clearStyleCache();
+        const el = await fixture<BkSlider>(
+          html`<bk-slider tooltip="always" value="40" value-text="40 %"></bk-slider>`,
+        );
+        const readout = getComputedStyle(readoutOf(el)!);
+
+        expect(readout.backgroundColor, 'the bubble is a surface').to.equal(
+          await colorOf('var(--bk-bg-surface)'),
+        );
+        expect(readout.color, 'and the default text role paints on it').to.equal(
+          await colorOf('var(--bk-text-default)'),
+        );
+        expect(contrastRatio(readout.color, readout.backgroundColor)).to.be.at.least(4.5);
       });
     }
   });

@@ -3,7 +3,7 @@ import { html } from 'lit';
 import { ref } from 'lit/directives/ref.js';
 import '../bk-field/define.js';
 import './define.js';
-import type { BkSlider, BkSliderOrientation } from './bk-slider.js';
+import type { BkSlider, BkSliderOrientation, BkSliderTooltip } from './bk-slider.js';
 
 type Args = {
   label: string;
@@ -18,6 +18,8 @@ type Args = {
   orientation: BkSliderOrientation;
   valueText: string;
   valueTextEnd: string;
+  ticks: boolean;
+  tooltip: BkSliderTooltip;
   disabled: boolean;
 };
 
@@ -42,6 +44,8 @@ const meta: Meta<Args> = {
     orientation: 'horizontal',
     valueText: '',
     valueTextEnd: '',
+    ticks: false,
+    tooltip: 'none',
     disabled: false,
   },
   argTypes: {
@@ -57,6 +61,8 @@ const meta: Meta<Args> = {
     orientation: { control: 'inline-radio', options: ['horizontal', 'vertical'] },
     valueText: { control: 'text' },
     valueTextEnd: { control: 'text' },
+    ticks: { control: 'boolean' },
+    tooltip: { control: 'inline-radio', options: ['none', 'hover', 'always'] },
     disabled: { control: 'boolean' },
   },
   render: ({
@@ -72,6 +78,8 @@ const meta: Meta<Args> = {
     orientation,
     valueText,
     valueTextEnd,
+    ticks,
+    tooltip,
     disabled,
   }) => html`
     <div style="width: 320px;">
@@ -87,6 +95,8 @@ const meta: Meta<Args> = {
           orientation=${orientation}
           value-text=${valueText}
           value-text-end=${valueTextEnd}
+          ?ticks=${ticks}
+          tooltip=${tooltip}
           ?disabled=${disabled}
         >
           ${parts(label, description)}
@@ -107,9 +117,42 @@ export const Range: Story = {
 };
 
 /* No label on purpose: the row above a vertical slider reads badly, and this canvas is
- * about the shape. A real page still has to name the control. */
+ * about the shape. A real page still has to name the control. A mixer strip is three of
+ * them in a centred row, where the tick density and the vertical knob read. */
 export const Vertical: Story = {
-  args: { label: '', orientation: 'vertical' },
+  args: { label: '', orientation: 'vertical', ticks: true, step: 10 },
+  render: ({ step, ticks }) => html`
+    <div
+      style="display: flex; align-items: center; justify-content: center; gap: var(--bk-space-4);"
+    >
+      ${[
+        { name: 'high', value: 80 },
+        { name: 'mid', value: 50 },
+        { name: 'low', value: 20 },
+      ].map(
+        (channel) => html`
+          <bk-slider
+            name=${channel.name}
+            orientation="vertical"
+            step=${step}
+            ?ticks=${ticks}
+            .value=${channel.value}
+          ></bk-slider>
+        `,
+      )}
+    </div>
+  `,
+};
+
+/* The step is not the decision: it is what makes one mark per value readable on a canvas
+ * this wide. */
+export const Ticks: Story = {
+  args: { step: 10, ticks: true },
+};
+
+/* `always`, so the canvas shows the readout without a pointer over it. */
+export const Tooltip: Story = {
+  args: { tooltip: 'always' },
 };
 
 /* The readout follows `bk-change`, and the value text follows the value: a thumb that has
