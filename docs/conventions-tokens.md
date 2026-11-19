@@ -35,8 +35,8 @@ stops reading it, delete it in the same change.
 `primary-active`, `on-primary`, `on-danger`, `surface`, `surface-hover`, `text`,
 `text-on-muted` and `border` — and no component ever read one. They were removed
 in `d9dfacd`, after the controls took their own layer. What survives is what a
-component reads: a role nobody reads fails `pnpm check:tokens` (R1), so this set is
-kept honest by the check rather than by a list that would age badly.
+component reads: a role nobody reads fails `pnpm check:tokens`, so this set is kept
+honest by the check rather than by a list that would age badly.
 
 The cost of a speculative role is not its bytes. A token name is public
 contract: removing `--bk-color-primary` later is a breaking change for any host
