@@ -106,8 +106,10 @@ export const Range: Story = {
   args: { label: 'Price', value: 20, valueEnd: 80 },
 };
 
+/* No label on purpose: the row above a vertical slider reads badly, and this canvas is
+ * about the shape. A real page still has to name the control. */
 export const Vertical: Story = {
-  args: { label: 'Volume', orientation: 'vertical' },
+  args: { label: '', orientation: 'vertical' },
 };
 
 /* The readout follows `bk-change`, and the value text follows the value: a thumb that has

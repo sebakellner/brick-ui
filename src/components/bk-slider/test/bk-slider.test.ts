@@ -827,6 +827,23 @@ describe('bk-slider', () => {
   });
 
   describe('paint', () => {
+    it('should keep the run inside the track in both orientations', async () => {
+      for (const orientation of ['horizontal', 'vertical'] as const) {
+        const el = await fixture<BkSlider>(
+          html`<bk-slider value="30" orientation=${orientation}></bk-slider>`,
+        );
+        const rail = el.shadowRoot!.querySelector('[part="track"]')!.getBoundingClientRect();
+        const fill = el.shadowRoot!.querySelector('[part="fill"]')!.getBoundingClientRect();
+
+        expect(
+          fill.width,
+          `the run never grows wider than the track (${orientation})`,
+        ).to.be.at.most(rail.width + 0.5);
+        expect(fill.height).to.be.at.most(rail.height + 0.5);
+        el.remove();
+      }
+    });
+
     it('should start the run at the rail edge, never at the thumb centre', async () => {
       const el = await fixture<BkSlider>(html`<bk-slider value="40"></bk-slider>`);
       const rail = el.shadowRoot!.querySelector('[part="track"]')!.getBoundingClientRect();

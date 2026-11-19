@@ -107,12 +107,6 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         );
       }
 
-      :host([orientation='vertical']) .rail:not([data-two]) .fill {
-        margin-block-end: calc(
-          var(--bk-slider-thumb-size, var(--bk-slider-variant-thumb-size)) / -2
-        );
-      }
-
       .thumb-input {
         position: absolute;
         inset-inline: 0;
