@@ -446,6 +446,35 @@ describe('bk-slider', () => {
       expect(readoutOf(el)!.textContent!.trim(), 'one readout, on the lower thumb').to.equal('20');
     });
 
+    it('should keep the readout on screen while the drag is held off the knob', async function () {
+      if (!hoverCapable()) this.skip();
+
+      const host = await fixture<HTMLElement>(html`
+        <div><bk-slider tooltip="hover" value="20"></bk-slider></div>
+      `);
+      const el = host.querySelector<BkSlider>('bk-slider')!;
+      const rail = railOf(el).getBoundingClientRect();
+      const start: [number, number] = [
+        Math.round(rail.left + thumbOf(el) / 2 + laneOf(el) * 0.2),
+        Math.round(rail.top + rail.height / 2),
+      ];
+
+      await sendMouse({ type: 'move', position: start });
+      await sendMouse({ type: 'down' });
+      await sendMouse({ type: 'move', position: [start[0] + 60, start[1] - 40] });
+      await el.updateComplete;
+
+      expect(
+        getComputedStyle(readoutOf(el)!).opacity,
+        'the value being chosen stays readable while the knob is held',
+      ).to.equal('1');
+
+      await sendMouse({ type: 'up' });
+      await nextFrame();
+
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'and leaves with the gesture').to.equal('0');
+    });
+
     it('should keep the readout hidden until the knob is hovered in hover mode', async function () {
       if (!hoverCapable()) this.skip();
 

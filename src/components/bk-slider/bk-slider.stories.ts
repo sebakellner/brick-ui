@@ -150,9 +150,12 @@ export const Ticks: Story = {
   args: { step: 10, ticks: true },
 };
 
-/* `always`, so the canvas shows the readout without a pointer over it. */
+/* `hover`, which is how the three modes behave in the field: the readout is a response to
+ * the knob, not a permanent ornament. Hover or focus the knob, or drag it — the bubble
+ * follows the value and stays while the drag is held, even if the pointer leaves the
+ * knob. `always` is one attribute away and lives in the controls below. */
 export const Tooltip: Story = {
-  args: { tooltip: 'always' },
+  args: { tooltip: 'hover' },
 };
 
 /* The readout follows `bk-input`, the continuous channel, so the number moves with the

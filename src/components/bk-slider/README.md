@@ -262,7 +262,15 @@ instance and would need a map attribute to carry it, while the accessible channe
 the value is already `value-text`; a tick label would be a second copy of it that no
 one announces.
 
-`tooltip` has three modes. `none` draws nothing, `hover` shows the bubble while the
-pointer is over the knob — the same hover that draws the halo — or while the knob has
-focus, and `always` keeps it. The bubble reads `value-text` when there is one and the
-value otherwise.
+`tooltip` has three modes, and they are MUI's `off`/`auto`/`on` under different names.
+`none` draws nothing, and it is the default: MUI and Shoelace both default to off, and a
+readout nobody asked for is decoration competing with the track. `hover` shows the bubble
+while the pointer is over the knob — the same hover that draws the halo — while the knob
+has **keyboard** focus, and for as long as a drag is held, even when the pointer leaves
+the knob; it hides again on release and on blur, so a mouse click never leaves it behind.
+`always` keeps it, which is what a canvas needs and what a product rarely does. The bubble
+reads `value-text` when there is one and the value otherwise.
+
+That is the field's split: Material Web shows it only while the handle is activated, Ant
+Design and Spectrum on hover or focus, Shoelace on focus or drag, MUI on hover or focus
+when `auto` is asked for, and Radix never.

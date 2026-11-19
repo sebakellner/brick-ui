@@ -178,7 +178,8 @@ export class BkSlider extends FieldControlMixin(LitElement) {
       }
 
       :host([tooltip='hover']) .thumb-input:hover ~ .readout-lane .readout,
-      :host([tooltip='hover']) .thumb-input:focus ~ .readout-lane .readout {
+      :host([tooltip='hover']) .thumb-input:focus-visible ~ .readout-lane .readout,
+      :host([tooltip='hover']) .thumb-input:active ~ .readout-lane .readout {
         opacity: 1;
       }
 
