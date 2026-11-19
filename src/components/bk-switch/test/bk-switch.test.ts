@@ -86,6 +86,11 @@ describe('bk-switch', () => {
     await el.updateComplete;
 
     expect(innerLabel(el).textContent!.trim(), 'the attribute names nothing').to.equal('');
+    expect(
+      innerInput(el).getAttribute('aria-label'),
+      'and no attribute is turned into a name instead',
+    ).to.equal(null);
+    expect(innerInput(el).getAttribute('aria-labelledby')).to.equal(null);
   });
 
   it('should take a description only from the description slot, never from a helper attribute', async () => {
@@ -313,9 +318,37 @@ describe('bk-switch', () => {
     expect(innerError(el).textContent!.trim()).to.equal(error);
     expect(innerInput(el).getAttribute('aria-invalid')).to.equal('true');
     expect(getComputedStyle(innerError(el)).color).to.equal(await colorOf('var(--bk-text-danger)'));
-    expect(getComputedStyle(innerTrack(el)).borderTopColor).to.equal(
-      await colorOf('var(--bk-border-danger)'),
+    expect(
+      innerLabel(el).getAttribute('data-state'),
+      'the label row carries the state the flat track cannot paint',
+    ).to.equal('invalid');
+    expect(el.validity.customError).to.equal(true);
+  });
+
+  it('should block a submit on the error and let a slotted error atom win over it', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form><bk-switch name="wifi" error="Turn this on to continue."></bk-switch></form>
+    `);
+    const el = form.querySelector<BkSwitch>('bk-switch')!;
+    await el.updateComplete;
+    const watch = watchSubmit(form);
+
+    form.requestSubmit();
+    await el.updateComplete;
+
+    expect(watch.invalidOrder[0] === el, 'the error blocks the submit').to.equal(true);
+    expect(watch.count).to.equal(0);
+
+    const atom = document.createElement('bk-field-error');
+    atom.slot = 'error';
+    atom.textContent = 'The atom is the error.';
+    el.append(atom);
+    await settle(el);
+
+    expect(el.fieldError, 'the atom with text wins over the property').to.equal(
+      'The atom is the error.',
     );
+    expect(innerError(el).textContent!.trim()).to.equal('The atom is the error.');
   });
 
   it('should mark a required switch with the label glyph', async () => {
@@ -347,12 +380,16 @@ describe('bk-switch', () => {
 
   describe('contrast', () => {
     for (const theme of ['light', 'dark'] as const) {
-      it(`should keep the track boundary at 3:1 against the surface (${theme})`, async () => {
+      it(`should keep the on fill at 3:1 against the surface (${theme})`, async () => {
         setTheme(theme);
-        const el = await fixture<BkSwitch>(html`<bk-switch></bk-switch>`);
-        const style = getComputedStyle(innerTrack(el));
+        const el = await fixture<BkSwitch>(html`<bk-switch checked></bk-switch>`);
 
-        expect(contrastRatio(style.borderTopColor, style.backgroundColor)).to.be.at.least(3);
+        expect(
+          contrastRatio(
+            getComputedStyle(innerTrack(el)).backgroundColor,
+            await colorOf('var(--bk-bg-surface)'),
+          ),
+        ).to.be.at.least(3);
       });
 
       it(`should keep the thumb at 3:1 against the on track (${theme})`, async () => {
@@ -364,20 +401,19 @@ describe('bk-switch', () => {
         expect(contrastRatio(thumb.backgroundColor, track.backgroundColor)).to.be.at.least(3);
       });
 
-      it(`should keep the thumb edge at 3:1 against the off track (${theme})`, async () => {
-        setTheme(theme);
-        const el = await fixture<BkSwitch>(html`<bk-switch></bk-switch>`);
-        const track = getComputedStyle(innerTrack(el));
-        const thumb = getComputedStyle(innerThumb(el));
-
-        expect(contrastRatio(thumb.borderTopColor, track.backgroundColor)).to.be.at.least(3);
-      });
-
       it(`should keep the focus ring at 3:1 against the surface (${theme})`, async () => {
         setTheme(theme);
-        const el = await fixture<BkSwitch>(html`<bk-switch></bk-switch>`);
-        const style = getComputedStyle(innerTrack(el));
+        const host = await fixture<HTMLElement>(html`
+          <div><button type="button">before</button><bk-switch></bk-switch></div>
+        `);
+        const el = host.querySelector<BkSwitch>('bk-switch')!;
 
+        (host.querySelector('button') as HTMLElement).focus();
+        await sendKeys({ press: 'Tab' });
+        await nextFrame();
+
+        const style = getComputedStyle(innerTrack(el));
+        expect(style.outlineStyle, 'the ring is painted for keyboard focus').to.equal('solid');
         expect(
           contrastRatio(style.outlineColor, await colorOf('var(--bk-bg-surface)')),
         ).to.be.at.least(3);
@@ -453,12 +489,20 @@ describe('bk-switch', () => {
 
     it('should submit nothing and report no error while disabled', async () => {
       const form = await fixture<HTMLFormElement>(html`
-        <form><bk-switch name="wifi" required disabled></bk-switch></form>
+        <form>
+          <bk-switch name="wifi" required disabled></bk-switch>
+          <bk-switch name="sync" checked disabled></bk-switch>
+        </form>
       `);
-      const el = form.querySelector<BkSwitch>('bk-switch')!;
+      const [el, checked] = form.querySelectorAll<BkSwitch>('bk-switch');
       await el.updateComplete;
+      await checked.updateComplete;
 
       expect(formData(form).get('wifi')).to.equal(null);
+      expect(
+        formData(form).get('sync'),
+        'a disabled switch submits nothing even while it reads as on',
+      ).to.equal(null);
       expect(el.validity.valid, 'a disabled control asks nothing of the form').to.equal(true);
     });
   });

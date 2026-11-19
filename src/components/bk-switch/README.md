@@ -79,7 +79,7 @@ document.querySelector('bk-switch').addEventListener('bk-change', (event) => {
 | ------------- | ------------------------------------------------------------------------------------- |
 | `label`       | the `<label>` row: the track and the label, carrying `data-state` and `data-disabled` |
 | `input`       | the native `<input type="checkbox" role="switch">`                                    |
-| `track`       | the painted track: the fill, the border and the focus ring                            |
+| `track`       | the painted track: the fill and the focus ring                                        |
 | `thumb`       | the painted thumb, which travels from one end of the track to the other               |
 | `required`    | the `*` that marks a required switch, `aria-hidden`                                   |
 | `message`     | the container of the two message regions, indented to the label text                  |
@@ -110,16 +110,16 @@ alignment, because one value paints the track and the indent.
 Everything else the switch paints is a shared role or base token: theming the
 switch means theming the roles, not the field. The off track is
 `--bk-bg-surface-muted`, the on track is `--bk-bg-accent`, the thumb is
-`--bk-bg-surface`, and the track and the thumb are outlined in
-`--bk-border-strong`.
+`--bk-bg-surface`, and nothing is outlined: the track is a flat fill.
 
-**The height follows the thumb.** The track is the thumb plus a `--bk-space-1` gap at
-each end, so a consumer who resizes the thumb gets a track that still contains it.
-The travel is the track width minus that height, and the inset at each end is the
-gap, so an override keeps the thumb inside the track instead of leaving it hanging
-over the edge. There is no track-height hook: one dimension the consumer sets and
-the other is derived from it, so the two cannot disagree. The suite asserts the
-identity between the painted track and the thumb's transform.
+**The height follows the thumb.** The track is the thumb plus a `--bk-space-1` gap split
+between its two ends, so a consumer who resizes the thumb gets a track that still
+contains it. The travel is the track width minus the thumb and that gap, and the
+inset at each end is half the gap, so an override keeps the thumb inside the track
+instead of leaving it hanging over the edge. There is no track-height hook: one
+dimension the consumer sets and the other follows from it, so the two cannot
+disagree. The suite asserts the identity between the painted track and the thumb's
+transform.
 
 `--bk-switch-variant-track-width`, `--bk-switch-variant-thumb-size` and
 `--bk-switch-variant-radius` are the internal defaults the hooks fall back to, so an
@@ -147,14 +147,16 @@ override set on an ancestor still wins. Set the three hooks above, not those.
 - The painted track and thumb are `aria-hidden` decoration. Everything the
   assistive technology reads — `checked`, `aria-invalid`, `aria-disabled`,
   `aria-describedby` — lives on the native input.
-- The label colour is reinforcement, never the signal: the track border and the
-  message region carry the error, and the `*` is `aria-hidden` decoration.
+- The label colour is reinforcement, never the signal: the message region and the
+  label row carry the error, `aria-invalid` carries it for assistive technology, and
+  the `*` is `aria-hidden` decoration. A flat track paints no error colour of its own.
 - The focus ring is drawn on the track through `:focus-visible` on the input, so it
   appears for keyboard focus and not for a mouse click.
-- The track boundary, the thumb against the on track, the thumb edge against the
-  off track, and the focus ring each clear 3:1 against what they sit on (WCAG
-  1.4.11). The suite asserts all four, in both themes. The off state is not carried
-  by colour alone: the thumb has moved, and the two ends are the two states.
+- The on fill against the page surface, the thumb against the on track and the focus
+  ring each clear 3:1, and the suite asserts all three in both themes (WCAG 1.4.11).
+  The off state is a flat fill on the surface and does not: see Limitations. The
+  state is never carried by colour alone in the on direction — the thumb has moved,
+  and the two ends are the two states.
 - `disabled` sets `aria-disabled` on the inner input and cancels the click: the
   control stays in the tab order and is announced as unavailable, while Space and
   the label stop changing it. A native `disabled` input would be skipped entirely,
@@ -173,6 +175,14 @@ override set on an ancestor still wins. Set the three hooks above, not those.
 
 ## Limitations
 
+- **The off track does not clear the non-text contrast bar.** A flat fill with no
+  border puts the off state at 1.09:1 against the light surface (the muted role) and
+  1.15:1 against the dark one, against the 3:1 WCAG 1.4.11 asks of a control
+  boundary; the white thumb on it is 1.09:1 in the light theme. The on state, the
+  thumb against it and the focus ring are asserted and pass in both themes. Raising
+  the two off values to a mid tone (the `neutral-500` step of the palette) puts the
+  track at 4.80:1 in light and 3.65:1 in dark, on the same flat shape, at the cost of
+  the pale grey the design shows.
 - **No mixed state.** A switch answers on or off, and the ARIA pattern for it
   defines nothing else. A "select all" header over a set is `bk-checkbox` with
   `indeterminate`.

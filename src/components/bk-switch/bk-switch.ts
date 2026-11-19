@@ -59,15 +59,12 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
         align-items: center;
         inline-size: var(--bk-switch-track-width, var(--bk-switch-variant-track-width));
         block-size: calc(
-          var(--bk-switch-thumb-size, var(--bk-switch-variant-thumb-size)) + var(--bk-space-1) * 2
+          var(--bk-switch-thumb-size, var(--bk-switch-variant-thumb-size)) + var(--bk-space-1)
         );
-        padding-inline-start: calc(var(--bk-space-1) - var(--bk-border-width));
+        padding-inline-start: calc(var(--bk-space-1) / 2);
         background: var(--bk-bg-surface-muted);
-        border: var(--bk-border-width) solid var(--bk-border-strong);
         border-radius: var(--bk-switch-radius, var(--bk-switch-variant-radius));
-        transition:
-          border-color var(--bk-transition),
-          background-color var(--bk-transition);
+        transition: background-color var(--bk-transition);
       }
 
       .thumb {
@@ -76,7 +73,6 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
         inline-size: var(--bk-switch-thumb-size, var(--bk-switch-variant-thumb-size));
         block-size: var(--bk-switch-thumb-size, var(--bk-switch-variant-thumb-size));
         background: var(--bk-bg-surface);
-        border: var(--bk-border-width) solid var(--bk-border-strong);
         border-radius: 100%;
         transition: transform var(--bk-transition);
       }
@@ -95,18 +91,13 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
             var(--bk-switch-track-width, var(--bk-switch-variant-track-width)) - var(
                 --bk-switch-thumb-size,
                 var(--bk-switch-variant-thumb-size)
-              ) - var(--bk-space-1) *
-              2
+              ) - var(--bk-space-1)
           )
         );
       }
 
       .field:not([data-disabled]):hover .native:checked + .track {
         background: var(--bk-bg-accent-hover);
-      }
-
-      .native[aria-invalid='true'] + .track {
-        border-color: var(--bk-border-danger);
       }
 
       .native:focus-visible + .track {
