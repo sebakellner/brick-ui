@@ -104,6 +104,8 @@ describe('bk-slider', () => {
       const input = inputOf(el);
       const box = input.getBoundingClientRect();
       const rail = railOf(el).getBoundingClientRect();
+      const thumb =
+        rail.width - el.shadowRoot!.querySelector('.lane')!.getBoundingClientRect().width;
 
       expect(
         getComputedStyle(input).appearance,
@@ -111,10 +113,7 @@ describe('bk-slider', () => {
       ).to.equal('none');
       expect(getComputedStyle(input).opacity, 'a hidden input would be transparent').to.equal('1');
       expect(box.width, 'the input spans the track it hit-tests').to.equal(rail.width);
-      expect(
-        box.height,
-        'the input is taller than the flat track: it is the box the thumb is painted in',
-      ).to.be.above(rail.height);
+      expect(box.height, 'the height is the thumb hook the lane is inset by').to.equal(thumb);
     });
 
     it('should render a second input only while value-end is set', async () => {
@@ -366,6 +365,47 @@ describe('bk-slider', () => {
 
       expect(el.value, 'and the lower thumb answers the pointer too').to.be.closeTo(41, 2);
       expect(el.valueEnd).to.be.closeTo(51, 2);
+    });
+
+    it('should open a collapsed pair whichever way the pointer drags', async () => {
+      const point = (el: BkSlider, at: number): [number, number] => {
+        const rail = railOf(el).getBoundingClientRect();
+        return [
+          Math.round(rail.left + thumbOf(el) / 2 + laneOf(el) * at),
+          Math.round(rail.top + rail.height / 2),
+        ];
+      };
+
+      const dragTo = async (from: string, to: number): Promise<BkSlider> => {
+        const host = await fixture<HTMLElement>(html`
+          <div><bk-slider value=${from} value-end=${from}></bk-slider></div>
+        `);
+        const el = host.querySelector<BkSlider>('bk-slider')!;
+
+        await sendMouse({ type: 'move', position: point(el, Number(from) / 100) });
+        await sendMouse({ type: 'down' });
+        await sendMouse({ type: 'move', position: point(el, to) });
+        await sendMouse({ type: 'up' });
+        await el.updateComplete;
+        return el;
+      };
+
+      const down = await dragTo('100', 0.6);
+      expect(down.value, 'the lower thumb opens a max/max pair downward').to.be.closeTo(61, 2);
+      expect(down.valueEnd, 'and the upper thumb keeps its value').to.equal(100);
+
+      await sendMouse({ type: 'move', position: point(down, 1) });
+      await sendMouse({ type: 'down' });
+      await sendMouse({ type: 'move', position: point(down, 0.8) });
+      await sendMouse({ type: 'up' });
+      await down.updateComplete;
+
+      expect(down.valueEnd, 'the thumb it chose does not outlive the release').to.be.below(100);
+
+      const up = await dragTo('0', 0.4);
+
+      expect(up.value, 'the lower thumb keeps its value').to.equal(0);
+      expect(up.valueEnd, 'and the upper thumb opens a 0/0 pair upward').to.be.closeTo(41, 2);
     });
 
     it('should move with the arrow keys, Home and End', async () => {

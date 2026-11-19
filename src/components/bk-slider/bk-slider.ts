@@ -112,15 +112,8 @@ export class BkSlider extends FieldControlMixin(LitElement) {
             ) /
             2
         );
-        inset-block-end: calc(
-          (
-              var(--bk-slider-track-height, var(--bk-slider-variant-track-height)) - var(
-                  --bk-slider-thumb-size,
-                  var(--bk-slider-variant-thumb-size)
-                )
-            ) /
-            2
-        );
+        inline-size: 100%;
+        block-size: var(--bk-slider-thumb-size, var(--bk-slider-variant-thumb-size));
         margin: 0;
         padding: 0;
         appearance: none;
@@ -288,6 +281,7 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         aria-label=${label ?? nothing}
         aria-invalid=${this.fieldInvalid ? 'true' : nothing}
         aria-describedby=${this.fieldParts.describedBy(this.messageSources()) || nothing}
+        @pointerdown=${this.handlePointerDown}
         @input=${this.handleInput}
         @change=${this.handleChange}
       />
@@ -301,8 +295,25 @@ export class BkSlider extends FieldControlMixin(LitElement) {
 
   private readonly handleChange = (event: Event): void => {
     this.readThumb(event);
+    this.collapsedDrag = null;
     this.emitChange();
   };
+
+  /* A drag that ends where it began fires no change, so the next press clears the choice too. */
+  private readonly handlePointerDown = (): void => {
+    this.collapsedDrag = null;
+  };
+
+  /* A collapsed pair sits on one spot, where the upper input hit-tests over the lower one:
+   * the side the pointer moved to picks the thumb it drags, and it keeps it until it lets go. */
+  private collapsedDrag: 'value' | 'valueEnd' | null = null;
+
+  private thumbOf(control: HTMLInputElement, next: number): 'value' | 'valueEnd' {
+    if (this.collapsedDrag !== null) return this.collapsedDrag;
+    if (control !== this.endInput || this.valueEnd === null) return 'value';
+    if (this.value !== this.valueEnd || next === this.value) return 'valueEnd';
+    return (this.collapsedDrag = next < this.value ? 'value' : 'valueEnd');
+  }
 
   /* The input under the pointer is the source of truth while it is dragged; the properties
    * follow it, and the clamp puts the lower thumb back at the upper one's value. */
@@ -310,7 +321,7 @@ export class BkSlider extends FieldControlMixin(LitElement) {
     const control = event.target as HTMLInputElement;
     const next = Number(control.value);
 
-    if (control === this.endInput) {
+    if (this.thumbOf(control, next) === 'valueEnd') {
       this.valueEnd = Math.max(next, this.value);
     } else {
       this.value = this.valueEnd === null ? next : Math.min(next, this.valueEnd);
