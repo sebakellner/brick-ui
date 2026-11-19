@@ -14,7 +14,7 @@ export interface FieldConstraint {
 
 export interface FormControlInterface {
   name: string;
-  value: string;
+  value: string | number;
   disabled: boolean;
   required: boolean;
   error: string;
@@ -50,7 +50,7 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
 
     @property({ type: String }) name = '';
 
-    @property({ type: String }) value = '';
+    @property({ type: String }) value: string | number = '';
 
     @property({ type: Boolean, reflect: true }) disabled = false;
 
@@ -139,7 +139,7 @@ export function FormControlMixin<T extends Constructor<LitElement>>(Base: T) {
     }
 
     get submittedValue(): File | string | FormData | null {
-      return this.value;
+      return typeof this.value === 'string' ? this.value : String(this.value);
     }
 
     override updated(changed: PropertyValues): void {

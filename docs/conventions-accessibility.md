@@ -14,6 +14,7 @@ invisible until someone cannot use the control.
 | A6  | Form controls are form-associated through `ElementInternals` | the suite                               |
 | A7  | A live region is never removed from the accessibility tree   | the suite, for what a test can see      |
 | A7a | A container of controls is named on its host                 | the suite, by resolving every reference |
+| A8  | A halo is never the focus indicator                          | the suite, per control                  |
 
 **The rules are asserted, and the component is also audited.** Each rule below has its own
 cases; on top of them, every component suite runs one axe audit per theme
@@ -158,3 +159,21 @@ to offer. It is still never removed and still collapsed rather than
 **Enforced by.** The suite: every reference is asserted by resolving it
 (`document.getElementById` on the host's `aria-describedby`), never by comparing
 the attribute string.
+
+## A8. A halo is never the focus indicator
+
+**Rule.** Every control draws its focus indicator with `--bk-focus-ring` as a solid
+`outline`. A translucent halo (`--bk-focus-halo`) is allowed only on a control whose hit
+surface sits on top of the control's own track — today that is the slider's knob — and it
+is a pointer state, never the keyboard indicator.
+
+**Why.** A solid ring has a measurable contrast and a defined area; a translucent layer
+over an arbitrary backdrop has neither, so it cannot be the thing a keyboard user relies
+on to find where they are. The one place a halo earns its keep is a knob sitting on a
+track: a 2px ring there reads as part of the track it is painted over, and the state
+layer Material and Ant Design use is what separates the two. The projects that use halos
+keep them off the controls that have air around their box.
+
+**Enforced by.** The suite, per control: the focus ring is asserted as a solid `outline`
+with its colour resolved from the role, and the slider asserts both that the track does
+not answer the pointer and that the knob's halo is an `outline` sized by its hook.

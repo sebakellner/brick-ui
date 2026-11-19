@@ -127,7 +127,7 @@ export class BkSwitch extends FieldControlMixin(LitElement) {
   }
 
   override get submittedValue(): string | null {
-    return this.checked ? this.value || 'on' : null;
+    return this.checked ? String(this.value) || 'on' : null;
   }
 
   override render() {

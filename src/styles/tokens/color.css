@@ -63,6 +63,7 @@
   --bk-palette-sky-700: #0369a1;
   --bk-palette-sky-800: #075985;
   --bk-palette-sky-900: #0c4a6e;
+  --bk-focus-halo: rgb(37 99 235 / 0.18);
   --bk-bg-surface: var(--bk-palette-white);
   --bk-bg-surface-muted: var(--bk-palette-neutral-100);
   --bk-bg-surface-hover: var(--bk-palette-neutral-200);
@@ -74,6 +75,7 @@
   --bk-text-muted: var(--bk-palette-neutral-600);
   --bk-text-on-accent: var(--bk-palette-white);
   --bk-text-danger: var(--bk-palette-red-700);
+  --bk-border-on-accent: var(--bk-palette-white);
   --bk-border-default: var(--bk-palette-neutral-500);
   --bk-border-strong: var(--bk-palette-neutral-600);
   --bk-border-danger: var(--bk-palette-red-700);

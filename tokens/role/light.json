@@ -38,6 +38,9 @@
       }
     },
     "border": {
+      "on-accent": {
+        "value": "{palette.white}"
+      },
       "default": {
         "value": "{palette.neutral-500}"
       },
@@ -47,6 +50,9 @@
       "danger": {
         "value": "{palette.red-700}"
       }
+    },
+    "focus-halo": {
+      "value": "rgb(37 99 235 / 0.18)"
     },
     "focus-ring": {
       "value": "{palette.sky-600}"
