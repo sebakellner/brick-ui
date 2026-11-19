@@ -124,7 +124,7 @@ export class BkTextarea extends FieldControlMixin(LitElement) {
         ${
           this.counted
             ? html`<div class="counter" part="counter" id=${this.counterId} role="status">
-                ${this.value.length} / ${this.maxlength}
+                ${String(this.value).length} / ${this.maxlength}
               </div>`
             : nothing
         }

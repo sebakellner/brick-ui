@@ -781,7 +781,7 @@ describe('bk-textarea', () => {
       const counter = region(el, 'counter');
 
       expect(counter!.textContent!.trim(), 'value.length over maxlength').to.equal(
-        `${el.value.length} / ${el.maxlength}`,
+        `${String(el.value).length} / ${el.maxlength}`,
       );
       expect(counter!.textContent!.trim()).to.equal('5 / 20');
       expect(

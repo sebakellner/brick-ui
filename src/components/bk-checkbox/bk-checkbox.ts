@@ -140,7 +140,7 @@ export class BkCheckbox extends FieldControlMixin(LitElement) {
   override get submittedValue(): string | null {
     if (this.indeterminate) return null;
 
-    return this.checked ? this.value || 'on' : null;
+    return this.checked ? String(this.value) || 'on' : null;
   }
 
   override render() {

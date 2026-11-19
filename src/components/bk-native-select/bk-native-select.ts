@@ -118,7 +118,7 @@ export class BkNativeSelect extends FieldControlMixin(LitElement) {
    * one contributes nothing either: a custom element has to say both itself. */
   override get submittedValue(): string | null {
     if (this.fieldDisabled) return null;
-    return this.value === '' ? null : this.value;
+    return this.value === '' ? null : String(this.value);
   }
 
   override connectedCallback(): void {
@@ -208,7 +208,7 @@ export class BkNativeSelect extends FieldControlMixin(LitElement) {
      * is the value the mirror adopted when the options arrived. */
     if (this.value === '' && !this.placeholder) return;
 
-    if (select.value !== this.value) select.value = this.value;
+    if (select.value !== this.value) select.value = String(this.value);
   }
 
   private syncMirror(): void {
