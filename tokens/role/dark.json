@@ -51,6 +51,9 @@
         "value": "{palette.red-400}"
       }
     },
+    "focus-halo": {
+      "value": "rgb(96 165 250 / 0.24)"
+    },
     "focus-ring": {
       "value": "{palette.sky-400}"
     }

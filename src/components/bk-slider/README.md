@@ -108,18 +108,25 @@ pseudo-element, so no `part` reaches it — see "Limitations".
 | `--bk-slider-track-height` | the height of the painted track (defaults to `--bk-space-1`, so 4px)                                                   |
 | `--bk-slider-radius`       | the corner radius of the track and of the run (defaults to `--bk-radius-lg`)                                           |
 | `--bk-slider-length`       | the length of a vertical slider, which is the rail's inline span in that orientation (defaults to `--bk-space-4` × 15) |
+| `--bk-slider-halo-size`    | the translucent halo the knob draws under the pointer (defaults to `--bk-space-2`)                                     |
 
 Everything else the slider paints is a shared role or base token: the track is
-`--bk-bg-surface-strong` and steps to `--bk-bg-surface-strong-hover` under the
-pointer, the run is `--bk-bg-accent`, and the focus ring is `--bk-focus-ring`. The
-thumb is the **run colour** — `--bk-bg-accent` — with a one-pixel
-`--bk-border-on-accent` edge, because a knob painted a separate colour reads as a
-second object rather than as the end of the run. That edge is what separates the knob
-from the track and from the run it caps: it is white on the light theme and
-`neutral-900` on the dark one, so it reads 4.80:1 against the light track and 6.93:1
-against the dark one, and 5.17:1 and 3.38:1 against the knob itself. Under the pointer
-the edge doubles to two pixels, which keeps the knob's outer size because the box is
-`border-box`. A disabled slider dims the whole
+`--bk-bg-surface-strong`, the run is `--bk-bg-accent`, and the focus ring is
+`--bk-focus-ring`. The **track never answers the pointer**: it is not a button, and
+Material, Shoelace and Spectrum all leave it alone on hover. The thumb is the **run
+colour** — `--bk-bg-accent` — with a one-pixel `--bk-border-on-accent` edge, because a
+knob painted a separate colour reads as a second object rather than as the end of the
+run. That edge is what separates the knob from the track and from the run it caps: it
+is white on the light theme and `neutral-900` on the dark one, so it reads 4.80:1
+against the light track and 6.93:1 against the dark one, and 5.17:1 and 3.38:1 against
+the knob itself.
+
+Under the pointer the knob draws a **translucent halo** — `--bk-focus-halo`, the accent
+at 18% in the light theme and at 24% in the dark one, `--bk-slider-halo-size` wide —
+which is the state layer Material and Ant Design both use, at 40px around a 20px handle
+and 6px at 20% respectively. The halo is an `outline`, so it is drawn outside the knob
+and never changes its size; keyboard focus keeps the solid `--bk-focus-ring`, which is
+the indicator the contrast cases assert. A disabled slider dims the whole
 track with `--bk-opacity-disabled`, thumb and run included, so nothing about it looks
 operable.
 

@@ -99,6 +99,7 @@ export const tokens = {
   roleDarkBorderDefault: '--bk-border-default',
   roleDarkBorderStrong: '--bk-border-strong',
   roleDarkBorderDanger: '--bk-border-danger',
+  roleDarkFocusHalo: '--bk-focus-halo',
   roleDarkFocusRing: '--bk-focus-ring',
   roleLightBgSurface: '--bk-bg-surface',
   roleLightBgSurfaceMuted: '--bk-bg-surface-muted',
@@ -115,6 +116,7 @@ export const tokens = {
   roleLightBorderDefault: '--bk-border-default',
   roleLightBorderStrong: '--bk-border-strong',
   roleLightBorderDanger: '--bk-border-danger',
+  roleLightFocusHalo: '--bk-focus-halo',
   roleLightFocusRing: '--bk-focus-ring',
 } as const;
 
@@ -147,10 +149,12 @@ export const hooks = {
   sliderTrackHeight: '--bk-slider-track-height',
   sliderRadius: '--bk-slider-radius',
   sliderLength: '--bk-slider-length',
+  sliderHaloSize: '--bk-slider-halo-size',
   sliderVariantThumbSize: '--bk-slider-variant-thumb-size',
   sliderVariantTrackHeight: '--bk-slider-variant-track-height',
   sliderVariantRadius: '--bk-slider-variant-radius',
   sliderVariantLength: '--bk-slider-variant-length',
+  sliderVariantHaloSize: '--bk-slider-variant-halo-size',
   buttonVariantBg: '--bk-button-variant-bg',
   buttonVariantBgHover: '--bk-button-variant-bg-hover',
   buttonVariantFg: '--bk-button-variant-fg',

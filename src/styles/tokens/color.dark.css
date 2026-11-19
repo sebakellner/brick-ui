@@ -1,4 +1,5 @@
 :where([data-theme="dark"]) {
+  --bk-focus-halo: rgb(96 165 250 / 0.24);
   --bk-bg-surface: var(--bk-palette-neutral-900);
   --bk-bg-surface-muted: var(--bk-palette-neutral-800);
   --bk-bg-surface-hover: var(--bk-palette-neutral-700);

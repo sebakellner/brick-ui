@@ -527,21 +527,31 @@ describe('bk-slider', () => {
   });
 
   describe('paint', () => {
-    it('should paint the track with the strong role and step it under the pointer', async function () {
+    it('should leave the track alone under the pointer', async function () {
       if (!hoverCapable()) this.skip();
 
       const el = await fixture<BkSlider>(html`<bk-slider></bk-slider>`);
-
-      expect(getComputedStyle(railOf(el)).backgroundColor).to.equal(
-        await colorOf('var(--bk-bg-surface-strong)'),
-      );
+      const before = getComputedStyle(railOf(el)).backgroundColor;
 
       await hover(railOf(el));
 
       expect(
         getComputedStyle(railOf(el)).backgroundColor,
-        'the track answers the pointer with the stronger step',
-      ).to.equal(await colorOf('var(--bk-bg-surface-strong-hover)'));
+        'the track is not a button: only the knob answers the pointer',
+      ).to.equal(before);
+    });
+
+    it('should answer the pointer with a translucent halo on the knob', async function () {
+      if (!hoverCapable()) this.skip();
+
+      const el = await fixture<BkSlider>(html`<bk-slider></bk-slider>`);
+      const rule = [...el.shadowRoot!.adoptedStyleSheets]
+        .flatMap((sheet) => [...sheet.cssRules].map((entry) => entry.cssText))
+        .find((text) => text.includes(':hover::-webkit-slider-thumb'));
+
+      expect(rule, 'the knob has a hover rule').to.contain('--bk-focus-halo');
+      expect(rule, 'a halo, not a thicker edge').to.contain('outline');
+      expect(rule).to.contain('--bk-slider-halo-size');
     });
 
     it('should paint the fill with the accent role', async () => {
@@ -659,15 +669,14 @@ describe('bk-slider', () => {
         ).to.be.below(3);
       });
 
-      it(`should thicken the knob edge under the pointer (${theme})`, async () => {
+      it(`should resolve the halo for the theme (${theme})`, async () => {
         setTheme(theme);
+        clearStyleCache();
         const el = await fixture<BkSlider>(html`<bk-slider value="40"></bk-slider>`);
+        const halo = await colorOf('var(--bk-focus-halo)');
 
-        const hover = [...el.shadowRoot!.adoptedStyleSheets]
-          .flatMap((sheet) => [...sheet.cssRules].map((entry) => entry.cssText))
-          .find((text) => text.includes(':hover::-webkit-slider-thumb'));
-
-        expect(hover, 'a hover rule exists for the knob').to.contain('border-width');
+        expect(halo, 'the halo is translucent in both themes').to.contain('0.');
+        expect(el.shadowRoot!.querySelector('[part="fill"]')).to.not.equal(null);
       });
 
       it(`should keep the fill at 3:1 against the surface (${theme})`, async () => {

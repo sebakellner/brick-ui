@@ -61,6 +61,7 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         --bk-slider-variant-track-height: var(--bk-space-1);
         --bk-slider-variant-radius: var(--bk-radius-lg);
         --bk-slider-variant-length: calc(var(--bk-space-4) * 15);
+        --bk-slider-variant-halo-size: var(--bk-space-2);
       }
 
       .rail {
@@ -77,10 +78,6 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         inline-size: var(--bk-slider-length, var(--bk-slider-variant-length));
         writing-mode: vertical-rl;
         direction: rtl;
-      }
-
-      .rail:hover:not([data-disabled]) {
-        background: var(--bk-bg-surface-strong-hover);
       }
 
       .rail[data-disabled] {
@@ -150,7 +147,8 @@ export class BkSlider extends FieldControlMixin(LitElement) {
       }
 
       .thumb-input:hover::-webkit-slider-thumb {
-        border-width: calc(var(--bk-border-width) * 2);
+        outline: var(--bk-slider-halo-size, var(--bk-slider-variant-halo-size)) solid
+          var(--bk-focus-halo);
       }
 
       .rail[data-two] .thumb-input::-webkit-slider-thumb {
