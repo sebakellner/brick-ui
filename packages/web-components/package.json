@@ -23,10 +23,8 @@
     "**/register.js",
     "**/register.ts"
   ],
-  "dependencies": {
-    "@brick/tokens": "workspace:*"
-  },
   "peerDependencies": {
+    "@brick/tokens": "workspace:^",
     "lit": "^3.3.3"
   },
   "devDependencies": {

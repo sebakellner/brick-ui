@@ -16,3 +16,9 @@ odd/
 # Generated component manifest: `pnpm build:manifest`. CI runs it; it ships with the
 # package, not with the repository.
 packages/web-components/src/custom-elements.json
+
+# The examples are consumers, not workspace packages: their install, their build and the
+# tarballs they install are all local.
+examples/*/node_modules/
+examples/*/dist/
+examples/*/.pack/

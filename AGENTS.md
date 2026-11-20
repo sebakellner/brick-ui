@@ -20,6 +20,7 @@ packages/web-components/src/components/shared/ contract: mixins, controllers, st
 packages/web-components/test/                suites that compose several components of the package
 packages/test-utils/                         helpers every suite shares — private, never published
 storybook/web-components/                    the documentation site: one Storybook per technology
+examples/brick-ui-vite-ts/                   a consumer of the packed packages: outside the workspace on purpose
 test/                                        what needs two packages at once, and the runner's own check
 scripts/                                     the three checks
 docs/                                        conventions and decision records
