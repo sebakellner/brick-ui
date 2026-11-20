@@ -1,3 +1,7 @@
+packages:
+  - 'packages/*'
+  - 'apps/*'
+
 allowBuilds:
   esbuild: true
   # `@custom-elements-manifest/analyzer` pulls this native lexer, and manifest generation

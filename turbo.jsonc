@@ -1,0 +1,39 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+
+  // The gates deliberately do not cache. A gate that returns a cached success while a file
+  // changed outside its declared inputs is worse than a slow gate: it reports reassurance
+  // instead of a result. What caches here is the two generators, whose inputs are the JSON
+  // and the config that produce them, and the static site, which depends on the token build.
+  //
+  // Nothing is wired to turbo yet. `packages/*` and `apps/*` are empty, so `turbo run test`
+  // resolves no task and exits 0 — a green gate over nothing, the same failure the tooling
+  // slice removed from the checks. The root scripts stay direct until the first package
+  // exists and turbo has something real to run.
+  "tasks": {
+    "build:tokens": {
+      "inputs": ["tokens/**", "style-dictionary.config.mjs", "scripts/roots.mjs"],
+      "outputs": ["src/styles/tokens/**", "src/styles/tokens.generated.ts"],
+    },
+    "build:manifest": {
+      "inputs": [
+        "src/components/**",
+        "custom-elements-manifest.config.mjs",
+        "scripts/normalize-manifest.mjs",
+        "scripts/roots.mjs",
+      ],
+      "outputs": ["src/custom-elements.json"],
+    },
+    "build-storybook": {
+      "dependsOn": ["build:tokens"],
+      "inputs": ["$TURBO_DEFAULT$", ".storybook/**"],
+      "outputs": ["storybook-static/**"],
+    },
+    "test": { "cache": false },
+    "typecheck": { "cache": false },
+    "check:tokens": { "cache": false },
+    "check:readmes": { "cache": false },
+    "check-manifest": { "cache": false },
+    "format:check": { "cache": false },
+  },
+}
