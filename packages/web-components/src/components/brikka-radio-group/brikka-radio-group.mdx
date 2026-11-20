@@ -1,0 +1,27 @@
+import { Meta, Canvas, Markdown } from '@storybook/addon-docs/blocks';
+import * as RadioGroupStories from './brikka-radio-group.stories';
+import readme from './README.md?raw';
+
+<Meta of={RadioGroupStories} />
+
+<Markdown>{readme}</Markdown>
+
+## Description
+
+<Canvas of={RadioGroupStories.Description} />
+
+## Field
+
+<Canvas of={RadioGroupStories.Field} />
+
+## Disabled
+
+<Canvas of={RadioGroupStories.Disabled} />
+
+## Invalid
+
+<Canvas of={RadioGroupStories.Invalid} />
+
+## Horizontal
+
+<Canvas of={RadioGroupStories.Horizontal} />

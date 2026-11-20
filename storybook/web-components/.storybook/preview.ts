@@ -1,6 +1,6 @@
 import type { Preview } from '@storybook/web-components-vite';
 
-import '@brick/styles/theme.css';
+import '@brikka/styles/theme.css';
 import './preview.css';
 
 type Theme = 'light' | 'dark' | 'system';

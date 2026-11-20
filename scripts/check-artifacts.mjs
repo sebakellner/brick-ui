@@ -38,11 +38,11 @@ const declaredTargets = (manifest) => {
   return targets.filter((target) => !target.includes('*'));
 };
 
-const workspace = mkdtempSync(join(tmpdir(), 'brick-artifacts-'));
+const workspace = mkdtempSync(join(tmpdir(), 'brikka-artifacts-'));
 const consumer = join(workspace, 'consumer');
 
 try {
-  for (const name of PACKAGES) pnpm(['--filter', `@brick/${name}`, 'build'], root);
+  for (const name of PACKAGES) pnpm(['--filter', `@brikka/${name}`, 'build'], root);
 
   for (const name of PACKAGES) {
     const directory = join(root, 'packages', name);
@@ -51,7 +51,7 @@ try {
       .map((line) => line.trim())
       .filter((line) => line.endsWith('.tgz'))
       .at(-1);
-    if (!packed) throw new Error(`@brick/${name} packed nothing`);
+    if (!packed) throw new Error(`@brikka/${name} packed nothing`);
 
     const tarball = join(workspace, packed.replace(/^.*\//, ''));
     const listing = run('tar', ['-tzf', tarball], workspace);
@@ -64,16 +64,16 @@ try {
     for (const target of declaredTargets(manifest)) {
       const path = target.replace(/^\.\//, '');
       if (!listing.includes(`package/${path}`))
-        problems.push(`@brick/${name} exports ${target}, which the tarball does not carry`);
+        problems.push(`@brikka/${name} exports ${target}, which the tarball does not carry`);
     }
 
     for (const [dependency, version] of Object.entries(manifest.dependencies ?? {})) {
       if (String(version).startsWith('workspace:'))
-        problems.push(`@brick/${name} ships an unresolved ${dependency}: ${version}`);
+        problems.push(`@brikka/${name} ships an unresolved ${dependency}: ${version}`);
     }
 
     /* Unpack where no workspace link can reach, which is the whole point. */
-    const target = join(consumer, 'node_modules', '@brick', name);
+    const target = join(consumer, 'node_modules', '@brikka', name);
     mkdirSync(target, { recursive: true });
     run('tar', ['-xzf', tarball, '--strip-components=1', '-C', target], workspace);
   }
@@ -104,12 +104,12 @@ try {
   );
   writeFileSync(
     join(consumer, 'use.ts'),
-    `import '@brick/web-components/register.js';
-import '@brick/web-components/components/bk-slider/define.js';
-import { BkButton } from '@brick/web-components';
-import { tokens } from '@brick/styles';
+    `import '@brikka/web-components/register.js';
+import '@brikka/web-components/components/brikka-slider/define.js';
+import { BrikkaButton } from '@brikka/web-components';
+import { tokens } from '@brikka/styles';
 
-export const button: typeof BkButton = BkButton;
+export const button: typeof BrikkaButton = BrikkaButton;
 export const accent: string = tokens.roleLightBgAccent;
 `,
   );
@@ -131,5 +131,5 @@ if (problems.length) {
 }
 
 console.log(
-  `artifacts ok: ${PACKAGES.map((name) => `@brick/${name}`).join(', ')} pack, carry their exports and type-check outside the workspace`,
+  `artifacts ok: ${PACKAGES.map((name) => `@brikka/${name}`).join(', ')} pack, carry their exports and type-check outside the workspace`,
 );

@@ -1,16 +1,16 @@
 {
-  "name": "@brick/storybook-web-components",
+  "name": "@brikka/storybook-web-components",
   "version": "0.1.0",
   "private": true,
-  "description": "The documentation site for @brick/web-components: one Storybook per technology",
+  "description": "The documentation site for @brikka/web-components: one Storybook per technology",
   "type": "module",
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build": "storybook build -o ../../storybook-static"
   },
   "dependencies": {
-    "@brick/styles": "workspace:*",
-    "@brick/web-components": "workspace:*"
+    "@brikka/styles": "workspace:*",
+    "@brikka/web-components": "workspace:*"
   },
   "devDependencies": {
     "@storybook/addon-docs": "^10.6.7",

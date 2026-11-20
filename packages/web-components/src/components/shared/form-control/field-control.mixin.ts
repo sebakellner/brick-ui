@@ -15,7 +15,7 @@ let instanceCount = 0;
 /* One counter for every field control, so ids stay unique across tags instead
  * of pretending each tag owns its own document. */
 const nextInstanceId = (host: LitElement): string =>
-  `${host.localName || 'bk-field'}-${++instanceCount}`;
+  `${host.localName || 'brikka-field'}-${++instanceCount}`;
 
 /* The members the mixin adds, as a named type. A declaration cannot name an anonymous class
  * with `protected` members (TS4094), so the mixin returns a constructor of this interface and
@@ -36,7 +36,7 @@ export function FieldControlMixin<T extends Constructor<LitElement>>(
 
     protected readonly fieldParts = new FieldPartsController(this, this.controlId);
 
-    /* A slotted `bk-field-error` with text is this field's error: it is what the
+    /* A slotted `brikka-field-error` with text is this field's error: it is what the
      * region shows, and markup is the more specific statement, so it wins over
      * the property. An atom with no text is not content and says nothing. */
     override get fieldError(): string {

@@ -1,5 +1,5 @@
 {
-  "name": "@brick/test-utils",
+  "name": "@brikka/test-utils",
   "version": "0.1.0",
   "private": true,
   "description": "The helpers every suite in this repository shares: dom, style, pointer, form, a11y, theme",

@@ -7,7 +7,7 @@ export default {
   files: ['packages/*/src/**/*.test.ts', 'packages/*/test/**/*.test.ts', 'test/**/*.test.ts'],
   nodeResolve: true,
   // Contention, not timeouts: the role matrix recalculated the whole page while
-  // bk-input awaited browser commands, and three CI runs were lost to it.
+  // brikka-input awaited browser commands, and three CI runs were lost to it.
   concurrency: 1,
   plugins: [
     // Without the tsconfig, esbuild applies its own decorator transform and the
@@ -28,14 +28,14 @@ export default {
        * interpolated colour. Custom properties do inherit, so the kit's own duration
        * token is what the test page zeroes. */
       :root {
-        --bk-transition: 0s;
+        --brikka-transition: 0s;
       }
       /* axe grades text against the page's canvas. An unpainted canvas is white to
        * axe even when the browser reports a dark colour scheme, so the dark theme was
        * measured as dark text on white: 1.09:1 on a pair the kit paints at 8:1. The
        * theme paints the page, and the page is where the theme belongs. */
       body {
-        background: var(--bk-bg-surface);
+        background: var(--brikka-bg-surface);
       }
     </style>
   </head>

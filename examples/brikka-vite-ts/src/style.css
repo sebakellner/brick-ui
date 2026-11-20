@@ -1,0 +1,22 @@
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  margin: 0;
+  padding: var(--brikka-space-4);
+  background: var(--brikka-bg-surface);
+  color: var(--brikka-text-default);
+  font-family: var(--brikka-font-sans);
+}
+
+main {
+  display: grid;
+  gap: var(--brikka-space-4);
+  max-inline-size: 28rem;
+}
+
+.row {
+  display: flex;
+  gap: var(--brikka-space-2);
+}

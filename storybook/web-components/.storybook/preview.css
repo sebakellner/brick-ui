@@ -4,6 +4,6 @@
 html,
 body,
 #storybook-root {
-  background: var(--bk-bg-surface) !important;
-  color: var(--bk-text-default) !important;
+  background: var(--brikka-bg-surface) !important;
+  color: var(--brikka-text-default) !important;
 }

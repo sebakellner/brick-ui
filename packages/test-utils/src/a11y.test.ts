@@ -3,20 +3,20 @@ import { expectNoViolations } from './a11y.js';
 import { clearStyleCache } from './style.js';
 import { setTheme } from './theme.js';
 
-class BkProbeBox extends HTMLElement {
+class BrikkaProbeBox extends HTMLElement {
   connectedCallback(): void {
     if (this.shadowRoot) return;
     this.attachShadow({ mode: 'open' }).innerHTML =
       '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />';
   }
 }
-customElements.define('bk-probe-box', BkProbeBox);
+customElements.define('brikka-probe-box', BrikkaProbeBox);
 
 describe('the axe gate', () => {
   afterEach(() => setTheme('light'));
 
   it('should fail, and name the rule, on a violation inside a shadow root', async () => {
-    const el = await fixture<HTMLElement>(html`<bk-probe-box></bk-probe-box>`);
+    const el = await fixture<HTMLElement>(html`<brikka-probe-box></brikka-probe-box>`);
     let message = '';
     try {
       await expectNoViolations(el);
@@ -38,7 +38,7 @@ describe('the axe gate', () => {
       setTheme(theme);
       clearStyleCache();
       const el = await fixture<HTMLElement>(html`
-        <p style="color:var(--bk-text-default);font-size:16px;line-height:24px">
+        <p style="color:var(--brikka-text-default);font-size:16px;line-height:24px">
           A paragraph long enough for axe to grade against the page canvas behind it.
         </p>
       `);

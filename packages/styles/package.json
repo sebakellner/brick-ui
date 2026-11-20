@@ -1,8 +1,8 @@
 {
-  "name": "@brick/styles",
+  "name": "@brikka/styles",
   "version": "0.1.0",
   "private": true,
-  "description": "Brick's styles: the token source, the custom properties it generates, and the theme a page loads",
+  "description": "Brikka's styles: the token source, the custom properties it generates, and the theme a page loads",
   "type": "module",
   "exports": {
     "./theme.css": "./src/theme.css",

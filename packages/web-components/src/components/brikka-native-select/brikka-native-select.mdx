@@ -1,0 +1,37 @@
+import { Meta, Canvas, Markdown } from '@storybook/addon-docs/blocks';
+import * as NativeSelectStories from './brikka-native-select.stories';
+import readme from './README.md?raw';
+
+<Meta of={NativeSelectStories} />
+
+<Markdown>{readme}</Markdown>
+
+## Default
+
+The platform's own `<select>`: its arrow, its keyboard and its mobile picker.
+The options are written as atoms and mirrored inside the shadow select.
+
+<Canvas of={NativeSelectStories.Default} />
+
+## Groups
+
+An `brikka-native-select-opt-group` becomes an `<optgroup>`: its `label` names the
+group, and the options inside it are mirrored under that name. A group inside a
+group is not rendered, because the platform has no such thing.
+
+<Canvas of={NativeSelectStories.Groups} />
+
+## Disabled
+
+`disabled` is the native attribute on the inner select, so the platform removes
+it from the tab order and refuses every path into it — the select is a
+text-field-shaped control and follows the input, not the button.
+
+<Canvas of={NativeSelectStories.Disabled} />
+
+## Invalid
+
+`error` paints the label and fills the error region, exactly as the rest of the
+field controls do.
+
+<Canvas of={NativeSelectStories.Invalid} />

@@ -4,27 +4,27 @@
  * asked next — and the count is the half a boolean flag cannot say. */
 
 import { expect, fixture, html } from '@open-wc/testing';
-import '../../../src/components/bk-input/define.js';
-import '../../../src/components/bk-checkbox/define.js';
-import '../../../src/components/bk-native-select/define.js';
-import '../../../src/components/bk-field/define.js';
-import type { BkInput } from '../../../src/components/bk-input/bk-input.js';
-import type { BkNativeSelect } from '../../../src/components/bk-native-select/bk-native-select.js';
-import { labelAtom } from '@brick/test-utils/atoms.js';
-import { watchSubmit } from '@brick/test-utils/form.js';
-import { settle } from '@brick/test-utils/settle.js';
+import '../../../src/components/brikka-input/define.js';
+import '../../../src/components/brikka-checkbox/define.js';
+import '../../../src/components/brikka-native-select/define.js';
+import '../../../src/components/brikka-field/define.js';
+import type { BrikkaInput } from '../../../src/components/brikka-input/brikka-input.js';
+import type { BrikkaNativeSelect } from '../../../src/components/brikka-native-select/brikka-native-select.js';
+import { labelAtom } from '@brikka/test-utils/atoms.js';
+import { watchSubmit } from '@brikka/test-utils/form.js';
+import { settle } from '@brikka/test-utils/settle.js';
 
-const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
-const innerSelect = (el: BkNativeSelect) => el.shadowRoot!.querySelector('select')!;
+const innerInput = (el: BrikkaInput) => el.shadowRoot!.querySelector('input')!;
+const innerSelect = (el: BrikkaNativeSelect) => el.shadowRoot!.querySelector('select')!;
 
-const type = async (el: BkInput, value: string) => {
+const type = async (el: BrikkaInput, value: string) => {
   const field = innerInput(el);
   field.value = value;
   field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
   await settle(el);
 };
 
-const choose = async (el: BkNativeSelect, value: string) => {
+const choose = async (el: BrikkaNativeSelect, value: string) => {
   const select = innerSelect(el);
   select.value = value;
   select.dispatchEvent(new Event('change', { bubbles: true }));
@@ -39,21 +39,21 @@ const submitted = (form: HTMLFormElement, name: string): string | null => {
 
 const twoRequired = html`
   <form>
-    <bk-input name="email" required>${labelAtom('Email')}</bk-input>
-    <bk-native-select name="channel" placeholder="Choose a channel" required>
+    <brikka-input name="email" required>${labelAtom('Email')}</brikka-input>
+    <brikka-native-select name="channel" placeholder="Choose a channel" required>
       ${labelAtom('Channel')}
-      <bk-native-select-opt value="email">Email</bk-native-select-opt>
-      <bk-native-select-opt value="sms">SMS</bk-native-select-opt>
-    </bk-native-select>
-    <bk-checkbox name="terms">${labelAtom('Terms')}</bk-checkbox>
+      <brikka-native-select-opt value="email">Email</brikka-native-select-opt>
+      <brikka-native-select-opt value="sms">SMS</brikka-native-select-opt>
+    </brikka-native-select>
+    <brikka-checkbox name="terms">${labelAtom('Terms')}</brikka-checkbox>
   </form>
 `;
 
 describe('form validity', () => {
   it('should refuse the submit while both required widgets are empty and report the first in document order', async () => {
     const form = await fixture<HTMLFormElement>(twoRequired);
-    const email = form.querySelector<BkInput>('bk-input')!;
-    const channel = form.querySelector<BkNativeSelect>('bk-native-select')!;
+    const email = form.querySelector<BrikkaInput>('brikka-input')!;
+    const channel = form.querySelector<BrikkaNativeSelect>('brikka-native-select')!;
     await settle(email);
     await settle(channel);
     const watch = watchSubmit(form);
@@ -85,13 +85,13 @@ describe('form validity', () => {
 
   it('should stay invalid on the second widget once the first is satisfied', async () => {
     const form = await fixture<HTMLFormElement>(twoRequired);
-    const email = form.querySelector<BkInput>('bk-input')!;
-    const channel = form.querySelector<BkNativeSelect>('bk-native-select')!;
+    const email = form.querySelector<BrikkaInput>('brikka-input')!;
+    const channel = form.querySelector<BrikkaNativeSelect>('brikka-native-select')!;
     await settle(email);
     await settle(channel);
     const watch = watchSubmit(form);
 
-    await type(email, 'you@brick.dev');
+    await type(email, 'you@brikka.dev');
 
     expect(email.validity.valueMissing, 'the typed field is no longer missing').to.equal(false);
     expect(channel.validity.valueMissing, 'the select still is').to.equal(true);
@@ -110,18 +110,18 @@ describe('form validity', () => {
 
   it('should run the submit once when both required widgets are satisfied', async () => {
     const form = await fixture<HTMLFormElement>(twoRequired);
-    const email = form.querySelector<BkInput>('bk-input')!;
-    const channel = form.querySelector<BkNativeSelect>('bk-native-select')!;
+    const email = form.querySelector<BrikkaInput>('brikka-input')!;
+    const channel = form.querySelector<BrikkaNativeSelect>('brikka-native-select')!;
     await settle(email);
     await settle(channel);
     const watch = watchSubmit(form);
 
-    await type(email, 'you@brick.dev');
+    await type(email, 'you@brikka.dev');
     await choose(channel, 'sms');
 
     expect(form.checkValidity(), 'the form has no refusal left').to.equal(true);
     expect(submitted(form, 'email'), 'the typed value is part of the payload').to.equal(
-      'you@brick.dev',
+      'you@brikka.dev',
     );
     expect(submitted(form, 'channel'), 'and so is the chosen option').to.equal('sms');
 

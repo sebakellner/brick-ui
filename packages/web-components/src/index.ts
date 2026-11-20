@@ -1,22 +1,35 @@
-export { BkButton, type BkButtonVariant } from './components/bk-button/bk-button.js';
-export { BkCheckbox } from './components/bk-checkbox/bk-checkbox.js';
 export {
-  BkCheckboxGroup,
-  type BkCheckboxGroupOrientation,
-} from './components/bk-checkbox-group/bk-checkbox-group.js';
-export { BkField, type BkFieldPart } from './components/bk-field/bk-field.js';
-export { BkFieldDescription } from './components/bk-field/bk-field-description.js';
-export { BkFieldError } from './components/bk-field/bk-field-error.js';
-export { BkFieldLabel } from './components/bk-field/bk-field-label.js';
-export { BkInput, type BkInputMode, type BkInputType } from './components/bk-input/bk-input.js';
-export { BkNativeSelect } from './components/bk-native-select/bk-native-select.js';
+  BrikkaButton,
+  type BrikkaButtonVariant,
+} from './components/brikka-button/brikka-button.js';
+export { BrikkaCheckbox } from './components/brikka-checkbox/brikka-checkbox.js';
 export {
-  BkRadioGroup,
-  type BkRadioGroupOrientation,
-} from './components/bk-radio-group/bk-radio-group.js';
-export { BkSlider, type BkSliderOrientation } from './components/bk-slider/bk-slider.js';
-export { BkSwitch } from './components/bk-switch/bk-switch.js';
-export { BkTextarea, type BkTextareaResize } from './components/bk-textarea/bk-textarea.js';
+  BrikkaCheckboxGroup,
+  type BrikkaCheckboxGroupOrientation,
+} from './components/brikka-checkbox-group/brikka-checkbox-group.js';
+export { BrikkaField, type BrikkaFieldPart } from './components/brikka-field/brikka-field.js';
+export { BrikkaFieldDescription } from './components/brikka-field/brikka-field-description.js';
+export { BrikkaFieldError } from './components/brikka-field/brikka-field-error.js';
+export { BrikkaFieldLabel } from './components/brikka-field/brikka-field-label.js';
+export {
+  BrikkaInput,
+  type BrikkaInputMode,
+  type BrikkaInputType,
+} from './components/brikka-input/brikka-input.js';
+export { BrikkaNativeSelect } from './components/brikka-native-select/brikka-native-select.js';
+export {
+  BrikkaRadioGroup,
+  type BrikkaRadioGroupOrientation,
+} from './components/brikka-radio-group/brikka-radio-group.js';
+export {
+  BrikkaSlider,
+  type BrikkaSliderOrientation,
+} from './components/brikka-slider/brikka-slider.js';
+export { BrikkaSwitch } from './components/brikka-switch/brikka-switch.js';
+export {
+  BrikkaTextarea,
+  type BrikkaTextareaResize,
+} from './components/brikka-textarea/brikka-textarea.js';
 export {
   FormControlMixin,
   formControlStyles,

@@ -9,14 +9,14 @@ const COLOR_CSS = paths.colorCss;
 const COMPONENTS_DIR = paths.components;
 const HOOKS_SOURCE = paths.hooks;
 
-const NAMES = /^\s*(--bk-[a-z0-9-]+):/gm;
-const REFERENCES = /(--bk-[a-z0-9-]+)/g;
+const NAMES = /^\s*(--brikka-[a-z0-9-]+):/gm;
+const REFERENCES = /(--brikka-[a-z0-9-]+)/g;
 const DECLARATION = /^\s*(--[a-z0-9-]+|[a-z-]+)\s*:/;
 const RULE_BOUNDARY = /[{}]/;
 const SUPPORT_FILE = /\.(test|stories)\.ts$/;
 const STORYBOOK_DIR = paths.storybook;
 const STORYBOOK_FILE = /\.(css|ts|html)$/;
-const PRIMITIVE = '--bk-palette-';
+const PRIMITIVE = '--brikka-palette-';
 
 const PROPERTIES = {
   bg: ['background', 'background-color'],
@@ -60,7 +60,7 @@ for (const file of walk(TOKENS_CSS_DIR)) {
 }
 
 const hooks = new Set();
-for (const [, name] of read(HOOKS_SOURCE).matchAll(/'(--bk-[a-z0-9-]+)'/g)) hooks.add(name);
+for (const [, name] of read(HOOKS_SOURCE).matchAll(/'(--brikka-[a-z0-9-]+)'/g)) hooks.add(name);
 
 const semantic = names(read(COLOR_CSS)).filter((name) => !name.startsWith(PRIMITIVE));
 if (semantic.length === 0) {
@@ -87,7 +87,7 @@ const misplacedRoles = (file, source) => {
 
       for (const [, name] of segment.matchAll(REFERENCES)) {
         if (!roles.has(name)) continue;
-        const family = name.slice('--bk-'.length).split('-')[0];
+        const family = name.slice('--brikka-'.length).split('-')[0];
         const allowed = PROPERTIES[family];
         if (!allowed || !property || allowed.includes(property)) continue;
         found.push(`${file}:${i + 1}: ${name} read under ${property} (R5)`);

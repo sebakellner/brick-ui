@@ -1,7 +1,7 @@
 {
-  "name": "@brick/web-components",
+  "name": "@brikka/web-components",
   "version": "0.1.0",
-  "description": "Brick's elements: Lit custom elements with a token-driven theming contract",
+  "description": "Brikka's elements: Lit custom elements with a token-driven theming contract",
   "type": "module",
   "exports": {
     ".": {
@@ -24,11 +24,11 @@
     "**/register.ts"
   ],
   "peerDependencies": {
-    "@brick/styles": "workspace:^",
+    "@brikka/styles": "workspace:^",
     "lit": "^3.3.3"
   },
   "devDependencies": {
-    "@brick/test-utils": "workspace:*",
+    "@brikka/test-utils": "workspace:*",
     "@storybook/addon-docs": "^10.6.7",
     "@storybook/web-components-vite": "^10.6.7"
   },

@@ -1,0 +1,37 @@
+import { Meta, Canvas, Markdown } from '@storybook/addon-docs/blocks';
+import * as FieldStories from './brikka-field.stories';
+import readme from './README.md?raw';
+
+<Meta of={FieldStories} />
+
+<Markdown>{readme}</Markdown>
+
+## Input
+
+<Canvas of={FieldStories.Input} />
+
+## Select
+
+<Canvas of={FieldStories.Select} />
+
+## Checkbox
+
+<Canvas of={FieldStories.Checkbox} />
+
+## Radio group
+
+<Canvas of={FieldStories.RadioGroup} />
+
+## Label only
+
+The description slot may be empty; the field still stacks what is there.
+
+<Canvas of={FieldStories.LabelOnly} />
+
+## Invalid, with the error atom
+
+`invalid` is the field's, and the atom only paints the text. The control's
+`error` property is what makes the input invalid, so the two are written
+together until the form-error model gives the atom a validity source.
+
+<Canvas of={FieldStories.Invalid} />

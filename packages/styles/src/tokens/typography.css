@@ -1,7 +1,7 @@
 :root {
-  --bk-font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --bk-font-size-sm: 0.8125rem;
-  --bk-font-size-md: 0.9375rem;
-  --bk-font-weight-medium: 500;
-  --bk-line-height-md: 1.5;
+  --brikka-font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --brikka-font-size-sm: 0.8125rem;
+  --brikka-font-size-md: 0.9375rem;
+  --brikka-font-weight-medium: 500;
+  --brikka-line-height-md: 1.5;
 }

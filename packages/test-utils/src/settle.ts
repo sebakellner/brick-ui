@@ -8,7 +8,7 @@
  *
  * One round, because that is what the suites ask for: removing the flush breaks no test
  * today, so a heavier helper would be a claim nothing proves. A suite that genuinely
- * needs a second flush composes one — `bk-radio-group` settles its items, and that is
+ * needs a second flush composes one — `brikka-radio-group` settles its items, and that is
  * the rule, not the mechanic. */
 
 export const settle = async (el: { updateComplete: Promise<unknown> }): Promise<void> => {
