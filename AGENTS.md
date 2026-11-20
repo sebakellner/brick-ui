@@ -73,6 +73,7 @@ identifiers are the one exception: a rename updates the names, never the reasoni
 | `pnpm typecheck`       | `tsc --noEmit`, with `strict`, `noUnusedLocals`, `noUnusedParameters`                                                                                                    |
 | `pnpm build:tokens`    | regenerate the CSS and `tokens.generated.ts`; commit the result                                                                                                          |
 | `pnpm check:tokens`    | every `--brikka-*` name a component reads exists, and every semantic role is read                                                                                        |
+| `pnpm test:checks`     | the checks' own tests: each refuses the input it exists to refuse                                                                                                        |
 | `pnpm check:artifacts` | the packages pack, carry every path their `exports` name, and type-check from a consumer outside the workspace                                                           |
 | `pnpm check:readmes`   | every name the manifest declares is in the README, every name the README has is in the manifest, and the sections and table headers are the ones the conventions ask for |
 | `pnpm format`          | rewrite the files Prettier owns                                                                                                                                          |

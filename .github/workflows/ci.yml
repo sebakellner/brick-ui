@@ -51,6 +51,8 @@ jobs:
       - name: the READMEs and the manifest agree, in both directions
         run: node scripts/check-readmes.mjs
       - run: pnpm check:tokens
+      - name: the token check refuses the prefix this kit no longer publishes
+        run: pnpm test:checks
       - name: the packages pack, and a consumer outside the workspace resolves them
         run: pnpm check:artifacts
       - name: the example installs the tarballs and builds

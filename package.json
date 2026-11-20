@@ -19,6 +19,7 @@
     "typecheck": "tsc --noEmit",
     "test": "web-test-runner",
     "test:watch": "web-test-runner --watch",
+    "test:checks": "node --test \"scripts/*.test.mjs\"",
     "storybook": "pnpm --filter @brikka-ui/storybook-web-components storybook",
     "build-storybook": "pnpm --filter @brikka-ui/storybook-web-components build"
   },
