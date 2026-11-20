@@ -1,12 +1,12 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import '.././define.js';
 import type { BkButton } from '.././bk-button.js';
-import { contrastRatio } from '../../../../../../test/helpers/contrast.js';
-import { expectNoViolations, expectRendered } from '../../../../../../test/helpers/a11y.js';
-import { colorOf } from '../../../../../../test/helpers/style.js';
-import { watchSubmit } from '../../../../../../test/helpers/form.js';
-import { clickAt, hover, hoverCapable } from '../../../../../../test/helpers/pointer.js';
-import { setTheme } from '../../../../../../test/helpers/theme.js';
+import { contrastRatio } from '@brick/test-utils/contrast.js';
+import { expectNoViolations, expectRendered } from '@brick/test-utils/a11y.js';
+import { colorOf } from '@brick/test-utils/style.js';
+import { watchSubmit } from '@brick/test-utils/form.js';
+import { clickAt, hover, hoverCapable } from '@brick/test-utils/pointer.js';
+import { setTheme } from '@brick/test-utils/theme.js';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 
 const innerButton = (el: BkButton) => el.shadowRoot!.querySelector('button')!;

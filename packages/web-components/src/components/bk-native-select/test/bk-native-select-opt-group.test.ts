@@ -1,5 +1,5 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { expectRendered } from '../../../../../../test/helpers/a11y.js';
+import { expectRendered } from '@brick/test-utils/a11y.js';
 import type { BkNativeSelectOptGroup } from '.././bk-native-select-opt-group.js';
 import '.././define.js';
 

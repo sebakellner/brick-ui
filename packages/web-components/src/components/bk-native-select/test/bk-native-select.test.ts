@@ -1,15 +1,15 @@
-import { settle } from '../../../../../../test/helpers/settle.js';
-import { colorOf } from '../../../../../../test/helpers/style.js';
-import { labelAtom } from '../../../../../../test/helpers/atoms.js';
-import { watchSubmit } from '../../../../../../test/helpers/form.js';
-import { contrastRatio } from '../../../../../../test/helpers/contrast.js';
+import { settle } from '@brick/test-utils/settle.js';
+import { colorOf } from '@brick/test-utils/style.js';
+import { labelAtom } from '@brick/test-utils/atoms.js';
+import { watchSubmit } from '@brick/test-utils/form.js';
+import { contrastRatio } from '@brick/test-utils/contrast.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import '.././define.js';
 import '../../bk-field/define.js';
 import type { BkNativeSelect } from '.././bk-native-select.js';
-import { expectNoViolations, expectRendered } from '../../../../../../test/helpers/a11y.js';
-import { setTheme } from '../../../../../../test/helpers/theme.js';
+import { expectNoViolations, expectRendered } from '@brick/test-utils/a11y.js';
+import { setTheme } from '@brick/test-utils/theme.js';
 
 const innerSelect = (el: BkNativeSelect) => el.shadowRoot!.querySelector('select')!;
 const innerLabel = (el: BkNativeSelect) =>

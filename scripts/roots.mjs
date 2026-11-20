@@ -26,7 +26,6 @@ export const paths = {
   storybook: at('.storybook'),
   tokensJson: at('packages', 'tokens', 'tokens'),
   manifest: at('packages', 'web-components', 'src', 'custom-elements.json'),
-  test: at('test'),
   styles: at('packages', 'tokens', 'src'),
 };
 

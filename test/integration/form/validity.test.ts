@@ -10,9 +10,9 @@ import '../../../packages/web-components/src/components/bk-native-select/define.
 import '../../../packages/web-components/src/components/bk-field/define.js';
 import type { BkInput } from '../../../packages/web-components/src/components/bk-input/bk-input.js';
 import type { BkNativeSelect } from '../../../packages/web-components/src/components/bk-native-select/bk-native-select.js';
-import { labelAtom } from '../../helpers/atoms.js';
-import { watchSubmit } from '../../helpers/form.js';
-import { settle } from '../../helpers/settle.js';
+import { labelAtom } from '@brick/test-utils/atoms.js';
+import { watchSubmit } from '@brick/test-utils/form.js';
+import { settle } from '@brick/test-utils/settle.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
 const innerSelect = (el: BkNativeSelect) => el.shadowRoot!.querySelector('select')!;

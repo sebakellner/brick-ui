@@ -1,16 +1,16 @@
-import { settle } from '../../../../../../test/helpers/settle.js';
+import { settle } from '@brick/test-utils/settle.js';
 import { resetMouse, sendKeys } from '@web/test-runner-commands';
-import { labelAtom } from '../../../../../../test/helpers/atoms.js';
-import { contrastRatio } from '../../../../../../test/helpers/contrast.js';
-import { colorOf, opacityOf } from '../../../../../../test/helpers/style.js';
+import { labelAtom } from '@brick/test-utils/atoms.js';
+import { contrastRatio } from '@brick/test-utils/contrast.js';
+import { colorOf, opacityOf } from '@brick/test-utils/style.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
-import { expectNoViolations, expectRendered } from '../../../../../../test/helpers/a11y.js';
+import { expectNoViolations, expectRendered } from '@brick/test-utils/a11y.js';
 import '.././define.js';
 import '../../bk-field/define.js';
 import type { BkRadioGroup } from '.././bk-radio-group.js';
 import type { BkRadioGroupItem } from '.././bk-radio-group-item.js';
-import { clickAt, hover, hoverCapable } from '../../../../../../test/helpers/pointer.js';
-import { setTheme } from '../../../../../../test/helpers/theme.js';
+import { clickAt, hover, hoverCapable } from '@brick/test-utils/pointer.js';
+import { setTheme } from '@brick/test-utils/theme.js';
 
 const innerInput = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkRadioGroupItem) => el.shadowRoot!.querySelector('label')!;

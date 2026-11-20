@@ -1,16 +1,16 @@
-import { settle as settleHost } from '../../../../../../test/helpers/settle.js';
-import { colorOf, opacityOf } from '../../../../../../test/helpers/style.js';
-import { describedNode } from '../../../../../../test/helpers/dom.js';
-import { watchSubmit } from '../../../../../../test/helpers/form.js';
+import { settle as settleHost } from '@brick/test-utils/settle.js';
+import { colorOf, opacityOf } from '@brick/test-utils/style.js';
+import { describedNode } from '@brick/test-utils/dom.js';
+import { watchSubmit } from '@brick/test-utils/form.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import '.././define.js';
 import '../../bk-field/define.js';
 import type { BkRadioGroupItem } from '.././bk-radio-group-item.js';
 import type { BkRadioGroup } from '.././bk-radio-group.js';
-import { expectNoViolations, expectRendered } from '../../../../../../test/helpers/a11y.js';
-import { clickAt } from '../../../../../../test/helpers/pointer.js';
-import { setTheme } from '../../../../../../test/helpers/theme.js';
+import { expectNoViolations, expectRendered } from '@brick/test-utils/a11y.js';
+import { clickAt } from '@brick/test-utils/pointer.js';
+import { setTheme } from '@brick/test-utils/theme.js';
 
 const radios = (el: BkRadioGroup) =>
   Array.from(el.querySelectorAll<BkRadioGroupItem>('bk-radio-group-item'));

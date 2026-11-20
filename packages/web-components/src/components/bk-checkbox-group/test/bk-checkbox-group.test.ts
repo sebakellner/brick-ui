@@ -1,15 +1,15 @@
-import { settle } from '../../../../../../test/helpers/settle.js';
-import { colorOf, opacityOf } from '../../../../../../test/helpers/style.js';
-import { describedNode, region } from '../../../../../../test/helpers/dom.js';
-import { watchSubmit } from '../../../../../../test/helpers/form.js';
+import { settle } from '@brick/test-utils/settle.js';
+import { colorOf, opacityOf } from '@brick/test-utils/style.js';
+import { describedNode, region } from '@brick/test-utils/dom.js';
+import { watchSubmit } from '@brick/test-utils/form.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import '.././define.js';
 import '../../bk-checkbox/define.js';
 import '../../bk-field/define.js';
 import type { BkCheckbox } from '../../bk-checkbox/bk-checkbox.js';
 import type { BkCheckboxGroup } from '.././bk-checkbox-group.js';
-import { setTheme } from '../../../../../../test/helpers/theme.js';
-import { expectNoViolations, expectRendered } from '../../../../../../test/helpers/a11y.js';
+import { setTheme } from '@brick/test-utils/theme.js';
+import { expectNoViolations, expectRendered } from '@brick/test-utils/a11y.js';
 
 const boxesContainer = (el: BkCheckboxGroup) => region(el, 'boxes')!;
 

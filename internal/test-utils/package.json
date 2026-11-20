@@ -1,0 +1,18 @@
+{
+  "name": "@brick/test-utils",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The helpers every suite in this repository shares: dom, style, pointer, form, a11y, theme",
+  "type": "module",
+  "exports": {
+    "./*.js": "./src/*.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "devDependencies": {
+    "@open-wc/testing": "^5.0.0",
+    "@web/test-runner-commands": "^1.0.3",
+    "axe-core": "^4.14.0"
+  }
+}

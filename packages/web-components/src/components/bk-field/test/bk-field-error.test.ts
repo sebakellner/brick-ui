@@ -1,8 +1,8 @@
-import { colorOf } from '../../../../../../test/helpers/style.js';
+import { colorOf } from '@brick/test-utils/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
-import { expectNoViolations, expectRendered } from '../../../../../../test/helpers/a11y.js';
-import { setTheme } from '../../../../../../test/helpers/theme.js';
-import { settle } from '../../../../../../test/helpers/settle.js';
+import { expectNoViolations, expectRendered } from '@brick/test-utils/a11y.js';
+import { setTheme } from '@brick/test-utils/theme.js';
+import { settle } from '@brick/test-utils/settle.js';
 import '.././define.js';
 import type { BkFieldError } from '.././bk-field-error.js';
 

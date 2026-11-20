@@ -1,14 +1,14 @@
-import { settle } from '../../../../../../test/helpers/settle.js';
-import { colorOf, opacityOf } from '../../../../../../test/helpers/style.js';
+import { settle } from '@brick/test-utils/settle.js';
+import { colorOf, opacityOf } from '@brick/test-utils/style.js';
 import {
   describedNode,
   projectedNodes,
   projectedText,
   region,
   slottedText,
-} from '../../../../../../test/helpers/dom.js';
-import { descriptionAtom, labelAtom } from '../../../../../../test/helpers/atoms.js';
-import { watchSubmit } from '../../../../../../test/helpers/form.js';
+} from '@brick/test-utils/dom.js';
+import { descriptionAtom, labelAtom } from '@brick/test-utils/atoms.js';
+import { watchSubmit } from '@brick/test-utils/form.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import '.././define.js';
@@ -16,10 +16,10 @@ import '../../bk-field/define.js';
 import type { BkField } from '../../bk-field/bk-field.js';
 import type { BkFieldLabel } from '../../bk-field/bk-field-label.js';
 import type { BkInput } from '.././bk-input.js';
-import { contrastRatio } from '../../../../../../test/helpers/contrast.js';
-import { expectNoViolations, expectRendered } from '../../../../../../test/helpers/a11y.js';
-import { hover, hoverCapable } from '../../../../../../test/helpers/pointer.js';
-import { setTheme } from '../../../../../../test/helpers/theme.js';
+import { contrastRatio } from '@brick/test-utils/contrast.js';
+import { expectNoViolations, expectRendered } from '@brick/test-utils/a11y.js';
+import { hover, hoverCapable } from '@brick/test-utils/pointer.js';
+import { setTheme } from '@brick/test-utils/theme.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkInput) => el.shadowRoot!.querySelector('label')!;

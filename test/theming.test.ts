@@ -1,7 +1,7 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import '../packages/web-components/src/components/bk-button/define.js';
 import type { BkButton } from '../packages/web-components/src/components/bk-button/bk-button.js';
-import { setTheme } from './helpers/theme.js';
+import { setTheme } from '@brick/test-utils/theme.js';
 
 const hex = (value: string) =>
   `rgb(${parseInt(value.slice(1, 3), 16)}, ${parseInt(value.slice(3, 5), 16)}, ${parseInt(

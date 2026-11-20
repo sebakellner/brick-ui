@@ -19,10 +19,10 @@ import type { BkCheckbox } from '../../../packages/web-components/src/components
 import type { BkRadioGroup } from '../../../packages/web-components/src/components/bk-radio-group/bk-radio-group.js';
 import type { BkRadioGroupItem } from '../../../packages/web-components/src/components/bk-radio-group/bk-radio-group-item.js';
 import type { BkNativeSelect } from '../../../packages/web-components/src/components/bk-native-select/bk-native-select.js';
-import { labelAtom } from '../../helpers/atoms.js';
-import { colorOf } from '../../helpers/style.js';
-import { clickAt } from '../../helpers/pointer.js';
-import { settle } from '../../helpers/settle.js';
+import { labelAtom } from '@brick/test-utils/atoms.js';
+import { colorOf } from '@brick/test-utils/style.js';
+import { clickAt } from '@brick/test-utils/pointer.js';
+import { settle } from '@brick/test-utils/settle.js';
 
 const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BkInput) => el.shadowRoot!.querySelector<HTMLElement>('[part="label"]')!;

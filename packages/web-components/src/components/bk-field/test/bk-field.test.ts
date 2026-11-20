@@ -6,9 +6,9 @@ import type { BkField } from '.././bk-field.js';
 import type { BkFieldDescription } from '.././bk-field-description.js';
 import type { BkFieldError } from '.././bk-field-error.js';
 import type { BkFieldLabel } from '.././bk-field-label.js';
-import { expectNoViolations, expectRendered } from '../../../../../../test/helpers/a11y.js';
-import { colorOf } from '../../../../../../test/helpers/style.js';
-import { setTheme } from '../../../../../../test/helpers/theme.js';
+import { expectNoViolations, expectRendered } from '@brick/test-utils/a11y.js';
+import { colorOf } from '@brick/test-utils/style.js';
+import { setTheme } from '@brick/test-utils/theme.js';
 
 const part = <T extends Element>(el: BkField, tag: string) => el.querySelector<T>(tag)!;
 
