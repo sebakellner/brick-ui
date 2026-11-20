@@ -81,5 +81,14 @@
   --brikka-border-default: var(--brikka-palette-neutral-500);
   --brikka-border-strong: var(--brikka-palette-neutral-600);
   --brikka-border-danger: var(--brikka-palette-red-700);
+  --brikka-success-bg: var(--brikka-palette-green-100);
+  --brikka-success-text: var(--brikka-palette-green-800);
+  --brikka-success-border: var(--brikka-palette-green-600);
+  --brikka-warning-bg: var(--brikka-palette-yellow-100);
+  --brikka-warning-text: var(--brikka-palette-yellow-800);
+  --brikka-warning-border: var(--brikka-palette-yellow-700);
+  --brikka-info-bg: var(--brikka-palette-blue-100);
+  --brikka-info-text: var(--brikka-palette-blue-800);
+  --brikka-info-border: var(--brikka-palette-blue-600);
   --brikka-focus-ring: var(--brikka-palette-sky-600);
 }

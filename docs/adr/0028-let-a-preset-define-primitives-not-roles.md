@@ -55,8 +55,10 @@ small, named set; everything semantic is derived from them by this repository.
 The preset is DTCG, the same format and the same shape as `tokens/`, and the build merges it
 over the default before transforming anything. Its contract is four things:
 
-1. **16 colour anchors**, named for what they are on the ramp, not for what they paint. A
-   ramp step a role needs and a preset omits is a build failure, not a fallback.
+1. **16 colour anchors**, named for what they are on the ramp, not for what they paint — the
+   count this record was written with, and thirty-one once
+   [0029](0029-give-the-graph-a-status-vocabulary.md) adds the status families. A ramp step a
+   role needs and a preset omits is a build failure, not a fallback.
 2. **One space unit**, `space.base`. The ramp and the radii follow by arithmetic.
 3. **One density and one type scale**, `control.height` and `type.scale`, so a host picks a
    size family instead of listing sizes.
