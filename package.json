@@ -48,5 +48,5 @@
     "**/define.js",
     "**/define.ts"
   ],
-  "customElements": "src/custom-elements.json"
+  "customElements": "packages/web-components/src/custom-elements.json"
 }

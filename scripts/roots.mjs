@@ -18,14 +18,15 @@ export const root = process.env.BRICK_ROOT ?? dirname(dirname(fileURLToPath(impo
 const at = (...parts) => join(root, ...parts);
 
 export const paths = {
-  src: at('src'),
-  components: at('src', 'components'),
+  src: at('packages', 'web-components', 'src'),
+  components: at('packages', 'web-components', 'src', 'components'),
   stylesTokens: at('packages', 'tokens', 'src', 'tokens'),
   colorCss: at('packages', 'tokens', 'src', 'tokens', 'color.css'),
   hooks: at('packages', 'tokens', 'style-dictionary.config.mjs'),
   storybook: at('.storybook'),
   tokensJson: at('packages', 'tokens', 'tokens'),
-  manifest: at('src', 'custom-elements.json'),
+  manifest: at('packages', 'web-components', 'src', 'custom-elements.json'),
+  test: at('test'),
   styles: at('packages', 'tokens', 'src'),
 };
 

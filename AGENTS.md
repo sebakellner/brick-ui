@@ -13,8 +13,8 @@ published; the package is private and consumed from this repository.
 packages/tokens/tokens/base/           primitives, theme-invariant
 packages/tokens/tokens/role/light.json semantic roles, one file per theme
 packages/tokens/tokens/component/      what one component paints
-src/components/bk-*/   element, stories, docs page, test/, README
-src/components/shared/ contract: mixins, controllers, styles; no tag, no define, no shadow root
+packages/web-components/src/components/bk-*/   element, stories, docs page, test/, README
+packages/web-components/src/components/shared/ contract: mixins, controllers, styles; no tag, no define, no shadow root
 packages/tokens/src/tokens/     generated CSS — never edit by hand
 packages/tokens/src/theme.css   the theming entry point, imports the generated files
 src/test/helpers/      the runner page's helpers: token resolver, contrast, pointer

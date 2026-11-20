@@ -1,4 +1,5 @@
 import { readdir, readFile } from 'node:fs/promises';
+import { join } from 'node:path';
 import { paths, requireRoots } from './roots.mjs';
 
 /* ADR 0020 §5 promises that a README and the manifest cannot contradict each other, and until
@@ -128,17 +129,15 @@ const tagIn = (text) => {
   return byTag.has(bare) ? bare : null;
 };
 
-const readmes = (
-  await readdir(new URL('../src/components', import.meta.url), { withFileTypes: true })
-)
+const readmes = (await readdir(paths.components, { withFileTypes: true }))
   .filter((entry) => entry.isDirectory() && entry.name.startsWith('bk-'))
-  .map((entry) => `src/components/${entry.name}/README.md`)
+  .map((entry) => join(paths.components, entry.name, 'README.md'))
   .sort();
 
 const documented = new Map();
 
 for (const path of readmes) {
-  const text = await readFile(new URL(`../${path}`, import.meta.url), 'utf8');
+  const text = await readFile(path, 'utf8');
   const ownTag = path.split('/').at(-2);
   /* A README under a directory the manifest does not declare documents an element with no source
    * behind it. It used to be skipped, which let a whole component document anything it liked. */

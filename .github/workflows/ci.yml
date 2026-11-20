@@ -44,9 +44,9 @@ jobs:
       - name: the component manifest is generated from the code, and twice the same
         run: |
           pnpm build:manifest
-          cp src/custom-elements.json "$RUNNER_TEMP/manifest-once.json"
+          cp packages/web-components/src/custom-elements.json "$RUNNER_TEMP/manifest-once.json"
           pnpm build:manifest
-          cmp "$RUNNER_TEMP/manifest-once.json" src/custom-elements.json
+          cmp "$RUNNER_TEMP/manifest-once.json" packages/web-components/src/custom-elements.json
           node scripts/check-manifest.mjs
       - name: the READMEs and the manifest agree, in both directions
         run: node scripts/check-readmes.mjs

@@ -51,7 +51,7 @@ component does not re-decide any of it.
    The test is one question: would a second component compose with it? If yes it is an atom;
    if it only makes sense inside one, it is a part.
 
-4. **Element.** `src/components/bk-<name>/bk-<name>.ts`: Lit, `delegatesFocus`, styles that
+4. **Element.** `packages/web-components/src/components/bk-<name>/bk-<name>.ts`: Lit, `delegatesFocus`, styles that
    read tokens with no fallback, a `part` attribute on each thing a consumer might need to
    reach, and a reflected attribute per variant.
 
@@ -115,7 +115,7 @@ never a second place to maintain the API.
   no test catches, so it is worth knowing that the check exists before the merge rather
   than after it.
 - The new element has its own `README.md` and a Storybook page. The root README's
-  documentation table reaches it through the `src/components/*/README.md` row, so nothing
+  documentation table reaches it through the `packages/web-components/src/components/*/README.md` row, so nothing
   is added to the root README per component — the component's own README is what has to
   exist.
 - A keyboard-only pass: tab to it, focus ring visible, `aria-disabled` controls

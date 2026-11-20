@@ -1,9 +1,12 @@
+import { paths, requireRoots } from './roots.mjs';
 import { readFile, writeFile } from 'node:fs/promises';
 
 /* The analyzer orders modules by whatever the filesystem returned, so two runs of the same
  * source produced two different files. Sorting makes the build reproducible and lets CI prove
  * it by generating twice and comparing. */
-const path = new URL('../src/custom-elements.json', import.meta.url);
+requireRoots('manifest');
+
+const path = paths.manifest;
 const manifest = JSON.parse(await readFile(path, 'utf8'));
 
 const byPath = (a, b) => {

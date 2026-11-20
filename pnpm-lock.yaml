@@ -269,6 +269,15 @@ importers:
 
   packages/tokens: {}
 
+  packages/web-components:
+    dependencies:
+      '@brick/tokens':
+        specifier: workspace:*
+        version: link:../tokens
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
+
 packages:
 
   '@adobe/css-tools@4.5.0':

@@ -48,7 +48,7 @@ in this kit is an atom ([0009](adr/0009-nest-the-field-parts-inside-the-control.
 [0010](adr/0010-name-a-group-on-its-host-and-let-its-atoms-be-the-regions.md))
 rather than a `help-text` property, so something has to observe them:
 `SlottedTextController` in
-`src/components/shared/form-control/slotted-text.controller.ts`. One
+`packages/web-components/src/components/shared/form-control/slotted-text.controller.ts`. One
 `MutationObserver` per host, re-targeted when the assignment changes, and two
 entry points — a slot of the host's own shadow root, and a set of nodes a
 container hands over for the atoms that live in its light DOM. Presence means
@@ -75,8 +75,8 @@ not have to reopen the question.
 tokens/base/           primitives: palette, space, radius, typography, structure
 tokens/role/light.json semantic roles, one file per theme
 tokens/component/      what one component paints, one file per component
-src/components/shared/form-control/  the contract every field composes: mixins, controllers, styles
-src/components/bk-*/   element, stories, Storybook docs page, test/, README
+packages/web-components/src/components/shared/form-control/  the contract every field composes: mixins, controllers, styles
+packages/web-components/src/components/bk-*/   element, stories, Storybook docs page, test/, README
 packages/tokens/src/theme.css   imports the generated token files; the consumer entry point
 src/index.ts           public entry point
 src/test/helpers/      token resolver (colorOf, opacityOf), contrast assertions, theme switch, pointer (hover, clickAt)

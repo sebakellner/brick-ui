@@ -117,7 +117,7 @@ node, and a region whose assigned nodes change is the node that stays in the tre
 region stops being announced and the visual hiding also silenced it.
 
 **Do** — the `.message` blocks in
-`src/components/shared/form-control/form-control.styles.ts` are the reference
+`packages/web-components/src/components/shared/form-control/form-control.styles.ts` are the reference
 implementation. `:empty` cannot see slotted content, so a region is collapsed
 from `data-empty` as well: a control marks its own `.message` wrapper, which
 `FieldMessagesController` sets from `assignedNodes()`, and an atom marks itself,
