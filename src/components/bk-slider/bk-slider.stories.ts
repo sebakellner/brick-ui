@@ -110,7 +110,11 @@ export default meta;
 
 type Story = StoryObj<Args>;
 
-export const Default: Story = {};
+/* The four canvases below carry no label: they are about the control, and a title above a
+ * slider is one more thing between the reader and the shape. A real page still names it. */
+export const Default: Story = {
+  args: { label: '' },
+};
 
 export const Range: Story = {
   args: { label: 'Price', value: 20, valueEnd: 80 },
@@ -147,7 +151,7 @@ export const Vertical: Story = {
 /* The step is not the decision: it is what makes one mark per value readable on a canvas
  * this wide. */
 export const Ticks: Story = {
-  args: { step: 10, ticks: true },
+  args: { label: '', step: 10, ticks: true },
 };
 
 /* `hover`, which is how the three modes behave in the field: the readout is a response to
@@ -155,7 +159,7 @@ export const Ticks: Story = {
  * follows the value and stays while the drag is held, even if the pointer leaves the
  * knob. `always` is one attribute away and lives in the controls below. */
 export const Tooltip: Story = {
-  args: { tooltip: 'hover' },
+  args: { label: '', tooltip: 'hover' },
 };
 
 /* The readout follows `bk-input`, the continuous channel, so the number moves with the
@@ -206,5 +210,5 @@ export const Controlled: Story = {
 };
 
 export const Disabled: Story = {
-  args: { disabled: true },
+  args: { label: '', disabled: true },
 };
