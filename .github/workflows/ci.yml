@@ -55,8 +55,8 @@ jobs:
         run: pnpm check:artifacts
       - name: the example installs the tarballs and builds
         run: |
-          pnpm --filter @brikka/styles build
-          pnpm --filter @brikka/web-components build
+          pnpm --filter @brikka-ui/styles build
+          pnpm --filter @brikka-ui/web-components build
           mkdir -p examples/brikka-vite-ts/.pack
           (cd packages/styles && pnpm pack --pack-destination ../../examples/brikka-vite-ts/.pack)
           (cd packages/web-components && pnpm pack --pack-destination ../../examples/brikka-vite-ts/.pack)

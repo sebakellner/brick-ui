@@ -40,7 +40,7 @@ affordable at this size, and it stops being true the day a version ships.
 
 **The kit is named `brikka`, and every identifier it publishes carries that name.**
 Tags read `brikka-*`, custom properties `--brikka-*`, events `brikka-*`, classes
-`Brikka*`, packages `@brikka/*`, and component directories `brikka-*`. The
+`Brikka*`, packages `@brikka-ui/*`, and component directories `brikka-*`. The
 example consumer is `examples/brikka-vite-ts`.
 
 Style Dictionary's `prefix` option is the single place the property prefix is

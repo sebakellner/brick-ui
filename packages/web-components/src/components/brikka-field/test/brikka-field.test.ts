@@ -6,9 +6,9 @@ import type { BrikkaField } from '.././brikka-field.js';
 import type { BrikkaFieldDescription } from '.././brikka-field-description.js';
 import type { BrikkaFieldError } from '.././brikka-field-error.js';
 import type { BrikkaFieldLabel } from '.././brikka-field-label.js';
-import { expectNoViolations, expectRendered } from '@brikka/test-utils/a11y.js';
-import { colorOf } from '@brikka/test-utils/style.js';
-import { setTheme } from '@brikka/test-utils/theme.js';
+import { expectNoViolations, expectRendered } from '@brikka-ui/test-utils/a11y.js';
+import { colorOf } from '@brikka-ui/test-utils/style.js';
+import { setTheme } from '@brikka-ui/test-utils/theme.js';
 
 const part = <T extends Element>(el: BrikkaField, tag: string) => el.querySelector<T>(tag)!;
 

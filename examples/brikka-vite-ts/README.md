@@ -9,8 +9,8 @@ or an unresolved peer shows up as a page that does not work.
 
 ```bash
 # from the repository root: the packages as a consumer receives them
-pnpm --filter @brikka/styles build
-pnpm --filter @brikka/web-components build
+pnpm --filter @brikka-ui/styles build
+pnpm --filter @brikka-ui/web-components build
 mkdir -p examples/brikka-vite-ts/.pack
 (cd packages/styles && pnpm pack --pack-destination ../../examples/brikka-vite-ts/.pack)
 (cd packages/web-components && pnpm pack --pack-destination ../../examples/brikka-vite-ts/.pack)
@@ -31,8 +31,8 @@ the source and prove nothing. Its own `pnpm-workspace.yaml` exists for two setti
 only reads there:
 
 - `packages: []` — it is a mini-workspace of one, as the Turborepo examples are.
-- an override pointing `@brikka/styles` at its tarball. In a published world the registry
-  satisfies the peer range `@brikka/web-components` declares; here the tarball does, because no
+- an override pointing `@brikka-ui/styles` at its tarball. In a published world the registry
+  satisfies the peer range `@brikka-ui/web-components` declares; here the tarball does, because no
   registry is reachable.
 
 ## Why there is no lockfile here

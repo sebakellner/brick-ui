@@ -1,7 +1,7 @@
 import { expect, fixture, html } from '@open-wc/testing';
 import '../packages/web-components/src/components/brikka-button/define.js';
 import type { BrikkaButton } from '../packages/web-components/src/components/brikka-button/brikka-button.js';
-import { setTheme } from '@brikka/test-utils/theme.js';
+import { setTheme } from '@brikka-ui/test-utils/theme.js';
 
 const hex = (value: string) =>
   `rgb(${parseInt(value.slice(1, 3), 16)}, ${parseInt(value.slice(3, 5), 16)}, ${parseInt(

@@ -1,16 +1,16 @@
-import { settle as settleHost } from '@brikka/test-utils/settle.js';
-import { colorOf, opacityOf } from '@brikka/test-utils/style.js';
-import { describedNode } from '@brikka/test-utils/dom.js';
-import { watchSubmit } from '@brikka/test-utils/form.js';
+import { settle as settleHost } from '@brikka-ui/test-utils/settle.js';
+import { colorOf, opacityOf } from '@brikka-ui/test-utils/style.js';
+import { describedNode } from '@brikka-ui/test-utils/dom.js';
+import { watchSubmit } from '@brikka-ui/test-utils/form.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import '.././define.js';
 import '../../brikka-field/define.js';
 import type { BrikkaRadioGroupItem } from '.././brikka-radio-group-item.js';
 import type { BrikkaRadioGroup } from '.././brikka-radio-group.js';
-import { expectNoViolations, expectRendered } from '@brikka/test-utils/a11y.js';
-import { clickAt } from '@brikka/test-utils/pointer.js';
-import { setTheme } from '@brikka/test-utils/theme.js';
+import { expectNoViolations, expectRendered } from '@brikka-ui/test-utils/a11y.js';
+import { clickAt } from '@brikka-ui/test-utils/pointer.js';
+import { setTheme } from '@brikka-ui/test-utils/theme.js';
 
 const radios = (el: BrikkaRadioGroup) =>
   Array.from(el.querySelectorAll<BrikkaRadioGroupItem>('brikka-radio-group-item'));

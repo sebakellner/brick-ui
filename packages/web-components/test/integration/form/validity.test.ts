@@ -10,9 +10,9 @@ import '../../../src/components/brikka-native-select/define.js';
 import '../../../src/components/brikka-field/define.js';
 import type { BrikkaInput } from '../../../src/components/brikka-input/brikka-input.js';
 import type { BrikkaNativeSelect } from '../../../src/components/brikka-native-select/brikka-native-select.js';
-import { labelAtom } from '@brikka/test-utils/atoms.js';
-import { watchSubmit } from '@brikka/test-utils/form.js';
-import { settle } from '@brikka/test-utils/settle.js';
+import { labelAtom } from '@brikka-ui/test-utils/atoms.js';
+import { watchSubmit } from '@brikka-ui/test-utils/form.js';
+import { settle } from '@brikka-ui/test-utils/settle.js';
 
 const innerInput = (el: BrikkaInput) => el.shadowRoot!.querySelector('input')!;
 const innerSelect = (el: BrikkaNativeSelect) => el.shadowRoot!.querySelector('select')!;

@@ -1,5 +1,5 @@
 {
-  "name": "@brikka/web-components",
+  "name": "@brikka-ui/web-components",
   "version": "0.1.0",
   "description": "Brikka's elements: Lit custom elements with a token-driven theming contract",
   "type": "module",
@@ -24,11 +24,11 @@
     "**/register.ts"
   ],
   "peerDependencies": {
-    "@brikka/styles": "workspace:^",
+    "@brikka-ui/styles": "workspace:^",
     "lit": "^3.3.3"
   },
   "devDependencies": {
-    "@brikka/test-utils": "workspace:*",
+    "@brikka-ui/test-utils": "workspace:*",
     "@storybook/addon-docs": "^10.6.7",
     "@storybook/web-components-vite": "^10.6.7"
   },

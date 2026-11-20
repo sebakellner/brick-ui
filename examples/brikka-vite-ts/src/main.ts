@@ -1,5 +1,5 @@
-import '@brikka/styles/theme.css';
-import '@brikka/web-components/register.js';
+import '@brikka-ui/styles/theme.css';
+import '@brikka-ui/web-components/register.js';
 
 const output = document.querySelector('#output');
 const slider = document.querySelector('brikka-slider');

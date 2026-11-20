@@ -19,15 +19,15 @@
     "typecheck": "tsc --noEmit",
     "test": "web-test-runner",
     "test:watch": "web-test-runner --watch",
-    "storybook": "pnpm --filter @brikka/storybook-web-components storybook",
-    "build-storybook": "pnpm --filter @brikka/storybook-web-components build"
+    "storybook": "pnpm --filter @brikka-ui/storybook-web-components storybook",
+    "build-storybook": "pnpm --filter @brikka-ui/storybook-web-components build"
   },
   "dependencies": {
-    "@brikka/styles": "workspace:*",
+    "@brikka-ui/styles": "workspace:*",
     "lit": "^3.3.3"
   },
   "devDependencies": {
-    "@brikka/test-utils": "workspace:*",
+    "@brikka-ui/test-utils": "workspace:*",
     "@custom-elements-manifest/analyzer": "^0.11.0",
     "@open-wc/testing": "^5.0.0",
     "@types/mocha": "^10.0.10",

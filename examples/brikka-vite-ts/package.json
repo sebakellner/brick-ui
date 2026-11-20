@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@brikka/styles": "file:./.pack/brikka-styles-0.1.0.tgz",
-    "@brikka/web-components": "file:./.pack/brikka-web-components-0.1.0.tgz",
+    "@brikka-ui/styles": "file:./.pack/brikka-ui-styles-0.1.0.tgz",
+    "@brikka-ui/web-components": "file:./.pack/brikka-ui-web-components-0.1.0.tgz",
     "lit": "3.3.3"
   },
   "devDependencies": {

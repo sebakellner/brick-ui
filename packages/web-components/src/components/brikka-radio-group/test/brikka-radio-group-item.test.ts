@@ -1,16 +1,16 @@
-import { settle } from '@brikka/test-utils/settle.js';
+import { settle } from '@brikka-ui/test-utils/settle.js';
 import { resetMouse, sendKeys } from '@web/test-runner-commands';
-import { labelAtom } from '@brikka/test-utils/atoms.js';
-import { contrastRatio } from '@brikka/test-utils/contrast.js';
-import { colorOf, opacityOf } from '@brikka/test-utils/style.js';
+import { labelAtom } from '@brikka-ui/test-utils/atoms.js';
+import { contrastRatio } from '@brikka-ui/test-utils/contrast.js';
+import { colorOf, opacityOf } from '@brikka-ui/test-utils/style.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
-import { expectNoViolations, expectRendered } from '@brikka/test-utils/a11y.js';
+import { expectNoViolations, expectRendered } from '@brikka-ui/test-utils/a11y.js';
 import '.././define.js';
 import '../../brikka-field/define.js';
 import type { BrikkaRadioGroup } from '.././brikka-radio-group.js';
 import type { BrikkaRadioGroupItem } from '.././brikka-radio-group-item.js';
-import { clickAt, hover, hoverCapable } from '@brikka/test-utils/pointer.js';
-import { setTheme } from '@brikka/test-utils/theme.js';
+import { clickAt, hover, hoverCapable } from '@brikka-ui/test-utils/pointer.js';
+import { setTheme } from '@brikka-ui/test-utils/theme.js';
 
 const innerInput = (el: BrikkaRadioGroupItem) => el.shadowRoot!.querySelector('input')!;
 const innerLabel = (el: BrikkaRadioGroupItem) => el.shadowRoot!.querySelector('label')!;

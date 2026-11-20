@@ -1,15 +1,15 @@
-import { settle } from '@brikka/test-utils/settle.js';
-import { colorOf } from '@brikka/test-utils/style.js';
-import { labelAtom } from '@brikka/test-utils/atoms.js';
-import { watchSubmit } from '@brikka/test-utils/form.js';
-import { contrastRatio } from '@brikka/test-utils/contrast.js';
+import { settle } from '@brikka-ui/test-utils/settle.js';
+import { colorOf } from '@brikka-ui/test-utils/style.js';
+import { labelAtom } from '@brikka-ui/test-utils/atoms.js';
+import { watchSubmit } from '@brikka-ui/test-utils/form.js';
+import { contrastRatio } from '@brikka-ui/test-utils/contrast.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys } from '@web/test-runner-commands';
 import '.././define.js';
 import '../../brikka-field/define.js';
 import type { BrikkaNativeSelect } from '.././brikka-native-select.js';
-import { expectNoViolations, expectRendered } from '@brikka/test-utils/a11y.js';
-import { setTheme } from '@brikka/test-utils/theme.js';
+import { expectNoViolations, expectRendered } from '@brikka-ui/test-utils/a11y.js';
+import { setTheme } from '@brikka-ui/test-utils/theme.js';
 
 const innerSelect = (el: BrikkaNativeSelect) => el.shadowRoot!.querySelector('select')!;
 const innerLabel = (el: BrikkaNativeSelect) =>
