@@ -89,6 +89,7 @@ export const tokens = {
   fontWeightRegular: '--brikka-font-weight-regular',
   fontWeightMedium: '--brikka-font-weight-medium',
   fontWeightSemibold: '--brikka-font-weight-semibold',
+  fontWeightBold: '--brikka-font-weight-bold',
   lineHeightTight: '--brikka-line-height-tight',
   lineHeightMd: '--brikka-line-height-md',
   lineHeightRelaxed: '--brikka-line-height-relaxed',

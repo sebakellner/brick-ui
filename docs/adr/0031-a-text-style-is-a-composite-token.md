@@ -47,7 +47,7 @@ shorthand, so a composite cannot carry it.
 | Group            | Values                                                                                 |
 | ---------------- | -------------------------------------------------------------------------------------- |
 | `font-size`      | `xs .75rem`, `sm .8125rem`, `md .9375rem`, `lg 1.125rem`, `xl 1.375rem`, `2xl 1.75rem` |
-| `font-weight`    | `regular 400`, `medium 500`, `semibold 600`                                            |
+| `font-weight`    | `regular 400`, `medium 500`, `semibold 600`, `bold 700`                                |
 | `line-height`    | `tight 1.25`, `md 1.5`, `relaxed 1.75`                                                 |
 | `letter-spacing` | `tight -0.01em`, `normal 0`                                                            |
 | `font`           | `sans` (unchanged) and `mono`                                                          |
@@ -55,6 +55,23 @@ shorthand, so a composite cannot carry it.
 `heading-lg`, `heading-md`, `heading-sm`, `body-md`, `body-sm` and `label-md` are `$type:
 typography` tokens carrying `fontFamily`, `fontSize`, `fontWeight` and `lineHeight` — and nothing
 else, because the serializer would drop what it does not know.
+
+Each one names the primitives it consumes, because the heading names do **not** mirror the size
+names — a page title is the largest size the scale offers, not `lg`:
+
+| Style        | Size  | Weight     | Line height |
+| ------------ | ----- | ---------- | ----------- |
+| `heading-lg` | `2xl` | `semibold` | `tight`     |
+| `heading-md` | `xl`  | `semibold` | `tight`     |
+| `heading-sm` | `lg`  | `semibold` | `tight`     |
+| `body-md`    | `md`  | `regular`  | `md`        |
+| `body-sm`    | `sm`  | `regular`  | `md`        |
+| `label-md`   | `sm`  | `medium`   | `tight`     |
+
+`bold` exists because `strong` and `b` already render it: it is the one weight the browser
+applies without this repository deciding it, and a weight the kit paints but does not name
+cannot be audited or changed. `light 300` and `black 900` are deliberately absent — the system
+font stack does not guarantee them, and a synthesised light is thin text on a tinted surface.
 
 They live in `tokens/base/typography.json` under a `typography` group, **not under `role`**: R1
 governs what a page paints, and a text style is a named combination of primitives with no theme
