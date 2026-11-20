@@ -1,4 +1,5 @@
 import { readdir, readFile } from 'node:fs/promises';
+import { paths, requireRoots } from './roots.mjs';
 
 /* ADR 0020 §5 promises that a README and the manifest cannot contradict each other, and until
  * now nothing executed it: `check-manifest.mjs` validates the manifest against a hand-written
@@ -10,9 +11,9 @@ import { readdir, readFile } from 'node:fs/promises';
  * The table is classified by its own header, not by the section it sits in, because an atom is
  * documented inside its family's README under its own `### \`tag>\`` and those tables live in
  * component-specific sections. */
-const manifest = JSON.parse(
-  await readFile(new URL('../src/custom-elements.json', import.meta.url), 'utf8'),
-);
+requireRoots('components', 'manifest');
+
+const manifest = JSON.parse(await readFile(paths.manifest, 'utf8'));
 const declarations = manifest.modules
   .flatMap((module) => module.declarations ?? [])
   .filter((declaration) => declaration.tagName);

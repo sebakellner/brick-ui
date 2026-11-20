@@ -1,4 +1,7 @@
 import { formattedVariables } from 'style-dictionary/utils';
+import { paths, requireRoots } from './scripts/roots.mjs';
+
+requireRoots('tokensJson', 'styles');
 
 const only =
   (...groups) =>
@@ -67,7 +70,7 @@ const platform = (files, transforms = []) => ({
   transformGroup: 'css',
   transforms,
   prefix: 'bk',
-  buildPath: 'src/styles/tokens/',
+  buildPath: `${paths.stylesTokens}/`,
   files,
 });
 
@@ -76,7 +79,7 @@ const DARK_ROLES = ':where([data-theme="dark"])';
 const DARK_ROLES_AUTO = ':where(:root:not([data-theme]))';
 
 export default {
-  source: ['tokens/**/*.json'],
+  source: [`${paths.tokensJson}/**/*.json`],
   hooks: {
     transforms: {
       'name/strip-theme': {
@@ -162,7 +165,7 @@ export default {
       transformGroup: 'css',
       transforms: ['name/strip-theme'],
       prefix: 'bk',
-      buildPath: 'src/styles/',
+      buildPath: `${paths.styles}/`,
       files: [{ destination: 'tokens.generated.ts', format: 'typescript/token-names' }],
     },
     base: platform([
