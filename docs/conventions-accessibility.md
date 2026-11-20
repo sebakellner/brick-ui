@@ -7,7 +7,7 @@ invisible until someone cannot use the control.
 | #   | Rule                                                         | Enforced by                             |
 | --- | ------------------------------------------------------------ | --------------------------------------- |
 | A1  | Native semantics first                                       | the suite, and review                   |
-| A2  | Non-text contrast is asserted, not eyeballed                 | `src/test/helpers/contrast.ts`          |
+| A2  | Non-text contrast is asserted, not eyeballed                 | `packages/test-utils/src/contrast.ts`   |
 | A3  | ARIA is wired in the component, never left to the host page  | review                                  |
 | A4  | Descriptions are referenced only while they have content     | the suite                               |
 | A5  | Disabled is `aria-disabled`, with activation blocked         | the suite                               |
@@ -18,7 +18,7 @@ invisible until someone cannot use the control.
 
 **The rules are asserted, and the component is also audited.** Each rule below has its own
 cases; on top of them, every component suite runs one axe audit per theme
-(`wcag2a`, `wcag2aa`, `best-practice`) through `src/test/helpers/a11y.ts`. Neither half
+(`wcag2a`, `wcag2aa`, `best-practice`) through `packages/test-utils/src/a11y.ts`. Neither half
 replaces the other, and the split is `docs/conventions-testing.md` T15.
 
 ## A1. Native semantics first
@@ -36,7 +36,7 @@ that the control is focusable, and that the inner element is a real control.
 ## A2. Non-text contrast is asserted, not eyeballed
 
 **Rule.** A control boundary and a focus ring need at least 3:1 against the surface
-they sit on. Each one gets an assertion through `src/test/helpers/contrast.ts`.
+they sit on. Each one gets an assertion through `packages/test-utils/src/contrast.ts`.
 
 **Why.** Repeated over forty components, an eyeball judgement is a coin flip that
 depends on the reviewer's monitor. The threshold for non-text content is lower than

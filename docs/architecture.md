@@ -79,8 +79,8 @@ packages/web-components/src/components/shared/form-control/  the contract every 
 packages/web-components/src/components/bk-*/   element, stories, Storybook docs page, test/, README
 packages/tokens/src/theme.css   imports the generated token files; the consumer entry point
 src/index.ts           public entry point
-src/test/helpers/      token resolver (colorOf, opacityOf), contrast assertions, theme switch, pointer (hover, clickAt)
-src/test/integration/  where a suite the test composes from two or more widgets goes, one folder per assembly
+packages/test-utils/src/  token resolver (colorOf, opacityOf), contrast assertions, theme switch, pointer (hover, clickAt)
+packages/web-components/test/integration/  where a suite the test composes from two or more widgets goes, one folder per assembly
 scripts/               check-token-usage.mjs
 ```
 
