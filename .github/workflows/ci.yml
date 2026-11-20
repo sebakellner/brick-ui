@@ -34,8 +34,8 @@ jobs:
       - name: tokens are generated from tokens/*.json
         run: |
           pnpm build:tokens
-          if [ -n "$(git status --porcelain -- packages/styles/src)" ]; then
-            git status --porcelain -- packages/styles/src
+          if [ -n "$(git status --porcelain -- packages/tokens/src)" ]; then
+            git status --porcelain -- packages/tokens/src
             echo "::error::generated token CSS is out of date; run pnpm build:tokens and commit the result"
             exit 1
           fi
@@ -57,10 +57,10 @@ jobs:
         run: pnpm check:artifacts
       - name: the example installs the tarballs and builds
         run: |
-          pnpm --filter @brikka-ui/styles build
+          pnpm --filter @brikka-ui/tokens build
           pnpm --filter @brikka-ui/web-components build
           mkdir -p examples/brikka-vite-ts/.pack
-          (cd packages/styles && pnpm pack --pack-destination ../../examples/brikka-vite-ts/.pack)
+          (cd packages/tokens && pnpm pack --pack-destination ../../examples/brikka-vite-ts/.pack)
           (cd packages/web-components && pnpm pack --pack-destination ../../examples/brikka-vite-ts/.pack)
           cd examples/brikka-vite-ts
           pnpm install --no-frozen-lockfile

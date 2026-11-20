@@ -43,7 +43,7 @@
     "**/register.ts"
   ],
   "peerDependencies": {
-    "@brikka-ui/styles": "workspace:^",
+    "@brikka-ui/tokens": "workspace:^",
     "lit": "^3.3.3"
   },
   "devDependencies": {

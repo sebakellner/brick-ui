@@ -2,10 +2,11 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { paths, requireRoots } from './roots.mjs';
 
-requireRoots('stylesTokens', 'colorCss', 'components', 'hooks', 'storybook');
+requireRoots('tokensCss', 'colorCss', 'colorDarkCss', 'components', 'hooks', 'storybook');
 
-const TOKENS_CSS_DIR = paths.stylesTokens;
+const TOKENS_CSS_DIR = paths.tokensCss;
 const COLOR_CSS = paths.colorCss;
+const DARK_CSS = paths.colorDarkCss;
 const COMPONENTS_DIR = paths.components;
 const HOOKS_SOURCE = paths.hooks;
 
@@ -146,14 +147,22 @@ for (const file of walk(STORYBOOK_DIR).filter((path) => STORYBOOK_FILE.test(path
   }
 }
 
-const consumed = new Set();
-for (const file of componentFiles.filter((path) => !SUPPORT_FILE.test(path))) {
-  for (const [, name] of stripComments(read(file)).matchAll(REFERENCES)) consumed.add(name);
-}
+/* R1 asks every role to resolve in every theme, and the generated light and dark artifacts are
+ * the only place that promise is observable: the `name/strip-theme` transform makes both emit
+ * the same custom property, so a role declared in one theme and not the other renders through
+ * nothing while every name it reads still exists. */
+const darkSemantic = names(read(DARK_CSS)).filter((name) => !name.startsWith(PRIMITIVE));
+const inDark = new Set(darkSemantic);
+const inLight = new Set(semantic);
 
 for (const name of semantic) {
-  if (consumed.has(name)) continue;
-  problems.push(`${COLOR_CSS}: semantic role with no consumer ${name}`);
+  if (inDark.has(name)) continue;
+  problems.push(`${DARK_CSS}: role missing from the dark theme (R1): ${name}`);
+}
+
+for (const name of darkSemantic) {
+  if (inLight.has(name)) continue;
+  problems.push(`${COLOR_CSS}: role missing from the light theme (R1): ${name}`);
 }
 
 if (problems.length > 0) {
@@ -165,5 +174,5 @@ if (problems.length > 0) {
 }
 
 console.log(
-  `token names ok: ${declared.size} declared, ${hooks.size} hooks, ${semantic.length} semantic roles consumed`,
+  `token names ok: ${declared.size} declared, ${hooks.size} hooks, ${semantic.length} semantic roles in every theme`,
 );

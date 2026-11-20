@@ -16,9 +16,9 @@ component does not re-decide any of it.
 ## Steps
 
 1. **Tokens, if the component needs its own.** A component file
-   (`packages/styles/tokens/component/<component>.json`) exists only when something must be themable per
+   (`packages/tokens/tokens/component/<component>.json`) exists only when something must be themable per
    component; a control that paints roles and needs one geometry value gets a **hook** in
-   `packages/styles/style-dictionary.config.mjs` with a primitive default instead
+   `packages/tokens/style-dictionary.config.mjs` with a primitive default instead
    (`--brikka-input-radius`).
    Reuse a semantic role when it is genuinely shared. Whatever you add: run
    `pnpm build:tokens` and commit the output.
@@ -120,7 +120,7 @@ never a second place to maintain the API.
   exist.
 - A keyboard-only pass: tab to it, focus ring visible, `aria-disabled` controls
   reachable and inert.
-- Every new token is read by the component, and every new name resolves: the suite and
+- Every new name resolves, and every new role exists in both theme files: the suite and
   `check:tokens` say so.
 
 ## Related

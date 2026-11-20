@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@brikka-ui/styles": "file:./.pack/brikka-ui-styles-0.1.0.tgz",
+    "@brikka-ui/tokens": "file:./.pack/brikka-ui-tokens-0.1.0.tgz",
     "@brikka-ui/web-components": "file:./.pack/brikka-ui-web-components-0.1.0.tgz",
     "lit": "3.3.3"
   },

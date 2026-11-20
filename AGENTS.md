@@ -10,11 +10,11 @@ as plain custom elements, with a token-driven theming contract. Nothing is
 published; the package is private and consumed from this repository.
 
 ```
-packages/styles/tokens/base/                 primitives, theme-invariant
-packages/styles/tokens/role/light.json       semantic roles, one file per theme
-packages/styles/tokens/component/            what one component paints
-packages/styles/src/tokens/                  generated CSS — never edit by hand
-packages/styles/src/theme.css                the theming entry point, imports the generated files
+packages/tokens/tokens/base/                 primitives, theme-invariant
+packages/tokens/tokens/role/light.json       semantic roles, one file per theme
+packages/tokens/tokens/component/            what one component paints
+packages/tokens/src/tokens/                  generated CSS — never edit by hand
+packages/tokens/src/theme.css                the theming entry point, imports the generated files
 packages/web-components/src/components/brikka-*/ element, stories, docs page, test/, README
 packages/web-components/src/components/shared/ contract: mixins, controllers, styles; no tag, no define
 packages/web-components/test/                suites that compose several components of the package
@@ -42,7 +42,7 @@ identifiers are the one exception: a rename updates the names, never the reasoni
 
 ## Never
 
-- Edit `packages/styles/src/tokens/*.css` or `packages/styles/src/tokens.generated.ts`. They are
+- Edit `packages/tokens/src/tokens/*.css` or `packages/tokens/src/tokens.generated.ts`. They are
   output of `pnpm build:tokens`, and CI fails when they are stale or untracked.
 - Write a style literal in a component. Colors, lengths, weights and durations
   read `var(--brikka-…)`. A literal is allowed only when it is a reset (`0`,
@@ -55,7 +55,7 @@ identifiers are the one exception: a rename updates the names, never the reasoni
 - Point a token reference at a control token, or make a chain longer than one
   hop. `control → palette`, `semantic → palette`, `radius → space` —
   [docs/conventions-tokens.md](docs/conventions-tokens.md), R2.
-- Add a semantic role that no component reads directly. `pnpm check:tokens`
+- Add a semantic role that resolves in one theme and not the other. `pnpm check:tokens`
   fails on it — R1.
 - Import `'./x'` from a `.ts` file. The imports carry `.js`
   (`verbatimModuleSyntax`).
@@ -72,7 +72,7 @@ identifiers are the one exception: a rename updates the names, never the reasoni
 | `pnpm test:watch`      | the suite, watching                                                                                                                                                      |
 | `pnpm typecheck`       | `tsc --noEmit`, with `strict`, `noUnusedLocals`, `noUnusedParameters`                                                                                                    |
 | `pnpm build:tokens`    | regenerate the CSS and `tokens.generated.ts`; commit the result                                                                                                          |
-| `pnpm check:tokens`    | every `--brikka-*` name a component reads exists, and every semantic role is read                                                                                        |
+| `pnpm check:tokens`    | every `--brikka-*` name a component reads exists, and every semantic role resolves in every theme                                                                        |
 | `pnpm test:checks`     | the checks' own tests: each refuses the input it exists to refuse                                                                                                        |
 | `pnpm changeset`       | declare a version bump for a package that ships; `pnpm changeset:version` applies it                                                                                     |
 | `pnpm check:artifacts` | the packages pack, carry every path their `exports` name, and type-check from a consumer outside the workspace                                                           |

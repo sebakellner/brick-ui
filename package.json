@@ -9,7 +9,7 @@
   },
   "packageManager": "pnpm@12.14.0",
   "scripts": {
-    "build:tokens": "style-dictionary build --config packages/styles/style-dictionary.config.mjs",
+    "build:tokens": "style-dictionary build --config packages/tokens/style-dictionary.config.mjs",
     "build:manifest": "cem analyze --config custom-elements-manifest.config.mjs && node scripts/normalize-manifest.mjs",
     "changeset": "changeset",
     "changeset:version": "changeset version",
@@ -26,7 +26,7 @@
     "build-storybook": "pnpm --filter @brikka-ui/storybook-web-components build"
   },
   "dependencies": {
-    "@brikka-ui/styles": "workspace:*",
+    "@brikka-ui/tokens": "workspace:*",
     "lit": "^3.3.3"
   },
   "devDependencies": {

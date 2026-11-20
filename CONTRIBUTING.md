@@ -62,7 +62,7 @@ pnpm install
 | `pnpm test:watch`                             | the suite, watching                                                                                                          |
 | `pnpm typecheck`                              | `tsc --noEmit`                                                                                                               |
 | `pnpm build:tokens`                           | regenerate the CSS and `tokens.generated.ts`; commit the result                                                              |
-| `pnpm check:tokens`                           | every name a component reads exists, and every semantic role is read                                                         |
+| `pnpm check:tokens`                           | every name a component reads exists, and every semantic role resolves in every theme                                         |
 | `pnpm check:artifacts`                        | the packages pack, carry every path their `exports` name, and type-check from a consumer outside the workspace               |
 | `pnpm format`                                 | rewrite the files Prettier owns                                                                                              |
 | `pnpm format:check`                           | fail if any of them is not formatted                                                                                         |
@@ -92,7 +92,7 @@ the other.
   down is a limitation someone can fix; one kept quiet is a bug report six months
   late.
 - If the change touches a package that ships, add a changeset: `pnpm changeset`.
-  `@brikka-ui/web-components` and `@brikka-ui/styles` are a `fixed` group, so
+  `@brikka-ui/web-components` and `@brikka-ui/tokens` are a `fixed` group, so
   declaring one of them bumps both — forgetting the other is no longer possible.
   `pnpm changeset:version` applies the bumps and writes the changelogs. Nothing here
   publishes.

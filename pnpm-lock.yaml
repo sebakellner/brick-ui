@@ -208,9 +208,9 @@ importers:
 
   .:
     dependencies:
-      '@brikka-ui/styles':
+      '@brikka-ui/tokens':
         specifier: workspace:*
-        version: link:packages/styles
+        version: link:packages/tokens
       lit:
         specifier: ^3.3.3
         version: 3.3.3
@@ -264,8 +264,6 @@ importers:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(yaml@2.9.1)
 
-  packages/styles: {}
-
   packages/test-utils:
     devDependencies:
       '@open-wc/testing':
@@ -278,11 +276,13 @@ importers:
         specifier: ^4.14.0
         version: 4.14.0
 
+  packages/tokens: {}
+
   packages/web-components:
     dependencies:
-      '@brikka-ui/styles':
+      '@brikka-ui/tokens':
         specifier: workspace:^
-        version: link:../styles
+        version: link:../tokens
       lit:
         specifier: ^3.3.3
         version: 3.3.3
@@ -299,9 +299,9 @@ importers:
 
   storybook/web-components:
     dependencies:
-      '@brikka-ui/styles':
+      '@brikka-ui/tokens':
         specifier: workspace:*
-        version: link:../../packages/styles
+        version: link:../../packages/tokens
       '@brikka-ui/web-components':
         specifier: workspace:*
         version: link:../../packages/web-components

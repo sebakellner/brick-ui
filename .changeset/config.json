@@ -4,6 +4,6 @@
   "commit": false,
   "access": "public",
   "baseBranch": "main",
-  "fixed": [["@brikka-ui/web-components", "@brikka-ui/styles"]],
+  "fixed": [["@brikka-ui/web-components", "@brikka-ui/tokens"]],
   "updateInternalDependencies": "patch"
 }
