@@ -7,12 +7,20 @@
   "exports": {
     "./theme.css": "./src/theme.css",
     "./tokens.css": "./src/tokens/base.css",
-    ".": "./src/tokens.generated.ts"
+    ".": {
+      "types": "./dist/tokens.generated.d.ts",
+      "default": "./dist/tokens.generated.js"
+    }
   },
   "files": [
-    "src"
+    "src",
+    "dist"
   ],
   "sideEffects": [
     "*.css"
-  ]
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "types": "./dist/tokens.generated.d.ts"
 }
