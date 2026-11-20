@@ -11,6 +11,8 @@
   "scripts": {
     "build:tokens": "style-dictionary build --config packages/styles/style-dictionary.config.mjs",
     "build:manifest": "cem analyze --config custom-elements-manifest.config.mjs && node scripts/normalize-manifest.mjs",
+    "changeset": "changeset",
+    "changeset:version": "changeset version",
     "check:tokens": "node scripts/check-token-usage.mjs",
     "check:readmes": "node scripts/check-readmes.mjs",
     "check:artifacts": "node scripts/check-artifacts.mjs",
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "@brikka-ui/test-utils": "workspace:*",
+    "@changesets/cli": "^3.0.3",
     "@custom-elements-manifest/analyzer": "^0.11.0",
     "@open-wc/testing": "^5.0.0",
     "@types/mocha": "^10.0.10",
