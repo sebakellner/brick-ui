@@ -14,7 +14,13 @@ const only =
  * stays out because it rewrites -- `color/css` turns `rgb(37 99 235 / 0.18)` into `#2563eb` and
  * drops the alpha, `size/rem` rescales lengths, `fontFamily/css` requotes the stack.
  * `typography/css/shorthand` is a serializer; ADR 0031 draws that line for every composite. */
-const TRANSFORMS = ['attribute/cti', 'name/kebab', 'typography/css/shorthand'];
+const TRANSFORMS = [
+  'attribute/cti',
+  'name/kebab',
+  'cubicBezier/css',
+  'typography/css/shorthand',
+  'transition/css/shorthand',
+];
 
 /* `$description` documents a role for the graph; it is not a CSS comment. */
 const FORMATTING = { commentStyle: 'none' };
@@ -200,6 +206,8 @@ export default {
         only(
           'border-width',
           'control-height',
+          'duration',
+          'easing',
           'transition',
           'focus-ring-width',
           'focus-ring-offset',

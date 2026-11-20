@@ -1,8 +1,15 @@
 :root {
+  --brikka-duration-fast: 100ms;
+  --brikka-duration-base: 150ms;
+  --brikka-duration-slow: 250ms;
+  --brikka-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --brikka-easing-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --brikka-easing-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --brikka-easing-linear: cubic-bezier(0, 0, 1, 1);
   --brikka-border-width: 1px;
   --brikka-control-height: 40px;
-  --brikka-transition: 120ms ease;
   --brikka-focus-ring-width: 2px;
   --brikka-focus-ring-offset: 1px;
   --brikka-opacity-disabled: 0.5;
+  --brikka-transition: var(--brikka-duration-base) var(--brikka-easing-standard) 0ms;
 }
