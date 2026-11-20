@@ -215,6 +215,9 @@ importers:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
+      '@brick/test-utils':
+        specifier: workspace:*
+        version: link:internal/test-utils
       '@custom-elements-manifest/analyzer':
         specifier: ^0.11.0
         version: 0.11.0
@@ -267,7 +270,32 @@ importers:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)
 
+  internal/test-utils:
+    devDependencies:
+      '@open-wc/testing':
+        specifier: ^5.0.0
+        version: 5.0.0(supports-color@7.2.0)
+      '@web/test-runner-commands':
+        specifier: ^1.0.3
+        version: 1.0.3(supports-color@7.2.0)
+      axe-core:
+        specifier: ^4.14.0
+        version: 4.14.0
+
   packages/tokens: {}
+
+  packages/web-components:
+    dependencies:
+      '@brick/tokens':
+        specifier: workspace:*
+        version: link:../tokens
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
+    devDependencies:
+      '@brick/test-utils':
+        specifier: workspace:*
+        version: link:../../internal/test-utils
 
 packages:
 

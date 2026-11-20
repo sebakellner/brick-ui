@@ -4,7 +4,7 @@ import { playwrightLauncher } from '@web/test-runner-playwright';
 import { paths } from './scripts/roots.mjs';
 
 export default {
-  files: `${paths.src}/**/*.test.ts`,
+  files: ['packages/*/src/**/*.test.ts', 'internal/*/src/**/*.test.ts', 'test/**/*.test.ts'],
   nodeResolve: true,
   // Contention, not timeouts: the role matrix recalculated the whole page while
   // bk-input awaited browser commands, and three CI runs were lost to it.

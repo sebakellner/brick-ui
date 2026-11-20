@@ -16,5 +16,5 @@
     "noEmit": true,
     "types": ["mocha", "vite/client"]
   },
-  "include": ["src", ".storybook/**/*.ts"]
+  "include": ["packages/*/src", "test", ".storybook/**/*.ts"]
 }

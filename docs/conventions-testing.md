@@ -18,11 +18,11 @@ The line between a unit test and an integration test is not "how many elements i
 imports" — almost every suite here imports an atom's `define.js`, because the atoms are
 the kit's vocabulary. The line is **who decides the composition**:
 
-| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                           |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | --------------------------------------------------------------- |
-| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `src/components/bk-x/test/bk-x.test.ts`, `describe` per concern |
-| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                |
-| **e2e**         | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/`, Playwright                                              |
+| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                                                   |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------- |
+| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `packages/web-components/src/components/bk-x/test/bk-x.test.ts`, `describe` per concern |
+| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                                        |
+| **e2e**         | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/`, Playwright                                                                      |
 
 **Where exactly the line falls: the level names whose contract the test writes down, not
 how many elements sit in the fixture.** That is the test of every doubtful case, and it
@@ -344,7 +344,7 @@ component's folder while testing the package.
 **Do** — the component's own suite, and a part's when the part does something:
 
 ```
-src/components/bk-field/
+packages/web-components/src/components/bk-field/
   bk-field.ts  bk-field-label.ts  define.ts  …
   test/
     bk-field.test.ts  bk-field-label.test.ts

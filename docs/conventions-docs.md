@@ -72,7 +72,7 @@ A component whose behaviour needs its own explanation (`## Label state`, `## For
 `## The two channels`) puts it **after** `## Limitations`, never between the standard
 ones: a reader who wants the contract finds it in the same place in every README.
 
-`src/components/bk-checkbox/README.md` is the reference: a new component starts from it.
+`packages/web-components/src/components/bk-checkbox/README.md` is the reference: a new component starts from it.
 A live document cannot drift from the component it describes, and a template can — the
 list this rule replaces had already lost `Slots` and `Accessibility` before anyone noticed.
 

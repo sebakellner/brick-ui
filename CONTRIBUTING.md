@@ -22,14 +22,14 @@ internals lives in [`docs/`](docs/README.md); the [README](README.md) covers usa
 
 A field is the layers below, and only the last one is specific to it:
 
-| Layer     | Where                                                             | What it owns                                                                                                                               |
-| --------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| behaviour | `src/components/shared/form-control/form-control.mixin.ts`        | form association, the value in `FormData`, validity, reset, restore, and the disabling a `fieldset` imposes                                |
-| styles    | `src/components/shared/form-control/form-control.styles.ts`       | label, control wrapper, message and the collapsed error region, in logical properties                                                      |
-| anatomy   | `src/components/shared/form-control/field-control.mixin.ts`       | the per-instance id, the parts controller, and the one definition of "the error the field owns" — the `error` property or the slotted atom |
-| messages  | `src/components/shared/form-control/field-messages.controller.ts` | the description and error regions, their ids, and the `aria-describedby` a field announces                                                 |
-| regions   | `src/components/shared/form-control/field-regions.controller.ts`  | a container: the name on its host, the consumer's atoms adopted as its regions, and one observer for the text                              |
-| the field | `src/components/bk-*/bk-*.ts`                                     | the native control, its attributes, its render                                                                                             |
+| Layer     | Where                                                                                     | What it owns                                                                                                                               |
+| --------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| behaviour | `packages/web-components/src/components/shared/form-control/form-control.mixin.ts`        | form association, the value in `FormData`, validity, reset, restore, and the disabling a `fieldset` imposes                                |
+| styles    | `packages/web-components/src/components/shared/form-control/form-control.styles.ts`       | label, control wrapper, message and the collapsed error region, in logical properties                                                      |
+| anatomy   | `packages/web-components/src/components/shared/form-control/field-control.mixin.ts`       | the per-instance id, the parts controller, and the one definition of "the error the field owns" — the `error` property or the slotted atom |
+| messages  | `packages/web-components/src/components/shared/form-control/field-messages.controller.ts` | the description and error regions, their ids, and the `aria-describedby` a field announces                                                 |
+| regions   | `packages/web-components/src/components/shared/form-control/field-regions.controller.ts`  | a container: the name on its host, the consumer's atoms adopted as its regions, and one observer for the text                              |
+| the field | `packages/web-components/src/components/bk-*/bk-*.ts`                                     | the native control, its attributes, its render                                                                                             |
 
 A second field composes them — `class BkTextarea extends FieldControlMixin(LitElement)`, with
 `static styles = [formControlStyles, css…]` — and overrides `formControlElement` to return the
