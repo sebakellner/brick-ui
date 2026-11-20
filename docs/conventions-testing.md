@@ -125,7 +125,7 @@ a group changes the reading order and never the name of a rule.
 ## T1. The runner page loads the theme, once
 
 **Rule.** `web-test-runner.config.mjs` serves every suite from one page: it links
-`/src/styles/theme.css` and zeroes `--bk-transition`. A suite never loads the stylesheet
+`/packages/tokens/src/theme.css` and zeroes `--bk-transition`. A suite never loads the stylesheet
 itself; when it needs the other theme it calls `setTheme('dark')` and nothing else.
 
 **Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)), so

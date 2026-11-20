@@ -18,7 +18,8 @@ component does not re-decide any of it.
 1. **Tokens, if the component needs its own.** A component file
    (`tokens/component/<component>.json`) exists only when something must be themable per
    component; a control that paints roles and needs one geometry value gets a **hook** in
-   `style-dictionary.config.mjs` with a primitive default instead (`--bk-input-radius`).
+   `packages/tokens/style-dictionary.config.mjs` with a primitive default instead
+   (`--bk-input-radius`).
    Reuse a semantic role when it is genuinely shared. Whatever you add: run
    `pnpm build:tokens` and commit the output.
 

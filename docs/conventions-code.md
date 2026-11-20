@@ -79,7 +79,7 @@ interpolations, so a token name cannot be passed as a typed value without wrappi
 it in `unsafeCSS`. Doing that turned every read into noise, in exchange for a
 guarantee that `pnpm check:tokens` already provides: an unknown name fails CI.
 Typed names exist and are exported (`TokenName`, `HookName` in
-`src/styles/tokens.generated.ts`) for code that wants them; the stylesheets do not.
+`packages/tokens/src/tokens.generated.ts`) for code that wants them; the stylesheets do not.
 
 **Do**
 

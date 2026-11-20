@@ -9,7 +9,7 @@
   },
   "packageManager": "pnpm@12.14.0",
   "scripts": {
-    "build:tokens": "style-dictionary build --config style-dictionary.config.mjs",
+    "build:tokens": "style-dictionary build --config packages/tokens/style-dictionary.config.mjs",
     "build:manifest": "cem analyze --config custom-elements-manifest.config.mjs && node scripts/normalize-manifest.mjs",
     "check:tokens": "node scripts/check-token-usage.mjs",
     "check:readmes": "node scripts/check-readmes.mjs",
@@ -22,6 +22,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@brick/tokens": "workspace:*",
     "lit": "^3.3.3"
   },
   "devDependencies": {

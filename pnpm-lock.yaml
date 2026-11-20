@@ -208,6 +208,9 @@ importers:
 
   .:
     dependencies:
+      '@brick/tokens':
+        specifier: workspace:*
+        version: link:packages/tokens
       lit:
         specifier: ^3.3.3
         version: 3.3.3
@@ -263,6 +266,8 @@ importers:
       vite:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)
+
+  packages/tokens: {}
 
 packages:
 
