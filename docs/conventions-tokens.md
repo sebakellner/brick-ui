@@ -4,16 +4,16 @@ Rules for the token source in `tokens/*.json` and for the layers it generates.
 The pipeline is explained in [ADR 0001](adr/0001-generate-token-css-from-json.md);
 why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 
-| #   | Rule                                                                     | Enforced by         |
-| --- | ------------------------------------------------------------------------ | ------------------- |
-| R1  | A semantic role exists only while a component reads it directly          | `pnpm check:tokens` |
-| R2  | References point downwards, one hop, never at a role                     | review              |
-| R3  | The palette is a reference ramp, not a usage list                        | review              |
-| R4  | The token path is the public name                                        | review              |
-| R5  | A role is read under the property it belongs to                          | `pnpm check:tokens` |
-| R6  | A component reads a role for colour and a primitive for everything else  | `pnpm check:tokens` |
-| R7  | Motion is one composite token, and reduced motion zeroes it at the theme | review              |
-| R8  | There is no shadow layer until something paints a shadow                 | review              |
+| #   | Rule                                                                         | Enforced by         |
+| --- | ---------------------------------------------------------------------------- | ------------------- |
+| R1  | A role is a documented, typed commitment that resolves in every theme        | `pnpm check:tokens` |
+| R2  | In the graph an alias points one layer down, and a role never aliases a role | review              |
+| R3  | The palette is a reference ramp, not a usage list                            | review              |
+| R4  | The token path is the public name                                            | review              |
+| R5  | A role is read under the property it belongs to                              | `pnpm check:tokens` |
+| R6  | A component reads a role for colour and a primitive for everything else      | `pnpm check:tokens` |
+| R7  | Motion is one composite token, and reduced motion zeroes it at the theme     | review              |
+| R8  | There is no shadow layer until something paints a shadow                     | review              |
 
 Before any of these rules, `pnpm check:tokens` asserts **existence**: every
 `--brikka-*` name read inside a CSS string must be a declared token or a hook. No
@@ -26,55 +26,72 @@ through its fallback — the failure this check exists to catch, arriving by a r
 could not look at. `pnpm test:checks` is what keeps that second refusal honest, because
 a gate nobody can make fail is decoration.
 
-## R1. A semantic role exists only while a component reads it
+## R1. A semantic role is a documented commitment, not a derivation of usage
 
-**Rule.** A role under `color.*` or `focus-ring` is added when a component reads
-it directly, and deleted in the same change that stops reading it. A role that
-exists only so that a control token can alias it is a middle tier — this kit has
-none, and the ten roles that tried to be one were removed. A role with no
-consumer is not forward planning; it is a public name with no behaviour.
+**Rule.** A role under `color.*` or `focus-ring` is added when the design system
+publishes the decision, not when a component starts reading it. A role may ship with no
+consumer. What it may not ship without is a `$type`, a `$description` that says what it
+is for, and a definition in every theme. Renaming or removing one is a breaking change,
+and ships with the changeset that says so.
 
-The converse holds too. A value that only one component paints is a control
-token, not a role — a role read by one component is that component's token
-wearing a public name. And a control token needs a component: when the component
-stops reading it, delete it in the same change.
+The converse is unchanged. A value only one component paints is a component token, not a
+role, and it is deleted in the same change that stops reading it.
 
-**Why.** Ten roles were authored up front — `primary`, `primary-hover`,
-`primary-active`, `on-primary`, `on-danger`, `surface`, `surface-hover`, `text`,
-`text-on-muted` and `border` — and no component ever read one. They went once the
-controls took their own layer. What survives is what a component reads: a role nobody
-reads fails `pnpm check:tokens`, so this set is kept honest by the check rather than by
-a list that would age badly.
+**Why.** R1 used to say a role exists only while a component reads it. That answered the
+right question while the token graph was the theming of a component kit: the only thing
+that could justify a public name was the thing that consumed it. The graph is now
+published as a design system a host can paint with and never register an element, so
+`bg-surface` and `border-default` are the contract themselves, whatever the components
+do with them.
 
-The cost of a speculative role is not its bytes. A token name is public
-contract: removing `--brikka-color-primary` later is a breaking change for any host
-that themed it, so adding the role is a decision to pay that cost eventually.
+What the rule protected is unchanged, and larger. It said the cost of a speculative role
+is not its bytes: it is that removing `--brikka-color-primary` later is a breaking change
+for any host that themed it. With a consumer who never saw this source, that cost is paid
+by a stranger. So the gate moves from _is it read_ to _is it committed_: the description
+is what a reader is owed, the theme coverage is what the theme contract promises, and the
+changeset is what makes a removal visible instead of silent.
 
-**Do** — add the role in the same change as the control that reads it.
+The history is why the new gate is shaped this way. Ten roles were authored up front so
+the token file would look complete, nothing ever read one, and they were deleted. The
+lesson was not "a role needs a consumer". It was "a role needs a reason a reader can
+find", and a description is that reason, where a consumer is whoever needed it first.
 
-**Don't** — add the canonical ten-role set so the token file "looks complete".
+**Do** — ship `bg-warning` with its type, its description, and a value in every theme, on
+the day the ramp it needs exists.
 
-**Enforced by.** `pnpm check:tokens`, which derives the roles from `color.css` and
-fails when no component reads one. Tests and stories do not count as consumers.
-The control-token half of the rule is review only.
+**Don't** — ship `bg-warning` as a bare name because a component might want it next
+quarter. That is the ten roles again, with the difference that now a stranger depends on
+it.
 
-## R2. References point downwards, one hop, never at a role
+**Enforced by.** `pnpm check:tokens` refuses a role that resolves in one theme and not
+another. The `$description` and `$type` half becomes a check when the token source moves
+to DTCG, and the changeset a removal cannot skip needs a diff of the graph against the
+base branch; both are recorded in
+[ADR 0027](adr/0027-ship-the-token-graph-as-a-design-system.md), and neither is a gate
+today. What the graph as a public contract obliges is
+[ADR 0019](adr/0019-the-token-graph-is-the-public-contract.md).
 
-**Rule.** `role → palette`, `radius → space`. A role aliases a palette step,
-never another role, and no chain is longer than one hop.
+## R2. In the token graph, an alias points one layer down and a role never aliases a role
 
-**Why.** A role that aliases a role leaves the resolved value two hops from the
-reader, and with a shadow root in between the only practical way to find the color
-is DevTools. One hop means a role is answerable by opening two small files.
+**Rule.** `role → palette`, `radius → space`. Within `tokens/*.json`, a role aliases a
+palette step, never another role, and no chain in the graph is longer than one hop. The
+hops that hooks and component-local defaults add live outside the graph:
+`--brikka-button-bg` defaults to `--brikka-button-variant-bg`, which `brikka-button` sets
+to `--brikka-bg-accent`, which is the role. That is where the depth budget sits, and it is
+why the rule says which of the two it governs.
 
-The control tier is gone. The sixteen tokens removed were
+**Why.** A role that aliases a role leaves the resolved value two hops from the reader,
+and with a shadow root in between the only practical way to find the color is DevTools.
+One hop in the graph means a role is answerable by opening two small files, and the three
+hops a button resolves through are each owned by the layer that sets them.
+
+The rest is unchanged. The control tier is gone: the sixteen tokens removed were
 `button.{primary,secondary,ghost}.{bg,bg-hover,fg,border}` and
-`input.{bg,color,label-color,border-color}`; their values now live in
-`text-default`, `border-default`, `bg-surface*` and `bg-accent*`.
-`--brikka-button-disabled-opacity` is the only component token left, because opacity
-is not a color. It holds no value of its own: it defaults to the base primitive
-`{opacity.disabled}`, so a disabled control has one default and one place to
-override it.
+`input.{bg,color,label-color,border-color}`, their values now live in `text-default`,
+`border-default`, `bg-surface*` and `bg-accent*`, and `--brikka-button-disabled-opacity`
+is the only component token left because opacity is not a color. It holds no value of its
+own: it defaults to the base primitive `{opacity.disabled}`, so a disabled control has one
+default and one place to override it.
 
 **Do**
 

@@ -20,9 +20,17 @@ const STALE = '--bk-text-default';
 
 const PARAMETERS = 'export const parameters = {};\n';
 
+/* R1 asks a role to resolve in every theme, so the dark artifact is part of the fixture: a
+ * role declared for light and not for dark renders through nothing, and the check has to
+ * refuse the tree that produces it. */
+const DARK_ROLE = `:where([data-theme="dark"]) {\n  ${ROLE}: #8ab4f8;\n}\n`;
+const DARK_PALETTE_ONLY =
+  ':where([data-theme="dark"]) {\n  --brikka-palette-blue-600: #8ab4f8;\n}\n';
+
 /* The smallest tree that satisfies `requireRoots` and the check's own preconditions: a
- * declared name, a semantic role, a hooks source, a component and a Storybook directory. */
-const build = ({ component = '', storybook = PARAMETERS } = {}) => {
+ * declared name, a semantic role in both themes, a hooks source, a component and a
+ * Storybook directory. */
+const build = ({ component = '', storybook = PARAMETERS, dark = DARK_ROLE } = {}) => {
   const root = mkdtempSync(join(tmpdir(), 'brikka-gate-'));
 
   const write = (path, contents) => {
@@ -36,6 +44,7 @@ const build = ({ component = '', storybook = PARAMETERS } = {}) => {
     'packages/tokens/src/tokens/color.css',
     `:where(:root) {\n  --brikka-palette-blue-600: #0066ff;\n  ${ROLE}: var(--brikka-palette-blue-600);\n}\n`,
   );
+  write('packages/tokens/src/tokens/color.dark.css', dark);
   write(
     'packages/tokens/style-dictionary.config.mjs',
     `export default { hooks: { accent: '${ROLE}' } };\n`,
@@ -91,5 +100,20 @@ test('accepts a tree that reads the published prefix and nothing else', () => {
   on({ component: consuming() }, (result) => {
     assert.equal(result.status, 0, `expected a clean tree, got: ${result.stderr}`);
     assert.equal(result.stderr, '');
+  });
+});
+
+test('accepts a semantic role that no component reads', () => {
+  on({ component: 'export const styles = css`:host { display: block; }`;\n' }, (result) => {
+    assert.equal(result.status, 0, `a role no longer needs a consumer, got: ${result.stderr}`);
+    assert.equal(result.stderr, '');
+  });
+});
+
+test('refuses a role that resolves in the light theme and not in the dark one', () => {
+  on({ component: consuming(), dark: DARK_PALETTE_ONLY }, (result) => {
+    assert.equal(result.status, 1, 'the check must fail on a role that resolves in one theme');
+    assert.match(result.stderr, /missing from the dark theme/);
+    assert.match(result.stderr, new RegExp(ROLE));
   });
 });

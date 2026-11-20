@@ -4,9 +4,9 @@ Date: 2026-11-20
 
 ## Status
 
-proposed. It extends [0019](0019-the-token-graph-is-the-public-contract.md) and
-reverses one rule of row R1 in
-[docs/conventions-tokens.md](../conventions-tokens.md). It supersedes no record.
+accepted. It extends [0019](0019-the-token-graph-is-the-public-contract.md) and reverses
+row R1 of [docs/conventions-tokens.md](../conventions-tokens.md), which the change that
+accepts this record rewrites. It supersedes no record.
 
 ## Context
 
@@ -21,8 +21,8 @@ That arrangement is about to be the wrong shape. A host that loads
 never register an element. For that host `bg-surface`, `text-default` and
 `border-default` are the contract, and whether a component of this repository happens to
 read a given role says nothing about whether it is useful. Measured in the tree today:
-122 declared tokens — 64 `palette`, 41 semantic roles (`bg` 16, `text` 10, `border` 9,
-`focus` 6), 12 primitives across `space`, `radius` and `font-size`, and 5 singletons —
+122 declared tokens — 64 `palette`, 19 semantic roles (`bg` 8, `border` 5, `text` 5,
+`focus-ring` 1), 12 primitives across `space`, `radius` and `font-size`, and 5 singletons —
 plus 40 hooks, which the token graph does not contain at all.
 
 Two facts make the current shape expensive to keep.
@@ -116,8 +116,10 @@ file. And the design-tool bridge has a model to target — a set with modifiers,
 group — rather than a shape this repository invented and would have to re-explain.
 
 Harder: every role is a published name someone owes a description. Adding one is a design
-decision with a release rather than a component detail. Two gates are new and both will
-fail on today's tree the first time they run. And the depth the hooks add is now something
+decision with a release rather than a component detail. The theme-coverage gate is new and
+it passes on today's tree, where every one of the 19 roles already resolves in both
+themes; the description half is not a gate yet, and item 4 is what makes it one. And the
+depth the hooks add is now something
 to watch, where before the rule denied it existed. The rename also leaves the token source
 at `packages/tokens/tokens/`, which reads as a stutter; it stays, because that directory is
 not a published path and is therefore free to change forever, unlike the package name.

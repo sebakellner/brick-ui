@@ -22,6 +22,7 @@ export const paths = {
   components: at('packages', 'web-components', 'src', 'components'),
   tokensCss: at('packages', 'tokens', 'src', 'tokens'),
   colorCss: at('packages', 'tokens', 'src', 'tokens', 'color.css'),
+  colorDarkCss: at('packages', 'tokens', 'src', 'tokens', 'color.dark.css'),
   hooks: at('packages', 'tokens', 'style-dictionary.config.mjs'),
   storybook: at('storybook', 'web-components', '.storybook'),
   tokensJson: at('packages', 'tokens', 'tokens'),
