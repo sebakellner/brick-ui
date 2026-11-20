@@ -75,6 +75,48 @@
         "$description": "The border of an invalid control."
       }
     },
+    "success": {
+      "bg": {
+        "$value": "{palette.green-100}",
+        "$description": "The surface of a message that confirms something worked."
+      },
+      "text": {
+        "$value": "{palette.green-800}",
+        "$description": "The text of a confirmation, on `success.bg` or on a page surface."
+      },
+      "border": {
+        "$value": "{palette.green-600}",
+        "$description": "The border of a confirmation surface."
+      }
+    },
+    "warning": {
+      "bg": {
+        "$value": "{palette.yellow-100}",
+        "$description": "The surface of a message that asks for attention before something is lost."
+      },
+      "text": {
+        "$value": "{palette.yellow-800}",
+        "$description": "The text of a warning, on `warning.bg` or on a page surface."
+      },
+      "border": {
+        "$value": "{palette.yellow-700}",
+        "$description": "The border of a warning surface."
+      }
+    },
+    "info": {
+      "bg": {
+        "$value": "{palette.blue-100}",
+        "$description": "The surface of a message that adds context without asking for action."
+      },
+      "text": {
+        "$value": "{palette.blue-800}",
+        "$description": "The text of an informational message, on `info.bg` or on a page surface."
+      },
+      "border": {
+        "$value": "{palette.blue-600}",
+        "$description": "The border of an informational surface."
+      }
+    },
     "focus-halo": {
       "$value": "rgb(37 99 235 / 0.18)",
       "$description": "The translucent ring drawn around a focused control."
