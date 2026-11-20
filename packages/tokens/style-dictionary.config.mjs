@@ -82,7 +82,7 @@ const BASE = [`${paths.tokensJson}/base/*.json`, `${paths.tokensJson}/component/
 const LIGHT = [...BASE, `${paths.tokensJson}/role/light.json`];
 const DARK_ROLE = JSON.parse(readFileSync(`${paths.tokensJson}/role/dark.json`, 'utf8')).role;
 
-const THEMED = (token) => token.path[0] === 'role';
+const IS_ROLE_GROUP = (token) => token.path[0] === 'role';
 
 const platform = (files, { transforms = [], preprocessors = [] } = {}) => ({
   transforms: [...TRANSFORMS, ...transforms],
@@ -106,7 +106,7 @@ export default {
     transforms: {
       'name/strip-role': {
         type: 'name',
-        filter: THEMED,
+        filter: IS_ROLE_GROUP,
         transform: (token) => `brikka-${token.path.slice(1).join('-')}`,
       },
     },
