@@ -569,16 +569,23 @@ describe('bk-slider', () => {
       ).to.equal('-2px');
     });
 
-    it('should keep the readout off the label row', async () => {
-      const el = await fixture<BkSlider>(html`
-        <bk-slider tooltip="always" value="40" value-text="40 %">${labelAtom('Volume')}</bk-slider>
-      `);
+    it('should not reserve room for the readout, so the control never moves', async () => {
+      const plain = await fixture<BkSlider>(html`<bk-slider value="40"></bk-slider>`);
+      const shown = await fixture<BkSlider>(
+        html`<bk-slider value="40" tooltip="always" value-text="40 %"></bk-slider>`,
+      );
+      const offsetOf = (el: BkSlider) =>
+        Math.round(railOf(el).getBoundingClientRect().top - el.getBoundingClientRect().top);
+      const on = railOf(shown).getBoundingClientRect();
 
-      expect(Boolean(readoutOf(el)), 'the readout rendered').to.equal(true);
+      expect(offsetOf(shown), 'the track sits where it always sits').to.equal(offsetOf(plain));
+      expect(railOf(shown).getBoundingClientRect().height).to.equal(
+        railOf(plain).getBoundingClientRect().height,
+      );
       expect(
-        readoutOf(el)!.getBoundingClientRect().top,
-        'the rail makes the readout room above it',
-      ).to.be.at.least(labelOf(el).getBoundingClientRect().bottom);
+        readoutOf(shown)!.getBoundingClientRect().top,
+        'and the bubble floats over the row above instead of pushing the control down',
+      ).to.be.below(on.top);
     });
 
     it('should sit beside the knob in vertical', async () => {

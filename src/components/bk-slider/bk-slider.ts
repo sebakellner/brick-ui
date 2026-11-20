@@ -188,15 +188,6 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         margin-block-start: calc(var(--bk-space-1) / -2);
       }
 
-      :host([orientation='horizontal'][tooltip='always']) .rail,
-      :host([orientation='horizontal'][tooltip='hover']) .rail {
-        margin-block-start: calc(
-          var(--bk-font-size-sm) * var(--bk-line-height-md) + var(--bk-space-1) +
-            var(--bk-slider-readout-gap, var(--bk-slider-variant-readout-gap)) + var(--bk-space-1) /
-            2
-        );
-      }
-
       :host([tooltip='always']) .readout {
         opacity: 1;
       }

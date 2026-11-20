@@ -240,11 +240,11 @@ disabled>` contains it, because the value getter asks `fieldDisabled` before it 
 - **The readout follows the lower thumb.** With `value-end` set, the bubble reads
   `value-text` (or `value`) and sits on the lower thumb; the upper thumb has no
   readout of its own.
-- **The readout is drawn outside the rail.** The rail is a line: the bubble sits
-  above it in the horizontal run, and on its block-end side in the vertical one, so a
-  page leaves it room there. The horizontal rail reserves the bubble's height above
-  itself while a mode is on, which is why the control moves down when `tooltip` turns
-  on.
+- **The readout floats over the row above it.** The rail is a line: the bubble sits above
+  it in the horizontal run and beside it in the vertical one, and nothing reserves that
+  space, so the control does not move when `tooltip` turns on. The price is the one MUI and
+  Ant Design pay too: while the bubble is visible it can cover the label, because a value
+  that follows the knob has nowhere else to go.
 
 ## Ticks and the readout
 
