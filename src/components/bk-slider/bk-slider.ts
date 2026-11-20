@@ -78,7 +78,7 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         --bk-slider-variant-radius: var(--bk-radius-lg);
         --bk-slider-variant-length: calc(var(--bk-space-4) * 15);
         --bk-slider-variant-halo-size: var(--bk-space-2);
-        --bk-slider-variant-tick-size: var(--bk-space-1);
+        --bk-slider-variant-tick-size: calc(var(--bk-border-width) * 2);
       }
 
       .rail {
@@ -123,12 +123,10 @@ export class BkSlider extends FieldControlMixin(LitElement) {
       .tick {
         position: absolute;
         inline-size: var(--bk-slider-tick-size, var(--bk-slider-variant-tick-size));
-        block-size: var(--bk-slider-tick-size, var(--bk-slider-variant-tick-size));
-        inset-block-start: calc(
-          50% - var(--bk-slider-tick-size, var(--bk-slider-variant-tick-size)) / 2
-        );
+        block-size: 100%;
+        inset-block-start: 0;
         background: var(--bk-bg-surface);
-        border-radius: 100%;
+        border-radius: var(--bk-border-width);
       }
 
       .readout-lane {

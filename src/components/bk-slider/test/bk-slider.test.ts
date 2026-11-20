@@ -392,8 +392,11 @@ describe('bk-slider', () => {
       );
       const tick = ticksOf(el)[0]!.getBoundingClientRect();
 
-      expect(tick.height, 'the tick hook sizes the mark').to.equal(8);
-      expect(tick.width).to.equal(8);
+      expect(tick.width, 'the tick hook sizes the mark across').to.equal(8);
+      expect(
+        tick.height,
+        'and the mark spans the rail, so it reads as a division and not as a dot',
+      ).to.be.closeTo(railOf(el).getBoundingClientRect().height, 1);
     });
   });
 
