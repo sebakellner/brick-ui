@@ -118,10 +118,11 @@ export const Range: Story = {
 
 /* No label on purpose: the row above a vertical slider reads badly, and this canvas is
  * about the shape. A real page still has to name the control. A mixer strip is three of
- * them in a centred row, where the tick density and the vertical knob read. */
+ * them in a centred row; no ticks, because three ticked rails at this height read as three
+ * rulers, and the density is what the Ticks story is for. */
 export const Vertical: Story = {
-  args: { label: '', orientation: 'vertical', ticks: true, step: 10 },
-  render: ({ step, ticks }) => html`
+  args: { label: '', orientation: 'vertical' },
+  render: ({ step }) => html`
     <div
       style="display: flex; align-items: center; justify-content: center; gap: var(--bk-space-4);"
     >
@@ -135,7 +136,6 @@ export const Vertical: Story = {
             name=${channel.name}
             orientation="vertical"
             step=${step}
-            ?ticks=${ticks}
             .value=${channel.value}
           ></bk-slider>
         `,
