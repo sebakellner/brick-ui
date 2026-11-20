@@ -1,7 +1,25 @@
 :root {
   --brikka-font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --brikka-font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --brikka-font-size-xs: 0.75rem;
   --brikka-font-size-sm: 0.8125rem;
   --brikka-font-size-md: 0.9375rem;
+  --brikka-font-size-lg: 1.125rem;
+  --brikka-font-size-xl: 1.375rem;
+  --brikka-font-size-2xl: 1.75rem;
+  --brikka-font-weight-regular: 400;
   --brikka-font-weight-medium: 500;
+  --brikka-font-weight-semibold: 600;
+  --brikka-font-weight-bold: 700;
+  --brikka-line-height-tight: 1.25;
   --brikka-line-height-md: 1.5;
+  --brikka-line-height-relaxed: 1.75;
+  --brikka-letter-spacing-tight: -0.01em;
+  --brikka-letter-spacing-normal: 0;
+  --brikka-typography-heading-lg: var(--brikka-font-weight-semibold) var(--brikka-font-size-2xl)/var(--brikka-line-height-tight) var(--brikka-font-sans);
+  --brikka-typography-heading-md: var(--brikka-font-weight-semibold) var(--brikka-font-size-xl)/var(--brikka-line-height-tight) var(--brikka-font-sans);
+  --brikka-typography-heading-sm: var(--brikka-font-weight-semibold) var(--brikka-font-size-lg)/var(--brikka-line-height-tight) var(--brikka-font-sans);
+  --brikka-typography-body-md: var(--brikka-font-weight-regular) var(--brikka-font-size-md)/var(--brikka-line-height-md) var(--brikka-font-sans);
+  --brikka-typography-body-sm: var(--brikka-font-weight-regular) var(--brikka-font-size-sm)/var(--brikka-line-height-md) var(--brikka-font-sans);
+  --brikka-typography-label-md: var(--brikka-font-weight-medium) var(--brikka-font-size-sm)/var(--brikka-line-height-tight) var(--brikka-font-sans);
 }
