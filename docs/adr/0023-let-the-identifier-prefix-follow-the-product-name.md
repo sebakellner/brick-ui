@@ -80,6 +80,15 @@ hook wins over the variant default — and renaming a tag back to `bk-button` fa
 four more. A stale prefix in a place no test exercises would pass both gates and
 render through the fallback.
 
+One part of this change is not a commit. The repository rename is an action on
+GitHub, and it behaves unlike every other rename here: `github.com/sebakellner/brick-ui`
+and the git remotes redirect to the new name, while **project site URLs do not** —
+`sebakellner.github.io/brick-ui/` stops resolving the moment the repository is
+renamed, and nothing in the repository can prevent it. The 16 URLs across the
+READMEs, which are the CI badge, the Storybook link and the convention anchors,
+therefore change in the same change as the rename. Any future repository rename
+has the same shape: the redirect covers the repository, never the site.
+
 Debt accepted, in two parts and both conditional:
 
 1. **The 23 accepted ADRs keep `bk-` and `@brick/` in their prose and snippets.**
@@ -88,13 +97,7 @@ Debt accepted, in two parts and both conditional:
    reader of an ADR reaches for an element that no longer exists by that name more
    than once: the honest fix then is to update the identifiers, never the
    reasoning.
-2. **The GitHub repository is still `sebakellner/brick-ui`.** It is referenced by
-   16 URLs across the READMEs — the CI badge, the Storybook Pages site, and the
-   convention anchors — and they were held back deliberately, because rewriting
-   them before the repository is renamed would have published links that 404.
-   The condition to revisit is the repository rename itself, which makes those 16
-   URLs a single search and replace.
-3. **A stale prefix is caught only where a test exercises it.** `check:tokens`
+2. **A stale prefix is caught only where a test exercises it.** `check:tokens`
    cannot reject `--bk-*` because it looks for `--brikka-*`, and the browser suite
    only notices when the read has a visible consequence. The condition to revisit
    is the next change to `check-token-usage.mjs`, which should also fail on a

@@ -3,7 +3,7 @@
 A single-line text field with a real `<label>`, a description and an error slot,
 and a `brikka-change` event.
 
-[Docs page](https://github.com/sebakellner/brick-ui/?path=/docs/components-input--docs)
+[Docs page](https://github.com/sebakellner/brikka/?path=/docs/components-input--docs)
 
 ```html
 <brikka-field>

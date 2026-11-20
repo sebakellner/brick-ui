@@ -6,7 +6,7 @@ while a `required` group has no selection, and carries the tab stop and the
 arrow keys. It is a `role="radiogroup"` with its own label and its own message
 regions.
 
-[Docs page](https://github.com/sebakellner/brick-ui/?path=/docs/components-radio-group--docs)
+[Docs page](https://github.com/sebakellner/brikka/?path=/docs/components-radio-group--docs)
 
 ```html
 <brikka-radio-group name="size" required>

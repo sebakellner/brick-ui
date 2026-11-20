@@ -3,7 +3,7 @@
 A switch with a real `<label>`, a description and an error slot, and a
 `brikka-change` event. The track sits beside the label, never above it.
 
-[Docs page](https://github.com/sebakellner/brick-ui/?path=/docs/components-switch--docs)
+[Docs page](https://github.com/sebakellner/brikka/?path=/docs/components-switch--docs)
 
 ```html
 <brikka-field>

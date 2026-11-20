@@ -5,7 +5,7 @@ A container that names and arranges several `brikka-checkbox` elements. It is a
 one thing: with `required`, at least one of its boxes must be checked. It submits
 no value of its own — every box submits its own.
 
-[Docs page](https://github.com/sebakellner/brick-ui/?path=/docs/components-checkbox-group--docs)
+[Docs page](https://github.com/sebakellner/brikka/?path=/docs/components-checkbox-group--docs)
 
 ```html
 <brikka-checkbox-group required>
@@ -202,7 +202,7 @@ boxes and leaves a box authored `disabled` disabled. Each box then refuses the
 pointer and reports `aria-disabled` on its own inner input, which is the disabled
 they already carry.
 A group that looks unavailable while its boxes still respond is the lie
-[Conventions C5](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-code.md#c5-a-disabled-control-keeps-its-muted-text-loses-its-hover-and-carries-one-dim)
+[Conventions C5](https://github.com/sebakellner/brikka/blob/main/docs/conventions-code.md#c5-a-disabled-control-keeps-its-muted-text-loses-its-hover-and-carries-one-dim)
 exists to prevent.
 
 A disabled `<fieldset>` reaches the group too, through `formDisabledCallback`, and

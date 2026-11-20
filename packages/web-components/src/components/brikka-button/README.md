@@ -2,7 +2,7 @@
 
 A button that delegates focus to its inner native `<button>`.
 
-[Docs page](https://github.com/sebakellner/brick-ui/?path=/docs/components-button--docs)
+[Docs page](https://github.com/sebakellner/brikka/?path=/docs/components-button--docs)
 
 ```html
 <brikka-button>Save changes</brikka-button>

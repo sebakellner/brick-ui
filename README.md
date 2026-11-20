@@ -1,6 +1,6 @@
 # Brikka
 
-[![ci](https://github.com/sebakellner/brick-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/sebakellner/brick-ui/actions/workflows/ci.yml)
+[![ci](https://github.com/sebakellner/brikka/actions/workflows/ci.yml/badge.svg)](https://github.com/sebakellner/brikka/actions/workflows/ci.yml)
 
 A small component library built with [Lit](https://lit.dev) and TypeScript. The components
 are plain custom elements, and what they paint comes from a token layer: a theme decides
@@ -21,7 +21,7 @@ same values in both themes.
 
 ## See it
 
-[Storybook](https://github.com/sebakellner/brick-ui/) — every component, every state, and a
+[Storybook](https://github.com/sebakellner/brikka/) — every component, every state, and a
 page per component built from its own README.
 
 ## Contributing

@@ -4,7 +4,7 @@ A slider: one real `<input type="range">` per thumb, painted with a track, the r
 it fills and a thumb, in the field row that carries the label and the message
 regions. One thumb, or two — `value` and `value-end` — and never three.
 
-[Docs page](https://github.com/sebakellner/brick-ui/?path=/docs/form-slider--docs)
+[Docs page](https://github.com/sebakellner/brikka/?path=/docs/form-slider--docs)
 
 ```html
 <brikka-field>

@@ -5,7 +5,7 @@ stays the control — its arrow, its keyboard and its mobile picker are its own 
 and the atoms in the light DOM are mirrored into real `<option>` and `<optgroup>`
 elements inside the shadow root.
 
-[Docs page](https://github.com/sebakellner/brick-ui/?path=/docs/form-native-select--docs)
+[Docs page](https://github.com/sebakellner/brikka/?path=/docs/form-native-select--docs)
 
 ```html
 <brikka-field>

@@ -4,7 +4,7 @@ A multiline text field: a real `<textarea>`, a real `<label>`, a description and
 error slot, a `brikka-change` event, and a counter while `maxlength` bounds the value.
 It is the counterpart of `brikka-input` for answers longer than one line.
 
-[Docs page](https://github.com/sebakellner/brick-ui/?path=/docs/form-textarea--docs)
+[Docs page](https://github.com/sebakellner/brikka/?path=/docs/form-textarea--docs)
 
 ```html
 <brikka-field>

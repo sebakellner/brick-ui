@@ -3,7 +3,7 @@
 A field assembled from parts: label, control, description and error message are
 written as elements instead of strings, and `brikka-field` stacks them.
 
-[Docs page](https://github.com/sebakellner/brick-ui/?path=/docs/components-field--docs)
+[Docs page](https://github.com/sebakellner/brikka/?path=/docs/components-field--docs)
 
 ```html
 <brikka-field>
@@ -74,10 +74,10 @@ theming the roles.
   slotted atom is not in the region's `textContent` and an edit to its text fires
   no `slotchange`, so the control decides from the nodes assigned to the slot,
   re-read on `slotchange` and watched by a `MutationObserver` while it has them.
-  [Conventions A4](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-accessibility.md)
+  [Conventions A4](https://github.com/sebakellner/brikka/blob/main/docs/conventions-accessibility.md)
 - A7: the live region is never removed from the accessibility tree. It is clipped
   to a 1px box while empty, so the announcement is not lost when the text
-  appears. [Conventions A7](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-accessibility.md)
+  appears. [Conventions A7](https://github.com/sebakellner/brikka/blob/main/docs/conventions-accessibility.md)
 - The flat shape is not supported: written as siblings, the atoms make the input
   visually labelled and silently unnamed.
 
@@ -116,7 +116,7 @@ Three things, and nothing else:
 - It reflects its boolean `invalid` into `data-state="invalid"` on those parts.
 - An atom paints `invalid` and nothing else. `data-state="disabled"` is written by
   the control that hosts the atom — it reports the state, and the row that owns the
-  dim is what paints it ([C5](https://github.com/sebakellner/brick-ui/blob/main/docs/conventions-code.md#c5-a-disabled-control-keeps-its-muted-text-loses-its-hover-and-carries-one-dim)).
+  dim is what paints it ([C5](https://github.com/sebakellner/brikka/blob/main/docs/conventions-code.md#c5-a-disabled-control-keeps-its-muted-text-loses-its-hover-and-carries-one-dim)).
 
 It has no `role`, computes no accessible name and carries no validity. The role
 belongs to the widget; `brikka-field` is structure.
