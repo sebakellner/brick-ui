@@ -23,7 +23,7 @@ const byTag = new Map(declarations.map((declaration) => [declaration.tagName, de
 const slotName = (slot) => (slot.name && slot.name.length ? slot.name : '(default)');
 
 /* A property declared with `attribute: false` is still a property the README documents, and the
- * manifest keeps it out of `attributes`: `bk-radio-group-item`'s `tabStop` is written by the group
+ * manifest keeps it out of `attributes`: `brikka-radio-group-item`'s `tabStop` is written by the group
  * and never by an attribute. Public instance fields are the properties a consumer sees; `static`
  * members, the `private`/`protected` ones and the ones a mixin contributes are not — the shared
  * form API has its own `Member` table, which this check leaves alone. */
@@ -130,7 +130,7 @@ const tagIn = (text) => {
 };
 
 const readmes = (await readdir(paths.components, { withFileTypes: true }))
-  .filter((entry) => entry.isDirectory() && entry.name.startsWith('bk-'))
+  .filter((entry) => entry.isDirectory() && entry.name.startsWith('brikka-'))
   .map((entry) => join(paths.components, entry.name, 'README.md'))
   .sort();
 
@@ -159,7 +159,7 @@ for (const path of readmes) {
 
   for (const heading of headings) {
     if (heading.level !== 3) continue;
-    if (!/^`?bk-[a-z-]+`?$/.test(heading.text)) continue;
+    if (!/^`?brikka-[a-z-]+`?$/.test(heading.text)) continue;
     if (!byTag.has(name(heading.text)))
       problem(`${name(heading.text)}: documented under ${path}, not in the manifest`);
   }

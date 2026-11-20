@@ -17,7 +17,7 @@ the three layers are not familiar; the rules are in
 ## Steps
 
 1. **Name it by its path.** The token name is its JSON path joined with `-`,
-   prefixed with `--bk-`. `bg.accent-hover` becomes `--bk-bg-accent-hover`, so the
+   prefixed with `--brikka-`. `bg.accent-hover` becomes `--brikka-bg-accent-hover`, so the
    path you write is the public name. Choose it as carefully as a function name
    in an API.
 

@@ -9,11 +9,11 @@ import { fileURLToPath } from 'node:url';
  * longer exists fails loudly: a check that walks an empty path passes, and a gate that
  * passes over nothing is worse than no gate.
  *
- * `BRICK_ROOT` overrides the resolution, which is how the acceptance for this change is
+ * `BRIKKA_ROOT` overrides the resolution, which is how the acceptance for this change is
  * proved — point it at a directory that is not the repository and every check must fail
  * with the name of the root it could not find. */
 
-export const root = process.env.BRICK_ROOT ?? dirname(dirname(fileURLToPath(import.meta.url)));
+export const root = process.env.BRIKKA_ROOT ?? dirname(dirname(fileURLToPath(import.meta.url)));
 
 const at = (...parts) => join(root, ...parts);
 
@@ -31,7 +31,7 @@ export const paths = {
 
 export class MissingRoot extends Error {
   constructor(name, path) {
-    super(`root check: ${name} does not exist at ${path}. BRICK_ROOT is ${root}`);
+    super(`root check: ${name} does not exist at ${path}. BRIKKA_ROOT is ${root}`);
     this.name = 'MissingRoot';
   }
 }

@@ -30,18 +30,18 @@ const expect = (tag, surface, names) => {
   }
 };
 
-expect('bk-input', 'attributes', ['error', 'required', 'disabled', 'value', 'name']);
-expect('bk-input', 'slots', ['label', 'description', 'error']);
-expect('bk-input', 'cssParts', ['label', 'input', 'message', 'error']);
-expect('bk-input', 'events', ['bk-change']);
-expect('bk-checkbox', 'attributes', ['checked', 'indeterminate', 'disabled']);
-expect('bk-checkbox', 'cssParts', ['box', 'input']);
-expect('bk-native-select', 'slots', ['label', 'description', 'error']);
-expect('bk-checkbox-group', 'slots', ['label', 'description', 'error']);
-expect('bk-radio-group', 'slots', ['label', 'description', 'error']);
-expect('bk-button', 'cssParts', ['button']);
-expect('bk-button', 'slots', ['(default)']);
-expect('bk-field', 'slots', ['label', 'description', 'error']);
+expect('brikka-input', 'attributes', ['error', 'required', 'disabled', 'value', 'name']);
+expect('brikka-input', 'slots', ['label', 'description', 'error']);
+expect('brikka-input', 'cssParts', ['label', 'input', 'message', 'error']);
+expect('brikka-input', 'events', ['brikka-change']);
+expect('brikka-checkbox', 'attributes', ['checked', 'indeterminate', 'disabled']);
+expect('brikka-checkbox', 'cssParts', ['box', 'input']);
+expect('brikka-native-select', 'slots', ['label', 'description', 'error']);
+expect('brikka-checkbox-group', 'slots', ['label', 'description', 'error']);
+expect('brikka-radio-group', 'slots', ['label', 'description', 'error']);
+expect('brikka-button', 'cssParts', ['button']);
+expect('brikka-button', 'slots', ['(default)']);
+expect('brikka-field', 'slots', ['label', 'description', 'error']);
 
 if (byTag.size < 13) problems.push(`only ${byTag.size} elements declared, expected at least 13`);
 

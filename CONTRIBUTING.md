@@ -29,9 +29,9 @@ A field is the layers below, and only the last one is specific to it:
 | anatomy   | `packages/web-components/src/components/shared/form-control/field-control.mixin.ts`       | the per-instance id, the parts controller, and the one definition of "the error the field owns" — the `error` property or the slotted atom |
 | messages  | `packages/web-components/src/components/shared/form-control/field-messages.controller.ts` | the description and error regions, their ids, and the `aria-describedby` a field announces                                                 |
 | regions   | `packages/web-components/src/components/shared/form-control/field-regions.controller.ts`  | a container: the name on its host, the consumer's atoms adopted as its regions, and one observer for the text                              |
-| the field | `packages/web-components/src/components/bk-*/bk-*.ts`                                     | the native control, its attributes, its render                                                                                             |
+| the field | `packages/web-components/src/components/brikka-*/brikka-*.ts`                             | the native control, its attributes, its render                                                                                             |
 
-A second field composes them — `class BkTextarea extends FieldControlMixin(LitElement)`, with
+A second field composes them — `class BrikkaTextarea extends FieldControlMixin(LitElement)`, with
 `static styles = [formControlStyles, css…]` — and overrides `formControlElement` to return the
 native control inside its shadow root. A container composes `FieldRegionsController` instead,
 and both rely on `SlottedTextController` for the one question neither can answer alone: whether

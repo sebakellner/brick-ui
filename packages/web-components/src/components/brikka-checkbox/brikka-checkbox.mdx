@@ -1,0 +1,23 @@
+import { Meta, Canvas, Markdown } from '@storybook/addon-docs/blocks';
+import * as CheckboxStories from './brikka-checkbox.stories';
+import readme from './README.md?raw';
+
+<Meta of={CheckboxStories} />
+
+<Markdown>{readme}</Markdown>
+
+## Basic
+
+<Canvas of={CheckboxStories.Basic} />
+
+## Description
+
+<Canvas of={CheckboxStories.Description} />
+
+## Disabled
+
+<Canvas of={CheckboxStories.Disabled} />
+
+## Invalid
+
+<Canvas of={CheckboxStories.Invalid} />

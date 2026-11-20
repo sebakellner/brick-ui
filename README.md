@@ -1,6 +1,6 @@
-# Brick
+# Brikka
 
-[![ci](https://github.com/sebakellner/brick-ui/actions/workflows/ci.yml/badge.svg)](https://github.com/sebakellner/brick-ui/actions/workflows/ci.yml)
+[![ci](https://github.com/sebakellner/brikka/actions/workflows/ci.yml/badge.svg)](https://github.com/sebakellner/brikka/actions/workflows/ci.yml)
 
 A small component library built with [Lit](https://lit.dev) and TypeScript. The components
 are plain custom elements, and what they paint comes from a token layer: a theme decides
@@ -12,16 +12,16 @@ every colour, length and radius in the kit, and no component carries a fallback 
 ## The theme is required
 
 There are no fallback values anywhere, by decision rather than by omission. A component that
-paints `var(--bk-bg-accent)` renders visibly unstyled on a page that never loaded the theme,
+paints `var(--brikka-bg-accent)` renders visibly unstyled on a page that never loaded the theme,
 and that is the point: a half-themed page is a bug report, not a design choice.
 
-Load `theme.css` from `@brick/styles`, or a build of it, once. It defines the roles the components
+Load `theme.css` from `@brikka/styles`, or a build of it, once. It defines the roles the components
 read and the `color-scheme` the browser needs, so the page and the controls paint from the
 same values in both themes.
 
 ## See it
 
-[Storybook](https://sebakellner.github.io/brick-ui/) — every component, every state, and a
+[Storybook](https://github.com/sebakellner/brikka/) — every component, every state, and a
 page per component built from its own README.
 
 ## Contributing

@@ -11,14 +11,14 @@ export interface FieldRegionsOptions {
 }
 
 const ATOM_SLOTS = [
-  { tag: 'bk-field-label', slot: 'label' },
-  { tag: 'bk-field-description', slot: 'description' },
-  { tag: 'bk-field-error', slot: 'error' },
+  { tag: 'brikka-field-label', slot: 'label' },
+  { tag: 'brikka-field-description', slot: 'description' },
+  { tag: 'brikka-field-error', slot: 'error' },
 ] as const;
 
 const REGION_ATOMS = {
-  description: 'bk-field-description',
-  error: 'bk-field-error',
+  description: 'brikka-field-description',
+  error: 'brikka-field-error',
 } as const;
 
 type RegionName = keyof typeof REGION_ATOMS;
@@ -149,7 +149,7 @@ export class FieldRegionsController implements ReactiveController {
   }
 
   private syncName(): void {
-    const [atom = null] = this.owned('bk-field-label');
+    const [atom = null] = this.owned('brikka-field-label');
     const host = labelledBy(this.host);
     const current = host.ariaLabelledByElements ?? [];
     if (atom === null && current.length === 0) return;

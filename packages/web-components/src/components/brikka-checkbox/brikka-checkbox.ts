@@ -1,0 +1,214 @@
+import { LitElement, css, html, nothing } from 'lit';
+import { property } from 'lit/decorators.js';
+import { FieldControlMixin, formControlStyles } from '../shared/form-control/index.js';
+
+/**
+ * A checkbox: the native `<input>` hidden behind a painted box, in the `<label>` row that carries
+ * the label, the required mark and the field's message regions.
+ *
+ * @slot label - The label atom that names the box.
+ * @slot description - The help text, named by `aria-describedby` while it has content.
+ * @slot error - The problem, announced from the status region; text in it is the box's error.
+ * @csspart label - The `<label>` row, carrying `data-state` while the box is invalid or disabled.
+ * @csspart input - The native `<input type="checkbox">`, visually hidden and still focusable.
+ * @csspart box - The painted square, with the check or the mixed state drawn in it.
+ * @csspart required - The `*` that marks a required box.
+ * @csspart message - The container of the help and error regions, indented to the label text.
+ * @csspart description - The help region.
+ * @csspart error - The error region.
+ * @fires brikka-change - The state changed, with `detail.checked`.
+ */
+export class BrikkaCheckbox extends FieldControlMixin(LitElement) {
+  static override shadowRootOptions = {
+    ...LitElement.shadowRootOptions,
+    delegatesFocus: true,
+  };
+
+  static override styles = [
+    formControlStyles,
+    css`
+      :host {
+        --brikka-checkbox-variant-size: var(--brikka-space-4);
+        --brikka-checkbox-variant-radius: var(--brikka-radius-sm);
+      }
+
+      .field {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: var(--brikka-space-2);
+        margin-block-end: 0;
+      }
+
+      .native {
+        position: absolute;
+        inline-size: 1px;
+        block-size: 1px;
+        margin: 0;
+        padding: 0;
+        opacity: 0;
+      }
+
+      .box {
+        box-sizing: border-box;
+        display: grid;
+        flex: none;
+        place-items: center;
+        inline-size: var(--brikka-checkbox-size, var(--brikka-checkbox-variant-size));
+        block-size: var(--brikka-checkbox-size, var(--brikka-checkbox-variant-size));
+        background: var(--brikka-bg-surface);
+        border: var(--brikka-border-width) solid var(--brikka-border-default);
+        border-radius: var(--brikka-checkbox-radius, var(--brikka-checkbox-variant-radius));
+        transition:
+          border-color var(--brikka-transition),
+          background-color var(--brikka-transition);
+      }
+
+      .field:not([data-disabled]):hover .box {
+        border-color: var(--brikka-border-strong);
+      }
+
+      .native[aria-invalid='true'] + .box {
+        border-color: var(--brikka-border-danger);
+      }
+
+      .native:focus-visible + .box {
+        outline: var(--brikka-focus-ring-width) solid var(--brikka-focus-ring);
+        outline-offset: var(--brikka-focus-ring-offset);
+      }
+
+      .native:checked + .box {
+        background: var(--brikka-bg-accent);
+      }
+
+      .native:indeterminate + .box {
+        background: var(--brikka-bg-accent);
+      }
+
+      .native[aria-disabled='true'] + .box {
+        cursor: not-allowed;
+      }
+
+      .box::after {
+        content: '';
+        box-sizing: border-box;
+        visibility: hidden;
+        inline-size: 35%;
+        block-size: 60%;
+        color: var(--brikka-text-on-accent);
+        border-inline-end: calc(var(--brikka-border-width) * 2) solid currentColor;
+        border-block-end: calc(var(--brikka-border-width) * 2) solid currentColor;
+        transform: rotate(45deg);
+      }
+
+      .native:checked + .box::after {
+        visibility: visible;
+      }
+
+      .native:indeterminate + .box::after {
+        visibility: visible;
+        inline-size: 60%;
+        block-size: calc(var(--brikka-border-width) * 2);
+        border: 0;
+        background: currentColor;
+        transform: none;
+      }
+
+      [part='message'] {
+        margin-inline-start: calc(
+          var(--brikka-checkbox-size, var(--brikka-checkbox-variant-size)) + var(--brikka-space-2)
+        );
+      }
+    `,
+  ];
+
+  @property({ type: Boolean }) checked = false;
+
+  @property({ type: Boolean, reflect: true }) indeterminate = false;
+
+  private authoredIndeterminate: boolean | null = null;
+
+  override connectedCallback(): void {
+    super.connectedCallback();
+    this.authoredIndeterminate ??= this.hasAttribute('indeterminate');
+  }
+
+  override get formControlElement(): HTMLInputElement | undefined {
+    return this.shadowRoot?.querySelector('input') ?? undefined;
+  }
+
+  override get submittedValue(): string | null {
+    if (this.indeterminate) return null;
+
+    return this.checked ? String(this.value) || 'on' : null;
+  }
+
+  override render() {
+    return html`
+      <label
+        class="field label"
+        part="label"
+        for=${this.controlId}
+        data-state=${this.fieldParts.labelState ?? nothing}
+        ?data-disabled=${this.fieldDisabled}
+      >
+        <input
+          part="input"
+          class="native"
+          id=${this.controlId}
+          type="checkbox"
+          name=${this.name || nothing}
+          .checked=${this.checked}
+          ?required=${this.required}
+          .indeterminate=${this.indeterminate}
+          aria-disabled=${this.fieldDisabled ? 'true' : nothing}
+          aria-invalid=${this.fieldInvalid ? 'true' : nothing}
+          aria-describedby=${this.fieldParts.describedBy(this.messageSources()) || nothing}
+          @click=${this.handleClick}
+          @change=${this.handleChange}
+        />
+        <span part="box" class="box" aria-hidden="true"></span>
+        <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}></slot>
+        ${this.fieldParts.glyph}
+      </label>
+      ${this.fieldParts.messages}
+    `;
+  }
+
+  override formResetCallback(): void {
+    const initialChecked = this.hasAttribute('checked');
+    const initialIndeterminate = this.authoredIndeterminate ?? this.hasAttribute('indeterminate');
+    const control = this.formControlElement;
+    if (control) {
+      control.checked = initialChecked;
+      control.indeterminate = initialIndeterminate;
+    }
+    this.checked = initialChecked;
+    this.indeterminate = initialIndeterminate;
+    super.formResetCallback();
+  }
+
+  private readonly handleClick = (event: MouseEvent): void => {
+    if (this.fieldDisabled) event.preventDefault();
+  };
+
+  private readonly handleChange = (): void => {
+    const control = this.formControlElement;
+    if (!control) return;
+    this.checked = control.checked;
+    this.indeterminate = control.indeterminate;
+    this.dispatchEvent(
+      new CustomEvent<{ checked: boolean }>('brikka-change', {
+        detail: { checked: this.checked },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  };
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'brikka-checkbox': BrikkaCheckbox;
+  }
+}

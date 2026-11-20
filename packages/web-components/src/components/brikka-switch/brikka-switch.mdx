@@ -1,0 +1,23 @@
+import { Meta, Canvas, Markdown } from '@storybook/addon-docs/blocks';
+import * as SwitchStories from './brikka-switch.stories';
+import readme from './README.md?raw';
+
+<Meta of={SwitchStories} />
+
+<Markdown>{readme}</Markdown>
+
+## Basic
+
+<Canvas of={SwitchStories.Basic} />
+
+## Description
+
+<Canvas of={SwitchStories.Description} />
+
+## Disabled
+
+<Canvas of={SwitchStories.Disabled} />
+
+## Invalid
+
+<Canvas of={SwitchStories.Invalid} />

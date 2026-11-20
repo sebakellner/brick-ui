@@ -1,8 +1,8 @@
 :root {
-  --bk-border-width: 1px;
-  --bk-control-height: 40px;
-  --bk-transition: 120ms ease;
-  --bk-focus-ring-width: 2px;
-  --bk-focus-ring-offset: 1px;
-  --bk-opacity-disabled: 0.5;
+  --brikka-border-width: 1px;
+  --brikka-control-height: 40px;
+  --brikka-transition: 120ms ease;
+  --brikka-focus-ring-width: 2px;
+  --brikka-focus-ring-offset: 1px;
+  --brikka-opacity-disabled: 0.5;
 }

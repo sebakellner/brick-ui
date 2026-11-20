@@ -127,8 +127,8 @@ it hosts. `1px` there is the geometry the technique requires, not a design value
 ([ADR 0004](adr/0004-forbid-style-literals-in-components.md)).
 
 **Enforced by.** The suite, for the part a test can see: the region keeps
-`role="status"` while it is empty (`bk-checkbox.test.ts`, `bk-input.test.ts`), stays
-connected, and is collapsed rather than hidden (`bk-field-error.test.ts` proves the
+`role="status"` while it is empty (`brikka-checkbox.test.ts`, `brikka-input.test.ts`), stays
+connected, and is collapsed rather than hidden (`brikka-field-error.test.ts` proves the
 collapse; the `role` it carries is the atom's own). Whether the
 announcement actually reaches a screen reader is not assertable here — the suite runs
 in Chrome alone ([0005](adr/0005-test-in-chrome-only.md)) — so that half stays a review
@@ -162,8 +162,8 @@ the attribute string.
 
 ## A8. A halo is never the focus indicator
 
-**Rule.** Every control draws its focus indicator with `--bk-focus-ring` as a solid
-`outline`. A translucent halo (`--bk-focus-halo`) is allowed only on a control whose hit
+**Rule.** Every control draws its focus indicator with `--brikka-focus-ring` as a solid
+`outline`. A translucent halo (`--brikka-focus-halo`) is allowed only on a control whose hit
 surface sits on top of the control's own track — today that is the slider's knob — and it
 is a pointer state, never the keyboard indicator.
 

@@ -33,6 +33,6 @@
   :where(:root),
   :where([data-theme='light']),
   :where([data-theme='dark']) {
-    --bk-transition: 1ms;
+    --brikka-transition: 1ms;
   }
 }

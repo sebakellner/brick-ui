@@ -16,7 +16,7 @@ why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 | R8  | There is no shadow layer until something paints a shadow                 | review              |
 
 Before any of these rules, `pnpm check:tokens` asserts **existence**: every
-`--bk-*` name read inside a CSS string must be a declared token or a hook. No
+`--brikka-*` name read inside a CSS string must be a declared token or a hook. No
 other tool sees those names, and a typo renders nothing at runtime. It covers
 tests, stories and `storybook/*/.storybook/`, because a typo in any of them is still a typo.
 
@@ -41,7 +41,7 @@ reads fails `pnpm check:tokens`, so this set is kept honest by the check rather 
 a list that would age badly.
 
 The cost of a speculative role is not its bytes. A token name is public
-contract: removing `--bk-color-primary` later is a breaking change for any host
+contract: removing `--brikka-color-primary` later is a breaking change for any host
 that themed it, so adding the role is a decision to pay that cost eventually.
 
 **Do** — add the role in the same change as the control that reads it.
@@ -65,7 +65,7 @@ The control tier is gone. The sixteen tokens removed were
 `button.{primary,secondary,ghost}.{bg,bg-hover,fg,border}` and
 `input.{bg,color,label-color,border-color}`; their values now live in
 `text-default`, `border-default`, `bg-surface*` and `bg-accent*`.
-`--bk-button-disabled-opacity` is the only component token left, because opacity
+`--brikka-button-disabled-opacity` is the only component token left, because opacity
 is not a color. It holds no value of its own: it defaults to the base primitive
 `{opacity.disabled}`, so a disabled control has one default and one place to
 override it.
@@ -73,13 +73,13 @@ override it.
 **Do**
 
 ```css
---bk-bg-accent: var(--bk-palette-blue-600);
+--brikka-bg-accent: var(--brikka-palette-blue-600);
 ```
 
 **Don't**
 
 ```css
---bk-border-default: var(--bk-bg-accent);
+--brikka-border-default: var(--brikka-bg-accent);
 ```
 
 **Enforced by.** Review.
@@ -95,23 +95,23 @@ to current usage would turn every new component into a palette edit.
 
 **Do** — add the full ramp for a color even if only two steps are read.
 
-**Don't** — delete `--bk-palette-orange-900` because `grep` finds no consumer.
+**Don't** — delete `--brikka-palette-orange-900` because `grep` finds no consumer.
 
 **Enforced by.** Review.
 
 ## R4. The token path is the public name
 
-**Rule.** A token name is its JSON path joined with `-`, prefixed with `--bk-`
-(`platform.prefix`). `bg.accent-hover` becomes `--bk-bg-accent-hover`, so the path
+**Rule.** A token name is its JSON path joined with `-`, prefixed with `--brikka-`
+(`platform.prefix`). `bg.accent-hover` becomes `--brikka-bg-accent-hover`, so the path
 you write is the name a host overrides.
 
 **Why.** A token name is public contract, and renaming one is a breaking change
 for anyone who themed it. Naming is API design rather than filing: the name has
 to say what the value is for, because that is what a consumer greps for.
 
-**Do** — name the role: `--bk-bg-accent`.
+**Do** — name the role: `--brikka-bg-accent`.
 
-**Don't** — name the appearance: `--bk-blue-surface`.
+**Don't** — name the appearance: `--brikka-blue-surface`.
 
 **Enforced by.** Review. What a breaking rename obliges — an alias, or a release note that
 names the old token — is the decision in
@@ -119,24 +119,24 @@ names the old token — is the decision in
 
 ## R5. A role is read under the property it belongs to
 
-**Rule.** `--bk-bg-*` in a `background`, `--bk-text-*` in a `color`,
-`--bk-border-*` in a border colour, `--bk-focus-ring` in an `outline`. A role
+**Rule.** `--brikka-bg-*` in a `background`, `--brikka-text-*` in a `color`,
+`--brikka-border-*` in a border colour, `--brikka-focus-ring` in an `outline`. A role
 assigned to a custom property is not checked: that is the hook indirection, and
 the property that matters is wherever the hook is finally read.
 
 **Why.** The family is in the name so the misuse is decidable without judgement.
-`color: var(--bk-bg-surface)` compiles, paints something nobody intended, and a
+`color: var(--brikka-bg-surface)` compiles, paints something nobody intended, and a
 reviewer reading forty correct declarations does not notice the forty-first.
 
-**Do** — `background: var(--bk-bg-surface);`
+**Do** — `background: var(--brikka-bg-surface);`
 
-**Don't** — `color: var(--bk-bg-surface);`
+**Don't** — `color: var(--brikka-bg-surface);`
 
 **Enforced by.** `pnpm check:tokens`.
 
 ## R6. A component reads a role for colour and a primitive for everything else
 
-**Rule.** A component never reads `--bk-palette-*`. It reads space, radius,
+**Rule.** A component never reads `--brikka-palette-*`. It reads space, radius,
 typography, opacity and the structural primitives directly.
 
 **Why.** A role exists where one name must resolve to different values in
@@ -144,9 +144,9 @@ different contexts. Colour has two themes; spacing has one. Reaching for the ram
 bypasses the theme silently: the value is right today and wrong the moment the
 theme switches, with nothing to notice it.
 
-**Do** — `background: var(--bk-bg-accent);`
+**Do** — `background: var(--brikka-bg-accent);`
 
-**Don't** — `background: var(--bk-palette-blue-600);`
+**Don't** — `background: var(--brikka-palette-blue-600);`
 
 **Enforced by.** `pnpm check:tokens`. Why the primitives a component reads stay single-purpose
 — one axis each, never merged — is the decision in
@@ -154,7 +154,7 @@ theme switches, with nothing to notice it.
 
 ## R7. Motion is one composite token, and reduced motion zeroes it at the theme
 
-**Rule.** `--bk-transition` is the only timing a component reads, and it carries the
+**Rule.** `--brikka-transition` is the only timing a component reads, and it carries the
 duration and the easing together. `theme.css` sets it to `1ms` under
 `prefers-reduced-motion: reduce`, and no component writes a duration of its own.
 
@@ -163,7 +163,7 @@ property a host needs in order to opt out of motion without auditing every compo
 `1ms` rather than `0` because a zero duration never fires `transitionend`, and the
 consumer listening for it would wait forever.
 
-**Enforced by.** Review, and the suite: the test page zeroes `--bk-transition`, which is
+**Enforced by.** Review, and the suite: the test page zeroes `--brikka-transition`, which is
 the same mechanism the media query uses.
 
 ## R8. There is no shadow layer until something paints a shadow

@@ -1,0 +1,21 @@
+{
+  "name": "brikka-vite-ts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A Brikka consumer: the packed packages, installed outside the workspace",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@brikka/styles": "file:./.pack/brikka-styles-0.1.0.tgz",
+    "@brikka/web-components": "file:./.pack/brikka-web-components-0.1.0.tgz",
+    "lit": "3.3.3"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "8.3.8"
+  }
+}

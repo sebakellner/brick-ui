@@ -1,0 +1,23 @@
+import { Meta, Canvas, Markdown } from '@storybook/addon-docs/blocks';
+import * as ButtonStories from './brikka-button.stories';
+import readme from './README.md?raw';
+
+<Meta of={ButtonStories} />
+
+<Markdown>{readme}</Markdown>
+
+## Default
+
+<Canvas of={ButtonStories.Default} />
+
+## Variants
+
+<Canvas of={ButtonStories.Variants} />
+
+## Disabled
+
+<Canvas of={ButtonStories.Disabled} />
+
+## Custom
+
+<Canvas of={ButtonStories.Custom} />

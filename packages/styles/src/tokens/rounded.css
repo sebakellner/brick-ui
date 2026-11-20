@@ -1,5 +1,5 @@
 :root {
-  --bk-radius-sm: var(--bk-space-1);
-  --bk-radius-md: var(--bk-space-2);
-  --bk-radius-lg: var(--bk-space-4);
+  --brikka-radius-sm: var(--brikka-space-1);
+  --brikka-radius-md: var(--brikka-space-2);
+  --brikka-radius-lg: var(--brikka-space-4);
 }

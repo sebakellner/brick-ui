@@ -7,27 +7,27 @@
  * comparison that can only pass or hang is not an assertion (T6). */
 
 import { expect, fixture, html } from '@open-wc/testing';
-import '../../../src/components/bk-input/define.js';
-import '../../../src/components/bk-checkbox/define.js';
-import '../../../src/components/bk-radio-group/define.js';
-import '../../../src/components/bk-native-select/define.js';
-import '../../../src/components/bk-field/define.js';
-import type { BkInput } from '../../../src/components/bk-input/bk-input.js';
-import type { BkCheckbox } from '../../../src/components/bk-checkbox/bk-checkbox.js';
-import type { BkRadioGroup } from '../../../src/components/bk-radio-group/bk-radio-group.js';
-import type { BkRadioGroupItem } from '../../../src/components/bk-radio-group/bk-radio-group-item.js';
-import type { BkNativeSelect } from '../../../src/components/bk-native-select/bk-native-select.js';
-import { labelAtom } from '@brick/test-utils/atoms.js';
-import { settle } from '@brick/test-utils/settle.js';
+import '../../../src/components/brikka-input/define.js';
+import '../../../src/components/brikka-checkbox/define.js';
+import '../../../src/components/brikka-radio-group/define.js';
+import '../../../src/components/brikka-native-select/define.js';
+import '../../../src/components/brikka-field/define.js';
+import type { BrikkaInput } from '../../../src/components/brikka-input/brikka-input.js';
+import type { BrikkaCheckbox } from '../../../src/components/brikka-checkbox/brikka-checkbox.js';
+import type { BrikkaRadioGroup } from '../../../src/components/brikka-radio-group/brikka-radio-group.js';
+import type { BrikkaRadioGroupItem } from '../../../src/components/brikka-radio-group/brikka-radio-group-item.js';
+import type { BrikkaNativeSelect } from '../../../src/components/brikka-native-select/brikka-native-select.js';
+import { labelAtom } from '@brikka/test-utils/atoms.js';
+import { settle } from '@brikka/test-utils/settle.js';
 
-const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
-const innerBox = (el: BkCheckbox) => el.shadowRoot!.querySelector('input')!;
-const innerSelect = (el: BkNativeSelect) => el.shadowRoot!.querySelector('select')!;
-const radios = (el: BkRadioGroup) =>
-  Array.from(el.querySelectorAll<BkRadioGroupItem>('bk-radio-group-item'));
+const innerInput = (el: BrikkaInput) => el.shadowRoot!.querySelector('input')!;
+const innerBox = (el: BrikkaCheckbox) => el.shadowRoot!.querySelector('input')!;
+const innerSelect = (el: BrikkaNativeSelect) => el.shadowRoot!.querySelector('select')!;
+const radios = (el: BrikkaRadioGroup) =>
+  Array.from(el.querySelectorAll<BrikkaRadioGroupItem>('brikka-radio-group-item'));
 
 /* The group writes `checked` on its items, so each item commits its own update. */
-const settleGroup = async (el: BkRadioGroup) => {
+const settleGroup = async (el: BrikkaRadioGroup) => {
   await settle(el);
   for (const radio of radios(el)) await settle(radio);
 };
@@ -41,14 +41,14 @@ const submitted = (form: HTMLFormElement, name: string): string | null => {
 const submittedAll = (form: HTMLFormElement, name: string): string[] =>
   new FormData(form).getAll(name).map((value) => String(value));
 
-const type = async (el: BkInput, value: string) => {
+const type = async (el: BrikkaInput, value: string) => {
   const field = innerInput(el);
   field.value = value;
   field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
   await settle(el);
 };
 
-const choose = async (el: BkNativeSelect, value: string) => {
+const choose = async (el: BrikkaNativeSelect, value: string) => {
   const select = innerSelect(el);
   select.value = value;
   select.dispatchEvent(new Event('change', { bubbles: true }));
@@ -59,22 +59,24 @@ describe('form payload', () => {
   it('should submit the value typed into the input under its name', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-input name="email" value="old@brick.dev">${labelAtom('Email')}</bk-input>
-        <bk-checkbox name="terms" value="accepted" checked>${labelAtom('Terms')}</bk-checkbox>
+        <brikka-input name="email" value="old@brikka.dev">${labelAtom('Email')}</brikka-input>
+        <brikka-checkbox name="terms" value="accepted" checked
+          >${labelAtom('Terms')}</brikka-checkbox
+        >
       </form>
     `);
-    const field = form.querySelector<BkInput>('bk-input')!;
+    const field = form.querySelector<BrikkaInput>('brikka-input')!;
     await settle(field);
 
     expect(Boolean(innerInput(field)), 'the input rendered its native control').to.equal(true);
     expect(submitted(form, 'email'), 'the value attribute is the mounted entry').to.equal(
-      'old@brick.dev',
+      'old@brikka.dev',
     );
 
-    await type(field, 'you@brick.dev');
+    await type(field, 'you@brikka.dev');
 
     expect(submitted(form, 'email'), 'the typed value is what the form sends').to.equal(
-      'you@brick.dev',
+      'you@brikka.dev',
     );
     expect(submitted(form, 'terms'), 'and the box beside it still carries its own value').to.equal(
       'accepted',
@@ -84,12 +86,18 @@ describe('form payload', () => {
   it('should submit a checked checkbox and no entry for the unchecked one', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-checkbox name="terms" value="accepted" checked>${labelAtom('Terms')}</bk-checkbox>
-        <bk-checkbox name="newsletter" value="weekly">${labelAtom('Newsletter')}</bk-checkbox>
-        <bk-input name="email" value="you@brick.dev">${labelAtom('Email')}</bk-input>
+        <brikka-checkbox name="terms" value="accepted" checked
+          >${labelAtom('Terms')}</brikka-checkbox
+        >
+        <brikka-checkbox name="newsletter" value="weekly"
+          >${labelAtom('Newsletter')}</brikka-checkbox
+        >
+        <brikka-input name="email" value="you@brikka.dev">${labelAtom('Email')}</brikka-input>
       </form>
     `);
-    const [checked, unchecked] = Array.from(form.querySelectorAll<BkCheckbox>('bk-checkbox'));
+    const [checked, unchecked] = Array.from(
+      form.querySelectorAll<BrikkaCheckbox>('brikka-checkbox'),
+    );
 
     expect(innerBox(checked).checked, 'the authored box rendered checked').to.equal(true);
     expect(Boolean(innerBox(unchecked)), 'the optional box rendered too').to.equal(true);
@@ -104,22 +112,22 @@ describe('form payload', () => {
   it('should submit a radio group’s selection once, not once per radio', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-radio-group name="size">
-          <bk-field-label>Size</bk-field-label>
-          <bk-radio-group-item value="s"
-            ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+        <brikka-radio-group name="size">
+          <brikka-field-label>Size</brikka-field-label>
+          <brikka-radio-group-item value="s"
+            ><brikka-field-label slot="label">Small</brikka-field-label></brikka-radio-group-item
           >
-          <bk-radio-group-item value="m" checked>
-            <bk-field-label slot="label">Medium</bk-field-label>
-          </bk-radio-group-item>
-          <bk-radio-group-item value="l"
-            ><bk-field-label slot="label">Large</bk-field-label></bk-radio-group-item
+          <brikka-radio-group-item value="m" checked>
+            <brikka-field-label slot="label">Medium</brikka-field-label>
+          </brikka-radio-group-item>
+          <brikka-radio-group-item value="l"
+            ><brikka-field-label slot="label">Large</brikka-field-label></brikka-radio-group-item
           >
-        </bk-radio-group>
-        <bk-input name="email" value="you@brick.dev">${labelAtom('Email')}</bk-input>
+        </brikka-radio-group>
+        <brikka-input name="email" value="you@brikka.dev">${labelAtom('Email')}</brikka-input>
       </form>
     `);
-    const group = form.querySelector<BkRadioGroup>('bk-radio-group')!;
+    const group = form.querySelector<BrikkaRadioGroup>('brikka-radio-group')!;
     await settleGroup(group);
 
     expect(radios(group).length, 'three boxes rendered, one selection among them').to.equal(3);
@@ -127,22 +135,24 @@ describe('form payload', () => {
       'm',
     ]);
     expect(submitted(form, 'email'), 'the field beside the group still sends its own').to.equal(
-      'you@brick.dev',
+      'you@brikka.dev',
     );
   });
 
   it('should submit the chosen option and nothing while the placeholder shows', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-native-select name="channel" placeholder="Choose a channel">
+        <brikka-native-select name="channel" placeholder="Choose a channel">
           ${labelAtom('Channel')}
-          <bk-native-select-opt value="email">Email</bk-native-select-opt>
-          <bk-native-select-opt value="sms">SMS</bk-native-select-opt>
-        </bk-native-select>
-        <bk-input name="email-address" value="you@brick.dev">${labelAtom('Email')}</bk-input>
+          <brikka-native-select-opt value="email">Email</brikka-native-select-opt>
+          <brikka-native-select-opt value="sms">SMS</brikka-native-select-opt>
+        </brikka-native-select>
+        <brikka-input name="email-address" value="you@brikka.dev"
+          >${labelAtom('Email')}</brikka-input
+        >
       </form>
     `);
-    const select = form.querySelector<BkNativeSelect>('bk-native-select')!;
+    const select = form.querySelector<BrikkaNativeSelect>('brikka-native-select')!;
     await settle(select);
 
     expect(
@@ -161,15 +171,15 @@ describe('form payload', () => {
   it('should submit nothing from a disabled control', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-input name="draft" value="not sent" disabled>${labelAtom('Draft')}</bk-input>
-        <bk-checkbox name="terms" value="accepted" checked disabled
-          >${labelAtom('Terms')}</bk-checkbox
+        <brikka-input name="draft" value="not sent" disabled>${labelAtom('Draft')}</brikka-input>
+        <brikka-checkbox name="terms" value="accepted" checked disabled
+          >${labelAtom('Terms')}</brikka-checkbox
         >
-        <bk-input name="email" value="you@brick.dev">${labelAtom('Email')}</bk-input>
+        <brikka-input name="email" value="you@brikka.dev">${labelAtom('Email')}</brikka-input>
       </form>
     `);
-    const draft = form.querySelector<BkInput>('bk-input')!;
-    const terms = form.querySelector<BkCheckbox>('bk-checkbox')!;
+    const draft = form.querySelector<BrikkaInput>('brikka-input')!;
+    const terms = form.querySelector<BrikkaCheckbox>('brikka-checkbox')!;
     await settle(draft);
     await settle(terms);
 
@@ -179,7 +189,7 @@ describe('form payload', () => {
     expect(new FormData(form).has('draft'), 'a disabled field has no entry').to.equal(false);
     expect(new FormData(form).has('terms'), 'and neither has a disabled box').to.equal(false);
     expect(submitted(form, 'email'), 'while its enabled sibling still sends its value').to.equal(
-      'you@brick.dev',
+      'you@brikka.dev',
     );
   });
 });

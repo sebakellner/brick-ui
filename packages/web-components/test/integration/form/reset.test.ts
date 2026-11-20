@@ -9,44 +9,45 @@
 
 import { expect, fixture, html } from '@open-wc/testing';
 import { resetMouse } from '@web/test-runner-commands';
-import '../../../src/components/bk-input/define.js';
-import '../../../src/components/bk-checkbox/define.js';
-import '../../../src/components/bk-radio-group/define.js';
-import '../../../src/components/bk-native-select/define.js';
-import '../../../src/components/bk-field/define.js';
-import type { BkInput } from '../../../src/components/bk-input/bk-input.js';
-import type { BkCheckbox } from '../../../src/components/bk-checkbox/bk-checkbox.js';
-import type { BkRadioGroup } from '../../../src/components/bk-radio-group/bk-radio-group.js';
-import type { BkRadioGroupItem } from '../../../src/components/bk-radio-group/bk-radio-group-item.js';
-import type { BkNativeSelect } from '../../../src/components/bk-native-select/bk-native-select.js';
-import { labelAtom } from '@brick/test-utils/atoms.js';
-import { colorOf } from '@brick/test-utils/style.js';
-import { clickAt } from '@brick/test-utils/pointer.js';
-import { settle } from '@brick/test-utils/settle.js';
+import '../../../src/components/brikka-input/define.js';
+import '../../../src/components/brikka-checkbox/define.js';
+import '../../../src/components/brikka-radio-group/define.js';
+import '../../../src/components/brikka-native-select/define.js';
+import '../../../src/components/brikka-field/define.js';
+import type { BrikkaInput } from '../../../src/components/brikka-input/brikka-input.js';
+import type { BrikkaCheckbox } from '../../../src/components/brikka-checkbox/brikka-checkbox.js';
+import type { BrikkaRadioGroup } from '../../../src/components/brikka-radio-group/brikka-radio-group.js';
+import type { BrikkaRadioGroupItem } from '../../../src/components/brikka-radio-group/brikka-radio-group-item.js';
+import type { BrikkaNativeSelect } from '../../../src/components/brikka-native-select/brikka-native-select.js';
+import { labelAtom } from '@brikka/test-utils/atoms.js';
+import { colorOf } from '@brikka/test-utils/style.js';
+import { clickAt } from '@brikka/test-utils/pointer.js';
+import { settle } from '@brikka/test-utils/settle.js';
 
-const innerInput = (el: BkInput) => el.shadowRoot!.querySelector('input')!;
-const innerLabel = (el: BkInput) => el.shadowRoot!.querySelector<HTMLElement>('[part="label"]')!;
-const innerBox = (el: BkCheckbox) => el.shadowRoot!.querySelector('input')!;
-const innerSelect = (el: BkNativeSelect) => el.shadowRoot!.querySelector('select')!;
-const radios = (el: BkRadioGroup) =>
-  Array.from(el.querySelectorAll<BkRadioGroupItem>('bk-radio-group-item'));
-const box = (radio: BkRadioGroupItem) =>
+const innerInput = (el: BrikkaInput) => el.shadowRoot!.querySelector('input')!;
+const innerLabel = (el: BrikkaInput) =>
+  el.shadowRoot!.querySelector<HTMLElement>('[part="label"]')!;
+const innerBox = (el: BrikkaCheckbox) => el.shadowRoot!.querySelector('input')!;
+const innerSelect = (el: BrikkaNativeSelect) => el.shadowRoot!.querySelector('select')!;
+const radios = (el: BrikkaRadioGroup) =>
+  Array.from(el.querySelectorAll<BrikkaRadioGroupItem>('brikka-radio-group-item'));
+const box = (radio: BrikkaRadioGroupItem) =>
   radio.shadowRoot!.querySelector<HTMLElement>('[part="box"]')!;
 
 /* The group writes `checked` on its items, so each item commits its own update. */
-const settleGroup = async (el: BkRadioGroup) => {
+const settleGroup = async (el: BrikkaRadioGroup) => {
   await settle(el);
   for (const radio of radios(el)) await settle(radio);
 };
 
-const type = async (el: BkInput, value: string) => {
+const type = async (el: BrikkaInput, value: string) => {
   const field = innerInput(el);
   field.value = value;
   field.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
   await settle(el);
 };
 
-const choose = async (el: BkNativeSelect, value: string) => {
+const choose = async (el: BrikkaNativeSelect, value: string) => {
   const select = innerSelect(el);
   select.value = value;
   select.dispatchEvent(new Event('change', { bubbles: true }));
@@ -67,46 +68,48 @@ describe('form reset', () => {
   it('should return the input to its value attribute after a reset, not to the value it mounted with', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-input name="email" value="mounted@brick.dev">${labelAtom('Email')}</bk-input>
-        <bk-checkbox name="terms" checked>${labelAtom('Terms')}</bk-checkbox>
+        <brikka-input name="email" value="mounted@brikka.dev">${labelAtom('Email')}</brikka-input>
+        <brikka-checkbox name="terms" checked>${labelAtom('Terms')}</brikka-checkbox>
       </form>
     `);
-    const email = form.querySelector<BkInput>('bk-input')!;
+    const email = form.querySelector<BrikkaInput>('brikka-input')!;
     await settle(email);
 
     expect(innerInput(email).value, 'the field mounted with its attribute').to.equal(
-      'mounted@brick.dev',
+      'mounted@brikka.dev',
     );
 
-    await type(email, 'typed@brick.dev');
+    await type(email, 'typed@brikka.dev');
 
     expect(submitted(form, 'email'), 'the interaction is what the form carries').to.equal(
-      'typed@brick.dev',
+      'typed@brikka.dev',
     );
 
-    email.setAttribute('value', 'later@brick.dev');
+    email.setAttribute('value', 'later@brikka.dev');
     await settle(email);
 
     form.reset();
     await settle(email);
 
-    expect(email.value, 'the attribute is the default the reset reads').to.equal('later@brick.dev');
+    expect(email.value, 'the attribute is the default the reset reads').to.equal(
+      'later@brikka.dev',
+    );
     expect(innerInput(email).value, 'and the native control shows the restored default').to.equal(
-      'later@brick.dev',
+      'later@brikka.dev',
     );
     expect(submitted(form, 'email'), 'the payload is the restored value').to.equal(
-      'later@brick.dev',
+      'later@brikka.dev',
     );
   });
 
   it('should return the checkbox to its authored checked attribute on reset', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-checkbox name="terms" checked>${labelAtom('Terms')}</bk-checkbox>
-        <bk-input name="email" value="you@brick.dev">${labelAtom('Email')}</bk-input>
+        <brikka-checkbox name="terms" checked>${labelAtom('Terms')}</brikka-checkbox>
+        <brikka-input name="email" value="you@brikka.dev">${labelAtom('Email')}</brikka-input>
       </form>
     `);
-    const terms = form.querySelector<BkCheckbox>('bk-checkbox')!;
+    const terms = form.querySelector<BrikkaCheckbox>('brikka-checkbox')!;
     await settle(terms);
 
     expect(innerBox(terms).checked, 'the authored box rendered checked').to.equal(true);
@@ -128,22 +131,22 @@ describe('form reset', () => {
   it('should return the radio group to the radio whose markup carried checked on reset', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-radio-group name="size">
-          <bk-field-label>Size</bk-field-label>
-          <bk-radio-group-item value="s"
-            ><bk-field-label slot="label">Small</bk-field-label></bk-radio-group-item
+        <brikka-radio-group name="size">
+          <brikka-field-label>Size</brikka-field-label>
+          <brikka-radio-group-item value="s"
+            ><brikka-field-label slot="label">Small</brikka-field-label></brikka-radio-group-item
           >
-          <bk-radio-group-item value="m" checked>
-            <bk-field-label slot="label">Medium</bk-field-label>
-          </bk-radio-group-item>
-          <bk-radio-group-item value="l"
-            ><bk-field-label slot="label">Large</bk-field-label></bk-radio-group-item
+          <brikka-radio-group-item value="m" checked>
+            <brikka-field-label slot="label">Medium</brikka-field-label>
+          </brikka-radio-group-item>
+          <brikka-radio-group-item value="l"
+            ><brikka-field-label slot="label">Large</brikka-field-label></brikka-radio-group-item
           >
-        </bk-radio-group>
-        <bk-input name="email" value="you@brick.dev">${labelAtom('Email')}</bk-input>
+        </brikka-radio-group>
+        <brikka-input name="email" value="you@brikka.dev">${labelAtom('Email')}</brikka-input>
       </form>
     `);
-    const group = form.querySelector<BkRadioGroup>('bk-radio-group')!;
+    const group = form.querySelector<BrikkaRadioGroup>('brikka-radio-group')!;
     await settleGroup(group);
     const [small, medium, large] = radios(group);
 
@@ -169,15 +172,15 @@ describe('form reset', () => {
   it('should return the select to its placeholder on reset', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-native-select name="channel" placeholder="Choose a channel">
+        <brikka-native-select name="channel" placeholder="Choose a channel">
           ${labelAtom('Channel')}
-          <bk-native-select-opt value="email">Email</bk-native-select-opt>
-          <bk-native-select-opt value="sms">SMS</bk-native-select-opt>
-        </bk-native-select>
-        <bk-input name="email" value="you@brick.dev">${labelAtom('Email')}</bk-input>
+          <brikka-native-select-opt value="email">Email</brikka-native-select-opt>
+          <brikka-native-select-opt value="sms">SMS</brikka-native-select-opt>
+        </brikka-native-select>
+        <brikka-input name="email" value="you@brikka.dev">${labelAtom('Email')}</brikka-input>
       </form>
     `);
-    const select = form.querySelector<BkNativeSelect>('bk-native-select')!;
+    const select = form.querySelector<BrikkaNativeSelect>('brikka-native-select')!;
     await settle(select);
 
     expect(innerSelect(select).value, 'the placeholder is what the field mounts on').to.equal('');
@@ -200,24 +203,24 @@ describe('form reset', () => {
   it('should clear the error state of every widget in the same reset', async () => {
     const form = await fixture<HTMLFormElement>(html`
       <form>
-        <bk-input name="email" value="you@brick.dev">${labelAtom('Email')}</bk-input>
-        <bk-checkbox name="terms" checked>${labelAtom('Terms')}</bk-checkbox>
-        <bk-radio-group name="size">
-          <bk-field-label>Size</bk-field-label>
-          <bk-radio-group-item value="m" checked>
-            <bk-field-label slot="label">Medium</bk-field-label>
-          </bk-radio-group-item>
-        </bk-radio-group>
-        <bk-native-select name="channel" placeholder="Choose a channel">
+        <brikka-input name="email" value="you@brikka.dev">${labelAtom('Email')}</brikka-input>
+        <brikka-checkbox name="terms" checked>${labelAtom('Terms')}</brikka-checkbox>
+        <brikka-radio-group name="size">
+          <brikka-field-label>Size</brikka-field-label>
+          <brikka-radio-group-item value="m" checked>
+            <brikka-field-label slot="label">Medium</brikka-field-label>
+          </brikka-radio-group-item>
+        </brikka-radio-group>
+        <brikka-native-select name="channel" placeholder="Choose a channel">
           ${labelAtom('Channel')}
-          <bk-native-select-opt value="sms">SMS</bk-native-select-opt>
-        </bk-native-select>
+          <brikka-native-select-opt value="sms">SMS</brikka-native-select-opt>
+        </brikka-native-select>
       </form>
     `);
-    const email = form.querySelector<BkInput>('bk-input')!;
-    const terms = form.querySelector<BkCheckbox>('bk-checkbox')!;
-    const group = form.querySelector<BkRadioGroup>('bk-radio-group')!;
-    const select = form.querySelector<BkNativeSelect>('bk-native-select')!;
+    const email = form.querySelector<BrikkaInput>('brikka-input')!;
+    const terms = form.querySelector<BrikkaCheckbox>('brikka-checkbox')!;
+    const group = form.querySelector<BrikkaRadioGroup>('brikka-radio-group')!;
+    const select = form.querySelector<BrikkaNativeSelect>('brikka-native-select')!;
     await settle(email);
     await settle(terms);
     await settleGroup(group);
@@ -238,7 +241,7 @@ describe('form reset', () => {
     expect(
       getComputedStyle(innerLabel(email)).color,
       'the invalid row paints the danger role',
-    ).to.equal(await colorOf('var(--bk-text-danger)'));
+    ).to.equal(await colorOf('var(--brikka-text-danger)'));
 
     form.reset();
 
@@ -258,6 +261,6 @@ describe('form reset', () => {
     expect(
       getComputedStyle(innerLabel(email)).color,
       'and the row comes back to the default text role',
-    ).to.equal(await colorOf('var(--bk-text-default)'));
+    ).to.equal(await colorOf('var(--brikka-text-default)'));
   });
 });
