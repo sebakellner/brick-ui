@@ -131,8 +131,9 @@ is white on the light theme and `neutral-900` on the dark one, so it reads 4.80:
 against the light track and 6.93:1 against the dark one, and 5.17:1 and 3.38:1 against
 the knob itself.
 
-Under the pointer the knob draws a **translucent halo** — `--bk-focus-halo`, the accent
-at 18% in the light theme and at 24% in the dark one, `--bk-slider-halo-size` wide —
+Under the pointer — **over the knob itself, never over the track it rides on** — the knob
+draws a **translucent halo** — `--bk-focus-halo`, the accent at 18% in the light theme and
+at 24% in the dark one, `--bk-slider-halo-size` wide —
 which is the state layer Material and Ant Design both use, at 40px around a 20px handle
 and 6px at 20% respectively. The halo is an `outline`, so it is drawn outside the knob
 and never changes its size; keyboard focus keeps the solid `--bk-focus-ring`, which is
@@ -265,9 +266,9 @@ one announces.
 `tooltip` has three modes, and they are MUI's `off`/`auto`/`on` under different names.
 `none` draws nothing, and it is the default: MUI and Shoelace both default to off, and a
 readout nobody asked for is decoration competing with the track. `hover` shows the bubble
-while the pointer is over the knob — the same hover that draws the halo — while the knob
-has **keyboard** focus, and for as long as a drag is held, even when the pointer leaves
-the knob; it hides again on release and on blur, so a mouse click never leaves it behind.
+while the pointer is over the knob itself — the same question that draws the halo, and
+not the whole track the input covers — while the knob has **keyboard** focus, and for as
+long as a drag is held, even when the pointer leaves the knob; it hides again on release and on blur, so a mouse click never leaves it behind.
 `always` keeps it, which is what a canvas needs and what a product rarely does. The bubble
 reads `value-text` when there is one and the value otherwise.
 

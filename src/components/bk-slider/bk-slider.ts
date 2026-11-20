@@ -177,7 +177,7 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         opacity: 1;
       }
 
-      :host([tooltip='hover']) .thumb-input:hover ~ .readout-lane .readout,
+      :host([tooltip='hover']) .thumb-input[data-knob] ~ .readout-lane .readout,
       :host([tooltip='hover']) .thumb-input:focus-visible ~ .readout-lane .readout,
       :host([tooltip='hover']) .thumb-input:active ~ .readout-lane .readout {
         opacity: 1;
@@ -225,7 +225,7 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         cursor: pointer;
       }
 
-      .thumb-input:hover::-webkit-slider-thumb {
+      .thumb-input[data-knob]::-webkit-slider-thumb {
         outline: var(--bk-slider-halo-size, var(--bk-slider-variant-halo-size)) solid
           var(--bk-focus-halo);
       }
@@ -305,7 +305,14 @@ export class BkSlider extends FieldControlMixin(LitElement) {
       >
         <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}></slot>
       </label>
-      <div class="rail" part="track" ?data-disabled=${this.fieldDisabled} ?data-two=${two}>
+      <div
+        class="rail"
+        part="track"
+        ?data-disabled=${this.fieldDisabled}
+        ?data-two=${two}
+        @pointermove=${this.handlePointerMove}
+        @pointerleave=${this.handlePointerLeave}
+      >
         <div class="lane">
           <div class="fill" part="fill" style=${this.fillStyle}></div>
           ${this.renderTicks()}
@@ -346,6 +353,12 @@ export class BkSlider extends FieldControlMixin(LitElement) {
     /* The two thumbs clamp at the moment a value is written: the lower one stops at the
      * upper one, and nothing swaps the values the author set. */
     this.value = this.valueEnd;
+  }
+
+  private knobPointer: 'input' | 'input-end' | null = null;
+
+  private get rail(): HTMLElement | null {
+    return this.shadowRoot?.querySelector('[part="track"]') ?? null;
   }
 
   private get rangeInput(): HTMLInputElement | null {
@@ -464,12 +477,53 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         aria-label=${label ?? nothing}
         aria-invalid=${this.fieldInvalid ? 'true' : nothing}
         aria-describedby=${this.fieldParts.describedBy(this.messageSources()) || nothing}
+        ?data-knob=${this.knobPointer === part}
         @pointerdown=${this.handlePointerDown}
         @input=${this.handleInput}
         @change=${this.handleChange}
       />
     `;
   }
+
+  /* The knob is a pseudo-element, so it has no hover of its own: the pointer over the
+   * track is over the whole input. The rail therefore answers the question the paint asks —
+   * is the pointer within half a knob of a knob's centre — and each input carries the
+   * answer, which is what the halo and the readout key on. */
+  private readonly handlePointerMove = (event: PointerEvent): void => {
+    const rail = this.rail;
+    const control = this.rangeInput;
+    if (!rail || !control) return;
+
+    const box = rail.getBoundingClientRect();
+    const knob = Math.min(control.offsetWidth, control.offsetHeight);
+    const vertical = this.orientation === 'vertical';
+
+    const over = (value: number): boolean => {
+      const percentage = this.percentageOf(value) / 100;
+      if (vertical) {
+        const centre = box.bottom - knob / 2 - percentage * (box.height - knob);
+        return Math.abs(event.clientY - centre) <= knob / 2;
+      }
+      const centre = box.left + knob / 2 + percentage * (box.width - knob);
+      return Math.abs(event.clientX - centre) <= knob / 2;
+    };
+
+    const next: 'input' | 'input-end' | null = over(this.value)
+      ? 'input'
+      : this.valueEnd !== null && over(this.valueEnd)
+        ? 'input-end'
+        : null;
+
+    if (next === this.knobPointer) return;
+    this.knobPointer = next;
+    this.requestUpdate();
+  };
+
+  private readonly handlePointerLeave = (): void => {
+    if (this.knobPointer === null) return;
+    this.knobPointer = null;
+    this.requestUpdate();
+  };
 
   private readonly handleInput = (event: Event): void => {
     this.readThumb(event);

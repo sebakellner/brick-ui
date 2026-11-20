@@ -833,16 +833,35 @@ describe('bk-slider', () => {
       ).to.equal(before);
     });
 
-    it('should answer the pointer with a translucent halo on the knob', async function () {
+    it('should answer the pointer only over the knob, never over the track', async function () {
       if (!hoverCapable()) this.skip();
 
-      const el = await fixture<BkSlider>(html`<bk-slider></bk-slider>`);
+      const el = await fixture<BkSlider>(html`<bk-slider value="20"></bk-slider>`);
+      const rail = el.shadowRoot!.querySelector('[part="track"]')!.getBoundingClientRect();
+      const input = el.shadowRoot!.querySelector('input')!;
+      const knob = Math.min(input.offsetWidth, input.offsetHeight);
+      const middle = Math.round(rail.top + rail.height / 2);
+
+      await sendMouse({ type: 'move', position: [Math.round(rail.right - 20), middle] });
+      await el.updateComplete;
+
+      expect(
+        input.hasAttribute('data-knob'),
+        'the pointer is over the track, which is not the knob',
+      ).to.equal(false);
+
+      const centre = rail.left + knob / 2 + 0.2 * (rail.width - knob);
+      await sendMouse({ type: 'move', position: [Math.round(centre), middle] });
+      await el.updateComplete;
+
+      expect(input.hasAttribute('data-knob'), 'the knob answers for itself').to.equal(true);
+
       const rule = [...el.shadowRoot!.adoptedStyleSheets]
         .flatMap((sheet) => [...sheet.cssRules].map((entry) => entry.cssText))
-        .find((text) => text.includes(':hover::-webkit-slider-thumb'));
+        .find((text) => text.includes('::-webkit-slider-thumb {') && text.includes('halo'));
 
-      expect(rule, 'the knob has a hover rule').to.contain('--bk-focus-halo');
-      expect(rule, 'a halo, not a thicker edge').to.contain('outline');
+      expect(rule, 'and the halo keys on that answer').to.contain('[data-knob]');
+      expect(rule).to.contain('--bk-focus-halo');
       expect(rule).to.contain('--bk-slider-halo-size');
     });
 
