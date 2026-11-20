@@ -6,9 +6,9 @@ rules live in the conventions; the reasoning lives in the [ADRs](adr/).
 ## The contract in one screen
 
 ```
-packages/tokens/tokens/*.json ──build:tokens──> packages/tokens/src/tokens/*.css
+packages/styles/tokens/*.json ──build:tokens──> packages/styles/src/tokens/*.css
                                                         │
-                                                        └──> packages/tokens/src/theme.css
+                                                        └──> packages/styles/src/theme.css
                                                                        │
                              components read it as var(--bk-*) and carry no fallback
 ```
@@ -67,7 +67,7 @@ not have to reopen the question.
 | Visual regression testing              | the suite asserts computed styles, not pixels                                                                                                                                        | a layout bug escapes it                                         |
 | A second browser in the suite          | [0005](adr/0005-test-in-chrome-only.md)                                                                                                                                              | a shadow-DOM or `::part` defect is reported from another engine |
 | A different license                    | MIT, in `LICENSE`                                                                                                                                                                    | never, unless relicensing                                       |
-| Typed token names inside component CSS | `TokenName` and `HookName` are generated in `packages/tokens/src/tokens.generated.ts`, but the `css` template keeps plain names — see [conventions-code.md](conventions-code.md), C4 | the typing stops costing readability                            |
+| Typed token names inside component CSS | `TokenName` and `HookName` are generated in `packages/styles/src/tokens.generated.ts`, but the `css` template keeps plain names — see [conventions-code.md](conventions-code.md), C4 | the typing stops costing readability                            |
 
 ## Where things live
 
@@ -77,7 +77,7 @@ tokens/role/light.json semantic roles, one file per theme
 tokens/component/      what one component paints, one file per component
 packages/web-components/src/components/shared/form-control/  the contract every field composes: mixins, controllers, styles
 packages/web-components/src/components/bk-*/   element, stories, Storybook docs page, test/, README
-packages/tokens/src/theme.css   imports the generated token files; the consumer entry point
+packages/styles/src/theme.css   imports the generated token files; the consumer entry point
 src/index.ts           public entry point
 packages/test-utils/src/  token resolver (colorOf, opacityOf), contrast assertions, theme switch, pointer (hover, clickAt)
 packages/web-components/test/integration/  where a suite the test composes from two or more widgets goes, one folder per assembly

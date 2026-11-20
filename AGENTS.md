@@ -10,11 +10,11 @@ as plain custom elements, with a token-driven theming contract. Nothing is
 published; the package is private and consumed from this repository.
 
 ```
-packages/tokens/tokens/base/                 primitives, theme-invariant
-packages/tokens/tokens/role/light.json       semantic roles, one file per theme
-packages/tokens/tokens/component/            what one component paints
-packages/tokens/src/tokens/                  generated CSS — never edit by hand
-packages/tokens/src/theme.css                the theming entry point, imports the generated files
+packages/styles/tokens/base/                 primitives, theme-invariant
+packages/styles/tokens/role/light.json       semantic roles, one file per theme
+packages/styles/tokens/component/            what one component paints
+packages/styles/src/tokens/                  generated CSS — never edit by hand
+packages/styles/src/theme.css                the theming entry point, imports the generated files
 packages/web-components/src/components/bk-*/ element, stories, docs page, test/, README
 packages/web-components/src/components/shared/ contract: mixins, controllers, styles; no tag, no define
 packages/web-components/test/                suites that compose several components of the package
@@ -41,7 +41,7 @@ you are about to change, and never edit an accepted ADR — supersede it.
 
 ## Never
 
-- Edit `packages/tokens/src/tokens/*.css` or `packages/tokens/src/tokens.generated.ts`. They are
+- Edit `packages/styles/src/tokens/*.css` or `packages/styles/src/tokens.generated.ts`. They are
   output of `pnpm build:tokens`, and CI fails when they are stale or untracked.
 - Write a style literal in a component. Colors, lengths, weights and durations
   read `var(--bk-…)`. A literal is allowed only when it is a reset (`0`,

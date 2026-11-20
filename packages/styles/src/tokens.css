@@ -1,0 +1,10 @@
+/* Every custom property the pipeline generates: the values a page paints with, and no
+ * decision about the page itself. `theme.css` is this plus `color-scheme`. */
+@import './tokens/space.css';
+@import './tokens/rounded.css';
+@import './tokens/color.css';
+@import './tokens/color.dark.css';
+@import './tokens/color.dark.media.css';
+@import './tokens/control.css';
+@import './tokens/typography.css';
+@import './tokens/base.css';

@@ -24,7 +24,7 @@
     "**/register.ts"
   ],
   "peerDependencies": {
-    "@brick/tokens": "workspace:^",
+    "@brick/styles": "workspace:^",
     "lit": "^3.3.3"
   },
   "devDependencies": {

@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@brick/tokens": "file:./.pack/brick-tokens-0.1.0.tgz",
+    "@brick/styles": "file:./.pack/brick-styles-0.1.0.tgz",
     "@brick/web-components": "file:./.pack/brick-web-components-0.1.0.tgz",
     "lit": "3.3.3"
   },
