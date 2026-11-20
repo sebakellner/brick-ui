@@ -50,6 +50,12 @@ alternatives that lost. The rules of the folder:
   one sentence naming what still holds. 0003 is the case: its rule about `var()`
   aliases survived 0006, its description of the layers did not. Marking the status
   is the only edit an accepted ADR receives; the body below it is never rewritten.
+- An accepted ADR's **identifiers** follow a rename of the thing they name. That is
+  not a change of decision: `bk-` becoming `brikka-`, a `BkButton` becoming
+  `BrikkaButton` and a package path moving are updated in place, while every
+  sentence that says what was decided stays as it was written. The line is between
+  the names and the reasoning. [0023](adr/0023-let-the-identifier-prefix-follow-the-product-name.md)
+  is the rename that drew it.
 - Start from [0000-template.md](adr/0000-template.md) and replace every prompt.
 - **The Context describes our situation, not the industry's.** What hurt, what it
   cost, verified in the code. Benchmarking belongs in the working notes: put it in

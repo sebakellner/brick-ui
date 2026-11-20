@@ -20,6 +20,12 @@ Before any of these rules, `pnpm check:tokens` asserts **existence**: every
 other tool sees those names, and a typo renders nothing at runtime. It covers
 tests, stories and `storybook/*/.storybook/`, because a typo in any of them is still a typo.
 
+It also refuses a read on the prefix this kit published before the rename. `--bk-*` is
+not a name `check:tokens` can see, so a read left on it passes existence and renders
+through its fallback — the failure this check exists to catch, arriving by a route it
+could not look at. `pnpm test:checks` is what keeps that second refusal honest, because
+a gate nobody can make fail is decoration.
+
 ## R1. A semantic role exists only while a component reads it
 
 **Rule.** A role under `color.*` or `focus-ring` is added when a component reads

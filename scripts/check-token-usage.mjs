@@ -11,6 +11,10 @@ const HOOKS_SOURCE = paths.hooks;
 
 const NAMES = /^\s*(--brikka-[a-z0-9-]+):/gm;
 const REFERENCES = /(--brikka-[a-z0-9-]+)/g;
+/* The prefix this kit published before the rename. `--brikka-` does not contain `--bk-`, so
+ * one scan cannot see the other: a read left on the old prefix is invisible to `REFERENCES`,
+ * passes this check, and renders through its fallback instead of failing. */
+const STALE = /--bk-[a-z0-9-]+/g;
 const DECLARATION = /^\s*(--[a-z0-9-]+|[a-z-]+)\s*:/;
 const RULE_BOUNDARY = /[{}]/;
 const SUPPORT_FILE = /\.(test|stories)\.ts$/;
@@ -104,6 +108,10 @@ const problems = [];
 for (const file of componentFiles) {
   const source = stripComments(read(file));
 
+  for (const [name] of source.matchAll(STALE)) {
+    problems.push(`${file}: stale token prefix, this kit publishes --brikka-*: ${name}`);
+  }
+
   for (const [, name] of source.matchAll(REFERENCES)) {
     if (!declared.has(name) && !hooks.has(name)) {
       problems.push(`${file}: unknown token ${name}`);
@@ -126,6 +134,10 @@ const blankHtmlComments = (source) =>
 
 for (const file of walk(STORYBOOK_DIR).filter((path) => STORYBOOK_FILE.test(path))) {
   const source = file.endsWith('.html') ? blankHtmlComments(read(file)) : stripComments(read(file));
+
+  for (const [name] of source.matchAll(STALE)) {
+    problems.push(`${file}: stale token prefix, this kit publishes --brikka-*: ${name}`);
+  }
 
   for (const [, name] of source.matchAll(REFERENCES)) {
     if (!declared.has(name) && !hooks.has(name)) {

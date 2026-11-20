@@ -5,7 +5,7 @@
 
 ## Context
 
-`bk-checkbox-group` wraps several `bk-checkbox` elements. A screen reader has to
+`brikka-checkbox-group` wraps several `brikka-checkbox` elements. A screen reader has to
 announce the boundary of the set and its name, and it has to be able to read a
 message about the set as a whole. Three facts constrain how:
 
@@ -32,18 +32,18 @@ group, in the document tree, where element reflection works.
 atoms.**
 
 - The host carries `role="group"`.
-- Its accessible name is the slotted `bk-field-label`, assigned with
+- Its accessible name is the slotted `brikka-field-label`, assigned with
   `ariaLabelledByElements`. No id is written for the name and no reference
   crosses a shadow root.
 - The group's description and error regions **are** the consumer's
-  `bk-field-description` and `bk-field-error` atoms. The group gives them an id
+  `brikka-field-description` and `brikka-field-error` atoms. The group gives them an id
   when they have none, puts `role="status"` on the error atom, marks both with
   `data-empty` while their text is empty, hides the description while the error
   has text, and points its own `aria-describedby` at the error atom or the
   description atom. Every reference now lives in the document tree, so the IDREF
   resolves.
 - The group writes only those facts on those nodes: never text, never state a box
-  reads, and never anything on a `bk-checkbox`.
+  reads, and never anything on a `brikka-checkbox`.
 
 This is a **scoped exception to A7** of
 [the accessibility conventions](../conventions-accessibility.md), which keeps a

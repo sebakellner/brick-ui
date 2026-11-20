@@ -14,13 +14,13 @@ declares it, and `docs/conventions-testing.md` T8 states the value.
 
 Two complaints pull in opposite directions.
 
-A reviewer said of `bk-input` that it works as a text field inside this design
+A reviewer said of `brikka-input` that it works as a text field inside this design
 system but is not yet a piece another team can adopt without friction: a consumer
 who does not load the token sheet sees it broken — no borders, no sizes — and
 proposed the chain said to be what the large libraries do:
 
 ```css
-var(--bk-input-border, var(--bk-border-default, #8a8f98))
+var(--brikka-input-border, var(--brikka-border-default, #8a8f98))
 ```
 
 That chain is what [0002](0002-require-the-theme.md) forbids, written down for
@@ -33,7 +33,7 @@ What exists in this repository today:
 - **0002**: only the hook pattern may carry a fallback, and its default must be a
   variable, never a literal.
 - **The failure the chain would hide.** `tokens/component/control.css` declares
-  `--bk-button-disabled-opacity`; without the theme, `opacity: var(…)` is invalid
+  `--brikka-button-disabled-opacity`; without the theme, `opacity: var(…)` is invalid
   at computed-value time, resolves to nothing, and a disabled button looks
   enabled.
 - **No outside consumer.** [architecture.md](../architecture.md) records the

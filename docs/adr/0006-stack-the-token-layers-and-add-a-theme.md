@@ -19,14 +19,14 @@ theme is not supportable.
 A second theme is now a requirement, and it is what breaks the arrangement. Four
 things stop working, and all four were verified in the code:
 
-- **Sixteen control tokens alias the palette.** `--bk-button-primary-bg` points at
-  `--bk-palette-blue-600`, so each one needs a definition per theme. Sixteen
+- **Sixteen control tokens alias the palette.** `--brikka-button-primary-bg` points at
+  `--brikka-palette-blue-600`, so each one needs a definition per theme. Sixteen
   tokens times two themes is thirty-two declarations, and every new component
   multiplies the count.
-- **One role serves two jobs.** `--bk-color-danger` is both `border-color` in the
+- **One role serves two jobs.** `--brikka-color-danger` is both `border-color` in the
   error state and `color` in the error message. A dark theme generally needs
   different steps for a red border and red text.
-- **Disabled is a global opacity.** `--bk-button-disabled-opacity: 0.55` reads the
+- **Disabled is a global opacity.** `--brikka-button-disabled-opacity: 0.55` reads the
   same over a light and a dark surface, where it does not produce the same result.
 - **The palette cannot express a dark theme at all.** It has red only at 700, sky
   only at 600, blue only from 600, and neutral only up to 900: no step light enough
@@ -75,8 +75,8 @@ wrong one: it buys atmosphere with legibility, and the assertion is what says so
 disjoint by vocabulary rather than by prefix: primitives are hues and ramps
 (`blue-600`, `space-3`, `font-size-md`), roles are concepts (`bg-accent`,
 `text-muted`), component tokens are component-prefixed (`button.disabled-opacity`).
-The property-family prefix on roles is what makes them checkable: `--bk-bg-*` in a
-`background`, `--bk-text-*` in a `color`, `--bk-border-*` in a `border-*` color.
+The property-family prefix on roles is what makes them checkable: `--brikka-bg-*` in a
+`background`, `--brikka-text-*` in a `color`, `--brikka-border-*` in a `border-*` color.
 
 No external convention governs this. The design token format defines the file and
 the rules for a valid token name — a JSON string, character restrictions — and
@@ -89,10 +89,10 @@ reference scale, not a usage list: steps without a consumer stay.
 
 **A component reads a role for anything that changes with the theme, and a
 primitive for anything that does not.** Colors have a role layer, so a component
-reads `--bk-bg-*`, `--bk-text-*` or `--bk-border-*`, and reading a color
-primitive — any `--bk-{hue}-{step}` — is a check failure rather than a review
+reads `--brikka-bg-*`, `--brikka-text-*` or `--brikka-border-*`, and reading a color
+primitive — any `--brikka-{hue}-{step}` — is a check failure rather than a review
 rule. Spacing, radius, type and the structural values have no role layer, because
-they do not change between themes: `--bk-space-3` is `--bk-space-3` in both, and a
+they do not change between themes: `--brikka-space-3` is `--brikka-space-3` in both, and a
 component reads it directly.
 
 **Theming by subtree.** `data-theme` on any element re-resolves the roles for
@@ -129,7 +129,7 @@ Easier:
   file and nothing else.
 - Control tokens, if they ever come back, are theme-invariant: they alias a role
   and the role carries the theme.
-- `--bk-bg-*` used in a `color`, or a primitive read from a component, are
+- `--brikka-bg-*` used in a `color`, or a primitive read from a component, are
   detectable by a check instead of by a reviewer noticing.
 - The role table is the design document. Reading `role/light.json` next to
   `role/dark.json` is the whole theming spec.
@@ -155,7 +155,7 @@ because a decision record states what was decided and a name-by-name table is
 release-note material. Revisit when the package is published and a consumer needs
 a deprecation window.
 
-`--bk-color-danger` is the one removal that is a semantic split rather than a pure
+`--brikka-color-danger` is the one removal that is a semantic split rather than a pure
 rename: it served both a border and a piece of text, and those are now two roles
 even though both resolve to `red-700` today.
 
