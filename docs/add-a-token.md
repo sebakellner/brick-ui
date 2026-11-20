@@ -35,7 +35,7 @@ the three layers are not familiar; the rules are in
    `packages/tokens/src/tokens.generated.ts`.
 
 5. **Validate.** `pnpm check:tokens` confirms every name the components read
-   exists, and that every semantic role is read by something.
+   exists, and that every semantic role resolves in every theme.
 
 6. **Commit all three artifacts.** The JSON, the generated CSS and
    `tokens.generated.ts`. CI regenerates and fails on any diff under
@@ -45,7 +45,7 @@ the three layers are not familiar; the rules are in
 
 ```bash
 $ pnpm build:tokens && pnpm check:tokens
-token names ok: 96 declared, 11 hooks, 13 semantic roles consumed
+token names ok: 103 declared, 40 hooks, 19 semantic roles in every theme
 ```
 
 The counts track the tree, so read them as a shape rather than as values to
@@ -63,7 +63,7 @@ declared.
 | The token exists in the JSON and appears in no CSS file | its group is not in a platform's filter list, and this failure is silent              | add the group to `packages/tokens/style-dictionary.config.mjs`                           |
 | `build:tokens` fails on an unresolvable reference       | the alias points at a path that does not exist, e.g. `{palette.stone-100}`            | check the palette; the build fails before writing anything, so nothing is half-generated |
 | A hook resolves to nothing in the browser               | the name is neither declared in `tokens/` nor listed in the `hooks` map in the config | `pnpm check:tokens` names the offender                                                   |
-| A semantic role breaks CI                               | nothing reads it                                                                      | either a component reads it, or it is not a role                                         |
+| A semantic role breaks CI                               | it is defined in one theme and not the other                                          | declare it in `tokens/role/light.json` and `tokens/role/dark.json` both                  |
 
 ## Related
 

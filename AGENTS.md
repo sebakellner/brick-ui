@@ -55,7 +55,7 @@ identifiers are the one exception: a rename updates the names, never the reasoni
 - Point a token reference at a control token, or make a chain longer than one
   hop. `control → palette`, `semantic → palette`, `radius → space` —
   [docs/conventions-tokens.md](docs/conventions-tokens.md), R2.
-- Add a semantic role that no component reads directly. `pnpm check:tokens`
+- Add a semantic role that resolves in one theme and not the other. `pnpm check:tokens`
   fails on it — R1.
 - Import `'./x'` from a `.ts` file. The imports carry `.js`
   (`verbatimModuleSyntax`).
@@ -72,7 +72,7 @@ identifiers are the one exception: a rename updates the names, never the reasoni
 | `pnpm test:watch`      | the suite, watching                                                                                                                                                      |
 | `pnpm typecheck`       | `tsc --noEmit`, with `strict`, `noUnusedLocals`, `noUnusedParameters`                                                                                                    |
 | `pnpm build:tokens`    | regenerate the CSS and `tokens.generated.ts`; commit the result                                                                                                          |
-| `pnpm check:tokens`    | every `--brikka-*` name a component reads exists, and every semantic role is read                                                                                        |
+| `pnpm check:tokens`    | every `--brikka-*` name a component reads exists, and every semantic role resolves in every theme                                                                        |
 | `pnpm test:checks`     | the checks' own tests: each refuses the input it exists to refuse                                                                                                        |
 | `pnpm changeset`       | declare a version bump for a package that ships; `pnpm changeset:version` applies it                                                                                     |
 | `pnpm check:artifacts` | the packages pack, carry every path their `exports` name, and type-check from a consumer outside the workspace                                                           |

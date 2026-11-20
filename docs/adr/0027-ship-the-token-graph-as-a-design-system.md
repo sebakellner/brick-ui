@@ -21,9 +21,10 @@ That arrangement is about to be the wrong shape. A host that loads
 never register an element. For that host `bg-surface`, `text-default` and
 `border-default` are the contract, and whether a component of this repository happens to
 read a given role says nothing about whether it is useful. Measured in the tree today:
-122 declared tokens — 64 `palette`, 19 semantic roles (`bg` 8, `border` 5, `text` 5,
-`focus-ring` 1), 12 primitives across `space`, `radius` and `font-size`, and 5 singletons —
-plus 40 hooks, which the token graph does not contain at all.
+103 distinct custom properties. 64 are `palette`; 19 are semantic roles, each defined once
+per theme (`bg` 8, `text` 5, `border` 4, `focus-ring` 2); the remaining 20 are the primitives
+and singletons — space, radius, font, the focus widths, control height, border width,
+transition and opacity. The graph holds no hooks: there are 40 of those.
 
 Two facts make the current shape expensive to keep.
 
@@ -34,7 +35,7 @@ published role may have no consumer in this repository and still be exactly what
 paints with.
 
 The second is that R2 does not describe the code. It says no chain is longer than one
-hop, and the button resolves through three: `--brikka-button-bg` (the hook), then
+hop, and the button resolves through three hops between four names: `--brikka-button-bg` (the hook), then
 `--brikka-button-variant-bg` (`brikka-button.ts:29`), then `--brikka-bg-accent`, then
 `--brikka-palette-blue-600`. The rule is true of `tokens/*.json` and false of what the
 browser resolves, and nothing in the rule says which of the two it governs.

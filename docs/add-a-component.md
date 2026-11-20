@@ -120,7 +120,7 @@ never a second place to maintain the API.
   exist.
 - A keyboard-only pass: tab to it, focus ring visible, `aria-disabled` controls
   reachable and inert.
-- Every new token is read by the component, and every new name resolves: the suite and
+- Every new name resolves, and every new role exists in both theme files: the suite and
   `check:tokens` say so.
 
 ## Related

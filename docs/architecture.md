@@ -25,7 +25,7 @@ the arrow, and the generated CSS is never edited by hand.
 | Control   | `packages/tokens/tokens/component/control.json` → `<component>.*`                     | what one control paints, when no role can carry it | `--brikka-button-disabled-opacity` |
 
 The semantic and control layers are **peers, not a stack**: control tokens alias
-the palette, and every semantic role is read by a component directly. Nothing points
+the palette, and every semantic role resolves in every theme. Nothing points
 at a control token. See R2 in
 [conventions-tokens.md](conventions-tokens.md).
 
@@ -37,7 +37,7 @@ at a control token. See R2 in
 | The theme is required; components carry no fallback values                 | the computed-style tests                 | [0002](adr/0002-require-the-theme.md)                   |
 | References survive as `var()`, so a subtree is re-themed without a rebuild | review, and the override tests           | [0003](adr/0003-keep-aliases-as-var.md)                 |
 | Every design value in a component reads a token                            | review, and `check:tokens` for the names | [0004](adr/0004-forbid-style-literals-in-components.md) |
-| Every semantic role is read by a component                                 | `check:tokens`                           | R1 in [conventions-tokens.md](conventions-tokens.md)    |
+| Every semantic role resolves in every theme                                | `check:tokens`                           | R1 in [conventions-tokens.md](conventions-tokens.md)    |
 
 ## Slotted text
 
