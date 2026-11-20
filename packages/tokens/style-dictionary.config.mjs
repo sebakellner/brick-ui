@@ -8,11 +8,20 @@ const only =
   (token) =>
     groups.includes(token.path[0]);
 
+/* The token source is authored design values, so no transform rewrites one: naming and
+ * attributes only. The `css` group would rewrite them — `color/css` turns
+ * `rgb(37 99 235 / 0.18)` into `#2563eb` and drops the alpha, `size/rem` rescales lengths,
+ * `fontFamily/css` requotes the stack. */
+const TRANSFORMS = ['attribute/cti', 'name/kebab'];
+
+/* `$description` documents a role for the graph; it is not a CSS comment. */
+const FORMATTING = { commentStyle: 'none' };
+
 const cssFile = (destination, filter, selector = ':root') => ({
   destination,
   format: 'css/variables',
   filter,
-  options: { selector, outputReferences: true, showFileHeader: false },
+  options: { selector, outputReferences: true, showFileHeader: false, formatting: FORMATTING },
 });
 
 const hooks = {
@@ -67,8 +76,7 @@ const camel = (path) =>
 const THEMED = (token) => token.path[0] === 'role-light' || token.path[0] === 'role-dark';
 
 const platform = (files, transforms = []) => ({
-  transformGroup: 'css',
-  transforms,
+  transforms: [...TRANSFORMS, ...transforms],
   prefix: 'brikka',
   buildPath: `${paths.tokensCss}/`,
   files,
@@ -80,6 +88,7 @@ const DARK_ROLES_AUTO = ':where(:root:not([data-theme]))';
 
 export default {
   source: [`${paths.tokensJson}/**/*.json`],
+  usesDtcg: true,
   hooks: {
     transforms: {
       'name/strip-theme': {
@@ -116,6 +125,8 @@ export default {
           format: 'css',
           dictionary,
           outputReferences: options.outputReferences,
+          usesDtcg: options.usesDtcg,
+          formatting: FORMATTING,
         })
           .split('\n')
           .map((line) => (line ? `  ${line}` : line))
@@ -152,6 +163,7 @@ export default {
             selector: DARK_ROLES_AUTO,
             outputReferences: true,
             showFileHeader: false,
+            formatting: FORMATTING,
           },
         },
       ],
@@ -162,8 +174,7 @@ export default {
       cssFile('typography.css', only('font', 'font-size', 'font-weight', 'line-height')),
     ]),
     typescript: {
-      transformGroup: 'css',
-      transforms: ['name/strip-theme'],
+      transforms: [...TRANSFORMS, 'name/strip-theme'],
       prefix: 'brikka',
       buildPath: `${paths.tokensSrc}/`,
       files: [{ destination: 'tokens.generated.ts', format: 'typescript/token-names' }],

@@ -1,22 +1,27 @@
 {
   "border-width": {
-    "value": "1px"
+    "$value": "1px",
+    "$type": "dimension"
   },
   "control-height": {
-    "value": "40px"
+    "$value": "40px",
+    "$type": "dimension"
   },
   "transition": {
-    "value": "120ms ease"
+    "$value": "120ms ease"
   },
   "focus-ring-width": {
-    "value": "2px"
+    "$value": "2px",
+    "$type": "dimension"
   },
   "focus-ring-offset": {
-    "value": "1px"
+    "$value": "1px",
+    "$type": "dimension"
   },
   "opacity": {
+    "$type": "number",
     "disabled": {
-      "value": "0.5"
+      "$value": "0.5"
     }
   }
 }
