@@ -73,8 +73,8 @@ and the controls together. A story captured without a `data-theme` follows
 state in which the operating system decides what you see.
 
 The initial theme is written twice on purpose: `initialGlobals` in
-`.storybook/preview.ts` governs every render, and the script in
-`.storybook/preview-head.html` lands before the first paint. Change one, change
+`storybook/web-components/.storybook/preview.ts` governs every render, and the script in
+`storybook/web-components/.storybook/preview-head.html` lands before the first paint. Change one, change
 the other.
 
 ## Sending a change

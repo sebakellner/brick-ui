@@ -19,6 +19,7 @@ packages/web-components/src/components/bk-*/ element, stories, docs page, test/,
 packages/web-components/src/components/shared/ contract: mixins, controllers, styles; no tag, no define
 packages/web-components/test/                suites that compose several components of the package
 packages/test-utils/                         helpers every suite shares — private, never published
+storybook/web-components/                    the documentation site: one Storybook per technology
 test/                                        what needs two packages at once, and the runner's own check
 scripts/                                     the three checks
 docs/                                        conventions and decision records
