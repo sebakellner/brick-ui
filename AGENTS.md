@@ -64,17 +64,18 @@ you are about to change, and never edit an accepted ADR — supersede it.
 
 ## Commands
 
-| Command              | Use                                                                                                                                                                      |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `pnpm test`          | the suite, in real Chrome                                                                                                                                                |
-| `pnpm test:watch`    | the suite, watching                                                                                                                                                      |
-| `pnpm typecheck`     | `tsc --noEmit`, with `strict`, `noUnusedLocals`, `noUnusedParameters`                                                                                                    |
-| `pnpm build:tokens`  | regenerate the CSS and `tokens.generated.ts`; commit the result                                                                                                          |
-| `pnpm check:tokens`  | every `--bk-*` name a component reads exists, and every semantic role is read                                                                                            |
-| `pnpm check:readmes` | every name the manifest declares is in the README, every name the README has is in the manifest, and the sections and table headers are the ones the conventions ask for |
-| `pnpm format`        | rewrite the files Prettier owns                                                                                                                                          |
-| `pnpm format:check`  | fail if any of them is not formatted                                                                                                                                     |
-| `pnpm storybook`     | component stories                                                                                                                                                        |
+| Command                | Use                                                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm test`            | the suite, in real Chrome                                                                                                                                                |
+| `pnpm test:watch`      | the suite, watching                                                                                                                                                      |
+| `pnpm typecheck`       | `tsc --noEmit`, with `strict`, `noUnusedLocals`, `noUnusedParameters`                                                                                                    |
+| `pnpm build:tokens`    | regenerate the CSS and `tokens.generated.ts`; commit the result                                                                                                          |
+| `pnpm check:tokens`    | every `--bk-*` name a component reads exists, and every semantic role is read                                                                                            |
+| `pnpm check:artifacts` | the packages pack, carry every path their `exports` name, and type-check from a consumer outside the workspace                                                           |
+| `pnpm check:readmes`   | every name the manifest declares is in the README, every name the README has is in the manifest, and the sections and table headers are the ones the conventions ask for |
+| `pnpm format`          | rewrite the files Prettier owns                                                                                                                                          |
+| `pnpm format:check`    | fail if any of them is not formatted                                                                                                                                     |
+| `pnpm storybook`       | component stories                                                                                                                                                        |
 
 ## Change workflow
 
