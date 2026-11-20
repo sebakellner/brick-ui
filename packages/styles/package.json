@@ -1,5 +1,5 @@
 {
-  "name": "@brikka/styles",
+  "name": "@brikka-ui/styles",
   "version": "0.1.0",
   "private": true,
   "description": "Brikka's styles: the token source, the custom properties it generates, and the theme a page loads",

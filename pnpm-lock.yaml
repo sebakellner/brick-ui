@@ -208,14 +208,14 @@ importers:
 
   .:
     dependencies:
-      '@brikka/styles':
+      '@brikka-ui/styles':
         specifier: workspace:*
         version: link:packages/styles
       lit:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
-      '@brikka/test-utils':
+      '@brikka-ui/test-utils':
         specifier: workspace:*
         version: link:packages/test-utils
       '@custom-elements-manifest/analyzer':
@@ -277,14 +277,14 @@ importers:
 
   packages/web-components:
     dependencies:
-      '@brikka/styles':
+      '@brikka-ui/styles':
         specifier: workspace:^
         version: link:../styles
       lit:
         specifier: ^3.3.3
         version: 3.3.3
     devDependencies:
-      '@brikka/test-utils':
+      '@brikka-ui/test-utils':
         specifier: workspace:*
         version: link:../test-utils
       '@storybook/addon-docs':
@@ -296,10 +296,10 @@ importers:
 
   storybook/web-components:
     dependencies:
-      '@brikka/styles':
+      '@brikka-ui/styles':
         specifier: workspace:*
         version: link:../../packages/styles
-      '@brikka/web-components':
+      '@brikka-ui/web-components':
         specifier: workspace:*
         version: link:../../packages/web-components
     devDependencies:

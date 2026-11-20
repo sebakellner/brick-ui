@@ -25,7 +25,7 @@ the kit's vocabulary. The line is **who decides the composition**:
 | **e2e**         | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/`, Playwright                                                                              |
 
 A suite that needs **two packages at once** has no package to live in: `theming.test.ts`
-reads the theme `@brikka/styles` publishes through a component `@brikka/web-components`
+reads the theme `@brikka-ui/styles` publishes through a component `@brikka-ui/web-components`
 provides, and `browser.test.ts` asserts the runner itself. Both stay in the root `test/`,
 which is the same place a future e2e suite against the packed artifact belongs.
 

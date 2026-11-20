@@ -1,5 +1,5 @@
 import { expect, fixture, html } from '@open-wc/testing';
-import { expectRendered } from '@brikka/test-utils/a11y.js';
+import { expectRendered } from '@brikka-ui/test-utils/a11y.js';
 import type { BrikkaNativeSelectOptGroup } from '.././brikka-native-select-opt-group.js';
 import '.././define.js';
 

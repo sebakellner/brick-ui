@@ -1,17 +1,17 @@
-import { settle } from '@brikka/test-utils/settle.js';
-import { clearStyleCache, colorOf, opacityOf } from '@brikka/test-utils/style.js';
-import { projectedText, slotIn } from '@brikka/test-utils/dom.js';
-import { labelAtom } from '@brikka/test-utils/atoms.js';
-import { watchSubmit } from '@brikka/test-utils/form.js';
+import { settle } from '@brikka-ui/test-utils/settle.js';
+import { clearStyleCache, colorOf, opacityOf } from '@brikka-ui/test-utils/style.js';
+import { projectedText, slotIn } from '@brikka-ui/test-utils/dom.js';
+import { labelAtom } from '@brikka-ui/test-utils/atoms.js';
+import { watchSubmit } from '@brikka-ui/test-utils/form.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { resetMouse, sendKeys, sendMouse } from '@web/test-runner-commands';
 import '../define.js';
 import '../../brikka-field/define.js';
 import type { BrikkaSlider } from '../brikka-slider.js';
-import { contrastRatio } from '@brikka/test-utils/contrast.js';
-import { expectNoViolations, expectRendered } from '@brikka/test-utils/a11y.js';
-import { clickAt, hover, hoverCapable } from '@brikka/test-utils/pointer.js';
-import { setTheme } from '@brikka/test-utils/theme.js';
+import { contrastRatio } from '@brikka-ui/test-utils/contrast.js';
+import { expectNoViolations, expectRendered } from '@brikka-ui/test-utils/a11y.js';
+import { clickAt, hover, hoverCapable } from '@brikka-ui/test-utils/pointer.js';
+import { setTheme } from '@brikka-ui/test-utils/theme.js';
 
 const inputsOf = (el: BrikkaSlider) =>
   Array.from(el.shadowRoot!.querySelectorAll<HTMLInputElement>('input'));

@@ -2,7 +2,7 @@
 # tarballs, not the workspace packages: that is the whole point of it.
 packages: []
 
-# In a published world the registry satisfies the peer range `@brikka/web-components` declares on
-# `@brikka/styles`. Here the tarball does, and no registry is reachable.
+# In a published world the registry satisfies the peer range `@brikka-ui/web-components` declares on
+# `@brikka-ui/styles`. Here the tarball does, and no registry is reachable.
 overrides:
-  '@brikka/styles': 'file:./.pack/brikka-styles-0.1.0.tgz'
+  '@brikka-ui/styles': 'file:./.pack/brikka-ui-styles-0.1.0.tgz'

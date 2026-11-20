@@ -15,7 +15,7 @@ There are no fallback values anywhere, by decision rather than by omission. A co
 paints `var(--brikka-bg-accent)` renders visibly unstyled on a page that never loaded the theme,
 and that is the point: a half-themed page is a bug report, not a design choice.
 
-Load `theme.css` from `@brikka/styles`, or a build of it, once. It defines the roles the components
+Load `theme.css` from `@brikka-ui/styles`, or a build of it, once. It defines the roles the components
 read and the `color-scheme` the browser needs, so the page and the controls paint from the
 same values in both themes.
 

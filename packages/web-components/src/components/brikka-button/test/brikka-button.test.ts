@@ -1,12 +1,12 @@
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import '.././define.js';
 import type { BrikkaButton } from '.././brikka-button.js';
-import { contrastRatio } from '@brikka/test-utils/contrast.js';
-import { expectNoViolations, expectRendered } from '@brikka/test-utils/a11y.js';
-import { colorOf } from '@brikka/test-utils/style.js';
-import { watchSubmit } from '@brikka/test-utils/form.js';
-import { clickAt, hover, hoverCapable } from '@brikka/test-utils/pointer.js';
-import { setTheme } from '@brikka/test-utils/theme.js';
+import { contrastRatio } from '@brikka-ui/test-utils/contrast.js';
+import { expectNoViolations, expectRendered } from '@brikka-ui/test-utils/a11y.js';
+import { colorOf } from '@brikka-ui/test-utils/style.js';
+import { watchSubmit } from '@brikka-ui/test-utils/form.js';
+import { clickAt, hover, hoverCapable } from '@brikka-ui/test-utils/pointer.js';
+import { setTheme } from '@brikka-ui/test-utils/theme.js';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 
 const innerButton = (el: BrikkaButton) => el.shadowRoot!.querySelector('button')!;

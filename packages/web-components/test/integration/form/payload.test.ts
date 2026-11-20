@@ -17,8 +17,8 @@ import type { BrikkaCheckbox } from '../../../src/components/brikka-checkbox/bri
 import type { BrikkaRadioGroup } from '../../../src/components/brikka-radio-group/brikka-radio-group.js';
 import type { BrikkaRadioGroupItem } from '../../../src/components/brikka-radio-group/brikka-radio-group-item.js';
 import type { BrikkaNativeSelect } from '../../../src/components/brikka-native-select/brikka-native-select.js';
-import { labelAtom } from '@brikka/test-utils/atoms.js';
-import { settle } from '@brikka/test-utils/settle.js';
+import { labelAtom } from '@brikka-ui/test-utils/atoms.js';
+import { settle } from '@brikka-ui/test-utils/settle.js';
 
 const innerInput = (el: BrikkaInput) => el.shadowRoot!.querySelector('input')!;
 const innerBox = (el: BrikkaCheckbox) => el.shadowRoot!.querySelector('input')!;

@@ -1,14 +1,14 @@
-import { settle } from '@brikka/test-utils/settle.js';
-import { colorOf, opacityOf } from '@brikka/test-utils/style.js';
+import { settle } from '@brikka-ui/test-utils/settle.js';
+import { colorOf, opacityOf } from '@brikka-ui/test-utils/style.js';
 import {
   describedNode,
   projectedNodes,
   projectedText,
   region,
   slottedText,
-} from '@brikka/test-utils/dom.js';
-import { descriptionAtom, labelAtom } from '@brikka/test-utils/atoms.js';
-import { watchSubmit } from '@brikka/test-utils/form.js';
+} from '@brikka-ui/test-utils/dom.js';
+import { descriptionAtom, labelAtom } from '@brikka-ui/test-utils/atoms.js';
+import { watchSubmit } from '@brikka-ui/test-utils/form.js';
 import { expect, fixture, html, nextFrame } from '@open-wc/testing';
 import { sendKeys, resetMouse } from '@web/test-runner-commands';
 import '.././define.js';
@@ -16,10 +16,10 @@ import '../../brikka-field/define.js';
 import type { BrikkaField } from '../../brikka-field/brikka-field.js';
 import type { BrikkaFieldLabel } from '../../brikka-field/brikka-field-label.js';
 import type { BrikkaTextarea } from '.././brikka-textarea.js';
-import { contrastRatio } from '@brikka/test-utils/contrast.js';
-import { expectNoViolations, expectRendered } from '@brikka/test-utils/a11y.js';
-import { hover, hoverCapable } from '@brikka/test-utils/pointer.js';
-import { setTheme } from '@brikka/test-utils/theme.js';
+import { contrastRatio } from '@brikka-ui/test-utils/contrast.js';
+import { expectNoViolations, expectRendered } from '@brikka-ui/test-utils/a11y.js';
+import { hover, hoverCapable } from '@brikka-ui/test-utils/pointer.js';
+import { setTheme } from '@brikka-ui/test-utils/theme.js';
 
 const innerTextarea = (el: BrikkaTextarea) => el.shadowRoot!.querySelector('textarea')!;
 const innerLabel = (el: BrikkaTextarea) => el.shadowRoot!.querySelector('label')!;

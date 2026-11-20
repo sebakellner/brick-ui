@@ -1,8 +1,8 @@
-import { colorOf } from '@brikka/test-utils/style.js';
+import { colorOf } from '@brikka-ui/test-utils/style.js';
 import { expect, fixture, html } from '@open-wc/testing';
-import { expectNoViolations, expectRendered } from '@brikka/test-utils/a11y.js';
-import { setTheme } from '@brikka/test-utils/theme.js';
-import { settle } from '@brikka/test-utils/settle.js';
+import { expectNoViolations, expectRendered } from '@brikka-ui/test-utils/a11y.js';
+import { setTheme } from '@brikka-ui/test-utils/theme.js';
+import { settle } from '@brikka-ui/test-utils/settle.js';
 import '.././define.js';
 import '../../brikka-checkbox-group/define.js';
 import type { BrikkaCheckboxGroup } from '../../brikka-checkbox-group/brikka-checkbox-group.js';

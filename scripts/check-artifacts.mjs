@@ -42,7 +42,7 @@ const workspace = mkdtempSync(join(tmpdir(), 'brikka-artifacts-'));
 const consumer = join(workspace, 'consumer');
 
 try {
-  for (const name of PACKAGES) pnpm(['--filter', `@brikka/${name}`, 'build'], root);
+  for (const name of PACKAGES) pnpm(['--filter', `@brikka-ui/${name}`, 'build'], root);
 
   for (const name of PACKAGES) {
     const directory = join(root, 'packages', name);
@@ -51,7 +51,7 @@ try {
       .map((line) => line.trim())
       .filter((line) => line.endsWith('.tgz'))
       .at(-1);
-    if (!packed) throw new Error(`@brikka/${name} packed nothing`);
+    if (!packed) throw new Error(`@brikka-ui/${name} packed nothing`);
 
     const tarball = join(workspace, packed.replace(/^.*\//, ''));
     const listing = run('tar', ['-tzf', tarball], workspace);
@@ -64,16 +64,16 @@ try {
     for (const target of declaredTargets(manifest)) {
       const path = target.replace(/^\.\//, '');
       if (!listing.includes(`package/${path}`))
-        problems.push(`@brikka/${name} exports ${target}, which the tarball does not carry`);
+        problems.push(`@brikka-ui/${name} exports ${target}, which the tarball does not carry`);
     }
 
     for (const [dependency, version] of Object.entries(manifest.dependencies ?? {})) {
       if (String(version).startsWith('workspace:'))
-        problems.push(`@brikka/${name} ships an unresolved ${dependency}: ${version}`);
+        problems.push(`@brikka-ui/${name} ships an unresolved ${dependency}: ${version}`);
     }
 
     /* Unpack where no workspace link can reach, which is the whole point. */
-    const target = join(consumer, 'node_modules', '@brikka', name);
+    const target = join(consumer, 'node_modules', '@brikka-ui', name);
     mkdirSync(target, { recursive: true });
     run('tar', ['-xzf', tarball, '--strip-components=1', '-C', target], workspace);
   }
@@ -104,10 +104,10 @@ try {
   );
   writeFileSync(
     join(consumer, 'use.ts'),
-    `import '@brikka/web-components/register.js';
-import '@brikka/web-components/components/brikka-slider/define.js';
-import { BrikkaButton } from '@brikka/web-components';
-import { tokens } from '@brikka/styles';
+    `import '@brikka-ui/web-components/register.js';
+import '@brikka-ui/web-components/components/brikka-slider/define.js';
+import { BrikkaButton } from '@brikka-ui/web-components';
+import { tokens } from '@brikka-ui/styles';
 
 export const button: typeof BrikkaButton = BrikkaButton;
 export const accent: string = tokens.roleLightBgAccent;
@@ -131,5 +131,5 @@ if (problems.length) {
 }
 
 console.log(
-  `artifacts ok: ${PACKAGES.map((name) => `@brikka/${name}`).join(', ')} pack, carry their exports and type-check outside the workspace`,
+  `artifacts ok: ${PACKAGES.map((name) => `@brikka-ui/${name}`).join(', ')} pack, carry their exports and type-check outside the workspace`,
 );

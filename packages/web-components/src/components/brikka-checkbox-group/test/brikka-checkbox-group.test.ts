@@ -1,15 +1,15 @@
-import { settle } from '@brikka/test-utils/settle.js';
-import { colorOf, opacityOf } from '@brikka/test-utils/style.js';
-import { describedNode, region } from '@brikka/test-utils/dom.js';
-import { watchSubmit } from '@brikka/test-utils/form.js';
+import { settle } from '@brikka-ui/test-utils/settle.js';
+import { colorOf, opacityOf } from '@brikka-ui/test-utils/style.js';
+import { describedNode, region } from '@brikka-ui/test-utils/dom.js';
+import { watchSubmit } from '@brikka-ui/test-utils/form.js';
 import { expect, fixture, html } from '@open-wc/testing';
 import '.././define.js';
 import '../../brikka-checkbox/define.js';
 import '../../brikka-field/define.js';
 import type { BrikkaCheckbox } from '../../brikka-checkbox/brikka-checkbox.js';
 import type { BrikkaCheckboxGroup } from '.././brikka-checkbox-group.js';
-import { setTheme } from '@brikka/test-utils/theme.js';
-import { expectNoViolations, expectRendered } from '@brikka/test-utils/a11y.js';
+import { setTheme } from '@brikka-ui/test-utils/theme.js';
+import { expectNoViolations, expectRendered } from '@brikka-ui/test-utils/a11y.js';
 
 const boxesContainer = (el: BrikkaCheckboxGroup) => region(el, 'boxes')!;
 
