@@ -23,8 +23,8 @@ marks the control's own region wrapper with `data-empty` and collapses it from t
 
 That half is honest: the controller marks its own element. The other half was not.
 [`FieldRegionsController`](../../src/components/shared/form-control/field-regions.controller.ts)
-wrote `data-empty` on the consumer's atoms — `bk-field-description` and `bk-field-error` inside
-`bk-checkbox-group` and `bk-radio-group` — so the atom decided nothing: it only reacted to
+wrote `data-empty` on the consumer's atoms — `brikka-field-description` and `brikka-field-error` inside
+`brikka-checkbox-group` and `brikka-radio-group` — so the atom decided nothing: it only reacted to
 `:host([data-empty])`, and its rule fired only while a container had adopted it. The consequence
 was measurable rather than theoretical: the atom's standalone test could not be written. The only
 case that reached the empty state had to nest the atom in a group and let the group mark it
@@ -46,7 +46,7 @@ theirs, and `:empty` cannot answer for it.
 
 | Alternative                                                   | Why it lost                                                                                                                                                                                                                                                  |
 | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `:host(:empty)` on the atom, `::slotted(:empty)` in the group | `:empty` is false for whitespace-only text and for a comment node, and the rule is about text: `<bk-field-error> </bk-field-error>` is empty to a reader and not to `:empty`.                                                                                |
+| `:host(:empty)` on the atom, `::slotted(:empty)` in the group | `:empty` is false for whitespace-only text and for a comment node, and the rule is about text: `<brikka-field-error> </brikka-field-error>` is empty to a reader and not to `:empty`.                                                                        |
 | The container keeps writing the mark (status quo)             | The atom's own `:host([data-empty])` rule became conditional on being inside a container that had adopted it, and the container had to read the text of a node it does not own — with two controllers already computing the same answer for different hosts. |
 | The container observes the atom's child list itself           | Same ownership problem moved one microtask earlier, and two observers on one node where one element can answer for itself.                                                                                                                                   |
 | Collapse with `display: none`                                 | It removes the region from the tree, so `aria-describedby` points at nothing and a live region stops announcing. A7a already rules this out; the empty region stays present and clipped.                                                                     |
@@ -65,6 +65,6 @@ microtask later. CSS consumers cannot tell the difference, and no test pins the 
 because it never existed as a promise.
 
 Debt accepted: `data-empty` stays a public, styleable attribute on the atoms and is documented in
-their READMEs — the change moved the writer, not the contract. `bk-field-label` carries no mark
+their READMEs — the change moved the writer, not the contract. `brikka-field-label` carries no mark
 because nothing reads one, so the rule is written by the two atoms whose own styles or a
 container's `::slotted` rule consume it.

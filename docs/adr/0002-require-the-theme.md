@@ -14,14 +14,14 @@ point, rather than requiring the consumer to load it.
 
 ## Context
 
-Components read their values as `var(--bk-…)` with a hard-coded fallback baked
+Components read their values as `var(--brikka-…)` with a hard-coded fallback baked
 into the same declaration, so a missing token still painted something:
 
 ```css
-background: var(--bk-button-bg, var(--bk-palette-sky-600));
+background: var(--brikka-button-bg, var(--brikka-palette-sky-600));
 ```
 
-There were 51 of those across `bk-button` and `bk-input`. Each one duplicated a
+There were 51 of those across `brikka-button` and `brikka-input`. Each one duplicated a
 value that already existed in `tokens/*.json`, and the duplication was the point
 of failure rather than a safety net.
 
@@ -36,7 +36,7 @@ and fixed within the hour; a component that is subtly off-brand ships and stays.
 
 ## Decision
 
-Components carry no value fallbacks. Every paint reads `var(--bk-…)` and nothing
+Components carry no value fallbacks. Every paint reads `var(--brikka-…)` and nothing
 else, and defaults live once, in the generated CSS. Loading the theme through
 `src/styles/theme.css` is part of the contract, not a convenience.
 
@@ -46,11 +46,11 @@ public hook pattern**, never a literal and never a copy of a token value.
 
 ```css
 button {
-  background: var(--bk-button-bg, var(--bk-button-variant-bg));
+  background: var(--brikka-button-bg, var(--brikka-button-variant-bg));
 }
 ```
 
-The public hook is read first so that a `--bk-button-bg` set on any ancestor
+The public hook is read first so that a `--brikka-button-bg` set on any ancestor
 still wins; the default — the variant's internal variable — is read second. If
 the variant wrote the public hook itself, every inherited override would lose.
 Seven such composites remain, and they are the mechanism, not an oversight.
@@ -90,8 +90,8 @@ Harder:
   broken-looking page, which is expensive for a first-time consumer and
   therefore depends on the README saying it loudly instead of in a footnote.
 - The hook pattern is load-bearing and looks reversible. Writing the variant
-  value into `--bk-button-bg` on `:host` instead of into
-  `--bk-button-variant-bg` is a one-token edit that appears equivalent and
+  value into `--brikka-button-bg` on `:host` instead of into
+  `--brikka-button-variant-bg` is a one-token edit that appears equivalent and
   silently breaks every inherited override. The override tests exist for this:
   they set the hook on `document.documentElement` and assert the computed style
   follows.

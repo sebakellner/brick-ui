@@ -4,13 +4,19 @@ Date: 2026-11-20
 
 ## Status
 
-accepted. It does not reverse a decision: it renames the identifiers that
+accepted, superseded in part by
+[0025](0025-keep-identifiers-in-an-accepted-adr-current.md). What still holds is
+everything this document decided: the rename, and that the reasoning in the earlier
+ADRs was written for the rule rather than for the prefix. What no longer holds is
+the last half of this status — those ADRs **do** carry `brikka-` identifiers now,
+because a name is not a decision and their examples had stopped naming anything.
+Read 0025 for that line.
+
+It reverses no decision of its own: it renames the identifiers that
 [0002](0002-require-the-theme.md), [0004](0004-forbid-style-literals-in-components.md),
 [0006](0006-stack-the-token-layers-and-add-a-theme.md) and
 [0019](0019-the-token-graph-is-the-public-contract.md) argue about, and every
-rule they state still holds under the new names. Those documents keep their
-`bk-` identifiers on purpose: they are the record of what was decided when they
-were written. Read them through the mapping below.
+rule they state still holds under the new names.
 
 ## Context
 

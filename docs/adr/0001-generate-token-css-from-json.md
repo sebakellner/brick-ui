@@ -14,7 +14,7 @@ loaded.
 
 Two problems followed from that.
 
-Nothing connected a component's `var(--bk-…)` to a declared value. CSS drops an
+Nothing connected a component's `var(--brikka-…)` to a declared value. CSS drops an
 invalid `var()` reference at computed-value time, so a typo or a token deleted
 from the stylesheet rendered as nothing: no error, no warning, no failing test —
 a blank edge or a missing background. The only possible guard was a validation
@@ -40,7 +40,7 @@ How it is wired:
 - One Style Dictionary platform per token group, filtered on the first path
   segment (`only('space')`, `only('button', 'input')`), so each generated file
   holds exactly one group and consumers can load only what they need.
-- `outputReferences: true` emits aliases as `var(--bk-…)` rather than resolved
+- `outputReferences: true` emits aliases as `var(--brikka-…)` rather than resolved
   literals. Handling of aliases is [0003](0003-keep-aliases-as-var.md).
 - `showFileHeader: false`, so the generated files stay comment-free like every
   other stylesheet in the kit.

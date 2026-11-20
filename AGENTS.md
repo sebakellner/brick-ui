@@ -37,7 +37,8 @@ docs/                                        conventions and decision records
   bar, the testing recipe and the CI gates.
 
 An ADR in [docs/adr/](docs/adr/) holds the reasoning. Read the one whose subject
-you are about to change, and never edit an accepted ADR — supersede it.
+you are about to change, and never edit an accepted ADR — supersede it. Its
+identifiers are the one exception: a rename updates the names, never the reasoning.
 
 ## Never
 

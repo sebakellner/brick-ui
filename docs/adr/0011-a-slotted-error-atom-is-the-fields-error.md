@@ -9,14 +9,14 @@ accepted; superseded in part by
 
 ## Context
 
-`bk-input` and `bk-checkbox` render one `role="status"` region. Its content comes
+`brikka-input` and `brikka-checkbox` render one `role="status"` region. Its content comes
 from one of three sources: the `error` property, the browser's native message,
-or a consumer's `bk-field-error` atom. The first two are the field's error — they
+or a consumer's `brikka-field-error` atom. The first two are the field's error — they
 set `aria-invalid="true"` and take part in constraint validation as
 `customError`. The third only painted.
 
-Measured on a `bk-input` holding
-`<bk-field-error>That address looks wrong.</bk-field-error>` and no `error`,
+Measured on a `brikka-input` holding
+`<brikka-field-error>That address looks wrong.</brikka-field-error>` and no `error`,
 before this decision:
 
 - the region showed the atom's text, because the slot projects it;
@@ -30,18 +30,18 @@ ran in the direction that loses the user's work: the consumer had written the
 message, the field looked rejected, and the form submitted it. The same seam had
 a second shape: with the property and the atom both set, the region showed the
 atom's text while `aria-invalid` and `validationMessage` came from the property,
-so a screen reader announced a sentence nobody could see. `bk-field/README.md`
+so a screen reader announced a sentence nobody could see. `brikka-field/README.md`
 documented the duplicate as the way to write an invalid field — the atom for the
 text, the property for the state — and left the ownership decision open.
 
 The atom also broke the region's own contract: `aria-describedby` was written
-from _assignment_, so an empty `bk-field-error` was referenced as the
+from _assignment_, so an empty `brikka-field-error` was referenced as the
 description of a region with nothing in it (A4 of
 [the accessibility conventions](../conventions-accessibility.md)).
 
 ## Decision
 
-**A slotted `bk-field-error` with text is the field's error, not decoration.**
+**A slotted `brikka-field-error` with text is the field's error, not decoration.**
 
 - That text is the field's message: it is what the region shows, it sets
   `aria-invalid="true"` on the native control, and it participates in constraint
@@ -52,7 +52,7 @@ description of a region with nothing in it (A4 of
 - An atom with no text is not content: no `aria-describedby` reference, no
   invalidity. Content means text, for both regions.
 - The control observes the nodes assigned to the `error` slot — `characterData`
-  and `childList`, the shape `bk-checkbox-group` already uses for the same
+  and `childList`, the shape `brikka-checkbox-group` already uses for the same
   reason — because a consumer editing an atom in place fires no `slotchange`.
   The observer lives once, in `FieldMessagesController`, so the group and the
   controls share it instead of each carrying a copy.
@@ -76,16 +76,16 @@ what is displayed and what is enforced.
 ## Consequences
 
 One sentence in the markup now states the display, the state and the constraint,
-so `error` and a `bk-field-error` cannot disagree. The audit's A4 finding closes
+so `error` and a `brikka-field-error` cannot disagree. The audit's A4 finding closes
 with it: an empty atom is neither referenced nor invalid, and `aria-describedby`
 names a region only while that region has text.
 
 The cost is named in the decision and accepted: **markup now declares
 invalidity**. A decorative atom is not a thing. The component cannot tell "a red
-caption" from "a rejected field", because both are a `bk-field-error` with text,
+caption" from "a rejected field", because both are a `brikka-field-error` with text,
 so a consumer who wants danger-coloured text that blocks nothing has no shape
 for it. That is a real limitation of the element, not an oversight; it is why the
-element is called `bk-field-error`.
+element is called `brikka-field-error`.
 
 Two smaller consequences follow from the atom being the consumer's node:
 
@@ -98,11 +98,11 @@ Two smaller consequences follow from the atom being the consumer's node:
   document order. The field does not pick one, and it does not merge meanings;
   writing two errors is reading them both out in one region.
 
-`bk-checkbox-group` keeps its own region logic and reports no validity of its
+`brikka-checkbox-group` keeps its own region logic and reports no validity of its
 own, so it keeps its own description/error decision. The observer is the part
 both needed, and that part is shared.
 
 It gets revisited if the kit needs a message that is deliberately not a problem —
-a `bk-field-hint` would be a separate element with its own slot, not a mode of
+a `brikka-field-hint` would be a separate element with its own slot, not a mode of
 this one — or if `valueMissing`-style platform rules need to be combined with the
 atom's text rather than replaced by it.

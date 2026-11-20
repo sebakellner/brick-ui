@@ -18,7 +18,7 @@ The last time names moved, sixteen of them went at once: the whole control tier
 (`button.{primary,secondary,ghost}.{bg,bg-hover,fg,border}`, `input.{bg,color,label-color,border-color}`)
 was deleted because a second tier meant two ways for a component to reach a colour, and the
 role that should have answered the question was one hop further from the reader. The removal
-was correct and it left `--bk-button-disabled-opacity` as the only component token, because
+was correct and it left `--brikka-button-disabled-opacity` as the only component token, because
 opacity is not a colour. A consumer who had themed any of those sixteen tokens got a silently
 different page.
 
@@ -41,7 +41,7 @@ conventions of the moment:
    after, it needs both plus the note.
 2. **Colour reaches a component only through a semantic role** (R6, enforced by
    `pnpm check:tokens`). The component tier stays at the one token that carries a value no
-   role can express, `--bk-button-disabled-opacity`, and a new component token needs the same
+   role can express, `--brikka-button-disabled-opacity`, and a new component token needs the same
    justification: it is not a colour, and no role answers it.
 3. **A component never carries a literal** (ADR 0004). A value that is not a token cannot be
    configured, and the graph above is only a contract if every painted value is in it.

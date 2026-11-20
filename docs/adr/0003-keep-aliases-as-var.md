@@ -19,7 +19,7 @@ entry, not as a color:
 ```
 
 Style Dictionary can do two things with that reference: resolve it into
-`#b91c1c` at build time, or emit it as `var(--bk-palette-red-700)` and let the
+`#b91c1c` at build time, or emit it as `var(--brikka-palette-red-700)` and let the
 browser resolve it. The default behaviour of a CSS pipeline is to resolve — a
 reference looks like a build-time substitution, and a flattened stylesheet is
 what you get if you never ask for anything else.
@@ -29,13 +29,13 @@ re-theme a subtree by setting a hook on an ancestor:
 
 ```css
 .checkout {
-  --bk-button-bg: var(--bk-palette-sky-600);
+  --brikka-button-bg: var(--brikka-palette-sky-600);
 }
 ```
 
 That works because custom properties inherit. A resolved literal is a value with
-no name: once `#1d4ed8` is written into `--bk-button-primary-bg`, redefining
-`--bk-palette-blue-600` anywhere in the tree no longer reaches the button, and
+no name: once `#1d4ed8` is written into `--brikka-button-primary-bg`, redefining
+`--brikka-palette-blue-600` anywhere in the tree no longer reaches the button, and
 re-theming requires a rebuild — which is the one thing a token-driven design
 system is supposed to remove.
 
@@ -47,14 +47,14 @@ structure is unreadable at the place where people actually look.
 ## Decision
 
 `outputReferences: true` on every platform. A reference in JSON becomes a
-`var(--bk-…)` reference in CSS, never a literal. Nothing resolves at build time;
+`var(--brikka-…)` reference in CSS, never a literal. Nothing resolves at build time;
 the browser resolves the chain at computed-value time.
 
 In practice that means the alias is also the documentation:
 
 ```css
---bk-color-danger: var(--bk-palette-red-700);
---bk-button-primary-bg: var(--bk-palette-blue-600);
+--brikka-color-danger: var(--brikka-palette-red-700);
+--brikka-button-primary-bg: var(--brikka-palette-blue-600);
 ```
 
 The name says what the value is for, the reference says where it comes from, and
@@ -66,7 +66,7 @@ they are not what a reader assumes:
 - Chains are one hop. Control tokens and semantic roles both point at the
   palette; nothing points at a control token.
 - The semantic layer and the control layer are peers, not a stack. A control
-  token never reads `--bk-color-*`; the five semantic roles are instead read by
+  token never reads `--brikka-color-*`; the five semantic roles are instead read by
   components directly, for behavior shared across controls.
 
 The layering rules themselves — reference downwards, one hop, and when a
@@ -75,10 +75,10 @@ semantic role earns its existence — live with the conventions, not here: see
 
 ### Alternatives considered
 
-| Alternative                                                                                    | Why it was rejected                                                                                                                                                                                 |
-| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Resolve references at build time                                                               | The emitted CSS becomes static values. Redefining a palette entry on an ancestor stops working, so every override hook the kit documents becomes a rebuild instead of a CSS rule.                   |
-| Emit the reference with the resolved value as a fallback: `var(--bk-palette-red-700, #b91c1c)` | Looks like a safer middle ground and is the same defect [0002](0002-require-the-theme.md) removed: a duplicated value that drifts silently the moment the palette changes, on every generated line. |
+| Alternative                                                                                        | Why it was rejected                                                                                                                                                                                 |
+| -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Resolve references at build time                                                                   | The emitted CSS becomes static values. Redefining a palette entry on an ancestor stops working, so every override hook the kit documents becomes a rebuild instead of a CSS rule.                   |
+| Emit the reference with the resolved value as a fallback: `var(--brikka-palette-red-700, #b91c1c)` | Looks like a safer middle ground and is the same defect [0002](0002-require-the-theme.md) removed: a duplicated value that drifts silently the moment the palette changes, on every generated line. |
 
 ## Consequences
 
@@ -98,12 +98,12 @@ Harder:
   negligible in a browser, but the emitted color is no longer readable in the
   stylesheet. You follow the chain, or you read DevTools; `grep` tells you the
   name and not the value.
-- The output mixes references and keywords. `--bk-button-ghost-bg: transparent`
+- The output mixes references and keywords. `--brikka-button-ghost-bg: transparent`
   is a literal in `tokens/control.json`, so a palette re-theme does not touch
   it. Correct for a keyword, but it means "everything follows the palette" is
   not literally true, and that boundary is invisible in the output.
 - A semantic role reaches only the components that read it. Re-theming
-  `--bk-color-danger` repaints the input's error border and message, because the
+  `--brikka-color-danger` repaints the input's error border and message, because the
   input reads the role; it does not reach the button, whose paints come from its
   own control tokens. The isolation is invisible in the token files and easy to
   misread as a bug the first time it surprises someone.

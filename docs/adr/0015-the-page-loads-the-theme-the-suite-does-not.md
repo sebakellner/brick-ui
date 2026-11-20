@@ -25,7 +25,7 @@ points at dead code is the failure this ADR exists to stop.
 ## Decision
 
 **The test page owns the environment; a suite owns its subject.** The page links the
-theme once, zeroes `--bk-transition`, and paints `body` with `--bk-bg-surface`; a suite
+theme once, zeroes `--brikka-transition`, and paints `body` with `--brikka-bg-surface`; a suite
 never loads a stylesheet, never sets a page background and never starts a runner
 config of its own. When a test is about the other theme it calls `setTheme('dark')`
 and nothing else.
@@ -36,7 +36,7 @@ fallback, and a page without the theme still renders unstyled on purpose.
 ## Consequences
 
 - **The canvas is part of the decision, not a detail.** The page paints `body` with
-  `--bk-bg-surface` because axe-core grades text against the canvas the page paints.
+  `--brikka-bg-surface` because axe-core grades text against the canvas the page paints.
   An unpainted canvas is white to axe even when the browser reports a dark colour
   scheme, and it reported 1.09:1 on a pair the kit paints at 8:1 — six findings in one
   run, none of them a defect. Anything else that grades against the page inherits this.
