@@ -64,9 +64,10 @@ quarter. That is the ten roles again, with the difference that now a stranger de
 it.
 
 **Enforced by.** `pnpm check:tokens` refuses a role that resolves in one theme and not
-another. The `$description` and `$type` half becomes a check when the token source moves
-to DTCG, and the changeset a removal cannot skip needs a diff of the graph against the
-base branch; both are recorded in
+another. The `$description` and `$type` half is not a gate yet: the token source moved to
+DTCG, and the check that reads it arrives with the `tokens.json` entry point; the
+changeset a removal cannot skip needs a diff of the graph against the base branch; both
+are recorded in
 [ADR 0027](adr/0027-ship-the-token-graph-as-a-design-system.md), and neither is a gate
 today. What the graph as a public contract obliges is
 [ADR 0019](adr/0019-the-token-graph-is-the-public-contract.md).

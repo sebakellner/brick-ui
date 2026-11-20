@@ -1,7 +1,8 @@
 {
   "button": {
     "disabled-opacity": {
-      "value": "{opacity.disabled}"
+      "$value": "{opacity.disabled}",
+      "$type": "number"
     }
   }
 }

@@ -1,67 +1,87 @@
 {
   "role-light": {
+    "$type": "color",
     "bg": {
       "inverse": {
-        "value": "{palette.neutral-900}"
+        "$value": "{palette.neutral-900}",
+        "$description": "Background of an element that inverts the surface it sits on."
       },
       "surface": {
-        "value": "{palette.white}"
+        "$value": "{palette.white}",
+        "$description": "The default surface content is read against."
       },
       "surface-muted": {
-        "value": "{palette.neutral-100}"
+        "$value": "{palette.neutral-100}",
+        "$description": "A surface that recedes behind content: inert areas, read-only regions."
       },
       "surface-hover": {
-        "value": "{palette.neutral-200}"
+        "$value": "{palette.neutral-200}",
+        "$description": "The surface of a hoverable element while a pointer is over it."
       },
       "surface-strong": {
-        "value": "{palette.neutral-500}"
+        "$value": "{palette.neutral-500}",
+        "$description": "The surface of a filled control that carries the primary action."
       },
       "surface-strong-hover": {
-        "value": "{palette.neutral-600}"
+        "$value": "{palette.neutral-600}",
+        "$description": "A filled control's surface while a pointer is over it."
       },
       "accent": {
-        "value": "{palette.blue-600}"
+        "$value": "{palette.blue-600}",
+        "$description": "The accent surface that marks selection and emphasis."
       },
       "accent-hover": {
-        "value": "{palette.blue-700}"
+        "$value": "{palette.blue-700}",
+        "$description": "The accent surface while a pointer is over it."
       }
     },
     "text": {
       "inverse": {
-        "value": "{palette.neutral-100}"
+        "$value": "{palette.neutral-100}",
+        "$description": "Text read on `bg.inverse`."
       },
       "default": {
-        "value": "{palette.neutral-900}"
+        "$value": "{palette.neutral-900}",
+        "$description": "Body text and every label not deliberately quieter."
       },
       "muted": {
-        "value": "{palette.neutral-600}"
+        "$value": "{palette.neutral-600}",
+        "$description": "Supporting text: help, descriptions, secondary labels."
       },
       "on-accent": {
-        "value": "{palette.white}"
+        "$value": "{palette.white}",
+        "$description": "Text and icons read on an accent or strong surface."
       },
       "danger": {
-        "value": "{palette.red-700}"
+        "$value": "{palette.red-700}",
+        "$description": "Text that names a failure or a destructive action."
       }
     },
     "border": {
       "on-accent": {
-        "value": "{palette.white}"
+        "$value": "{palette.white}",
+        "$description": "Borders drawn on an accent or strong surface."
       },
       "default": {
-        "value": "{palette.neutral-500}"
+        "$value": "{palette.neutral-500}",
+        "$description": "The border of a control at rest."
       },
       "strong": {
-        "value": "{palette.neutral-600}"
+        "$value": "{palette.neutral-600}",
+        "$description": "A border that reads as a boundary rather than a hint."
       },
       "danger": {
-        "value": "{palette.red-700}"
+        "$value": "{palette.red-700}",
+        "$description": "The border of an invalid control."
       }
     },
     "focus-halo": {
-      "value": "rgb(37 99 235 / 0.18)"
+      "$value": "rgb(37 99 235 / 0.18)",
+      "$description": "The translucent ring drawn around a focused control."
     },
     "focus-ring": {
-      "value": "{palette.sky-600}"
+      "$value": "{palette.sky-600}",
+      "$description": "The opaque ring a focus indicator is drawn with."
     }
   }
 }
