@@ -540,8 +540,33 @@ describe('bk-slider', () => {
       const knob = rail.left + thumbOf(el) / 2 + laneOf(el) * 0.4;
 
       expect(readout.bottom, 'the bubble clears the rail it points at').to.be.at.most(rail.top);
-      expect(rail.top - readout.bottom, 'by the gap the rail gives it').to.be.at.least(4);
+      expect(
+        rail.top - readout.bottom,
+        'by the gap the rail gives it, which is a hook now',
+      ).to.be.at.least(8);
       expect(middleOf(readoutOf(el)!)[0], 'and is centred over the knob').to.be.closeTo(knob, 1);
+    });
+
+    it('should draw a tail under the bubble that points at the knob', async () => {
+      const el = await fixture<BkSlider>(html`<bk-slider tooltip="always" value="40"></bk-slider>`);
+      const tail = getComputedStyle(readoutOf(el)!, '::after');
+
+      expect(tail.content, 'a tail exists').to.not.equal('none');
+      expect(tail.backgroundColor, 'and it is the same inverse surface').to.equal(
+        await colorOf('var(--bk-bg-inverse)'),
+      );
+      expect(tail.transform, 'drawn as a square turned on its corner').to.contain('matrix');
+      expect(tail.insetBlockEnd, 'hanging off the bubble towards the rail').to.equal('-2px');
+
+      const vertical = await fixture<BkSlider>(
+        html`<bk-slider tooltip="always" value="40" orientation="vertical"></bk-slider>`,
+      );
+      const side = getComputedStyle(readoutOf(vertical)!, '::after');
+
+      expect(
+        side.insetInlineEnd,
+        'and on the vertical run it points sideways, at the rail beside it',
+      ).to.equal('-2px');
     });
 
     it('should keep the readout off the label row', async () => {

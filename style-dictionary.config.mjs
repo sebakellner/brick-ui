@@ -46,6 +46,8 @@ const hooks = {
   sliderVariantRadius: '--bk-slider-variant-radius',
   sliderVariantLength: '--bk-slider-variant-length',
   sliderVariantHaloSize: '--bk-slider-variant-halo-size',
+  sliderReadoutGap: '--bk-slider-readout-gap',
+  sliderVariantReadoutGap: '--bk-slider-variant-readout-gap',
   sliderVariantTickSize: '--bk-slider-variant-tick-size',
   buttonVariantBg: '--bk-button-variant-bg',
   buttonVariantBgHover: '--bk-button-variant-bg-hover',

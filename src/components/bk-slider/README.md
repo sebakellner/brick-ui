@@ -114,6 +114,7 @@ pseudo-element, so no `part` reaches it — see "Limitations".
 | `--bk-slider-radius`       | the corner radius of the track and of the run (defaults to `--bk-radius-lg`)                                           |
 | `--bk-slider-length`       | the length of a vertical slider, which is the rail's inline span in that orientation (defaults to `--bk-space-4` × 15) |
 | `--bk-slider-halo-size`    | the translucent halo the knob draws under the pointer (defaults to `--bk-space-2`)                                     |
+| `--bk-slider-readout-gap`  | how far the readout floats off the knob, tail included (defaults to `--bk-space-2`)                                    |
 | `--bk-slider-tick-size`    | the width of one tick on the rail; the mark spans the rail's height (defaults to `--bk-border-width` × 2, so 2px)      |
 
 Everything else the slider paints is a shared role or base token: the track is
@@ -279,7 +280,10 @@ reads `value-text` when there is one and the value otherwise, and it is painted 
 has to read over whatever it lands on, not only over the page it started on. That is 19.2:1
 between the two, and 19.2:1 and 17.0:1 against the page in the two themes, so no border is
 needed to make its shape visible. The pair is the one a toast or a snackbar would use,
-which is why it is a role and not a control token.
+which is why it is a role and not a control token. A square turned on its corner gives the
+bubble a tail: it hangs off the bottom in the horizontal run and off the side that faces the
+rail in the vertical one, and `--bk-slider-readout-gap` decides how far the whole thing
+floats off the knob.
 
 That is the field's split: Material Web shows it only while the handle is activated, Ant
 Design and Spectrum on hover or focus, Shoelace on focus or drag, MUI on hover or focus

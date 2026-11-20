@@ -78,6 +78,7 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         --bk-slider-variant-radius: var(--bk-radius-lg);
         --bk-slider-variant-length: calc(var(--bk-space-4) * 15);
         --bk-slider-variant-halo-size: var(--bk-space-2);
+        --bk-slider-variant-readout-gap: var(--bk-space-2);
         --bk-slider-variant-tick-size: calc(var(--bk-border-width) * 2);
       }
 
@@ -154,19 +155,45 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         transition: opacity var(--bk-transition);
       }
 
+      .readout::after {
+        content: '';
+        position: absolute;
+        inline-size: var(--bk-space-1);
+        block-size: var(--bk-space-1);
+        background: var(--bk-bg-inverse);
+        transform: rotate(45deg);
+      }
+
       :host(:not([orientation='vertical'])) .readout {
-        margin-block-end: var(--bk-space-1);
+        margin-block-end: calc(
+          var(--bk-slider-readout-gap, var(--bk-slider-variant-readout-gap)) + var(--bk-space-1) / 2
+        );
+      }
+
+      :host(:not([orientation='vertical'])) .readout::after {
+        inset-block-end: calc(var(--bk-space-1) / -2);
+        inset-inline-start: 50%;
+        margin-inline-start: calc(var(--bk-space-1) / -2);
       }
 
       :host([orientation='vertical']) .readout {
-        margin-inline-end: var(--bk-space-1);
+        margin-inline-end: calc(
+          var(--bk-slider-readout-gap, var(--bk-slider-variant-readout-gap)) + var(--bk-space-1) / 2
+        );
+      }
+
+      :host([orientation='vertical']) .readout::after {
+        inset-inline-end: calc(var(--bk-space-1) / -2);
+        inset-block-start: 50%;
+        margin-block-start: calc(var(--bk-space-1) / -2);
       }
 
       :host([orientation='horizontal'][tooltip='always']) .rail,
       :host([orientation='horizontal'][tooltip='hover']) .rail {
         margin-block-start: calc(
-          var(--bk-font-size-sm) * var(--bk-line-height-md) + var(--bk-space-1) * 2 +
-            var(--bk-border-width) * 2
+          var(--bk-font-size-sm) * var(--bk-line-height-md) + var(--bk-space-1) +
+            var(--bk-slider-readout-gap, var(--bk-slider-variant-readout-gap)) + var(--bk-space-1) /
+            2
         );
       }
 
