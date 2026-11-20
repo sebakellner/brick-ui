@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { formattedVariables } from 'style-dictionary/utils';
 import { paths, requireRoots } from '../../scripts/roots.mjs';
 
@@ -73,10 +74,18 @@ const camel = (path) =>
     .map((part, i) => (i === 0 ? part : part[0].toUpperCase() + part.slice(1)))
     .join('');
 
-const THEMED = (token) => token.path[0] === 'role-light' || token.path[0] === 'role-dark';
+/* The theme is a file, not a name segment: both role files declare the same `role` group, the
+ * build reads the light one, and the dark platforms replace it through a preprocessor. A
+ * Resolver would say this without the swap; Style Dictionary 5.8.0 has none. */
+const BASE = [`${paths.tokensJson}/base/*.json`, `${paths.tokensJson}/component/*.json`];
+const LIGHT = [...BASE, `${paths.tokensJson}/role/light.json`];
+const DARK_ROLE = JSON.parse(readFileSync(`${paths.tokensJson}/role/dark.json`, 'utf8')).role;
 
-const platform = (files, transforms = []) => ({
+const THEMED = (token) => token.path[0] === 'role';
+
+const platform = (files, { transforms = [], preprocessors = [] } = {}) => ({
   transforms: [...TRANSFORMS, ...transforms],
+  preprocessors,
   prefix: 'brikka',
   buildPath: `${paths.tokensCss}/`,
   files,
@@ -87,11 +96,14 @@ const DARK_ROLES = ':where([data-theme="dark"])';
 const DARK_ROLES_AUTO = ':where(:root:not([data-theme]))';
 
 export default {
-  source: [`${paths.tokensJson}/**/*.json`],
+  source: LIGHT,
   usesDtcg: true,
   hooks: {
+    preprocessors: {
+      'theme/dark': (tokens) => ({ ...tokens, role: DARK_ROLE }),
+    },
     transforms: {
-      'name/strip-theme': {
+      'name/strip-role': {
         type: 'name',
         filter: THEMED,
         transform: (token) => `brikka-${token.path.slice(1).join('-')}`,
@@ -145,20 +157,19 @@ export default {
   platforms: {
     space: platform([cssFile('space.css', only('space'))]),
     rounded: platform([cssFile('rounded.css', only('radius'))]),
-    color: platform(
-      [cssFile('color.css', only('palette', 'role-light'), LIGHT_ROLES)],
-      ['name/strip-theme'],
-    ),
-    colorDark: platform(
-      [cssFile('color.dark.css', only('role-dark'), DARK_ROLES)],
-      ['name/strip-theme'],
-    ),
+    color: platform([cssFile('color.css', only('palette', 'role'), LIGHT_ROLES)], {
+      transforms: ['name/strip-role'],
+    }),
+    colorDark: platform([cssFile('color.dark.css', only('role'), DARK_ROLES)], {
+      transforms: ['name/strip-role'],
+      preprocessors: ['theme/dark'],
+    }),
     colorDarkAuto: platform(
       [
         {
           destination: 'color.dark.media.css',
           format: 'css/variables-in-media',
-          filter: only('role-dark'),
+          filter: only('role'),
           options: {
             selector: DARK_ROLES_AUTO,
             outputReferences: true,
@@ -167,14 +178,14 @@ export default {
           },
         },
       ],
-      ['name/strip-theme'],
+      { transforms: ['name/strip-role'], preprocessors: ['theme/dark'] },
     ),
     control: platform([cssFile('control.css', only('button'))]),
     typography: platform([
       cssFile('typography.css', only('font', 'font-size', 'font-weight', 'line-height')),
     ]),
     typescript: {
-      transforms: [...TRANSFORMS, 'name/strip-theme'],
+      transforms: [...TRANSFORMS, 'name/strip-role'],
       prefix: 'brikka',
       buildPath: `${paths.tokensSrc}/`,
       files: [{ destination: 'tokens.generated.ts', format: 'typescript/token-names' }],
