@@ -119,15 +119,14 @@ pseudo-element, so no `part` reaches it — see "Limitations".
 Everything else the slider paints is a shared role or base token: the track is
 `--bk-bg-surface-strong`, the run is `--bk-bg-accent`, the readout is the
 `--bk-bg-inverse`/`--bk-text-inverse` pair, and the focus ring is `--bk-focus-ring`. The
-ticks are `--bk-bg-surface` on the rail — 4.80:1 against the
-light track and 6.93:1 against the dark one — so a mark reads as a notch in it. The mark
-is a **division and not a dot**: two pixels across and the rail's full height, which is how
-Material paints its ticks. A dot on a four-pixel rail reads as a hole punched in the track,
-and a tone close to the rail would read as almost nothing, because the rail is already a mid
-tone in both themes. The
-readout is a surface too: `--bk-bg-surface` with `--bk-text-default` on it and a
-`--bk-border-default` edge, which reads 17.49:1 of text in the light theme and 16.03:1
-in the dark one. The **track never answers the pointer**: it is not a button, and
+ticks are `--bk-bg-surface` on the rail — 4.80:1 against the light track and 6.93:1
+against the dark one — so a mark reads as a notch in it. The mark is a **division and not a
+dot**: two pixels across and the rail's full height, which is the shape Spectrum gives its
+ticks. The field is split on this — Material and MUI draw a two-pixel dot inside the track,
+Ant Design an eight-pixel bead that overlaps it — and a dot inside a four-pixel rail reads as
+a hole punched in the track. A tone close to the rail is not the answer either: the rail is
+already a mid tone in both themes, so a track-family tone measures 1.26:1 in the light theme
+and 1.60:1 in the dark one. The **track never answers the pointer**: it is not a button, and
 Material, Shoelace and Spectrum all leave it alone on hover. The thumb is the **run
 colour** — `--bk-bg-accent` — with a one-pixel `--bk-border-on-accent` edge, because a
 knob painted a separate colour reads as a second object rather than as the end of the
