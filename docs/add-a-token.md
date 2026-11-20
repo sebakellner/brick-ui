@@ -21,9 +21,9 @@ the three layers are not familiar; the rules are in
    path you write is the public name. Choose it as carefully as a function name
    in an API.
 
-2. **Add it to the group's JSON file.** `tokens/component/control.json` for a
-   control token, `tokens/base/color.json` for a palette entry,
-   `tokens/role/light.json` for a semantic role. Point it at a palette entry, or
+2. **Add it to the group's JSON file.** `packages/styles/tokens/component/control.json` for a
+   control token, `packages/styles/tokens/base/color.json` for a palette entry,
+   `packages/styles/tokens/role/light.json` for a semantic role. Point it at a palette entry, or
    write the literal — values live only here.
 
 3. **Register the group, if it is new.** `packages/styles/style-dictionary.config.mjs` builds one

@@ -18,15 +18,15 @@ the arrow, and the generated CSS is never edited by hand.
 
 ## Layers
 
-| Layer     | Lives in                                                              | Answers                                            | Example                        |
-| --------- | --------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------ |
-| Primitive | `tokens/base/color.json` → `palette.*`                                | what colors exist                                  | `--bk-palette-blue-600`        |
-| Semantic  | `tokens/role/light.json` → `bg.*`, `text.*`, `border.*`, `focus-ring` | roles read directly by a component                 | `--bk-text-danger`             |
-| Control   | `tokens/component/control.json` → `<component>.*`                     | what one control paints, when no role can carry it | `--bk-button-disabled-opacity` |
+| Layer     | Lives in                                                                              | Answers                                            | Example                        |
+| --------- | ------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------ |
+| Primitive | `packages/styles/tokens/base/color.json` → `palette.*`                                | what colors exist                                  | `--bk-palette-blue-600`        |
+| Semantic  | `packages/styles/tokens/role/light.json` → `bg.*`, `text.*`, `border.*`, `focus-ring` | roles read directly by a component                 | `--bk-text-danger`             |
+| Control   | `packages/styles/tokens/component/control.json` → `<component>.*`                     | what one control paints, when no role can carry it | `--bk-button-disabled-opacity` |
 
 The semantic and control layers are **peers, not a stack**: control tokens alias
-the palette, and the five semantic roles are read by components directly. Nothing
-points at a control token. See R2 in
+the palette, and every semantic role is read by a component directly. Nothing points
+at a control token. See R2 in
 [conventions-tokens.md](conventions-tokens.md).
 
 ## Invariants
@@ -72,16 +72,19 @@ not have to reopen the question.
 ## Where things live
 
 ```
-tokens/base/           primitives: palette, space, radius, typography, structure
-tokens/role/light.json semantic roles, one file per theme
-tokens/component/      what one component paints, one file per component
-packages/web-components/src/components/shared/form-control/  the contract every field composes: mixins, controllers, styles
-packages/web-components/src/components/bk-*/   element, stories, Storybook docs page, test/, README
-packages/styles/src/theme.css   imports the generated token files; the consumer entry point
-src/index.ts           public entry point
-packages/test-utils/src/  token resolver (colorOf, opacityOf), contrast assertions, theme switch, pointer (hover, clickAt)
-packages/web-components/test/integration/  where a suite the test composes from two or more widgets goes, one folder per assembly
-scripts/               check-token-usage.mjs
+packages/styles/tokens/base/            primitives: palette, space, radius, typography, structure
+packages/styles/tokens/role/light.json  semantic roles, one file per theme
+packages/styles/tokens/component/       what one component paints, one file per component
+packages/styles/src/tokens/             generated: the custom properties a page paints with
+packages/styles/src/tokens.css          every generated layer, and no decision about the page
+packages/styles/src/theme.css           tokens.css plus `color-scheme` — what a page loads
+packages/web-components/src/components/shared/form-control/  the contract every field composes
+packages/web-components/src/components/bk-*/  element, stories, docs page, test/, README
+packages/web-components/src/index.ts     the classes, registering nothing
+packages/web-components/src/register.ts  the one module that registers them all
+packages/test-utils/src/                 token resolver, contrast, pointer, form, a11y, theme
+packages/web-components/test/integration/  suites that compose several widgets of the package
+scripts/                                 the four checks
 ```
 
 One folder per component, holding everything about it including its docs. A
