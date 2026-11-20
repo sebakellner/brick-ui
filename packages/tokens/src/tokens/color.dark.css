@@ -1,4 +1,4 @@
-:where([data-theme='dark']) {
+:where([data-theme="dark"]) {
   --bk-focus-halo: rgb(96 165 250 / 0.24);
   --bk-bg-inverse: var(--bk-palette-neutral-100);
   --bk-bg-surface: var(--bk-palette-neutral-900);
