@@ -1,8 +1,11 @@
 import { litPlugin } from '@custom-elements-manifest/analyzer/src/features/framework-plugins/lit/lit.js';
+import { paths, requireRoots } from './scripts/roots.mjs';
+
+requireRoots('components', 'src');
 
 export default {
-  globs: ['src/components/**/*.ts'],
+  globs: [`${paths.components}/**/*.ts`],
   exclude: ['**/test/**', '**/*.stories.ts'],
-  outdir: 'src',
+  outdir: paths.src,
   plugins: litPlugin(),
 };

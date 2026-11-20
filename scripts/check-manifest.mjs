@@ -1,11 +1,12 @@
 import { readFile } from 'node:fs/promises';
+import { paths, requireRoots } from './roots.mjs';
 
 /* The gate generates the manifest twice and compares, which proves stability. This proves
  * content: the analyzer parses decorators and JSDoc tags that fail silently — a misspelled
  * `@slot` simply does not appear — so the names below are the canaries. */
-const manifest = JSON.parse(
-  await readFile(new URL('../src/custom-elements.json', import.meta.url), 'utf8'),
-);
+requireRoots('manifest');
+
+const manifest = JSON.parse(await readFile(paths.manifest, 'utf8'));
 const declarations = manifest.modules.flatMap((module) => module.declarations ?? []);
 const byTag = new Map(declarations.filter((d) => d.tagName).map((d) => [d.tagName, d]));
 const slotName = (slot) => (slot.name && slot.name.length ? slot.name : '(default)');

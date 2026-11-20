@@ -1,17 +1,20 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { paths, requireRoots } from './roots.mjs';
 
-const TOKENS_CSS_DIR = 'src/styles/tokens';
-const COLOR_CSS = join(TOKENS_CSS_DIR, 'color.css');
-const COMPONENTS_DIR = 'src/components';
-const HOOKS_SOURCE = 'style-dictionary.config.mjs';
+requireRoots('stylesTokens', 'colorCss', 'components', 'hooks', 'storybook');
+
+const TOKENS_CSS_DIR = paths.stylesTokens;
+const COLOR_CSS = paths.colorCss;
+const COMPONENTS_DIR = paths.components;
+const HOOKS_SOURCE = paths.hooks;
 
 const NAMES = /^\s*(--bk-[a-z0-9-]+):/gm;
 const REFERENCES = /(--bk-[a-z0-9-]+)/g;
 const DECLARATION = /^\s*(--[a-z0-9-]+|[a-z-]+)\s*:/;
 const RULE_BOUNDARY = /[{}]/;
 const SUPPORT_FILE = /\.(test|stories)\.ts$/;
-const STORYBOOK_DIR = '.storybook';
+const STORYBOOK_DIR = paths.storybook;
 const STORYBOOK_FILE = /\.(css|ts|html)$/;
 const PRIMITIVE = '--bk-palette-';
 
