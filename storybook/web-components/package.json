@@ -9,7 +9,7 @@
     "build": "storybook build -o ../../storybook-static"
   },
   "dependencies": {
-    "@brikka-ui/styles": "workspace:*",
+    "@brikka-ui/tokens": "workspace:*",
     "@brikka-ui/web-components": "workspace:*"
   },
   "devDependencies": {

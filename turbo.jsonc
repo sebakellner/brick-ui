@@ -13,7 +13,7 @@
   "tasks": {
     "build:tokens": {
       "inputs": ["tokens/**", "style-dictionary.config.mjs", "scripts/roots.mjs"],
-      "outputs": ["src/styles/tokens/**", "src/styles/tokens.generated.ts"],
+      "outputs": ["src/tokens/**", "src/tokens.generated.ts"],
     },
     "build:manifest": {
       "inputs": [

@@ -13,8 +13,8 @@ reasoning all still hold.
 ## Context
 
 [0024](0024-publish-under-the-scope-the-kit-owns.md) decided that
-`@brikka-ui/web-components` and `@brikka-ui/styles` carry **one version and move
-together**, because `styles` is the peer of the elements. It then wrote the debt
+`@brikka-ui/web-components` and `@brikka-ui/tokens` carry **one version and move
+together**, because `tokens` is the peer of the elements. It then wrote the debt
 down honestly: _the version is set by hand, and nothing enforces that the two stay
 equal._ The failure that debt allows is a published peer range pointing at a
 version the consumer cannot resolve — loud at install time, but only after the
@@ -41,7 +41,7 @@ Chakra's shape, not Radix's.
 group.**
 
 ```
-fixed: [["@brikka-ui/web-components", "@brikka-ui/styles"]]
+fixed: [["@brikka-ui/web-components", "@brikka-ui/tokens"]]
 access: "public"
 baseBranch: "main"
 ```

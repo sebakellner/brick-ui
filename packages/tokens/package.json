@@ -1,7 +1,7 @@
 {
-  "name": "@brikka-ui/styles",
+  "name": "@brikka-ui/tokens",
   "version": "0.1.0",
-  "description": "Brikka's styles: the token source, the custom properties it generates, and the theme a page loads",
+  "description": "Brikka's design system: the token source, the custom properties it generates, and the theme a page loads",
   "license": "MIT",
   "type": "module",
   "publishConfig": {
@@ -10,7 +10,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sebakellner/brikka.git",
-    "directory": "packages/styles"
+    "directory": "packages/tokens"
   },
   "homepage": "https://sebakellner.github.io/brikka/",
   "bugs": "https://github.com/sebakellner/brikka/issues",

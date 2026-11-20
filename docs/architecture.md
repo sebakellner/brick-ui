@@ -6,9 +6,9 @@ rules live in the conventions; the reasoning lives in the [ADRs](adr/).
 ## The contract in one screen
 
 ```
-packages/styles/tokens/*.json ──build:tokens──> packages/styles/src/tokens/*.css
+packages/tokens/tokens/*.json ──build:tokens──> packages/tokens/src/tokens/*.css
                                                         │
-                                                        └──> packages/styles/src/theme.css
+                                                        └──> packages/tokens/src/theme.css
                                                                        │
                              components read it as var(--brikka-*) and carry no fallback
 ```
@@ -20,9 +20,9 @@ the arrow, and the generated CSS is never edited by hand.
 
 | Layer     | Lives in                                                                              | Answers                                            | Example                            |
 | --------- | ------------------------------------------------------------------------------------- | -------------------------------------------------- | ---------------------------------- |
-| Primitive | `packages/styles/tokens/base/color.json` → `palette.*`                                | what colors exist                                  | `--brikka-palette-blue-600`        |
-| Semantic  | `packages/styles/tokens/role/light.json` → `bg.*`, `text.*`, `border.*`, `focus-ring` | roles read directly by a component                 | `--brikka-text-danger`             |
-| Control   | `packages/styles/tokens/component/control.json` → `<component>.*`                     | what one control paints, when no role can carry it | `--brikka-button-disabled-opacity` |
+| Primitive | `packages/tokens/tokens/base/color.json` → `palette.*`                                | what colors exist                                  | `--brikka-palette-blue-600`        |
+| Semantic  | `packages/tokens/tokens/role/light.json` → `bg.*`, `text.*`, `border.*`, `focus-ring` | roles read directly by a component                 | `--brikka-text-danger`             |
+| Control   | `packages/tokens/tokens/component/control.json` → `<component>.*`                     | what one control paints, when no role can carry it | `--brikka-button-disabled-opacity` |
 
 The semantic and control layers are **peers, not a stack**: control tokens alias
 the palette, and every semantic role is read by a component directly. Nothing points
@@ -67,17 +67,17 @@ not have to reopen the question.
 | Visual regression testing              | the suite asserts computed styles, not pixels                                                                                                                                        | a layout bug escapes it                                         |
 | A second browser in the suite          | [0005](adr/0005-test-in-chrome-only.md)                                                                                                                                              | a shadow-DOM or `::part` defect is reported from another engine |
 | A different license                    | MIT, in `LICENSE`                                                                                                                                                                    | never, unless relicensing                                       |
-| Typed token names inside component CSS | `TokenName` and `HookName` are generated in `packages/styles/src/tokens.generated.ts`, but the `css` template keeps plain names — see [conventions-code.md](conventions-code.md), C4 | the typing stops costing readability                            |
+| Typed token names inside component CSS | `TokenName` and `HookName` are generated in `packages/tokens/src/tokens.generated.ts`, but the `css` template keeps plain names — see [conventions-code.md](conventions-code.md), C4 | the typing stops costing readability                            |
 
 ## Where things live
 
 ```
-packages/styles/tokens/base/            primitives: palette, space, radius, typography, structure
-packages/styles/tokens/role/light.json  semantic roles, one file per theme
-packages/styles/tokens/component/       what one component paints, one file per component
-packages/styles/src/tokens/             generated: the custom properties a page paints with
-packages/styles/src/tokens.css          every generated layer, and no decision about the page
-packages/styles/src/theme.css           tokens.css plus `color-scheme` — what a page loads
+packages/tokens/tokens/base/            primitives: palette, space, radius, typography, structure
+packages/tokens/tokens/role/light.json  semantic roles, one file per theme
+packages/tokens/tokens/component/       what one component paints, one file per component
+packages/tokens/src/tokens/             generated: the custom properties a page paints with
+packages/tokens/src/tokens.css          every generated layer, and no decision about the page
+packages/tokens/src/theme.css           tokens.css plus `color-scheme` — what a page loads
 packages/web-components/src/components/shared/form-control/  the contract every field composes
 packages/web-components/src/components/brikka-*/  element, stories, docs page, test/, README
 packages/web-components/src/index.ts     the classes, registering nothing

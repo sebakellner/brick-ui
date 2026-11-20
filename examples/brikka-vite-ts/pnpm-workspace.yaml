@@ -3,6 +3,6 @@
 packages: []
 
 # In a published world the registry satisfies the peer range `@brikka-ui/web-components` declares on
-# `@brikka-ui/styles`. Here the tarball does, and no registry is reachable.
+# `@brikka-ui/tokens`. Here the tarball does, and no registry is reachable.
 overrides:
-  '@brikka-ui/styles': 'file:./.pack/brikka-ui-styles-0.1.0.tgz'
+  '@brikka-ui/tokens': 'file:./.pack/brikka-ui-tokens-0.1.0.tgz'

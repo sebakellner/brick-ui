@@ -92,7 +92,7 @@ the other.
   down is a limitation someone can fix; one kept quiet is a bug report six months
   late.
 - If the change touches a package that ships, add a changeset: `pnpm changeset`.
-  `@brikka-ui/web-components` and `@brikka-ui/styles` are a `fixed` group, so
+  `@brikka-ui/web-components` and `@brikka-ui/tokens` are a `fixed` group, so
   declaring one of them bumps both — forgetting the other is no longer possible.
   `pnpm changeset:version` applies the bumps and writes the changelogs. Nothing here
   publishes.

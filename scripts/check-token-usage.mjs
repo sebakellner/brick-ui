@@ -2,9 +2,9 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { paths, requireRoots } from './roots.mjs';
 
-requireRoots('stylesTokens', 'colorCss', 'components', 'hooks', 'storybook');
+requireRoots('tokensCss', 'colorCss', 'components', 'hooks', 'storybook');
 
-const TOKENS_CSS_DIR = paths.stylesTokens;
+const TOKENS_CSS_DIR = paths.tokensCss;
 const COLOR_CSS = paths.colorCss;
 const COMPONENTS_DIR = paths.components;
 const HOOKS_SOURCE = paths.hooks;

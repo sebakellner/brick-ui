@@ -1,4 +1,4 @@
-import '@brikka-ui/styles/theme.css';
+import '@brikka-ui/tokens/theme.css';
 import '@brikka-ui/web-components/register.js';
 
 const output = document.querySelector('#output');

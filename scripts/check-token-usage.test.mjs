@@ -31,13 +31,13 @@ const build = ({ component = '', storybook = PARAMETERS } = {}) => {
     writeFileSync(target, contents);
   };
 
-  write(`packages/styles/src/tokens/hooks.css`, `:root {\n  ${ROLE}: #0066ff;\n}\n`);
+  write(`packages/tokens/src/tokens/hooks.css`, `:root {\n  ${ROLE}: #0066ff;\n}\n`);
   write(
-    'packages/styles/src/tokens/color.css',
+    'packages/tokens/src/tokens/color.css',
     `:where(:root) {\n  --brikka-palette-blue-600: #0066ff;\n  ${ROLE}: var(--brikka-palette-blue-600);\n}\n`,
   );
   write(
-    'packages/styles/style-dictionary.config.mjs',
+    'packages/tokens/style-dictionary.config.mjs',
     `export default { hooks: { accent: '${ROLE}' } };\n`,
   );
   write('packages/web-components/src/components/probe/probe.ts', component);

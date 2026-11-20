@@ -20,13 +20,13 @@ const at = (...parts) => join(root, ...parts);
 export const paths = {
   src: at('packages', 'web-components', 'src'),
   components: at('packages', 'web-components', 'src', 'components'),
-  stylesTokens: at('packages', 'styles', 'src', 'tokens'),
-  colorCss: at('packages', 'styles', 'src', 'tokens', 'color.css'),
-  hooks: at('packages', 'styles', 'style-dictionary.config.mjs'),
+  tokensCss: at('packages', 'tokens', 'src', 'tokens'),
+  colorCss: at('packages', 'tokens', 'src', 'tokens', 'color.css'),
+  hooks: at('packages', 'tokens', 'style-dictionary.config.mjs'),
   storybook: at('storybook', 'web-components', '.storybook'),
-  tokensJson: at('packages', 'styles', 'tokens'),
+  tokensJson: at('packages', 'tokens', 'tokens'),
   manifest: at('packages', 'web-components', 'src', 'custom-elements.json'),
-  styles: at('packages', 'styles', 'src'),
+  tokensSrc: at('packages', 'tokens', 'src'),
 };
 
 export class MissingRoot extends Error {

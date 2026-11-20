@@ -1,7 +1,7 @@
 import { formattedVariables } from 'style-dictionary/utils';
 import { paths, requireRoots } from '../../scripts/roots.mjs';
 
-requireRoots('tokensJson', 'styles');
+requireRoots('tokensJson', 'tokensSrc');
 
 const only =
   (...groups) =>
@@ -70,7 +70,7 @@ const platform = (files, transforms = []) => ({
   transformGroup: 'css',
   transforms,
   prefix: 'brikka',
-  buildPath: `${paths.stylesTokens}/`,
+  buildPath: `${paths.tokensCss}/`,
   files,
 });
 
@@ -165,7 +165,7 @@ export default {
       transformGroup: 'css',
       transforms: ['name/strip-theme'],
       prefix: 'brikka',
-      buildPath: `${paths.styles}/`,
+      buildPath: `${paths.tokensSrc}/`,
       files: [{ destination: 'tokens.generated.ts', format: 'typescript/token-names' }],
     },
     base: platform([
