@@ -217,7 +217,7 @@ importers:
     devDependencies:
       '@brick/test-utils':
         specifier: workspace:*
-        version: link:internal/test-utils
+        version: link:packages/test-utils
       '@custom-elements-manifest/analyzer':
         specifier: ^0.11.0
         version: 0.11.0
@@ -270,7 +270,7 @@ importers:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)
 
-  internal/test-utils:
+  packages/test-utils:
     devDependencies:
       '@open-wc/testing':
         specifier: ^5.0.0
@@ -295,7 +295,7 @@ importers:
     devDependencies:
       '@brick/test-utils':
         specifier: workspace:*
-        version: link:../../internal/test-utils
+        version: link:../test-utils
 
 packages:
 

@@ -2,7 +2,7 @@
 
 The suite runs in real Chrome through Web Test Runner. `web-test-runner.config.mjs`
 picks up `src/**/*.test.ts`: a component's rule suites live in its `test/` folder, an assembly of two
-or more widgets that the test composes lives under `src/test/integration/`, and the
+or more widgets that the test composes lives under `packages/web-components/test/integration/`, and the
 `sendMouse` plugin is what the hover and focus tests need. One engine is a decision, not
 an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
 
@@ -21,8 +21,13 @@ the kit's vocabulary. The line is **who decides the composition**:
 | Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                                                   |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------- |
 | **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `packages/web-components/src/components/bk-x/test/bk-x.test.ts`, `describe` per concern |
-| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `src/test/integration/<assembly>/<rule>.test.ts`                                        |
+| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `packages/web-components/test/integration/<assembly>/<rule>.test.ts`                    |
 | **e2e**         | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/`, Playwright                                                                      |
+
+A suite that needs **two packages at once** has no package to live in: `theming.test.ts`
+reads the theme `@brick/tokens` publishes through a component `@brick/web-components`
+provides, and `browser.test.ts` asserts the runner itself. Both stay in the root `test/`,
+which is the same place a future e2e suite against the packed artifact belongs.
 
 **Where exactly the line falls: the level names whose contract the test writes down, not
 how many elements sit in the fixture.** That is the test of every doubtful case, and it
@@ -55,7 +60,7 @@ participation`, `error channel`, `label state`) instead of `.form` and `.error` 
 one file per subject is what Shoelace and Material Web do, and a concern is a paragraph
 of a suite, not a module. Integration gets its own directory, the way Spectrum keeps its
 accessibility specs apart from its unit tests and the runner itself separates kinds, and
-the location is what makes the level legible: a failure under `src/test/integration/` is
+the location is what makes the level legible: a failure under `packages/web-components/test/integration/` is
 never a component's regression.
 
 Three rules make the levels useful instead of decorative:
@@ -66,7 +71,7 @@ Three rules make the levels useful instead of decorative:
   widgets, focus moving to the next control.
 - **Share the mechanics, not the rules.** Mounting a field with its atoms, typing a
   value, submitting and settling are the same four lines in every suite, so they belong
-  in `src/test/helpers/`. A mechanic that has already been copied into more than one
+  in `packages/test-utils/src/`. A mechanic that has already been copied into more than one
   suite moves there — a zero-delay settle copied into several suites is how a suite
   samples a half-rendered state and reports a failure that names nothing. The rules stay
   with the component that owns them: a shared rule suite reports a failure without saying
@@ -86,7 +91,7 @@ runs its Playwright suite as a separate step after the unit suite, not as a bigg
 it does not re-assert a component's rules: a computed style that a unit test already pins is
 not more true from a Playwright page.
 
-The placement rule worth stating — a suite under `src/test/integration/` composes at
+The placement rule worth stating — a suite under `packages/web-components/test/integration/` composes at
 least two components, or the folder becomes a dumping ground — is enforced by **review,
 not by a script**. It is a _positive_ rule, which lint cannot express even with ESLint
 installed (`no-restricted-imports` forbids, it does not count), and a gate whose failure
@@ -174,7 +179,7 @@ next one's colours.
 ## T7. The runner claims a pointer, and the suite proves it
 
 **Rule.** `web-test-runner.config.mjs` launches the browser with
-`--blink-settings=primaryHoverType=2`, and `src/test/browser.test.ts` asserts that
+`--blink-settings=primaryHoverType=2`, and `test/browser.test.ts` asserts that
 `matchMedia('(hover: hover)')` is true. A hover test that skips is a hover test that
 proves nothing, so the environment is a test like any other.
 
@@ -194,7 +199,7 @@ the flag, so a test that resizes the viewport must not expect hover afterwards. 
 the flag is Blink-only: on an engine with no pointer the hover tests still declare
 `this.skip()` rather than assert anything.
 
-**Enforced by.** `src/test/browser.test.ts`, plus the enabled-sibling control inside
+**Enforced by.** `test/browser.test.ts`, plus the enabled-sibling control inside
 each hover test: the assertion cannot pass unless a hovered sibling really changed.
 
 ### What a case asserts
@@ -262,7 +267,7 @@ expect(Boolean(innerInput(el)), 'the inner control is there').to.equal(true);
 **Don't** — a case whose only assertion is that nothing changed, in a suite where nothing
 proves something ever rendered.
 
-**Enforced by.** Review; `src/test/helpers/a11y.test.ts` pins what an audit reports with
+**Enforced by.** Review; `packages/test-utils/src/a11y.test.ts` pins what an audit reports with
 nothing to audit.
 
 ### Traps that hide a regression
@@ -506,7 +511,7 @@ multiple tests for one feature into describe blocks".
 [conventions-accessibility.md](conventions-accessibility.md): the association, the reference
 that disappears with its content, the disabled state, the live region that stays, and every
 contrast pair A2 owes. The audit is one more case per theme: `await expectNoViolations(el)`
-from `src/test/helpers/a11y.ts`, running `wcag2a`, `wcag2aa` and `best-practice`. Neither half
+from `packages/test-utils/src/a11y.ts`, running `wcag2a`, `wcag2aa` and `best-practice`. Neither half
 replaces the other — the audit cannot tell "renders nothing" from "clean", and no case can
 see the wiring nobody thought to name.
 
@@ -528,7 +533,7 @@ runner page paints `body` with `--bk-bg-surface`, and the gate's own suite prove
 **Don't** — a green audit read as proof that the component rendered, or a contrast rule
 skipped because axe runs.
 
-**Enforced by.** `src/test/helpers/a11y.test.ts` proves the gate fails on a violation and
+**Enforced by.** `packages/test-utils/src/a11y.test.ts` proves the gate fails on a violation and
 passes an empty fixture; every suite whose subject paints runs it in both themes, and the
 suites of atoms that do not paint carry T16 instead.
 

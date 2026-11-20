@@ -4,12 +4,12 @@
  * asked next — and the count is the half a boolean flag cannot say. */
 
 import { expect, fixture, html } from '@open-wc/testing';
-import '../../../packages/web-components/src/components/bk-input/define.js';
-import '../../../packages/web-components/src/components/bk-checkbox/define.js';
-import '../../../packages/web-components/src/components/bk-native-select/define.js';
-import '../../../packages/web-components/src/components/bk-field/define.js';
-import type { BkInput } from '../../../packages/web-components/src/components/bk-input/bk-input.js';
-import type { BkNativeSelect } from '../../../packages/web-components/src/components/bk-native-select/bk-native-select.js';
+import '../../../src/components/bk-input/define.js';
+import '../../../src/components/bk-checkbox/define.js';
+import '../../../src/components/bk-native-select/define.js';
+import '../../../src/components/bk-field/define.js';
+import type { BkInput } from '../../../src/components/bk-input/bk-input.js';
+import type { BkNativeSelect } from '../../../src/components/bk-native-select/bk-native-select.js';
 import { labelAtom } from '@brick/test-utils/atoms.js';
 import { watchSubmit } from '@brick/test-utils/form.js';
 import { settle } from '@brick/test-utils/settle.js';
