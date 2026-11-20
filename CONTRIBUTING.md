@@ -37,7 +37,7 @@ native control inside its shadow root. A container composes `FieldRegionsControl
 and both rely on `SlottedTextController` for the one question neither can answer alone: whether
 slotted content has text. Nothing about form participation is copied:
 
-Component modules carry **no side effects**. Registration lives in a `define.ts` beside the component, guarded so a second copy of the package cannot throw, and the package entry point exports without registering. `package.json` declares `"sideEffects": ["**/define.js", "**/define.ts"]` — the compiled file a consumer's bundler reads and the source a build that reads TypeScript reads — which is what makes a bundler enforce the split instead of a test. `src/playground.ts` is the only module that registers for the dev server.
+Component modules carry **no side effects**. Registration lives in a `define.ts` beside the component, guarded so a second copy of the package cannot throw, and the package entry point exports without registering. `package.json` declares `"sideEffects": ["**/define.js", "**/define.ts"]` — the compiled file a consumer's bundler reads and the source a build that reads TypeScript reads — which is what makes a bundler enforce the split instead of a test. Nothing in the package entry registers: the stories and the docs pages register through the component's own `define.ts`, which is what a host does too.
 
 ## Setup
 
@@ -53,7 +53,6 @@ pnpm install
 
 | Command                                       | Use                                                                                                                          |
 | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm dev`                                    | the playground                                                                                                               |
 | `pnpm storybook`                              | component stories and the docs pages                                                                                         |
 | `pnpm test`                                   | the suite, in real Chromium                                                                                                  |
 | `npx playwright install --with-deps chromium` | once per machine: the browser the suite runs. Local and CI run the same build because `playwright` is pinned in the lockfile |
@@ -63,7 +62,6 @@ pnpm install
 | `pnpm check:tokens`                           | every name a component reads exists, and every semantic role is read                                                         |
 | `pnpm format`                                 | rewrite the files Prettier owns                                                                                              |
 | `pnpm format:check`                           | fail if any of them is not formatted                                                                                         |
-| `pnpm build`                                  | the bundle                                                                                                                   |
 | `pnpm build-storybook`                        | the static site                                                                                                              |
 | (CI) storybook job                            | after the build, fails if the bundle registers none of the elements the sources define                                       |
 

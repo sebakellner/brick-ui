@@ -71,7 +71,6 @@ you are about to change, and never edit an accepted ADR — supersede it.
 | `pnpm check:readmes` | every name the manifest declares is in the README, every name the README has is in the manifest, and the sections and table headers are the ones the conventions ask for |
 | `pnpm format`        | rewrite the files Prettier owns                                                                                                                                          |
 | `pnpm format:check`  | fail if any of them is not formatted                                                                                                                                     |
-| `pnpm dev`           | the playground                                                                                                                                                           |
 | `pnpm storybook`     | component stories                                                                                                                                                        |
 
 ## Change workflow

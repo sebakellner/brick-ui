@@ -67,7 +67,6 @@ Requirements: Node 26, pnpm, and Chrome for the test runner.
 ## Development
 
 ```bash
-pnpm dev            # playground
 pnpm storybook      # component stories
 pnpm build:tokens   # regenerate src/styles/tokens/*.css from tokens/*.json
 pnpm check:tokens   # validate the names components use and the roles they read
