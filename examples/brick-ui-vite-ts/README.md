@@ -35,6 +35,12 @@ only reads there:
   satisfies the peer range `@brick/web-components` declares; here the tarball does, because no
   registry is reachable.
 
+## Why there is no lockfile here
+
+Its dependencies are tarballs built by this repository, so their checksums change every time the
+packages are packed. A committed lockfile would record the bytes of one build and fail the next
+one with `ERR_PNPM_TARBALL_INTEGRITY`, which is what CI found.
+
 ## What it pins, and why
 
 `vite` and `lit` are pinned to the versions the repository builds with. A floating range resolved

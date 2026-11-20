@@ -22,3 +22,4 @@ packages/web-components/src/custom-elements.json
 examples/*/node_modules/
 examples/*/dist/
 examples/*/.pack/
+examples/*/pnpm-lock.yaml

@@ -61,7 +61,7 @@ jobs:
           (cd packages/tokens && pnpm pack --pack-destination ../../examples/brick-ui-vite-ts/.pack)
           (cd packages/web-components && pnpm pack --pack-destination ../../examples/brick-ui-vite-ts/.pack)
           cd examples/brick-ui-vite-ts
-          pnpm install
+          pnpm install --no-frozen-lockfile
           pnpm build
           grep -rq 'customElements.define' dist/assets || (echo 'the example built no element registration' && exit 1)
       - run: pnpm typecheck
