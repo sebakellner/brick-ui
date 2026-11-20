@@ -208,9 +208,9 @@ importers:
 
   .:
     dependencies:
-      '@brick/tokens':
+      '@brick/styles':
         specifier: workspace:*
-        version: link:packages/tokens
+        version: link:packages/styles
       lit:
         specifier: ^3.3.3
         version: 3.3.3
@@ -261,6 +261,8 @@ importers:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)
 
+  packages/styles: {}
+
   packages/test-utils:
     devDependencies:
       '@open-wc/testing':
@@ -273,13 +275,11 @@ importers:
         specifier: ^4.14.0
         version: 4.14.0
 
-  packages/tokens: {}
-
   packages/web-components:
     dependencies:
-      '@brick/tokens':
+      '@brick/styles':
         specifier: workspace:^
-        version: link:../tokens
+        version: link:../styles
       lit:
         specifier: ^3.3.3
         version: 3.3.3
@@ -296,9 +296,9 @@ importers:
 
   storybook/web-components:
     dependencies:
-      '@brick/tokens':
+      '@brick/styles':
         specifier: workspace:*
-        version: link:../../packages/tokens
+        version: link:../../packages/styles
       '@brick/web-components':
         specifier: workspace:*
         version: link:../../packages/web-components

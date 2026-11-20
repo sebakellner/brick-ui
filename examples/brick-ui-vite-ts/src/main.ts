@@ -1,4 +1,4 @@
-import '@brick/tokens/theme.css';
+import '@brick/styles/theme.css';
 import '@brick/web-components/register.js';
 
 const output = document.querySelector('#output');

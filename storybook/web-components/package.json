@@ -9,7 +9,7 @@
     "build": "storybook build -o ../../storybook-static"
   },
   "dependencies": {
-    "@brick/tokens": "workspace:*",
+    "@brick/styles": "workspace:*",
     "@brick/web-components": "workspace:*"
   },
   "devDependencies": {

@@ -21,7 +21,7 @@ export default {
   testRunnerHtml: (testFramework) => `<!doctype html>
 <html>
   <head>
-    <link rel="stylesheet" href="/packages/tokens/src/theme.css" />
+    <link rel="stylesheet" href="/packages/styles/src/theme.css" />
     <style>
       /* A universal transition: none !important does not reach into a shadow root —
        * measured: the component's own 0.12s survived it, and the assertion sampled an

@@ -25,7 +25,7 @@ the kit's vocabulary. The line is **who decides the composition**:
 | **e2e**         | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/`, Playwright                                                                      |
 
 A suite that needs **two packages at once** has no package to live in: `theming.test.ts`
-reads the theme `@brick/tokens` publishes through a component `@brick/web-components`
+reads the theme `@brick/styles` publishes through a component `@brick/web-components`
 provides, and `browser.test.ts` asserts the runner itself. Both stay in the root `test/`,
 which is the same place a future e2e suite against the packed artifact belongs.
 
@@ -130,7 +130,7 @@ a group changes the reading order and never the name of a rule.
 ## T1. The runner page loads the theme, once
 
 **Rule.** `web-test-runner.config.mjs` serves every suite from one page: it links
-`/packages/tokens/src/theme.css` and zeroes `--bk-transition`. A suite never loads the stylesheet
+`/packages/styles/src/theme.css` and zeroes `--bk-transition`. A suite never loads the stylesheet
 itself; when it needs the other theme it calls `setTheme('dark')` and nothing else.
 
 **Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)), so

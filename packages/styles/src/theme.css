@@ -1,12 +1,7 @@
-@import './tokens/space.css';
-@import './tokens/rounded.css';
-@import './tokens/color.css';
-@import './tokens/color.dark.css';
-@import './tokens/color.dark.media.css';
-@import './tokens/control.css';
-@import './tokens/typography.css';
-@import './tokens/base.css';
-
+/* What a page loads: the custom properties, and the `color-scheme` the browser needs so the
+ * page paints itself in the same theme the components do. Requires nothing of the components;
+ * they carry no fallback value (ADR 0002). */
+@import './tokens.css';
 /* The roles say what a component paints. The canvas is the host page's job, and
    `color-scheme` is how the host tells the browser which way to paint its own
    defaults — the page background, the scrollbars, the caret, form controls.

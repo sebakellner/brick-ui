@@ -4,5 +4,5 @@ dist/
 node_modules/
 odd/
 pnpm-lock.yaml
-packages/tokens/src/
+packages/styles/src/
 storybook-static/

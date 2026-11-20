@@ -17,7 +17,7 @@ import { root } from './roots.mjs';
  * that imports every entry point the exports promise. It runs in seconds, needs no browser, and
  * fails with the name of the entry that did not resolve. */
 
-const PACKAGES = ['tokens', 'web-components'];
+const PACKAGES = ['styles', 'web-components'];
 const problems = [];
 
 const run = (command, args, cwd) =>
@@ -107,7 +107,7 @@ try {
     `import '@brick/web-components/register.js';
 import '@brick/web-components/components/bk-slider/define.js';
 import { BkButton } from '@brick/web-components';
-import { tokens } from '@brick/tokens';
+import { tokens } from '@brick/styles';
 
 export const button: typeof BkButton = BkButton;
 export const accent: string = tokens.roleLightBgAccent;

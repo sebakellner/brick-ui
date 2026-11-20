@@ -9,10 +9,10 @@ or an unresolved peer shows up as a page that does not work.
 
 ```bash
 # from the repository root: the packages as a consumer receives them
-pnpm --filter @brick/tokens build
+pnpm --filter @brick/styles build
 pnpm --filter @brick/web-components build
 mkdir -p examples/brick-ui-vite-ts/.pack
-(cd packages/tokens && pnpm pack --pack-destination ../../examples/brick-ui-vite-ts/.pack)
+(cd packages/styles && pnpm pack --pack-destination ../../examples/brick-ui-vite-ts/.pack)
 (cd packages/web-components && pnpm pack --pack-destination ../../examples/brick-ui-vite-ts/.pack)
 
 # then the example
@@ -31,7 +31,7 @@ the source and prove nothing. Its own `pnpm-workspace.yaml` exists for two setti
 only reads there:
 
 - `packages: []` — it is a mini-workspace of one, as the Turborepo examples are.
-- an override pointing `@brick/tokens` at its tarball. In a published world the registry
+- an override pointing `@brick/styles` at its tarball. In a published world the registry
   satisfies the peer range `@brick/web-components` declares; here the tarball does, because no
   registry is reachable.
 
