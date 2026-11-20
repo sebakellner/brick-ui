@@ -1,18 +1,27 @@
 {
   "name": "@brick/web-components",
   "version": "0.1.0",
-  "private": true,
   "description": "Brick's elements: Lit custom elements with a token-driven theming contract",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./register.js": {
+      "types": "./dist/register.d.ts",
+      "default": "./dist/register.js"
+    },
+    "./components/*/define.js": "./dist/components/*/define.js"
   },
   "files": [
-    "src"
+    "dist"
   ],
   "sideEffects": [
     "**/define.js",
-    "**/define.ts"
+    "**/define.ts",
+    "**/register.js",
+    "**/register.ts"
   ],
   "dependencies": {
     "@brick/tokens": "workspace:*"
@@ -24,5 +33,10 @@
     "@brick/test-utils": "workspace:*",
     "@storybook/addon-docs": "^10.6.7",
     "@storybook/web-components-vite": "^10.6.7"
-  }
+  },
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.build.json",
+    "types": "tsc -p tsconfig.build.json"
+  },
+  "types": "./dist/index.d.ts"
 }

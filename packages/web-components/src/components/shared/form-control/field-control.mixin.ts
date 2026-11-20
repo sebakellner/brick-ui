@@ -4,7 +4,11 @@
 import type { LitElement } from 'lit';
 import type { FieldMessageFallbacks } from './field-messages.controller.js';
 import { FieldPartsController } from './field-parts.controller.js';
-import { FormControlMixin, type Constructor } from './form-control.mixin.js';
+import {
+  FormControlMixin,
+  type Constructor,
+  type FormControlInterface,
+} from './form-control.mixin.js';
 
 let instanceCount = 0;
 
@@ -13,7 +17,20 @@ let instanceCount = 0;
 const nextInstanceId = (host: LitElement): string =>
   `${host.localName || 'bk-field'}-${++instanceCount}`;
 
-export function FieldControlMixin<T extends Constructor<LitElement>>(Base: T) {
+/* The members the mixin adds, as a named type. A declaration cannot name an anonymous class
+ * with `protected` members (TS4094), so the mixin returns a constructor of this interface and
+ * the emitted types have something to point at. `FormControlMixin` has done this from the
+ * start, which is why only this one failed to emit. */
+export interface FieldControlMembers extends FormControlInterface {
+  readonly controlId: string;
+  readonly fieldParts: FieldPartsController;
+  readonly fieldError: string;
+  messageSources(): FieldMessageFallbacks;
+}
+
+export function FieldControlMixin<T extends Constructor<LitElement>>(
+  Base: T,
+): T & Constructor<FieldControlMembers> {
   class FieldControl extends FormControlMixin(Base) {
     protected readonly controlId: string = nextInstanceId(this);
 
@@ -33,5 +50,5 @@ export function FieldControlMixin<T extends Constructor<LitElement>>(Base: T) {
     }
   }
 
-  return FieldControl;
+  return FieldControl as unknown as T & Constructor<FieldControlMembers>;
 }
