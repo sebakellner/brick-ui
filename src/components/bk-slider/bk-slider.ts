@@ -149,9 +149,8 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         white-space: nowrap;
         writing-mode: horizontal-tb;
         direction: ltr;
-        color: var(--bk-text-default);
-        background: var(--bk-bg-surface);
-        border: var(--bk-border-width) solid var(--bk-border-default);
+        color: var(--bk-text-inverse);
+        background: var(--bk-bg-inverse);
         border-radius: var(--bk-radius-sm);
         opacity: 0;
         transition: opacity var(--bk-transition);

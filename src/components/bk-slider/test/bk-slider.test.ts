@@ -1034,7 +1034,7 @@ describe('bk-slider', () => {
         );
       });
 
-      it(`should paint the readout as a surface with text on it (${theme})`, async () => {
+      it(`should paint the readout with the inverse pair (${theme})`, async () => {
         setTheme(theme);
         clearStyleCache();
         const el = await fixture<BkSlider>(
@@ -1042,13 +1042,20 @@ describe('bk-slider', () => {
         );
         const readout = getComputedStyle(readoutOf(el)!);
 
-        expect(readout.backgroundColor, 'the bubble is a surface').to.equal(
-          await colorOf('var(--bk-bg-surface)'),
+        expect(readout.backgroundColor, 'the bubble is the inverse surface').to.equal(
+          await colorOf('var(--bk-bg-inverse)'),
         );
-        expect(readout.color, 'and the default text role paints on it').to.equal(
-          await colorOf('var(--bk-text-default)'),
+        expect(readout.color, 'and the inverse text paints on it').to.equal(
+          await colorOf('var(--bk-text-inverse)'),
         );
-        expect(contrastRatio(readout.color, readout.backgroundColor)).to.be.at.least(4.5);
+        expect(
+          contrastRatio(readout.color, readout.backgroundColor),
+          'text on the bubble',
+        ).to.be.at.least(4.5);
+        expect(
+          contrastRatio(readout.backgroundColor, await colorOf('var(--bk-bg-surface)')),
+          'and the bubble against the page it floats over, so it needs no border to be seen',
+        ).to.be.at.least(3);
       });
     }
   });

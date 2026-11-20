@@ -1,6 +1,9 @@
 {
   "role-light": {
     "bg": {
+      "inverse": {
+        "value": "{palette.neutral-900}"
+      },
       "surface": {
         "value": "{palette.white}"
       },
@@ -24,6 +27,9 @@
       }
     },
     "text": {
+      "inverse": {
+        "value": "{palette.neutral-100}"
+      },
       "default": {
         "value": "{palette.neutral-900}"
       },

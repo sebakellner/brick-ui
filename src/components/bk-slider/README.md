@@ -117,8 +117,9 @@ pseudo-element, so no `part` reaches it — see "Limitations".
 | `--bk-slider-tick-size`    | the diameter of one tick on the rail (defaults to `--bk-space-1`, so 4px)                                              |
 
 Everything else the slider paints is a shared role or base token: the track is
-`--bk-bg-surface-strong`, the run is `--bk-bg-accent`, and the focus ring is
-`--bk-focus-ring`. The ticks are `--bk-bg-surface` on the rail — 4.80:1 against the
+`--bk-bg-surface-strong`, the run is `--bk-bg-accent`, the readout is the
+`--bk-bg-inverse`/`--bk-text-inverse` pair, and the focus ring is `--bk-focus-ring`. The
+ticks are `--bk-bg-surface` on the rail — 4.80:1 against the
 light track and 6.93:1 against the dark one — so a mark reads as a notch in it. The
 readout is a surface too: `--bk-bg-surface` with `--bk-text-default` on it and a
 `--bk-border-default` edge, which reads 17.49:1 of text in the light theme and 16.03:1
@@ -270,7 +271,12 @@ while the pointer is over the knob itself — the same question that draws the h
 not the whole track the input covers — while the knob has **keyboard** focus, and for as
 long as a drag is held, even when the pointer leaves the knob; it hides again on release and on blur, so a mouse click never leaves it behind.
 `always` keeps it, which is what a canvas needs and what a product rarely does. The bubble
-reads `value-text` when there is one and the value otherwise.
+reads `value-text` when there is one and the value otherwise, and it is painted with the
+**inverse pair** — `--bk-bg-inverse` behind `--bk-text-inverse` — because a floating readout
+has to read over whatever it lands on, not only over the page it started on. That is 19.2:1
+between the two, and 19.2:1 and 17.0:1 against the page in the two themes, so no border is
+needed to make its shape visible. The pair is the one a toast or a snackbar would use,
+which is why it is a role and not a control token.
 
 That is the field's split: Material Web shows it only while the handle is activated, Ant
 Design and Spectrum on hover or focus, Shoelace on focus or drag, MUI on hover or focus
