@@ -30,20 +30,22 @@ validity.
 
 ## Attributes and properties
 
-| Property       | Attribute        | Type                         | Default        | Notes                                                                                                                                                                                                                         |
-| -------------- | ---------------- | ---------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `value`        | `value`          | `number`                     | `0`            | the lower thumb, and the only thumb while `value-end` is unset; while the pair is set, `value` is clamped to `value-end` when it is written — the lower thumb stops at the upper one, and nothing swaps what the author wrote |
-| `valueEnd`     | `value-end`      | `number \| null`             | `null`         | the upper thumb. While it is `null` the element renders one thumb and submits a plain string; setting it renders the second thumb and the run between them                                                                    |
-| `min`          | `min`            | `number`                     | `0`            | forwarded to both inputs                                                                                                                                                                                                      |
-| `max`          | `max`            | `number`                     | `100`          | forwarded to both inputs                                                                                                                                                                                                      |
-| `step`         | `step`           | `number`                     | `1`            | forwarded to both inputs; the arrow keys move by it, `Home` and `End` jump to the ends                                                                                                                                        |
-| `orientation`  | `orientation`    | `'horizontal' \| 'vertical'` | `'horizontal'` | reflected; vertical is a writing mode on the track plus `aria-orientation` on every input, so the arrows agree with the paint                                                                                                 |
-| `valueText`    | `value-text`     | `string`                     | `''`           | forwarded to `aria-valuetext` on the lower thumb: what a screen reader announces when the number alone does not say what it means ("21 °C", not "21")                                                                         |
-| `valueTextEnd` | `value-text-end` | `string`                     | `''`           | the same announcement on the upper thumb                                                                                                                                                                                      |
-| `name`         | `name`           | `string`                     | `''`           | the key the value submits under: one string, or one key per thumb                                                                                                                                                             |
-| `disabled`     | `disabled`       | `boolean`                    | `false`        | reflected; the native `disabled` attribute on both inputs                                                                                                                                                                     |
-| `required`     | `required`       | `boolean`                    | `false`        | declared by the shared form API and inert here: it marks nothing and reports nothing, because the HTML specification excludes `range` from `required` — see "Limitations"                                                     |
-| `error`        | `error`          | `string`                     | `''`           | the message from JavaScript; a slotted `bk-field-error` with text wins over it; sets `aria-invalid="true"` on both inputs and blocks submission; cleared on `input`                                                           |
+| Property       | Attribute        | Type                            | Default        | Notes                                                                                                                                                                                                                         |
+| -------------- | ---------------- | ------------------------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `value`        | `value`          | `number`                        | `0`            | the lower thumb, and the only thumb while `value-end` is unset; while the pair is set, `value` is clamped to `value-end` when it is written — the lower thumb stops at the upper one, and nothing swaps what the author wrote |
+| `valueEnd`     | `value-end`      | `number \| null`                | `null`         | the upper thumb. While it is `null` the element renders one thumb and submits a plain string; setting it renders the second thumb and the run between them                                                                    |
+| `min`          | `min`            | `number`                        | `0`            | forwarded to both inputs                                                                                                                                                                                                      |
+| `max`          | `max`            | `number`                        | `100`          | forwarded to both inputs                                                                                                                                                                                                      |
+| `step`         | `step`           | `number`                        | `1`            | forwarded to both inputs; the arrow keys move by it, `Home` and `End` jump to the ends; it is also what the ticks count — see "Ticks and the readout"                                                                         |
+| `ticks`        | `ticks`          | `boolean`                       | `false`        | reflected; one tick per `step` on the rail, `(max - min) / step` of them, `aria-hidden` and never announced                                                                                                                   |
+| `tooltip`      | `tooltip`        | `'none' \| 'hover' \| 'always'` | `'none'`       | reflected, and a value outside the three reads as `'none'`; `always` keeps the value readout on the knob, `hover` shows it while the pointer is over the knob or the knob has focus — see "Ticks and the readout"             |
+| `orientation`  | `orientation`    | `'horizontal' \| 'vertical'`    | `'horizontal'` | reflected; vertical is a writing mode on the track plus `aria-orientation` on every input, so the arrows agree with the paint                                                                                                 |
+| `valueText`    | `value-text`     | `string`                        | `''`           | forwarded to `aria-valuetext` on the lower thumb: what a screen reader announces when the number alone does not say what it means ("21 °C", not "21")                                                                         |
+| `valueTextEnd` | `value-text-end` | `string`                        | `''`           | the same announcement on the upper thumb                                                                                                                                                                                      |
+| `name`         | `name`           | `string`                        | `''`           | the key the value submits under: one string, or one key per thumb                                                                                                                                                             |
+| `disabled`     | `disabled`       | `boolean`                       | `false`        | reflected; the native `disabled` attribute on both inputs                                                                                                                                                                     |
+| `required`     | `required`       | `boolean`                       | `false`        | declared by the shared form API and inert here: it marks nothing and reports nothing, because the HTML specification excludes `range` from `required` — see "Limitations"                                                     |
+| `error`        | `error`          | `string`                        | `''`           | the message from JavaScript; a slotted `bk-field-error` with text wins over it; sets `aria-invalid="true"` on both inputs and blocks submission; cleared on `input`                                                           |
 
 A value outside `min`/`max` is not clamped by the element: the property keeps what
 was written, the browser clamps the input it holds, and the form submits what the
@@ -86,8 +88,11 @@ document.querySelector('bk-slider').addEventListener('bk-change', (event) => {
 | `label`       | the `<label>` row, carrying `data-state` and `data-disabled`                                        |
 | `track`       | the painted track, which carries the hover step, holds the inputs and is the box the fill paints in |
 | `fill`        | the run the slider fills: from the start of the track to the thumb, or between the two thumbs       |
+| `ticks`       | the layer the tick marks are drawn in, `aria-hidden` and rendered only while `ticks` is set         |
+| `tick`        | one tick on the rail, repeated once per step                                                        |
 | `input`       | the native `<input type="range">` of the lower thumb                                                |
 | `input-end`   | the native `<input type="range">` of the upper thumb, rendered only while `value-end` is set        |
+| `tooltip`     | the value readout, `aria-hidden` and rendered only while `tooltip` is not `none`                    |
 | `message`     | the container of the help and error regions                                                         |
 | `description` | the help region                                                                                     |
 | `error`       | the error region, `role="status"`                                                                   |
@@ -109,10 +114,20 @@ pseudo-element, so no `part` reaches it — see "Limitations".
 | `--bk-slider-radius`       | the corner radius of the track and of the run (defaults to `--bk-radius-lg`)                                           |
 | `--bk-slider-length`       | the length of a vertical slider, which is the rail's inline span in that orientation (defaults to `--bk-space-4` × 15) |
 | `--bk-slider-halo-size`    | the translucent halo the knob draws under the pointer (defaults to `--bk-space-2`)                                     |
+| `--bk-slider-readout-gap`  | how far the readout floats off the knob, tail included (defaults to `--bk-space-2`)                                    |
+| `--bk-slider-tick-size`    | the width of one tick on the rail; the mark spans the rail's height (defaults to `--bk-border-width` × 2, so 2px)      |
 
 Everything else the slider paints is a shared role or base token: the track is
-`--bk-bg-surface-strong`, the run is `--bk-bg-accent`, and the focus ring is
-`--bk-focus-ring`. The **track never answers the pointer**: it is not a button, and
+`--bk-bg-surface-strong`, the run is `--bk-bg-accent`, the readout is the
+`--bk-bg-inverse`/`--bk-text-inverse` pair, and the focus ring is `--bk-focus-ring`. The
+ticks are `--bk-bg-surface` on the rail — 4.80:1 against the light track and 6.93:1
+against the dark one — so a mark reads as a notch in it. The mark is a **division and not a
+dot**: two pixels across and the rail's full height, which is the shape Spectrum gives its
+ticks. The field is split on this — Material and MUI draw a two-pixel dot inside the track,
+Ant Design an eight-pixel bead that overlaps it — and a dot inside a four-pixel rail reads as
+a hole punched in the track. A tone close to the rail is not the answer either: the rail is
+already a mid tone in both themes, so a track-family tone measures 1.26:1 in the light theme
+and 1.60:1 in the dark one. The **track never answers the pointer**: it is not a button, and
 Material, Shoelace and Spectrum all leave it alone on hover. The thumb is the **run
 colour** — `--bk-bg-accent` — with a one-pixel `--bk-border-on-accent` edge, because a
 knob painted a separate colour reads as a second object rather than as the end of the
@@ -121,8 +136,9 @@ is white on the light theme and `neutral-900` on the dark one, so it reads 4.80:
 against the light track and 6.93:1 against the dark one, and 5.17:1 and 3.38:1 against
 the knob itself.
 
-Under the pointer the knob draws a **translucent halo** — `--bk-focus-halo`, the accent
-at 18% in the light theme and at 24% in the dark one, `--bk-slider-halo-size` wide —
+Under the pointer — **over the knob itself, never over the track it rides on** — the knob
+draws a **translucent halo** — `--bk-focus-halo`, the accent at 18% in the light theme and
+at 24% in the dark one, `--bk-slider-halo-size` wide —
 which is the state layer Material and Ant Design both use, at 40px around a 20px handle
 and 6px at 20% respectively. The halo is an `outline`, so it is drawn outside the knob
 and never changes its size; keyboard focus keeps the solid `--bk-focus-ring`, which is
@@ -130,9 +146,9 @@ the indicator the contrast cases assert. A disabled slider dims the whole
 track with `--bk-opacity-disabled`, thumb and run included, so nothing about it looks
 operable.
 
-`--bk-slider-variant-thumb-size`, `--bk-slider-variant-track-height` and
-`--bk-slider-variant-radius` are the internal defaults the hooks fall back to, so an
-override set on an ancestor still wins. Set the three hooks above, not those.
+`--bk-slider-variant-thumb-size`, `--bk-slider-variant-track-height`,
+`--bk-slider-variant-radius` and `--bk-slider-variant-tick-size` are the internal
+defaults the hooks fall back to, so an override set on an ancestor still wins. Set the hooks above, not those.
 
 ```css
 .equalizer {
@@ -156,7 +172,8 @@ override set on an ancestor still wins. Set the three hooks above, not those.
   the vertical layout itself is CSS only.
 - `value-text` and `value-text-end` are forwarded to `aria-valuetext` on their
   thumb, which is what makes "21 °C" an announcement and "21" a number with no
-  unit.
+  unit. The ticks and the readout are `aria-hidden`: the value is announced once,
+  by `value-text`, and never in two voices.
 - `aria-describedby` points at the error region while it has text, otherwise at the
   description region, and at neither while both are empty. Content that arrives
   through a slot is read from `slotchange` and `assignedNodes()`, never from the
@@ -170,8 +187,10 @@ override set on an ancestor still wins. Set the three hooks above, not those.
   `--bk-focus-ring` and `--bk-focus-ring-width`.
 - The track against the surface, the thumb against the track, the thumb against the
   run, the run against the surface and the focus ring each clear 3:1, and the suite
-  asserts them in both themes (WCAG 1.4.11). The value is never carried by colour
-  alone: the thumb has moved, and the run shows how far.
+  asserts them in both themes (WCAG 1.4.11). The ticks clear 3:1 against the track
+  they mark, and the readout's text clears 4.5:1 against its own surface, in both
+  themes. The value is never carried by colour alone: the thumb has moved, and the
+  run shows how far.
 - `disabled` is the native attribute on both inputs, because a range is a field:
   the platform refuses the drag and the keys, and the control is skipped in the tab
   order and announced as unavailable, like the platform's own range. The track dims
@@ -218,3 +237,54 @@ disabled>` contains it, because the value getter asks `fieldDisabled` before it 
   one stops it at the upper value, and lowering `value-end` past `value` drags the
   lower thumb down with it; the author's two values keep their roles instead of
   trading places.
+- **The readout follows the lower thumb.** With `value-end` set, the bubble reads
+  `value-text` (or `value`) and sits on the lower thumb; the upper thumb has no
+  readout of its own.
+- **The readout floats over the row above it.** The rail is a line: the bubble sits above
+  it in the horizontal run and beside it in the vertical one, and nothing reserves that
+  space, so the control does not move when `tooltip` turns on. The price is the one MUI and
+  Ant Design pay too: while the bubble is visible it can cover the label, because a value
+  that follows the knob has nowhere else to go.
+
+## Ticks and the readout
+
+`ticks` draws one mark per `step` from `min` to `max` on the rail, and `tooltip` echoes
+the value on the knob. **The readout is not a tooltip**, and it is not built from one:
+MUI and Shoelace both ship a tooltip component and both render the slider's readout
+inside the slider instead, and only Ant Design reuses its popup. A tooltip is a described
+popup — a trigger, a delay, a dismissal, an anchor, `aria-describedby` — and none of that
+belongs here, where the bubble follows the knob on every move and the announcement is
+`aria-valuetext`. Both are decoration: the tick layer and the bubble are
+`aria-hidden`, neither is focusable, and neither is reachable with the keyboard. What a
+screen reader hears is `value-text` — which is why the readout is its visual echo and
+not a second channel — and with no `value-text` the announcement is the platform's own
+value and the bubble shows the same number.
+
+The tick count is `(max - min) / step`, and the marks are the values the browser snaps
+to below `max`: a range that does not divide by `step` marks the snapped values and
+leaves the maximum end unmarked, because the browser snaps and the tick layer does not
+invent a value. The ticks carry **no labels**: a label's text is design copy per
+instance and would need a map attribute to carry it, while the accessible channel for
+the value is already `value-text`; a tick label would be a second copy of it that no
+one announces.
+
+`tooltip` has three modes, and they are MUI's `off`/`auto`/`on` under different names.
+`none` draws nothing, and it is the default: MUI and Shoelace both default to off, and a
+readout nobody asked for is decoration competing with the track. `hover` shows the bubble
+while the pointer is over the knob itself — the same question that draws the halo, and
+not the whole track the input covers — while the knob has **keyboard** focus, and for as
+long as a drag is held, even when the pointer leaves the knob; it hides again on release and on blur, so a mouse click never leaves it behind.
+`always` keeps it, which is what a canvas needs and what a product rarely does. The bubble
+reads `value-text` when there is one and the value otherwise, and it is painted with the
+**inverse pair** — `--bk-bg-inverse` behind `--bk-text-inverse` — because a floating readout
+has to read over whatever it lands on, not only over the page it started on. That is 19.2:1
+between the two, and 19.2:1 and 17.0:1 against the page in the two themes, so no border is
+needed to make its shape visible. The pair is the one a toast or a snackbar would use,
+which is why it is a role and not a control token. A square turned on its corner gives the
+bubble a tail: it hangs off the bottom in the horizontal run and off the side that faces the
+rail in the vertical one, and `--bk-slider-readout-gap` decides how far the whole thing
+floats off the knob.
+
+That is the field's split: Material Web shows it only while the handle is activated, Ant
+Design and Spectrum on hover or focus, Shoelace on focus or drag, MUI on hover or focus
+when `auto` is asked for, and Radix never.

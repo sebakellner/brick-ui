@@ -11,6 +11,10 @@ import { FieldControlMixin, formControlStyles } from '../shared/form-control/ind
 
 export type BkSliderOrientation = 'horizontal' | 'vertical';
 
+export type BkSliderTooltip = 'none' | 'hover' | 'always';
+
+const TOOLTIP_MODES: readonly string[] = ['none', 'hover', 'always'];
+
 const numberConverter: ComplexAttributeConverter<number> = {
   fromAttribute: (value: string | null): number => (value === null ? 0 : Number(value)),
 };
@@ -20,6 +24,13 @@ const numberConverter: ComplexAttributeConverter<number> = {
 const nullableNumberConverter: ComplexAttributeConverter<number | null> = {
   fromAttribute: (value: string | null): number | null =>
     value === null || value === '' ? null : Number(value),
+};
+
+/* A mode the element cannot paint is not a mode: anything outside the three reads as
+ * `none`, which is the value the attribute starts at. */
+const tooltipConverter: ComplexAttributeConverter<BkSliderTooltip> = {
+  fromAttribute: (value: string | null): BkSliderTooltip =>
+    TOOLTIP_MODES.includes(value ?? '') ? (value as BkSliderTooltip) : 'none',
 };
 
 /**
@@ -37,6 +48,11 @@ const nullableNumberConverter: ComplexAttributeConverter<number | null> = {
  * @csspart label - The `<label>` row, carrying `data-state` while the slider is invalid or disabled.
  * @csspart track - The painted track, which carries the hover step and holds the inputs.
  * @csspart fill - The run the slider fills, from the start to the thumb, or between the two thumbs.
+ * @csspart ticks - The layer the tick marks are drawn in, `aria-hidden` and rendered only while
+ * `ticks` is set.
+ * @csspart tick - One tick on the rail, repeated once per step.
+ * @csspart tooltip - The value readout, `aria-hidden` and rendered only while `tooltip` is not
+ * `none`.
  * @csspart input - The native `<input type="range">` of the lower thumb.
  * @csspart input-end - The native `<input type="range">` of the upper thumb, rendered only while
  * `value-end` is set.
@@ -62,6 +78,8 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         --bk-slider-variant-radius: var(--bk-radius-lg);
         --bk-slider-variant-length: calc(var(--bk-space-4) * 15);
         --bk-slider-variant-halo-size: var(--bk-space-2);
+        --bk-slider-variant-readout-gap: var(--bk-space-2);
+        --bk-slider-variant-tick-size: calc(var(--bk-border-width) * 2);
       }
 
       .rail {
@@ -98,10 +116,86 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         border-radius: var(--bk-slider-radius, var(--bk-slider-variant-radius));
       }
 
-      :host(:not([orientation='vertical'])) .rail:not([data-two]) .fill {
-        margin-inline-start: calc(
-          var(--bk-slider-thumb-size, var(--bk-slider-variant-thumb-size)) / -2
+      .ticks {
+        position: absolute;
+        inset: 0;
+      }
+
+      .tick {
+        position: absolute;
+        inline-size: var(--bk-slider-tick-size, var(--bk-slider-variant-tick-size));
+        block-size: 100%;
+        inset-block-start: 0;
+        background: var(--bk-bg-surface);
+        border-radius: var(--bk-border-width);
+      }
+
+      .readout-lane {
+        position: absolute;
+        inset-block: 0;
+        inset-inline: calc(var(--bk-slider-thumb-size, var(--bk-slider-variant-thumb-size)) / 2);
+        pointer-events: none;
+      }
+
+      .readout {
+        position: absolute;
+        box-sizing: border-box;
+        padding-inline: var(--bk-space-1);
+        padding-block: calc(var(--bk-space-1) / 2);
+        font-family: var(--bk-font-sans);
+        font-size: var(--bk-font-size-sm);
+        line-height: var(--bk-line-height-md);
+        white-space: nowrap;
+        writing-mode: horizontal-tb;
+        direction: ltr;
+        color: var(--bk-text-inverse);
+        background: var(--bk-bg-inverse);
+        border-radius: var(--bk-radius-sm);
+        opacity: 0;
+        transition: opacity var(--bk-transition);
+      }
+
+      .readout::after {
+        content: '';
+        position: absolute;
+        inline-size: var(--bk-space-1);
+        block-size: var(--bk-space-1);
+        background: var(--bk-bg-inverse);
+        transform: rotate(45deg);
+      }
+
+      :host(:not([orientation='vertical'])) .readout {
+        margin-block-end: calc(
+          var(--bk-slider-readout-gap, var(--bk-slider-variant-readout-gap)) + var(--bk-space-1) / 2
         );
+      }
+
+      :host(:not([orientation='vertical'])) .readout::after {
+        inset-block-end: calc(var(--bk-space-1) / -2);
+        inset-inline-start: 50%;
+        margin-inline-start: calc(var(--bk-space-1) / -2);
+      }
+
+      :host([orientation='vertical']) .readout {
+        margin-inline-end: calc(
+          var(--bk-slider-readout-gap, var(--bk-slider-variant-readout-gap)) + var(--bk-space-1) / 2
+        );
+      }
+
+      :host([orientation='vertical']) .readout::after {
+        inset-inline-end: calc(var(--bk-space-1) / -2);
+        inset-block-start: 50%;
+        margin-block-start: calc(var(--bk-space-1) / -2);
+      }
+
+      :host([tooltip='always']) .readout {
+        opacity: 1;
+      }
+
+      :host([tooltip='hover']) .thumb-input[data-knob] ~ .readout-lane .readout,
+      :host([tooltip='hover']) .thumb-input:focus-visible ~ .readout-lane .readout,
+      :host([tooltip='hover']) .thumb-input:active ~ .readout-lane .readout {
+        opacity: 1;
       }
 
       .thumb-input {
@@ -146,7 +240,7 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         cursor: pointer;
       }
 
-      .thumb-input:hover::-webkit-slider-thumb {
+      .thumb-input[data-knob]::-webkit-slider-thumb {
         outline: var(--bk-slider-halo-size, var(--bk-slider-variant-halo-size)) solid
           var(--bk-focus-halo);
       }
@@ -183,6 +277,11 @@ export class BkSlider extends FieldControlMixin(LitElement) {
   @property({ type: String, attribute: 'value-text' }) valueText = '';
 
   @property({ type: String, attribute: 'value-text-end' }) valueTextEnd = '';
+
+  @property({ type: Boolean, reflect: true }) ticks = false;
+
+  @property({ type: String, reflect: true, converter: tooltipConverter })
+  tooltip: BkSliderTooltip = 'none';
 
   override get formControlElement(): HTMLInputElement | undefined {
     return this.rangeInput ?? this.endInput ?? undefined;
@@ -221,15 +320,37 @@ export class BkSlider extends FieldControlMixin(LitElement) {
       >
         <slot name="label" @slotchange=${this.fieldParts.handleLabelSlot}></slot>
       </label>
-      <div class="rail" part="track" ?data-disabled=${this.fieldDisabled} ?data-two=${two}>
+      <div
+        class="rail"
+        part="track"
+        ?data-disabled=${this.fieldDisabled}
+        ?data-two=${two}
+        @pointermove=${this.handlePointerMove}
+        @pointerleave=${this.handlePointerLeave}
+      >
         <div class="lane">
           <div class="fill" part="fill" style=${this.fillStyle}></div>
+          ${this.renderTicks()}
         </div>
         ${this.renderThumb('input', this.value, this.valueText, two ? 'Minimum' : null)}
         ${end === null ? nothing : this.renderThumb('input-end', end, this.valueTextEnd, 'Maximum')}
+        ${this.renderReadout()}
       </div>
       ${this.fieldParts.messages}
     `;
+  }
+
+  /* The attribute is the reflected property, so a mode the element cannot paint has no
+   * business staying in it: an unknown value is written back as `none` instead. The
+   * property alone does not catch this, because an attribute that maps to the value the
+   * property already holds changes nothing for the reflection to write. */
+  override attributeChangedCallback(
+    name: string,
+    previous: string | null,
+    value: string | null,
+  ): void {
+    super.attributeChangedCallback(name, previous, value);
+    if (name === 'tooltip' && value !== this.tooltip) this.setAttribute('tooltip', this.tooltip);
   }
 
   override formResetCallback(): void {
@@ -249,6 +370,12 @@ export class BkSlider extends FieldControlMixin(LitElement) {
     this.value = this.valueEnd;
   }
 
+  private knobPointer: 'input' | 'input-end' | null = null;
+
+  private get rail(): HTMLElement | null {
+    return this.shadowRoot?.querySelector('[part="track"]') ?? null;
+  }
+
   private get rangeInput(): HTMLInputElement | null {
     return this.shadowRoot?.querySelector<HTMLInputElement>('[part="input"]') ?? null;
   }
@@ -262,14 +389,84 @@ export class BkSlider extends FieldControlMixin(LitElement) {
    * vertical rail carries the input's writing mode, so the browser decides which physical
    * end the value axis starts at. */
   private get fillStyle(): string {
-    const span = this.max - this.min;
-    const percentage = (value: number): number =>
-      span === 0 ? 0 : ((value - this.min) / span) * 100;
-    const clamp = (value: number): number => Math.min(100, Math.max(0, value));
-    const end = clamp(percentage(this.valueEnd ?? this.value));
-    const start = this.valueEnd === null ? 0 : clamp(percentage(this.value));
+    const end = this.percentageOf(this.valueEnd ?? this.value);
 
+    if (this.valueEnd === null) {
+      /* One thumb: the run starts at the rail's minimum edge and ends under the centre of
+       * the knob. The lane is inset by half a knob so its ends follow the centre line, so
+       * the start pulls back by that half, and the size carries it: the inline axis is the
+       * minimum-to-maximum axis in both orientations, which is what keeps this axis-free. */
+      return `inset-inline-start: calc(var(--bk-slider-thumb-size, var(--bk-slider-variant-thumb-size)) / -2); inline-size: calc(${end}% + var(--bk-slider-thumb-size, var(--bk-slider-variant-thumb-size)) / 2); inset-inline-end: auto;`;
+    }
+
+    const start = this.percentageOf(this.value);
     return `inset-inline-start: ${start}%; inset-inline-end: ${100 - end}%;`;
+  }
+
+  /* One mark per step, which is the count the ticks API models: `(max - min) / step`.
+   * A step that cannot carry a mark — zero, negative, or a range too narrow for it —
+   * draws none, and a range that does not divide by it marks the values the browser
+   * snaps to, the last of them one step short of the maximum. Each mark is inset by half
+   * its own size, because the logical start edge of a box cannot be its centre. */
+  private get tickPercentages(): string[] {
+    const span = this.max - this.min;
+    const count = Math.floor(span / this.step);
+    if (!Number.isFinite(count) || count < 1) return [];
+
+    return Array.from(
+      { length: count },
+      (_, index) =>
+        `calc(${(index * this.step * 100) / span}% - var(--bk-slider-tick-size, var(--bk-slider-variant-tick-size)) / 2)`,
+    );
+  }
+
+  /* The readout follows the knob along the run and sits on the side of the rail that has
+   * room: above it in the horizontal run, and beside it when the rail is vertical, because
+   * the rail's block axis is horizontal there. Both axes are physical in the inline style
+   * because the bubble writes horizontally, while its percentages are the lane's. */
+  private get readoutStyle(): string {
+    const percentage = this.percentageOf(this.value);
+
+    return this.orientation === 'vertical'
+      ? `top: ${100 - percentage}%; right: 100%; translate: 0 -50%;`
+      : `left: ${percentage}%; bottom: 100%; translate: -50% 0;`;
+  }
+
+  private percentageOf(value: number): number {
+    const span = this.max - this.min;
+    if (span === 0) return 0;
+
+    const percentage = ((value - this.min) / span) * 100;
+    return Math.min(100, Math.max(0, percentage));
+  }
+
+  private renderTicks() {
+    if (!this.ticks) return nothing;
+
+    return html`
+      <div class="ticks" part="ticks" aria-hidden="true">
+        ${this.tickPercentages.map(
+          (inlineStart) =>
+            html`<span
+              class="tick"
+              part="tick"
+              style=${`inset-inline-start: ${inlineStart};`}
+            ></span>`,
+        )}
+      </div>
+    `;
+  }
+
+  private renderReadout() {
+    if (this.tooltip === 'none') return nothing;
+
+    return html`
+      <div class="readout-lane">
+        <div class="readout" part="tooltip" aria-hidden="true" style=${this.readoutStyle}>
+          ${this.valueText || this.value}
+        </div>
+      </div>
+    `;
   }
 
   private renderThumb(
@@ -295,12 +492,53 @@ export class BkSlider extends FieldControlMixin(LitElement) {
         aria-label=${label ?? nothing}
         aria-invalid=${this.fieldInvalid ? 'true' : nothing}
         aria-describedby=${this.fieldParts.describedBy(this.messageSources()) || nothing}
+        ?data-knob=${this.knobPointer === part}
         @pointerdown=${this.handlePointerDown}
         @input=${this.handleInput}
         @change=${this.handleChange}
       />
     `;
   }
+
+  /* The knob is a pseudo-element, so it has no hover of its own: the pointer over the
+   * track is over the whole input. The rail therefore answers the question the paint asks —
+   * is the pointer within half a knob of a knob's centre — and each input carries the
+   * answer, which is what the halo and the readout key on. */
+  private readonly handlePointerMove = (event: PointerEvent): void => {
+    const rail = this.rail;
+    const control = this.rangeInput;
+    if (!rail || !control) return;
+
+    const box = rail.getBoundingClientRect();
+    const knob = Math.min(control.offsetWidth, control.offsetHeight);
+    const vertical = this.orientation === 'vertical';
+
+    const over = (value: number): boolean => {
+      const percentage = this.percentageOf(value) / 100;
+      if (vertical) {
+        const centre = box.bottom - knob / 2 - percentage * (box.height - knob);
+        return Math.abs(event.clientY - centre) <= knob / 2;
+      }
+      const centre = box.left + knob / 2 + percentage * (box.width - knob);
+      return Math.abs(event.clientX - centre) <= knob / 2;
+    };
+
+    const next: 'input' | 'input-end' | null = over(this.value)
+      ? 'input'
+      : this.valueEnd !== null && over(this.valueEnd)
+        ? 'input-end'
+        : null;
+
+    if (next === this.knobPointer) return;
+    this.knobPointer = next;
+    this.requestUpdate();
+  };
+
+  private readonly handlePointerLeave = (): void => {
+    if (this.knobPointer === null) return;
+    this.knobPointer = null;
+    this.requestUpdate();
+  };
 
   private readonly handleInput = (event: Event): void => {
     this.readThumb(event);

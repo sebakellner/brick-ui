@@ -26,6 +26,19 @@ const railOf = (el: BkSlider) => el.shadowRoot!.querySelector<HTMLElement>('[par
 
 const fillOf = (el: BkSlider) => el.shadowRoot!.querySelector<HTMLElement>('[part="fill"]')!;
 
+const ticksLayerOf = (el: BkSlider) => el.shadowRoot!.querySelector<HTMLElement>('[part="ticks"]');
+
+const ticksOf = (el: BkSlider) =>
+  Array.from(el.shadowRoot!.querySelectorAll<HTMLElement>('[part="tick"]'));
+
+const readoutOf = (el: BkSlider) => el.shadowRoot!.querySelector<HTMLElement>('[part="tooltip"]');
+
+const middleOf = (element: Element): [number, number] => {
+  const { left, top, width, height } = element.getBoundingClientRect();
+
+  return [left + width / 2, top + height / 2];
+};
+
 const descriptionOf = (el: BkSlider) =>
   el.shadowRoot!.querySelector<HTMLElement>('[part="description"]')!;
 
@@ -68,6 +81,20 @@ describe('bk-slider', () => {
         await expectNoViolations(el);
       });
     }
+
+    for (const theme of ['light', 'dark'] as const) {
+      it(`should have no accessibility violations with ticks and a readout (${theme})`, async () => {
+        setTheme(theme);
+        const el = await fixture<BkSlider>(html`
+          <bk-slider ticks min="0" max="10" step="1" tooltip="always" value-text="5 of 10">
+            ${labelAtom('Volume')}
+          </bk-slider>
+        `);
+
+        await expectRendered(el, 'input');
+        await expectNoViolations(el);
+      });
+    }
   });
   afterEach(async () => {
     await resetMouse();
@@ -78,6 +105,7 @@ describe('bk-slider', () => {
       '--bk-slider-thumb-size',
       '--bk-slider-track-height',
       '--bk-slider-radius',
+      '--bk-slider-tick-size',
     ]) {
       document.documentElement.style.removeProperty(property);
     }
@@ -292,6 +320,296 @@ describe('bk-slider', () => {
     });
   });
 
+  describe('ticks', () => {
+    it('should draw one tick per step across the run', async () => {
+      const el = await fixture<BkSlider>(
+        html`<bk-slider ticks min="0" max="10" step="1"></bk-slider>`,
+      );
+      const ticks = ticksOf(el);
+      const rail = railOf(el).getBoundingClientRect();
+      const start = rail.left + thumbOf(el) / 2;
+
+      expect(Boolean(ticksLayerOf(el)), 'the layer has its own part').to.equal(true);
+      expect(ticks.length, 'the count is (max - min) / step').to.equal(10);
+      expect(middleOf(ticks[0]!)[0], 'the first mark is the minimum').to.be.closeTo(start, 1);
+      expect(
+        middleOf(ticks[1]!)[0],
+        'and each step moves one mark by a tenth of the lane',
+      ).to.be.closeTo(start + laneOf(el) * 0.1, 1);
+      expect(middleOf(ticks[9]!)[0], 'the last one is a step short of the maximum').to.be.closeTo(
+        start + laneOf(el) * 0.9,
+        1,
+      );
+    });
+
+    it('should draw nothing from step alone', async () => {
+      const el = await fixture<BkSlider>(html`<bk-slider step="5"></bk-slider>`);
+
+      expect(Boolean(ticksLayerOf(el)), 'step without ticks draws no layer').to.equal(false);
+      expect(ticksOf(el).length).to.equal(0);
+    });
+
+    it('should hide the tick layer from assistive technology', async () => {
+      const el = await fixture<BkSlider>(html`
+        <bk-slider ticks min="0" max="4" step="1" value="2" value-text="2 of 4"></bk-slider>
+      `);
+
+      expect(
+        ticksLayerOf(el)!.getAttribute('aria-hidden'),
+        'the ticks are decoration, not a second value',
+      ).to.equal('true');
+      expect(
+        inputOf(el).getAttribute('aria-valuetext'),
+        'the value text stays the announcement',
+      ).to.equal('2 of 4');
+    });
+
+    it('should place the ticks along the run in vertical', async () => {
+      const el = await fixture<BkSlider>(html`
+        <bk-slider ticks min="0" max="4" step="1" orientation="vertical"></bk-slider>
+      `);
+      const ticks = ticksOf(el);
+      const rail = railOf(el).getBoundingClientRect();
+      const thumb = inputOf(el).getBoundingClientRect().width;
+      const lane = rail.height - thumb;
+
+      expect(ticks.length).to.equal(4);
+      expect(middleOf(ticks[0]!)[1], 'the minimum is the bottom end').to.be.closeTo(
+        rail.bottom - thumb / 2,
+        1,
+      );
+      expect(middleOf(ticks[3]!)[1], 'and the run climbs with the value').to.be.closeTo(
+        rail.bottom - thumb / 2 - lane * 0.75,
+        1,
+      );
+      expect(middleOf(ticks[0]!)[0], 'on the rail').to.be.closeTo(rail.left + rail.width / 2, 1);
+    });
+
+    it('should size the ticks through the hook', async () => {
+      document.documentElement.style.setProperty('--bk-slider-tick-size', '8px');
+      const el = await fixture<BkSlider>(
+        html`<bk-slider ticks min="0" max="3" step="1"></bk-slider>`,
+      );
+      const tick = ticksOf(el)[0]!.getBoundingClientRect();
+
+      expect(tick.width, 'the tick hook sizes the mark across').to.equal(8);
+      expect(
+        tick.height,
+        'and the mark spans the rail, so it reads as a division and not as a dot',
+      ).to.be.closeTo(railOf(el).getBoundingClientRect().height, 1);
+    });
+  });
+
+  describe('tooltip', () => {
+    it('should render no readout while tooltip is none', async () => {
+      const el = await fixture<BkSlider>(
+        html`<bk-slider value="40" value-text="40 %"></bk-slider>`,
+      );
+      await el.updateComplete;
+
+      expect(el.tooltip, 'none is the default').to.equal('none');
+      expect(Boolean(readoutOf(el)), 'and it draws nothing').to.equal(false);
+    });
+
+    it('should read the value text, or the value without one, while always', async () => {
+      const labelled = await fixture<BkSlider>(
+        html`<bk-slider tooltip="always" value="40" value-text="40 %"></bk-slider>`,
+      );
+
+      expect(readoutOf(labelled)!.textContent!.trim(), 'the value text when there is one').to.equal(
+        '40 %',
+      );
+      expect(
+        readoutOf(labelled)!.getAttribute('aria-hidden'),
+        'the readout is the visual echo of the announcement',
+      ).to.equal('true');
+      expect(
+        inputOf(labelled).getAttribute('aria-valuetext'),
+        'which stays the value text on the knob',
+      ).to.equal('40 %');
+
+      const bare = await fixture<BkSlider>(
+        html`<bk-slider tooltip="always" value="40"></bk-slider>`,
+      );
+
+      expect(readoutOf(bare)!.textContent!.trim(), 'the value without a value text').to.equal('40');
+    });
+
+    it('should read the lower thumb while a pair is set', async () => {
+      const el = await fixture<BkSlider>(html`
+        <bk-slider
+          tooltip="always"
+          value="20"
+          value-end="80"
+          value-text="20"
+          value-text-end="80"
+        ></bk-slider>
+      `);
+
+      expect(readoutOf(el)!.textContent!.trim(), 'one readout, on the lower thumb').to.equal('20');
+    });
+
+    it('should keep the readout on screen while the drag is held off the knob', async function () {
+      if (!hoverCapable()) this.skip();
+
+      const host = await fixture<HTMLElement>(html`
+        <div><bk-slider tooltip="hover" value="20"></bk-slider></div>
+      `);
+      const el = host.querySelector<BkSlider>('bk-slider')!;
+      const rail = railOf(el).getBoundingClientRect();
+      const start: [number, number] = [
+        Math.round(rail.left + thumbOf(el) / 2 + laneOf(el) * 0.2),
+        Math.round(rail.top + rail.height / 2),
+      ];
+
+      await sendMouse({ type: 'move', position: start });
+      await sendMouse({ type: 'down' });
+      await sendMouse({ type: 'move', position: [start[0] + 60, start[1] - 40] });
+      await el.updateComplete;
+
+      expect(
+        getComputedStyle(readoutOf(el)!).opacity,
+        'the value being chosen stays readable while the knob is held',
+      ).to.equal('1');
+
+      await sendMouse({ type: 'up' });
+      await nextFrame();
+
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'and leaves with the gesture').to.equal('0');
+    });
+
+    it('should keep the readout hidden until the knob is hovered in hover mode', async function () {
+      if (!hoverCapable()) this.skip();
+
+      const el = await fixture<BkSlider>(html`<bk-slider tooltip="hover" value="50"></bk-slider>`);
+
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'hidden at rest').to.equal('0');
+
+      await hover(inputOf(el));
+
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'shown under the pointer').to.equal('1');
+
+      await sendMouse({ type: 'move', position: [0, 0] });
+      await nextFrame();
+
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'hidden when the pointer leaves').to.equal(
+        '0',
+      );
+    });
+
+    it('should show the readout while the knob has focus in hover mode', async () => {
+      const host = await fixture<HTMLElement>(html`
+        <div><button type="button">before</button><bk-slider tooltip="hover"></bk-slider></div>
+      `);
+      const el = host.querySelector<BkSlider>('bk-slider')!;
+
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'hidden before the key').to.equal('0');
+
+      host.querySelector<HTMLElement>('button')!.focus();
+      await sendKeys({ press: 'Tab' });
+      await nextFrame();
+
+      expect(inputOf(el).matches(':focus'), 'the key reached the knob').to.equal(true);
+      expect(getComputedStyle(readoutOf(el)!).opacity, 'and the readout with it').to.equal('1');
+    });
+
+    it('should reflect the mode and never write an invalid one', async () => {
+      const el = await fixture<BkSlider>(html`<bk-slider></bk-slider>`);
+      await el.updateComplete;
+
+      expect(el.getAttribute('tooltip'), 'the default is reflected').to.equal('none');
+
+      el.setAttribute('tooltip', 'whenever');
+      await el.updateComplete;
+
+      expect(el.tooltip, 'an unknown mode reads as none').to.equal('none');
+      expect(el.getAttribute('tooltip'), 'and the attribute never carries it').to.equal('none');
+
+      el.tooltip = 'hover';
+      await el.updateComplete;
+
+      expect(el.getAttribute('tooltip'), 'a real mode is reflected').to.equal('hover');
+    });
+
+    it('should sit above the knob and follow it along the run', async () => {
+      const el = await fixture<BkSlider>(
+        html`<bk-slider tooltip="always" value="40" value-text="40 degrees"></bk-slider>`,
+      );
+      const rail = railOf(el).getBoundingClientRect();
+      const readout = readoutOf(el)!.getBoundingClientRect();
+      const knob = rail.left + thumbOf(el) / 2 + laneOf(el) * 0.4;
+
+      expect(readout.bottom, 'the bubble clears the rail it points at').to.be.at.most(rail.top);
+      expect(
+        rail.top - readout.bottom,
+        'by the gap the rail gives it, which is a hook now',
+      ).to.be.at.least(8);
+      expect(middleOf(readoutOf(el)!)[0], 'and is centred over the knob').to.be.closeTo(knob, 1);
+    });
+
+    it('should draw a tail under the bubble that points at the knob', async () => {
+      const el = await fixture<BkSlider>(html`<bk-slider tooltip="always" value="40"></bk-slider>`);
+      const tail = getComputedStyle(readoutOf(el)!, '::after');
+
+      expect(tail.content, 'a tail exists').to.not.equal('none');
+      expect(tail.backgroundColor, 'and it is the same inverse surface').to.equal(
+        await colorOf('var(--bk-bg-inverse)'),
+      );
+      expect(tail.transform, 'drawn as a square turned on its corner').to.contain('matrix');
+      expect(tail.insetBlockEnd, 'hanging off the bubble towards the rail').to.equal('-2px');
+
+      const vertical = await fixture<BkSlider>(
+        html`<bk-slider tooltip="always" value="40" orientation="vertical"></bk-slider>`,
+      );
+      const side = getComputedStyle(readoutOf(vertical)!, '::after');
+
+      expect(
+        side.insetInlineEnd,
+        'and on the vertical run it points sideways, at the rail beside it',
+      ).to.equal('-2px');
+    });
+
+    it('should not reserve room for the readout, so the control never moves', async () => {
+      const plain = await fixture<BkSlider>(html`<bk-slider value="40"></bk-slider>`);
+      const shown = await fixture<BkSlider>(
+        html`<bk-slider value="40" tooltip="always" value-text="40 %"></bk-slider>`,
+      );
+      const offsetOf = (el: BkSlider) =>
+        Math.round(railOf(el).getBoundingClientRect().top - el.getBoundingClientRect().top);
+      const on = railOf(shown).getBoundingClientRect();
+
+      expect(offsetOf(shown), 'the track sits where it always sits').to.equal(offsetOf(plain));
+      expect(railOf(shown).getBoundingClientRect().height).to.equal(
+        railOf(plain).getBoundingClientRect().height,
+      );
+      expect(
+        readoutOf(shown)!.getBoundingClientRect().top,
+        'and the bubble floats over the row above instead of pushing the control down',
+      ).to.be.below(on.top);
+    });
+
+    it('should sit beside the knob in vertical', async () => {
+      const el = await fixture<BkSlider>(html`
+        <bk-slider tooltip="always" value="40" orientation="vertical"></bk-slider>
+      `);
+      const rail = railOf(el).getBoundingClientRect();
+      const thumb = inputOf(el).getBoundingClientRect().width;
+      const lane = rail.height - thumb;
+      const readout = readoutOf(el)!.getBoundingClientRect();
+
+      expect(readout.right, 'the bubble clears the rail').to.be.at.most(rail.left);
+      expect(rail.left - readout.right, 'by the gap it leaves').to.be.at.least(4);
+      expect(middleOf(readoutOf(el)!)[1], 'and is centred on the knob').to.be.closeTo(
+        rail.bottom - thumb / 2 - lane * 0.4,
+        1,
+      );
+      expect(
+        getComputedStyle(readoutOf(el)!).writingMode,
+        'the rail writes vertically; the readout does not',
+      ).to.equal('horizontal-tb');
+    });
+  });
+
   describe('events', () => {
     it('should report the value after a key, the input before the change', async () => {
       const host = await fixture<HTMLElement>(html`
@@ -480,11 +798,20 @@ describe('bk-slider', () => {
       const fill = fillOf(el).getBoundingClientRect();
       const lane = rail.height - inputOf(el).getBoundingClientRect().width;
 
+      const cap = inputOf(el).getBoundingClientRect().width / 2;
+
       expect(
         rail.bottom - fill.top,
         'the run ends a quarter of the lane above the bottom the keys call the minimum',
-      ).to.be.closeTo(lane * 0.25 + inputOf(el).getBoundingClientRect().width / 2, 1);
-      expect(fill.height, 'and starts at the bottom of the lane').to.be.closeTo(lane * 0.25, 1);
+      ).to.be.closeTo(lane * 0.25 + cap, 1);
+      expect(fill.height, 'and its length carries the cap back to the edge').to.be.closeTo(
+        lane * 0.25 + cap,
+        1,
+      );
+      expect(fill.bottom, 'so the run reaches the rail, with no nub below it').to.be.closeTo(
+        rail.bottom,
+        1,
+      );
 
       const bottom: [number, number] = [
         Math.round(rail.left + rail.width / 2),
@@ -541,16 +868,35 @@ describe('bk-slider', () => {
       ).to.equal(before);
     });
 
-    it('should answer the pointer with a translucent halo on the knob', async function () {
+    it('should answer the pointer only over the knob, never over the track', async function () {
       if (!hoverCapable()) this.skip();
 
-      const el = await fixture<BkSlider>(html`<bk-slider></bk-slider>`);
+      const el = await fixture<BkSlider>(html`<bk-slider value="20"></bk-slider>`);
+      const rail = el.shadowRoot!.querySelector('[part="track"]')!.getBoundingClientRect();
+      const input = el.shadowRoot!.querySelector('input')!;
+      const knob = Math.min(input.offsetWidth, input.offsetHeight);
+      const middle = Math.round(rail.top + rail.height / 2);
+
+      await sendMouse({ type: 'move', position: [Math.round(rail.right - 20), middle] });
+      await el.updateComplete;
+
+      expect(
+        input.hasAttribute('data-knob'),
+        'the pointer is over the track, which is not the knob',
+      ).to.equal(false);
+
+      const centre = rail.left + knob / 2 + 0.2 * (rail.width - knob);
+      await sendMouse({ type: 'move', position: [Math.round(centre), middle] });
+      await el.updateComplete;
+
+      expect(input.hasAttribute('data-knob'), 'the knob answers for itself').to.equal(true);
+
       const rule = [...el.shadowRoot!.adoptedStyleSheets]
         .flatMap((sheet) => [...sheet.cssRules].map((entry) => entry.cssText))
-        .find((text) => text.includes(':hover::-webkit-slider-thumb'));
+        .find((text) => text.includes('::-webkit-slider-thumb {') && text.includes('halo'));
 
-      expect(rule, 'the knob has a hover rule').to.contain('--bk-focus-halo');
-      expect(rule, 'a halo, not a thicker edge').to.contain('outline');
+      expect(rule, 'and the halo keys on that answer').to.contain('[data-knob]');
+      expect(rule).to.contain('--bk-focus-halo');
       expect(rule).to.contain('--bk-slider-halo-size');
     });
 
@@ -702,6 +1048,48 @@ describe('bk-slider', () => {
             await colorOf('var(--bk-bg-surface)'),
           ),
           `the ring the rule paints is the role the kit resolves (${paintOf(ring, 'outline')})`,
+        ).to.be.at.least(3);
+      });
+
+      it(`should keep the ticks readable against the rail (${theme})`, async () => {
+        setTheme(theme);
+        clearStyleCache();
+        const el = await fixture<BkSlider>(html`
+          <bk-slider ticks min="0" max="4" step="1" value="2"></bk-slider>
+        `);
+        const tick = getComputedStyle(ticksOf(el)[0]!);
+
+        expect(Boolean(ticksLayerOf(el)), 'the ticks rendered').to.equal(true);
+        expect(
+          contrastRatio(tick.backgroundColor, getComputedStyle(railOf(el)).backgroundColor),
+          'a mark on the rail clears 3:1 against it',
+        ).to.be.at.least(3);
+        expect(tick.backgroundColor, 'and the role that does it').to.equal(
+          await colorOf('var(--bk-bg-surface)'),
+        );
+      });
+
+      it(`should paint the readout with the inverse pair (${theme})`, async () => {
+        setTheme(theme);
+        clearStyleCache();
+        const el = await fixture<BkSlider>(
+          html`<bk-slider tooltip="always" value="40" value-text="40 %"></bk-slider>`,
+        );
+        const readout = getComputedStyle(readoutOf(el)!);
+
+        expect(readout.backgroundColor, 'the bubble is the inverse surface').to.equal(
+          await colorOf('var(--bk-bg-inverse)'),
+        );
+        expect(readout.color, 'and the inverse text paints on it').to.equal(
+          await colorOf('var(--bk-text-inverse)'),
+        );
+        expect(
+          contrastRatio(readout.color, readout.backgroundColor),
+          'text on the bubble',
+        ).to.be.at.least(4.5);
+        expect(
+          contrastRatio(readout.backgroundColor, await colorOf('var(--bk-bg-surface)')),
+          'and the bubble against the page it floats over, so it needs no border to be seen',
         ).to.be.at.least(3);
       });
     }
