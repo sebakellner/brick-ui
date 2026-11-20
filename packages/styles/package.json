@@ -1,9 +1,25 @@
 {
   "name": "@brikka-ui/styles",
   "version": "0.1.0",
-  "private": true,
   "description": "Brikka's styles: the token source, the custom properties it generates, and the theme a page loads",
+  "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebakellner/brikka.git",
+    "directory": "packages/styles"
+  },
+  "homepage": "https://sebakellner.github.io/brikka/",
+  "bugs": "https://github.com/sebakellner/brikka/issues",
+  "keywords": [
+    "design-tokens",
+    "css-custom-properties",
+    "theming",
+    "style-dictionary"
+  ],
   "exports": {
     "./theme.css": "./src/theme.css",
     "./tokens.css": "./src/tokens.css",

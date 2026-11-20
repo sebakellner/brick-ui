@@ -2,7 +2,26 @@
   "name": "@brikka-ui/web-components",
   "version": "0.1.0",
   "description": "Brikka's elements: Lit custom elements with a token-driven theming contract",
+  "license": "MIT",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebakellner/brikka.git",
+    "directory": "packages/web-components"
+  },
+  "homepage": "https://sebakellner.github.io/brikka/",
+  "bugs": "https://github.com/sebakellner/brikka/issues",
+  "keywords": [
+    "web-components",
+    "custom-elements",
+    "lit",
+    "design-system",
+    "components",
+    "theming"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
