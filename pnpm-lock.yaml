@@ -224,12 +224,6 @@ importers:
       '@open-wc/testing':
         specifier: ^5.0.0
         version: 5.0.0(supports-color@7.2.0)
-      '@storybook/addon-docs':
-        specifier: ^10.6.7
-        version: 10.6.7(@types/react@19.3.0)(storybook@10.6.7(@types/react@19.3.0)(prettier@3.10.1)(react@19.3.1))
-      '@storybook/web-components-vite':
-        specifier: ^10.6.7
-        version: 10.6.7(lit@3.3.3)(storybook@10.6.7(@types/react@19.3.0)(prettier@3.10.1)(react@19.3.1))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2))
       '@types/mocha':
         specifier: ^10.0.10
         version: 10.0.10
@@ -254,9 +248,6 @@ importers:
       prettier:
         specifier: ^3.10.1
         version: 3.10.1
-      storybook:
-        specifier: ^10.6.7
-        version: 10.6.7(@types/react@19.3.0)(prettier@3.10.1)(react@19.3.1)
       style-dictionary:
         specifier: ^5.8.0
         version: 5.8.0
@@ -296,6 +287,37 @@ importers:
       '@brick/test-utils':
         specifier: workspace:*
         version: link:../test-utils
+      '@storybook/addon-docs':
+        specifier: ^10.6.7
+        version: 10.6.7(@types/react@19.3.0)(storybook@10.6.7(@types/react@19.3.0)(prettier@3.10.1)(react@19.3.1))
+      '@storybook/web-components-vite':
+        specifier: ^10.6.7
+        version: 10.6.7(lit@3.3.3)(storybook@10.6.7(@types/react@19.3.0)(prettier@3.10.1)(react@19.3.1))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2))
+
+  storybook/web-components:
+    dependencies:
+      '@brick/tokens':
+        specifier: workspace:*
+        version: link:../../packages/tokens
+      '@brick/web-components':
+        specifier: workspace:*
+        version: link:../../packages/web-components
+    devDependencies:
+      '@storybook/addon-docs':
+        specifier: ^10.6.7
+        version: 10.6.7(@types/react@19.3.0)(storybook@10.6.7(@types/react@19.3.0)(prettier@3.10.1)(react@19.3.1))
+      '@storybook/web-components-vite':
+        specifier: ^10.6.7
+        version: 10.6.7(lit@3.3.3)(storybook@10.6.7(@types/react@19.3.0)(prettier@3.10.1)(react@19.3.1))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2))
+      lit:
+        specifier: ^3.3.3
+        version: 3.3.3
+      storybook:
+        specifier: ^10.6.7
+        version: 10.6.7(@types/react@19.3.0)(prettier@3.10.1)(react@19.3.1)
+      vite:
+        specifier: ^8.3.8
+        version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)
 
 packages:
 

@@ -18,7 +18,7 @@ why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 Before any of these rules, `pnpm check:tokens` asserts **existence**: every
 `--bk-*` name read inside a CSS string must be a declared token or a hook. No
 other tool sees those names, and a typo renders nothing at runtime. It covers
-tests, stories and `.storybook/`, because a typo in any of them is still a typo.
+tests, stories and `storybook/*/.storybook/`, because a typo in any of them is still a typo.
 
 ## R1. A semantic role exists only while a component reads it
 

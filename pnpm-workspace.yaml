@@ -1,5 +1,6 @@
 packages:
   - 'packages/*'
+  - 'storybook/*'
   - 'apps/*'
 
 allowBuilds:

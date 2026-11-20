@@ -23,7 +23,7 @@ export const paths = {
   stylesTokens: at('packages', 'tokens', 'src', 'tokens'),
   colorCss: at('packages', 'tokens', 'src', 'tokens', 'color.css'),
   hooks: at('packages', 'tokens', 'style-dictionary.config.mjs'),
-  storybook: at('.storybook'),
+  storybook: at('storybook', 'web-components', '.storybook'),
   tokensJson: at('packages', 'tokens', 'tokens'),
   manifest: at('packages', 'web-components', 'src', 'custom-elements.json'),
   styles: at('packages', 'tokens', 'src'),

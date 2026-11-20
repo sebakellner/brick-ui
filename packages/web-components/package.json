@@ -21,6 +21,8 @@
     "lit": "^3.3.3"
   },
   "devDependencies": {
-    "@brick/test-utils": "workspace:*"
+    "@brick/test-utils": "workspace:*",
+    "@storybook/addon-docs": "^10.6.7",
+    "@storybook/web-components-vite": "^10.6.7"
   }
 }
