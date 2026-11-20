@@ -20,6 +20,7 @@ const TRANSFORMS = [
   'cubicBezier/css',
   'typography/css/shorthand',
   'transition/css/shorthand',
+  'shadow/css/shorthand',
 ];
 
 /* `$description` documents a role for the graph; it is not a CSS comment. */
@@ -208,6 +209,7 @@ export default {
           'control-height',
           'duration',
           'easing',
+          'elevation',
           'transition',
           'focus-ring-width',
           'focus-ring-offset',

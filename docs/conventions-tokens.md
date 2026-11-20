@@ -13,7 +13,7 @@ why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 | R5  | A role is read under the property it belongs to                              | `pnpm check:tokens` |
 | R6  | A component reads a role for colour and a primitive for everything else      | `pnpm check:tokens` |
 | R7  | Motion is one composite token, and reduced motion zeroes it at the theme     | review              |
-| R8  | There is no shadow layer until something paints a shadow                     | review              |
+| R8  | Elevation is two shadow tokens, and a shadow is the one unchecked value      | review              |
 
 Before any of these rules, `pnpm check:tokens` asserts **existence**: every
 `--brikka-*` name read inside a CSS string must be a declared token or a hook. No
@@ -190,17 +190,20 @@ consumer listening for it would wait forever.
 **Enforced by.** Review, and the suite: the test page zeroes `--brikka-transition`, which is
 the same mechanism the media query uses.
 
-## R8. There is no shadow layer until something paints a shadow
+## R8. Elevation is two shadow tokens, and a shadow is the one unchecked value
 
-**Rule.** No `box-shadow` in the control layer, and no shadow token. A shadow is a
-composite value — offset, blur, spread and colour — which this token pipeline cannot
-express as references to the layer below, and which `check:tokens` cannot verify: a role
-read under `box-shadow` is already rejected by R5.
+**Rule.** Depth is `elevation.raised` and `elevation.overlay`, both referencing
+`elevation.color`, and a component reads one of them under `box-shadow` rather than
+composing offsets of its own.
 
-**Why.** A composite string is a value nothing can check. Fluent and Ant Design both
-carry theirs that way, and Material avoids the problem by tokenising elevation as a level
-plus a colour. Until this kit paints depth, a shadow token would be the one unchecked
-thing in the layer.
+**Why.** [ADR 0032](adr/0032-elevation-exists-before-a-component-paints-it.md) reversed the
+old rule, and only one of its two reasons had expired. The pipeline now expresses a shadow:
+ADR 0031 allowed serializers, so `shadow/css/shorthand` composes offset, blur, spread and
+colour. The other reason did not expire — `check:tokens` derives a role's expected property
+from the first segment of its name, so `elevation` falls through unchecked, and a shadow stays
+the one value in the graph nothing verifies. That is written down here instead of being
+papered over by renaming the colour into a family the checker happens to know.
 
-**Enforced by.** Review. The day elevation arrives, it arrives with an ADR, with the
-`box-shadow` question in `check:tokens` answered first.
+**Enforced by.** Review, and the suite: a test reads the computed `box-shadow` the tokens
+produce. The `box-shadow` question in `check:tokens` is still open, deliberately, because the
+useful thing to check about a shadow is not the property it is read under.

@@ -1,0 +1,31 @@
+{
+  "elevation": {
+    "color": {
+      "$type": "color",
+      "$value": "rgb(28 25 23 / 0.12)",
+      "$description": "The tint a shadow is painted with: the page's darkest neutral, at the alpha a density needs."
+    },
+    "raised": {
+      "$type": "shadow",
+      "$value": {
+        "color": "{elevation.color}",
+        "offsetX": "0px",
+        "offsetY": "1px",
+        "blur": "3px",
+        "spread": "0px"
+      },
+      "$description": "A surface that sits on the page: a card, a popover resting against its trigger."
+    },
+    "overlay": {
+      "$type": "shadow",
+      "$value": {
+        "color": "{elevation.color}",
+        "offsetX": "0px",
+        "offsetY": "8px",
+        "blur": "24px",
+        "spread": "-4px"
+      },
+      "$description": "A surface that takes the page's attention: a dialog, a menu above everything."
+    }
+  }
+}
