@@ -10,13 +10,13 @@ as plain custom elements, with a token-driven theming contract. Nothing is
 published; the package is private and consumed from this repository.
 
 ```
-tokens/base/           primitives, theme-invariant
-tokens/role/light.json semantic roles, one file per theme
-tokens/component/      what one component paints
+packages/tokens/tokens/base/           primitives, theme-invariant
+packages/tokens/tokens/role/light.json semantic roles, one file per theme
+packages/tokens/tokens/component/      what one component paints
 src/components/bk-*/   element, stories, docs page, test/, README
 src/components/shared/ contract: mixins, controllers, styles; no tag, no define, no shadow root
-src/styles/tokens/     generated CSS — never edit by hand
-src/styles/theme.css   the theming entry point, imports the generated files
+packages/tokens/src/tokens/     generated CSS — never edit by hand
+packages/tokens/src/theme.css   the theming entry point, imports the generated files
 src/test/helpers/      the runner page's helpers: token resolver, contrast, pointer
 scripts/               check-token-usage.mjs
 docs/                  conventions and decision records
@@ -37,7 +37,7 @@ you are about to change, and never edit an accepted ADR — supersede it.
 
 ## Never
 
-- Edit `src/styles/tokens/*.css` or `src/styles/tokens.generated.ts`. They are
+- Edit `packages/tokens/src/tokens/*.css` or `packages/tokens/src/tokens.generated.ts`. They are
   output of `pnpm build:tokens`, and CI fails when they are stale or untracked.
 - Write a style literal in a component. Colors, lengths, weights and durations
   read `var(--bk-…)`. A literal is allowed only when it is a reset (`0`,

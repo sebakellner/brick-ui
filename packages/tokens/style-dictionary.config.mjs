@@ -1,5 +1,5 @@
 import { formattedVariables } from 'style-dictionary/utils';
-import { paths, requireRoots } from './scripts/roots.mjs';
+import { paths, requireRoots } from '../../scripts/roots.mjs';
 
 requireRoots('tokensJson', 'styles');
 

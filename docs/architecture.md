@@ -6,7 +6,9 @@ rules live in the conventions; the reasoning lives in the [ADRs](adr/).
 ## The contract in one screen
 
 ```
-tokens/*.json  ──build:tokens──>  src/styles/tokens/*.css  ──>  src/styles/theme.css
+packages/tokens/tokens/*.json ──build:tokens──> packages/tokens/src/tokens/*.css
+                                                        │
+                                                        └──> packages/tokens/src/theme.css
                                                                        │
                              components read it as var(--bk-*) and carry no fallback
 ```
@@ -59,13 +61,13 @@ dependency for wiring it can own.
 What this system deliberately does not do. Recorded so a well-meant change does
 not have to reopen the question.
 
-| Not in scope                           | Why                                                                                                                                                                         | Revisit when                                                    |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| A published package                    | consumed from this repository; there is no outside consumer                                                                                                                 | one appears                                                     |
-| Visual regression testing              | the suite asserts computed styles, not pixels                                                                                                                               | a layout bug escapes it                                         |
-| A second browser in the suite          | [0005](adr/0005-test-in-chrome-only.md)                                                                                                                                     | a shadow-DOM or `::part` defect is reported from another engine |
-| A different license                    | MIT, in `LICENSE`                                                                                                                                                           | never, unless relicensing                                       |
-| Typed token names inside component CSS | `TokenName` and `HookName` are generated in `src/styles/tokens.generated.ts`, but the `css` template keeps plain names — see [conventions-code.md](conventions-code.md), C4 | the typing stops costing readability                            |
+| Not in scope                           | Why                                                                                                                                                                                  | Revisit when                                                    |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| A published package                    | consumed from this repository; there is no outside consumer                                                                                                                          | one appears                                                     |
+| Visual regression testing              | the suite asserts computed styles, not pixels                                                                                                                                        | a layout bug escapes it                                         |
+| A second browser in the suite          | [0005](adr/0005-test-in-chrome-only.md)                                                                                                                                              | a shadow-DOM or `::part` defect is reported from another engine |
+| A different license                    | MIT, in `LICENSE`                                                                                                                                                                    | never, unless relicensing                                       |
+| Typed token names inside component CSS | `TokenName` and `HookName` are generated in `packages/tokens/src/tokens.generated.ts`, but the `css` template keeps plain names — see [conventions-code.md](conventions-code.md), C4 | the typing stops costing readability                            |
 
 ## Where things live
 
@@ -75,7 +77,7 @@ tokens/role/light.json semantic roles, one file per theme
 tokens/component/      what one component paints, one file per component
 src/components/shared/form-control/  the contract every field composes: mixins, controllers, styles
 src/components/bk-*/   element, stories, Storybook docs page, test/, README
-src/styles/theme.css   imports the generated token files; the consumer entry point
+packages/tokens/src/theme.css   imports the generated token files; the consumer entry point
 src/index.ts           public entry point
 src/test/helpers/      token resolver (colorOf, opacityOf), contrast assertions, theme switch, pointer (hover, clickAt)
 src/test/integration/  where a suite the test composes from two or more widgets goes, one folder per assembly
