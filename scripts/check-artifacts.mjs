@@ -110,7 +110,7 @@ import { BrikkaButton } from '@brikka-ui/web-components';
 import { tokens } from '@brikka-ui/tokens';
 
 export const button: typeof BrikkaButton = BrikkaButton;
-export const accent: string = tokens.roleLightBgAccent;
+export const accent: string = tokens.roleBgAccent;
 `,
   );
 

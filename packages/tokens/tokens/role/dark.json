@@ -1,5 +1,5 @@
 {
-  "role-dark": {
+  "role": {
     "$type": "color",
     "bg": {
       "inverse": {
