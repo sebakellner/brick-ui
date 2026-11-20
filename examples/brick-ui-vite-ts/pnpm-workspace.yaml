@@ -1,0 +1,8 @@
+# This example is its own mini-workspace, outside the repository's. It installs the packed
+# tarballs, not the workspace packages: that is the whole point of it.
+packages: []
+
+# In a published world the registry satisfies the peer range `@brick/web-components` declares on
+# `@brick/tokens`. Here the tarball does, and no registry is reachable.
+overrides:
+  '@brick/tokens': 'file:./.pack/brick-tokens-0.1.0.tgz'

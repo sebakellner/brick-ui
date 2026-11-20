@@ -53,6 +53,17 @@ jobs:
       - run: pnpm check:tokens
       - name: the packages pack, and a consumer outside the workspace resolves them
         run: pnpm check:artifacts
+      - name: the example installs the tarballs and builds
+        run: |
+          pnpm --filter @brick/tokens build
+          pnpm --filter @brick/web-components build
+          mkdir -p examples/brick-ui-vite-ts/.pack
+          (cd packages/tokens && pnpm pack --pack-destination ../../examples/brick-ui-vite-ts/.pack)
+          (cd packages/web-components && pnpm pack --pack-destination ../../examples/brick-ui-vite-ts/.pack)
+          cd examples/brick-ui-vite-ts
+          pnpm install --no-frozen-lockfile
+          pnpm build
+          grep -rq 'customElements.define' dist/assets || (echo 'the example built no element registration' && exit 1)
       - run: pnpm typecheck
       - run: pnpm test
 

@@ -278,7 +278,7 @@ importers:
   packages/web-components:
     dependencies:
       '@brick/tokens':
-        specifier: workspace:*
+        specifier: workspace:^
         version: link:../tokens
       lit:
         specifier: ^3.3.3

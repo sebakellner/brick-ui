@@ -1,0 +1,21 @@
+{
+  "name": "brick-ui-vite-ts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A Brick consumer: the packed packages, installed outside the workspace",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@brick/tokens": "file:./.pack/brick-tokens-0.1.0.tgz",
+    "@brick/web-components": "file:./.pack/brick-web-components-0.1.0.tgz",
+    "lit": "3.3.3"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "8.3.8"
+  }
+}
