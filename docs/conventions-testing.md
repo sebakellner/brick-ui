@@ -18,14 +18,14 @@ The line between a unit test and an integration test is not "how many elements i
 imports" — almost every suite here imports an atom's `define.js`, because the atoms are
 the kit's vocabulary. The line is **who decides the composition**:
 
-| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                                                   |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------- |
-| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `packages/web-components/src/components/bk-x/test/bk-x.test.ts`, `describe` per concern |
-| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `packages/web-components/test/integration/<assembly>/<rule>.test.ts`                    |
-| **e2e**         | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/`, Playwright                                                                      |
+| Level           | Subject                                                                                                                                                                          | Who composes    | Where                                                                                           |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- | ----------------------------------------------------------------------------------------------- |
+| **unit**        | one component and **the parts it fixes** — a control with its atoms, a group with its boxes, the field with its own atoms — plus the platform around it (`<form>`, `<fieldset>`) | the component   | `packages/web-components/src/components/brikka-x/test/brikka-x.test.ts`, `describe` per concern |
+| **integration** | an assembly of **two or more widgets that depend on each other**, chosen by the test                                                                                             | the test        | `packages/web-components/test/integration/<assembly>/<rule>.test.ts`                            |
+| **e2e**         | **the package on a real page**: the entry registers nothing, each `define.js` registers its tags, `theme.css` applies, and the bundle Vite produces loads                        | the application | `e2e/`, Playwright                                                                              |
 
 A suite that needs **two packages at once** has no package to live in: `theming.test.ts`
-reads the theme `@brick/styles` publishes through a component `@brick/web-components`
+reads the theme `@brikka/styles` publishes through a component `@brikka/web-components`
 provides, and `browser.test.ts` asserts the runner itself. Both stay in the root `test/`,
 which is the same place a future e2e suite against the packed artifact belongs.
 
@@ -33,7 +33,7 @@ which is the same place a future e2e suite against the packed artifact belongs.
 how many elements sit in the fixture.** That is the test of every doubtful case, and it
 is the one that answers why a `<form>` does not make a suite integration:
 
-- The `form participation` block of `bk-checkbox.test.ts` is **unit**. The rule — "a form can
+- The `form participation` block of `brikka-checkbox.test.ts` is **unit**. The rule — "a form can
   submit, reset and disable me" — is the control's own contract with the platform, and the
   `<form>` is a given rather than a composition of the kit. When it fails, the diagnosis is
   one component: its `formResetCallback`, its `setValidity`, its `submittedValue`. That
@@ -45,7 +45,7 @@ is the one that answers why a `<form>` does not make a suite integration:
   Shoelace tests `label` and `help-text` in `input.test.ts`, Material Web's helper text
   landed as component unit tests, and Spectrum keeps its declarative field spec inside the
   component's folder. Nobody tests "a control with a label atom" as integration.
-- `bk-checkbox.test.ts` is **unit** although it imports two defines, because its atoms are
+- `brikka-checkbox.test.ts` is **unit** although it imports two defines, because its atoms are
   part of its own documented contract.
 - A screen with an input, a checkbox and a select is **integration**, because the test
   decides that those three belong together and nobody else does.
@@ -130,7 +130,7 @@ a group changes the reading order and never the name of a rule.
 ## T1. The runner page loads the theme, once
 
 **Rule.** `web-test-runner.config.mjs` serves every suite from one page: it links
-`/packages/styles/src/theme.css` and zeroes `--bk-transition`. A suite never loads the stylesheet
+`/packages/styles/src/theme.css` and zeroes `--brikka-transition`. A suite never loads the stylesheet
 itself; when it needs the other theme it calls `setTheme('dark')` and nothing else.
 
 **Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)), so
@@ -153,7 +153,7 @@ setTheme('dark');
 
 ## T4. The test page has no transition to wait for
 
-**Rule.** The runner page zeroes the kit's duration token (`--bk-transition: 0s`), so a
+**Rule.** The runner page zeroes the kit's duration token (`--brikka-transition: 0s`), so a
 transitioned property reaches its final value immediately and no test waits for it. A test
 that is _about_ a transition sets the token back to its real value and awaits
 `element.getAnimations()` — never a timer.
@@ -167,7 +167,7 @@ made that look stable.
 **Do** — assert the final value directly, and reset what the test moved:
 
 ```ts
-expect(getComputedStyle(box).borderTopColor).to.equal(await colorOf('var(--bk-border-strong)'));
+expect(getComputedStyle(box).borderTopColor).to.equal(await colorOf('var(--brikka-border-strong)'));
 ```
 
 **Don't** — `await new Promise((resolve) => setTimeout(resolve, 250))`, and do not leave the
@@ -217,9 +217,11 @@ painted.
 **Do**
 
 ```ts
-const el = await fixture<BkX>(html`<bk-x><bk-field-label>Email</bk-field-label></bk-x>`);
+const el = await fixture<BrikkaX>(
+  html`<brikka-x><brikka-field-label>Email</brikka-field-label></brikka-x>`,
+);
 expect(getComputedStyle(inner(el)).borderTopColor).to.equal(
-  await colorOf('var(--bk-border-danger)'),
+  await colorOf('var(--brikka-border-danger)'),
 );
 ```
 
@@ -324,7 +326,7 @@ that has to be read rather than observed.
 
 ## T8. One suite per component, a suite per part that has behaviour, and the packaging contract declared
 
-**Rule.** A component ships `test/bk-<name>.test.ts` for its rules and nothing else. A part
+**Rule.** A component ships `test/brikka-<name>.test.ts` for its rules and nothing else. A part
 gets a suite of its own when it has behaviour — the radio item's activation, the select atoms'
 reflection, the field atoms' painting — and a part that only paints is covered where it is
 used. **The packaging contract is not a test**: `package.json` declares
@@ -349,17 +351,17 @@ component's folder while testing the package.
 **Do** — the component's own suite, and a part's when the part does something:
 
 ```
-packages/web-components/src/components/bk-field/
-  bk-field.ts  bk-field-label.ts  define.ts  …
+packages/web-components/src/components/brikka-field/
+  brikka-field.ts  brikka-field-label.ts  define.ts  …
   test/
-    bk-field.test.ts  bk-field-label.test.ts
+    brikka-field.test.ts  brikka-field-label.test.ts
 ```
 
 **Don't** — a `*.register.test.ts` beside a component. When a new component lands, its file is
 the suite; there is no list to extend and no second file to remember.
 
 **Accessibility is a concern, not a part.** The audit and the A-rule cases live inside the
-component's suite, under a `describe('accessibility')`, never in a `bk-<name>.a11y.test.ts`:
+component's suite, under a `describe('accessibility')`, never in a `brikka-<name>.a11y.test.ts`:
 a failing case already prints the component's name, and a second file per component repeats
 verbatim the argument this rule exists to refuse for `.form` and `.error` files. The
 exception would be earned by a hang, which costs a shared file its whole signal — the audit
@@ -383,7 +385,7 @@ build where they have nothing.
 **Do**
 
 ```ts
-describe('bk-input', () => {
+describe('brikka-input', () => {
   it('should name the field from the label slot', () => {});
 });
 ```
@@ -486,7 +488,7 @@ suites once read `:hover` left by the previous one.
 
 ## T14. A suite is named after its element, and a case says what should hold
 
-**Rule.** The outer `describe` carries the tag (`bk-checkbox`, `bk-radio-group-item`), a
+**Rule.** The outer `describe` carries the tag (`brikka-checkbox`, `brikka-radio-group-item`), a
 concern is a nested `describe` named for the concern (`accessibility`, `form participation`,
 `.styles`), and every `it` begins with `should`, names the state it puts the element in and
 the effect it expects. When the theme matters, the theme is in the title — `(light)`,
@@ -516,7 +518,7 @@ replaces the other — the audit cannot tell "renders nothing" from "clean", and
 see the wiring nobody thought to name.
 
 **An atom that paints nothing is not audited.** A private atom that lives `display: none`
-inside another control — `bk-native-select-opt` and `bk-native-select-opt-group` are data
+inside another control — `brikka-native-select-opt` and `brikka-native-select-opt-group` are data
 for the select, which paints the `<option>`s itself — gets no audit of its own: axe skips
 what does not render, so the case would pass without auditing anything, the vacuous green
 T16 exists to prevent. Its coverage is the audit of the control that paints it; what the
@@ -526,7 +528,7 @@ atom still owes is T16, a case saying its fixture rendered.
 attribute pointing at no node. The pairs caught what the audit cannot see: the canvas it grades
 against is the painted page, and an unpainted page made it report 1.09:1 on a pair the kit
 paints at 8:1 — six findings, none of them a defect. Both lessons are now environment: the
-runner page paints `body` with `--bk-bg-surface`, and the gate's own suite proves it can fail.
+runner page paints `body` with `--brikka-bg-surface`, and the gate's own suite proves it can fail.
 
 **Do** — the two halves, in the same suite, under `describe('accessibility')`.
 
@@ -546,8 +548,8 @@ so does a limitation the document declares. Prose earns nothing — a name does.
 **Why.** A `README.md` is the consumer's contract, and a name in it with no case behind it
 is the same false statement as an `Enforced by` column that names a check nobody runs.
 Auditing the seven components against their own documents found twenty such names and one
-that was simply **wrong**: `bk-field` documented three parts it never rendered, so
-`bk-field::part(error)` styled nothing. It is the cheapest case in this repository to write,
+that was simply **wrong**: `brikka-field` documented three parts it never rendered, so
+`brikka-field::part(error)` styled nothing. It is the cheapest case in this repository to write,
 because the document already says what to assert.
 
 **Do** — one case per part the README lists, one per documented property, and one for each

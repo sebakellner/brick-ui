@@ -31,13 +31,13 @@ fixtures those canvases draw. The test proves the behaviour.
 
 **Why.** Three copies of one fact drift, and the two that nobody reads win. The page
 already imports the README, so the only way a table can disagree with itself is if someone
-writes a second one in the `.mdx`. The rule this repository learned the hard way: `bk-field`
-documented three parts it never rendered, so `bk-field::part(error)` styled nothing.
+writes a second one in the `.mdx`. The rule this repository learned the hard way: `brikka-field`
+documented three parts it never rendered, so `brikka-field::part(error)` styled nothing.
 
 The same file is read in three places — on GitHub, in Storybook, and on this library's
 documentation page once it exists — so every link it carries is an **absolute URL**: a
 relative path resolves under one renderer and breaks under the others, which is how
-`bk-field`'s link to these conventions was broken on GitHub while nobody was looking.
+`brikka-field`'s link to these conventions was broken on GitHub while nobody was looking.
 
 **Do** — one README, rendered by the page, and a `.mdx` that only sequences canvases.
 
@@ -72,7 +72,7 @@ A component whose behaviour needs its own explanation (`## Label state`, `## For
 `## The two channels`) puts it **after** `## Limitations`, never between the standard
 ones: a reader who wants the contract finds it in the same place in every README.
 
-`packages/web-components/src/components/bk-checkbox/README.md` is the reference: a new component starts from it.
+`packages/web-components/src/components/brikka-checkbox/README.md` is the reference: a new component starts from it.
 A live document cannot drift from the component it describes, and a template can — the
 list this rule replaces had already lost `Slots` and `Accessibility` before anyone noticed.
 
@@ -155,8 +155,8 @@ is the one this folder already uses: a fact true of every technology belongs to 
 and a fact true of one technology belongs to that package.
 
 **Do** — a React README whose tables are generated from the manifest and whose `## Usage`
-shows `<BkInput onChange>`; a custom element README whose tables come from the same manifest
-and whose `## Usage` shows `<bk-input>` with a listener.
+shows `<BrikkaInput onChange>`; a custom element README whose tables come from the same manifest
+and whose `## Usage` shows `<brikka-input>` with a listener.
 
 **Don't** — copy a table by hand into a second package, or rename a contract name to fit the
 idiom: `disabled` stays `disabled`, and how you _set_ it is the package's business.

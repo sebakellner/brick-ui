@@ -1,6 +1,6 @@
 # Documentation
 
-How Brick is put together and why. The root [README](../README.md) covers usage
+How Brikka is put together and why. The root [README](../README.md) covers usage
 and is written for consumers; this directory is for whoever changes the kit.
 [AGENTS.md](../AGENTS.md) at the repository root is the same map, written for
 coding agents.
@@ -88,14 +88,14 @@ alternatives that lost. The rules of the folder:
 
 ## Glossary
 
-| Term                | Meaning                                                                                                                                                                                  |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| primitive / palette | a raw declared value (`--bk-palette-blue-600`). A reference ramp, not a usage list                                                                                                       |
-| semantic role       | a role in `color.json` read **directly** by a component (`--bk-text-danger`). See R1 in [conventions-tokens.md](conventions-tokens.md)                                                   |
-| control token       | what one component paints, when no role can carry it (`--bk-button-disabled-opacity`)                                                                                                    |
-| hook                | a public custom property a consumer may override (`--bk-button-bg`), declared in `style-dictionary.config.mjs`                                                                           |
-| part (`::part()`)   | a styling escape hatch a component exposes — never a nested element. The word is overloaded on purpose below                                                                             |
-| private part        | an element that only works inside one component (`bk-radio-group-item`, `bk-native-select-opt`): registered by the parent's `define.ts`, not exported, documented in the parent's README |
-| atom                | an element that is shared vocabulary (`bk-field-label`): exported, registered by its own `define.ts`, composed by several components                                                     |
-| invariant           | a rule that holds across the codebase and has something enforcing it                                                                                                                     |
-| ADR                 | architecture decision record — one decision, one file, in [adr/](adr/)                                                                                                                   |
+| Term                | Meaning                                                                                                                                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| primitive / palette | a raw declared value (`--brikka-palette-blue-600`). A reference ramp, not a usage list                                                                                                           |
+| semantic role       | a role in `color.json` read **directly** by a component (`--brikka-text-danger`). See R1 in [conventions-tokens.md](conventions-tokens.md)                                                       |
+| control token       | what one component paints, when no role can carry it (`--brikka-button-disabled-opacity`)                                                                                                        |
+| hook                | a public custom property a consumer may override (`--brikka-button-bg`), declared in `style-dictionary.config.mjs`                                                                               |
+| part (`::part()`)   | a styling escape hatch a component exposes — never a nested element. The word is overloaded on purpose below                                                                                     |
+| private part        | an element that only works inside one component (`brikka-radio-group-item`, `brikka-native-select-opt`): registered by the parent's `define.ts`, not exported, documented in the parent's README |
+| atom                | an element that is shared vocabulary (`brikka-field-label`): exported, registered by its own `define.ts`, composed by several components                                                         |
+| invariant           | a rule that holds across the codebase and has something enforcing it                                                                                                                             |
+| ADR                 | architecture decision record — one decision, one file, in [adr/](adr/)                                                                                                                           |

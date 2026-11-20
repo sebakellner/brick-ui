@@ -5,7 +5,7 @@ whole repo; there are no nested AGENTS.md files.
 
 ## What this repo is
 
-Brick — a component library built with Lit and TypeScript: web components shipped
+Brikka — a component library built with Lit and TypeScript: web components shipped
 as plain custom elements, with a token-driven theming contract. Nothing is
 published; the package is private and consumed from this repository.
 
@@ -15,12 +15,12 @@ packages/styles/tokens/role/light.json       semantic roles, one file per theme
 packages/styles/tokens/component/            what one component paints
 packages/styles/src/tokens/                  generated CSS — never edit by hand
 packages/styles/src/theme.css                the theming entry point, imports the generated files
-packages/web-components/src/components/bk-*/ element, stories, docs page, test/, README
+packages/web-components/src/components/brikka-*/ element, stories, docs page, test/, README
 packages/web-components/src/components/shared/ contract: mixins, controllers, styles; no tag, no define
 packages/web-components/test/                suites that compose several components of the package
 packages/test-utils/                         helpers every suite shares — private, never published
 storybook/web-components/                    the documentation site: one Storybook per technology
-examples/brick-ui-vite-ts/                   a consumer of the packed packages: outside the workspace on purpose
+examples/brikka-vite-ts/                   a consumer of the packed packages: outside the workspace on purpose
 test/                                        what needs two packages at once, and the runner's own check
 scripts/                                     the three checks
 docs/                                        conventions and decision records
@@ -44,10 +44,10 @@ you are about to change, and never edit an accepted ADR — supersede it.
 - Edit `packages/styles/src/tokens/*.css` or `packages/styles/src/tokens.generated.ts`. They are
   output of `pnpm build:tokens`, and CI fails when they are stale or untracked.
 - Write a style literal in a component. Colors, lengths, weights and durations
-  read `var(--bk-…)`. A literal is allowed only when it is a reset (`0`,
+  read `var(--brikka-…)`. A literal is allowed only when it is a reset (`0`,
   `100%`) or the geometry a technique requires — [ADR 0004](docs/adr/0004-forbid-style-literals-in-components.md).
 - Give a token read a fallback value. The only legal fallback is the default
-  half of the hook pattern, `var(--bk-button-bg, var(--bk-button-variant-bg))`,
+  half of the hook pattern, `var(--brikka-button-bg, var(--brikka-button-variant-bg))`,
   and its default must be a variable, never a literal —
   [ADR 0002](docs/adr/0002-require-the-theme.md).
 - Write a CSS comment. Token files and component styles stay declarative.
@@ -71,7 +71,7 @@ you are about to change, and never edit an accepted ADR — supersede it.
 | `pnpm test:watch`      | the suite, watching                                                                                                                                                      |
 | `pnpm typecheck`       | `tsc --noEmit`, with `strict`, `noUnusedLocals`, `noUnusedParameters`                                                                                                    |
 | `pnpm build:tokens`    | regenerate the CSS and `tokens.generated.ts`; commit the result                                                                                                          |
-| `pnpm check:tokens`    | every `--bk-*` name a component reads exists, and every semantic role is read                                                                                            |
+| `pnpm check:tokens`    | every `--brikka-*` name a component reads exists, and every semantic role is read                                                                                        |
 | `pnpm check:artifacts` | the packages pack, carry every path their `exports` name, and type-check from a consumer outside the workspace                                                           |
 | `pnpm check:readmes`   | every name the manifest declares is in the README, every name the README has is in the manifest, and the sections and table headers are the ones the conventions ask for |
 | `pnpm format`          | rewrite the files Prettier owns                                                                                                                                          |
@@ -86,7 +86,7 @@ you are about to change, and never edit an accepted ADR — supersede it.
    specificity bugs; `getComputedStyle` does not.
 3. Hover and focus must go through real input — `sendMouse` from
    `@web/test-runner-commands`. A class swap cannot reproduce a specificity loss.
-4. The test page zeroes `--bk-transition` (`web-test-runner.config.mjs`), so a
+4. The test page zeroes `--brikka-transition` (`web-test-runner.config.mjs`), so a
    transitioned property is final immediately. A test about a transition sets the token
    back and awaits `getAnimations()`; never a timer. The pointer is global: a suite that
    moves it resets it in `afterEach`, or the next fixture inherits `:hover`.

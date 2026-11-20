@@ -15,7 +15,7 @@ Rules for the TypeScript, the stylesheets and the tooling. Token rules are in
 ## C1. Imports of local modules carry `.js`
 
 **Rule.** A `.ts` file imports its siblings with the `.js` extension:
-`import './bk-input.js'`.
+`import './brikka-input.js'`.
 
 **Why.** `verbatimModuleSyntax` plus bundler resolution means the import specifier
 is emitted verbatim, so it has to name the runtime file. The editor resolves it
@@ -24,13 +24,13 @@ either way, which is what makes this fail in `tsc` and nowhere else.
 **Do**
 
 ```ts
-import { BkInput } from './bk-input.js';
+import { BrikkaInput } from './brikka-input.js';
 ```
 
 **Don't**
 
 ```ts
-import { BkInput } from './bk-input';
+import { BrikkaInput } from './brikka-input';
 ```
 
 **Enforced by.** `pnpm typecheck`.
@@ -51,7 +51,7 @@ better homes already: its `README.md` and its Storybook page.
 
 ```css
 /* the accent is blue-600 so the label stays readable */
-background: var(--bk-bg-accent);
+background: var(--brikka-bg-accent);
 ```
 
 **Enforced by.** Review. There is no mechanical check, and the risk when this is
@@ -71,7 +71,7 @@ claims.
 
 ## C4. Token names stay plain CSS strings
 
-**Rule.** Component styles read tokens as literal `var(--bk-…)` text, not as typed
+**Rule.** Component styles read tokens as literal `var(--brikka-…)` text, not as typed
 expressions.
 
 **Why.** Lit types the `css` tag to accept only `CSSResultGroup` or numbers as
@@ -84,7 +84,7 @@ Typed names exist and are exported (`TokenName`, `HookName` in
 **Do**
 
 ```css
-background: var(--bk-bg-accent);
+background: var(--brikka-bg-accent);
 ```
 
 **Don't**
@@ -100,12 +100,12 @@ otherwise catch.
 
 ## C5. A disabled control keeps its muted text, loses its hover and carries one dim
 
-**Rule.** A disabled control is drawn with `opacity: var(--bk-opacity-disabled)`
+**Rule.** A disabled control is drawn with `opacity: var(--brikka-opacity-disabled)`
 and has no hover state: every hover rule is guarded by the disabled condition, so
 pointing at an unavailable control changes nothing. Its value text reads
-`--bk-text-muted`, the role the placeholder already reads, so a filled field does
+`--brikka-text-muted`, the role the placeholder already reads, so a filled field does
 not read as an empty one. The surface is **not** repainted: a disabled field keeps
-`--bk-bg-surface`.
+`--brikka-bg-surface`.
 
 The dim speaks for the availability, the muted text role speaks for the content,
 and neither repaints the surface. An atom hosted by a disabled control still
@@ -113,7 +113,7 @@ carries `data-state="disabled"` — it reports the state, it does not paint it; 
 container that owns the row is the one that dims, and a consumer can style the atom
 on that state if they want a louder signal. The dim is written once, at the container that
 owns the state — the control's own row, never the row and the label inside it. A
-message region (`bk-field-description`, `bk-field-error`, the `message` part) is
+message region (`brikka-field-description`, `brikka-field-error`, the `message` part) is
 never dimmed. A component hook may default to the primitive, but never repeats
 its value.
 
@@ -137,12 +137,12 @@ hover:
 ```css
 .control:disabled {
   cursor: not-allowed;
-  color: var(--bk-text-muted);
-  opacity: var(--bk-opacity-disabled);
+  color: var(--brikka-text-muted);
+  opacity: var(--brikka-opacity-disabled);
 }
 
 .control:hover:not(:disabled):not([aria-invalid='true']) {
-  border-color: var(--bk-border-strong);
+  border-color: var(--brikka-border-strong);
 }
 ```
 
@@ -151,7 +151,7 @@ disabled control with the muted one:
 
 ```css
 .field[data-state='disabled'] {
-  background: var(--bk-bg-surface-muted);
+  background: var(--brikka-bg-surface-muted);
 }
 
 .field[data-state='disabled'] .label {

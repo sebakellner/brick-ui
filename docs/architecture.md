@@ -10,7 +10,7 @@ packages/styles/tokens/*.json ──build:tokens──> packages/styles/src/toke
                                                         │
                                                         └──> packages/styles/src/theme.css
                                                                        │
-                             components read it as var(--bk-*) and carry no fallback
+                             components read it as var(--brikka-*) and carry no fallback
 ```
 
 One direction, no exceptions. The token source is not edited at the other end of
@@ -18,11 +18,11 @@ the arrow, and the generated CSS is never edited by hand.
 
 ## Layers
 
-| Layer     | Lives in                                                                              | Answers                                            | Example                        |
-| --------- | ------------------------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------ |
-| Primitive | `packages/styles/tokens/base/color.json` → `palette.*`                                | what colors exist                                  | `--bk-palette-blue-600`        |
-| Semantic  | `packages/styles/tokens/role/light.json` → `bg.*`, `text.*`, `border.*`, `focus-ring` | roles read directly by a component                 | `--bk-text-danger`             |
-| Control   | `packages/styles/tokens/component/control.json` → `<component>.*`                     | what one control paints, when no role can carry it | `--bk-button-disabled-opacity` |
+| Layer     | Lives in                                                                              | Answers                                            | Example                            |
+| --------- | ------------------------------------------------------------------------------------- | -------------------------------------------------- | ---------------------------------- |
+| Primitive | `packages/styles/tokens/base/color.json` → `palette.*`                                | what colors exist                                  | `--brikka-palette-blue-600`        |
+| Semantic  | `packages/styles/tokens/role/light.json` → `bg.*`, `text.*`, `border.*`, `focus-ring` | roles read directly by a component                 | `--brikka-text-danger`             |
+| Control   | `packages/styles/tokens/component/control.json` → `<component>.*`                     | what one control paints, when no role can carry it | `--brikka-button-disabled-opacity` |
 
 The semantic and control layers are **peers, not a stack**: control tokens alias
 the palette, and every semantic role is read by a component directly. Nothing points
@@ -79,7 +79,7 @@ packages/styles/src/tokens/             generated: the custom properties a page 
 packages/styles/src/tokens.css          every generated layer, and no decision about the page
 packages/styles/src/theme.css           tokens.css plus `color-scheme` — what a page loads
 packages/web-components/src/components/shared/form-control/  the contract every field composes
-packages/web-components/src/components/bk-*/  element, stories, docs page, test/, README
+packages/web-components/src/components/brikka-*/  element, stories, docs page, test/, README
 packages/web-components/src/index.ts     the classes, registering nothing
 packages/web-components/src/register.ts  the one module that registers them all
 packages/test-utils/src/                 token resolver, contrast, pointer, form, a11y, theme
