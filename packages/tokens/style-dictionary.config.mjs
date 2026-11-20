@@ -13,7 +13,7 @@ const only =
  * attributes only. The `css` group would rewrite them — `color/css` turns
  * `rgb(37 99 235 / 0.18)` into `#2563eb` and drops the alpha, `size/rem` rescales lengths,
  * `fontFamily/css` requotes the stack. */
-const TRANSFORMS = ['attribute/cti', 'name/kebab'];
+const TRANSFORMS = ['attribute/cti', 'name/kebab', 'typography/css/shorthand'];
 
 /* `$description` documents a role for the graph; it is not a CSS comment. */
 const FORMATTING = { commentStyle: 'none' };
@@ -182,7 +182,10 @@ export default {
     ),
     control: platform([cssFile('control.css', only('button'))]),
     typography: platform([
-      cssFile('typography.css', only('font', 'font-size', 'font-weight', 'line-height')),
+      cssFile(
+        'typography.css',
+        only('font', 'font-size', 'font-weight', 'line-height', 'letter-spacing', 'typography'),
+      ),
     ]),
     typescript: {
       transforms: [...TRANSFORMS, 'name/strip-role'],

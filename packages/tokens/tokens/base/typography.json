@@ -3,27 +3,136 @@
     "$type": "fontFamily",
     "sans": {
       "$value": "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+    },
+    "mono": {
+      "$value": "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
+      "$description": "Code and anything that must line up character by character."
     }
   },
   "font-size": {
     "$type": "dimension",
+    "xs": {
+      "$value": "0.75rem",
+      "$description": "The floor: a caption or a helper line that must not compete with its subject."
+    },
     "sm": {
       "$value": "0.8125rem"
     },
     "md": {
       "$value": "0.9375rem"
+    },
+    "lg": {
+      "$value": "1.125rem",
+      "$description": "The smallest heading that still reads as a heading."
+    },
+    "xl": {
+      "$value": "1.375rem",
+      "$description": "A section title above the content it introduces."
+    },
+    "2xl": {
+      "$value": "1.75rem",
+      "$description": "A page title: the largest size the scale offers."
     }
   },
   "font-weight": {
     "$type": "fontWeight",
+    "regular": {
+      "$value": "400",
+      "$description": "Body text, and any label that is not deliberately stronger."
+    },
     "medium": {
       "$value": "500"
+    },
+    "semibold": {
+      "$value": "600",
+      "$description": "Headings and labels that must hold their own against body text."
     }
   },
   "line-height": {
     "$type": "number",
+    "tight": {
+      "$value": "1.25",
+      "$description": "Multi-line headings, where the lines belong to one phrase."
+    },
     "md": {
       "$value": "1.5"
+    },
+    "relaxed": {
+      "$value": "1.75",
+      "$description": "Long passages that are read rather than scanned."
+    }
+  },
+  "letter-spacing": {
+    "$type": "dimension",
+    "tight": {
+      "$value": "-0.01em",
+      "$description": "Large sizes set slightly closer, because type opens up as it grows."
+    },
+    "normal": {
+      "$value": "0",
+      "$description": "The absence of tracking: what a size needs unless it opts out."
+    }
+  },
+  "typography": {
+    "heading-lg": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.sans}",
+        "fontSize": "{font-size.2xl}",
+        "fontWeight": "{font-weight.semibold}",
+        "lineHeight": "{line-height.tight}"
+      },
+      "$description": "A page title. One per page."
+    },
+    "heading-md": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.sans}",
+        "fontSize": "{font-size.xl}",
+        "fontWeight": "{font-weight.semibold}",
+        "lineHeight": "{line-height.tight}"
+      },
+      "$description": "A section title above the content it introduces."
+    },
+    "heading-sm": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.sans}",
+        "fontSize": "{font-size.lg}",
+        "fontWeight": "{font-weight.semibold}",
+        "lineHeight": "{line-height.tight}"
+      },
+      "$description": "The smallest heading: it groups, it does not announce."
+    },
+    "body-md": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.sans}",
+        "fontSize": "{font-size.md}",
+        "fontWeight": "{font-weight.regular}",
+        "lineHeight": "{line-height.md}"
+      },
+      "$description": "Running text."
+    },
+    "body-sm": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.sans}",
+        "fontSize": "{font-size.sm}",
+        "fontWeight": "{font-weight.regular}",
+        "lineHeight": "{line-height.md}"
+      },
+      "$description": "Running text in a dense surface: a table cell, a description."
+    },
+    "label-md": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "{font.sans}",
+        "fontSize": "{font-size.sm}",
+        "fontWeight": "{font-weight.medium}",
+        "lineHeight": "{line-height.tight}"
+      },
+      "$description": "The label of a control: short, and never a sentence."
     }
   }
 }
