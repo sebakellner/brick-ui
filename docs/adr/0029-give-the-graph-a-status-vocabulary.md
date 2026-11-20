@@ -61,10 +61,12 @@ Three consequences are part of the decision rather than left to the implementer:
   `yellow-700` 4.58:1 on its tint, `blue-600` 5.17:1 — but `blue-700` on `neutral-900` is
   **2.61:1**. A status border does not carry the state, the text and the tint do; it is chosen
   for coherence with the family, and it is not held to the 3:1 component-boundary rule.
-- **The anchors grow from sixteen to thirty-one.** The status families add `green-100/400/600/700/800/900`,
-  `yellow-100/300/700/800/900` and `blue-100/300/800/900`, minus the `blue-600` and `blue-700` the
-  roles already used — measured on the committed tree, the role layer references thirty-one palette
-  steps. That is the preset contract of [0028](0028-let-a-preset-define-primitives-not-roles.md)
+- **The anchors grow from sixteen to thirty-one.** The status families add fifteen new steps:
+  `green-100/400/600/700/800/900`, `yellow-100/300/700/800/900` and `blue-100/300/800/900` — and
+  `blue-600` and `blue-700`, which `info.border` consumes and the roles already referenced, so they
+  are not new but they are still required. Measured on the committed tree, the role layer
+  references thirty-one palette steps in total, and a preset supplies all of them. That is the
+  preset contract of [0028](0028-let-a-preset-define-primitives-not-roles.md)
   growing, and it is recorded there rather than discovered by the first preset author.
 
 The roles are additive. No declaration that exists today changes value, so the gate for this
