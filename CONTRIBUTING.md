@@ -91,11 +91,10 @@ the other.
 - Name any limitation you are shipping with in the PR description. One written
   down is a limitation someone can fix; one kept quiet is a bug report six months
   late.
-- If the change touches a package that ships, add a changeset: `pnpm changeset`.
-  `@brikka-ui/web-components` and `@brikka-ui/tokens` are a `fixed` group, so
-  declaring one of them bumps both — forgetting the other is no longer possible.
-  `pnpm changeset:version` applies the bumps and writes the changelogs. Nothing here
-  publishes.
+- No changeset per change: [ADR 0030](docs/adr/0030-suspend-changesets-until-the-first-version.md)
+  suspends them until the first version is cut, and the commit message is the record. The two
+  shipped packages stay a `fixed` group, so the release that cuts the first version bumps both
+  together, with its own procedure.
 - Before pushing: `pnpm test`, `pnpm typecheck`, `pnpm check:tokens`,
   `pnpm format:check`. If you touched `tokens/`, also run `pnpm build:tokens`
   and commit the output.
