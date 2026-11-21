@@ -158,7 +158,7 @@
       }
     },
     "focus-halo": {
-      "$value": "rgb(96 165 250 / 0.24)",
+      "$value": "color-mix(in oklab, {palette.blue-400} 24%, transparent)",
       "$description": "The translucent ring drawn around a focused control."
     },
     "focus-ring": {

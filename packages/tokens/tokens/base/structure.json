@@ -4,8 +4,9 @@
     "$type": "dimension"
   },
   "control-height": {
-    "$value": "40px",
-    "$type": "dimension"
+    "$value": "calc(40px * {scale.density})",
+    "$type": "dimension",
+    "$description": "The height of a control at rest, computed from the density: a density of 1 is the designed 40px."
   },
   "focus-ring-width": {
     "$value": "2px",

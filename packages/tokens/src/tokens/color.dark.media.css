@@ -1,7 +1,6 @@
 @media (prefers-color-scheme: dark) {
   :where(:root:not([data-theme])) {
     --brikka-bg-scrim: rgb(28 25 23 / 0.64);
-    --brikka-focus-halo: rgb(96 165 250 / 0.24);
     --brikka-bg-inverse: var(--brikka-palette-neutral-100);
     --brikka-bg-surface: var(--brikka-palette-neutral-900);
     --brikka-bg-surface-muted: var(--brikka-palette-neutral-800);
@@ -37,6 +36,7 @@
     --brikka-info-bg: var(--brikka-palette-blue-900);
     --brikka-info-text: var(--brikka-palette-blue-300);
     --brikka-info-border: var(--brikka-palette-blue-700);
+    --brikka-focus-halo: color-mix(in oklab, var(--brikka-palette-blue-400) 24%, transparent);
     --brikka-focus-ring: var(--brikka-palette-sky-400);
   }
 }

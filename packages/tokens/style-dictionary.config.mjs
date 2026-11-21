@@ -245,6 +245,7 @@ export default {
           'focus-ring-width',
           'focus-ring-offset',
           'opacity',
+          'scale',
           'z-index',
         ),
       ),

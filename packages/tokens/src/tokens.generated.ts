@@ -91,6 +91,8 @@ export const tokens = {
   radiusLg: '--brikka-radius-lg',
   radiusXl: '--brikka-radius-xl',
   radiusFull: '--brikka-radius-full',
+  scaleType: '--brikka-scale-type',
+  scaleDensity: '--brikka-scale-density',
   space0: '--brikka-space-0',
   space1: '--brikka-space-1',
   space2: '--brikka-space-2',

@@ -1,0 +1,13 @@
+{
+  "scale": {
+    "$type": "number",
+    "type": {
+      "$value": 1,
+      "$description": "The multiplier every font size is computed from: a host sets 1.125 to read comfortably without zooming, or 0.875 for a dense console."
+    },
+    "density": {
+      "$value": 1,
+      "$description": "The multiplier the control height is computed from: a host sets 0.8 for a dense table and 1.2 for a touch surface."
+    }
+  }
+}
