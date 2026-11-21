@@ -46,8 +46,7 @@ someone is asking for a configuration point, or for a component that does not ex
 their values per theme, and the rules they obey are on this page and in [foundations.md](foundations.md). Touch any of those and
 the system stops being a system and becomes an archive of particular cases.
 
-**The fourth level is not one you climb.** The rule above has no lowest rung at the top: reaching the
-core means asking, and the answer is a version.
+**The fourth level is not one you climb.** It is requested, and the answer is a version.
 
 ## One rule makes the rest possible
 
@@ -73,17 +72,20 @@ it moves on its own, without anybody rewriting a role.
 
 A brand on the document works because the two declarations meet on one element: the palette step it
 supplies and the role that reads it are both applied to the root, so the role substitutes the new
-value.
+value. The rule behind it is that a brand lives on the element that carries the theme. The light
+block re-declares the palette under `[data-theme='light']`, so a theme attribute on a container below
+the brand puts the default palette back for everything under it. The dark block re-declares only the
+roles, which is why one brand block serves both themes: a palette does not depend on the theme, and a
+brand needs no rule per theme.
 
-A brand confined to a subtree is a different problem, and the obvious attempt fails in silence.
+A brand confined to a subtree is a different problem: putting the attribute on a container and
+expecting the roles to follow fails in silence.
 `var()` resolves where a declaration applies, so redefining a palette step inside a subtree never
-reaches a role declared on the root: that subtree has to re-declare the role as well, under its own
-selector. It is what a theme does, and why the light block declares the palette and the roles
-together.
-
-What a brand does not do is choose a role itself: it supplies values, and the roles that read them are
-re-declared for it. A contract every party drafts is not a contract, and `surface` would stop meaning
-anything.
+reaches a role declared on the root. What makes it work is that the graph re-emits the roles that read
+the brand's steps under that same selector — the generation that produces a theme produces a brand's
+scope too. Nobody hand-writes those roles, and that is the whole point: a brand supplies values, and a
+role is always the system's name for a decision. A contract every party drafts is not a contract, and
+`surface` would stop meaning anything.
 
 One consequence is the same mechanism from the other side: **a token that contains another resolves
 where it is declared.** A shadow's tint is applied at the theme that declares it, not on the card that
@@ -105,7 +107,7 @@ A **hook** is named for the component it belongs to: `button-bg`, not `accent-tw
 
 Freedom is only safe when something refuses the harmful cases.
 
-**Ranges, not free values.** A brand supplies a colour, a unit and two multipliers. It does not
+**Ranges, not free values.** A brand supplies palette values, a unit and two multipliers. It does not
 supply a stylesheet. Where two of them meet the system owns the computation: a control's height is
 supplied at the resting density and the multiplier that adapts it stays the system's, so a plain
 length would opt that control out of density.
@@ -114,7 +116,8 @@ length would opt that control out of density.
 status families in [tokens.md](tokens.md) are the example — and a preset that would form a pair below
 its threshold has to fail rather than ship. Two classes of pair are measured: text on its surface at
 4.5:1, and everything that is not text — a control's edge, a focus ring, a boundary that carries
-meaning — at 3:1.
+meaning — at 3:1. A brand that supplies one step and not its ramp keeps the default at every step it
+did not touch, and the pairs measured on the shipped ramp stop describing that page.
 
 **Failures are made visible.** A token that does not resolve invalidates the declaration that reads it, in
 silence. That is why a layer is loaded through `tokens.css`, and why the graph is checked rather than
@@ -133,7 +136,9 @@ magic number — `padding: 13px` — is a decision with no name and no owner. A 
 inside the core turns the system into an archive of particular cases, which is what the levels above
 exist to avoid. The families this graph refuses, and why, are listed once in [tokens.md](tokens.md).
 
-A rule nobody can check is a wish. Every guard above names what holds it up.
+A rule nobody can check is a wish. Where a guard above names a check, that check exists today; where
+it names none, the guard is held by review, and an exception is argued in a new record rather than
+granted in passing.
 
 ## What this document does not govern
 
