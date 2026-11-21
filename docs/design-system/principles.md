@@ -41,8 +41,10 @@ names a problem. There is nothing new to invent — the decisions are taken, and
 hook, and you write down why. An exception is legitimate. A **repeated** exception is information:
 someone is asking for a configuration point, or for a component that does not exist.
 
-**The core.** Names, scales, rules, and which property each role forms. Touch it and the system stops
-being a system and becomes an archive of particular cases.
+**The core.** Names, scales, rules, and which property each role forms — and it has an address:
+`tokens/base` holds the ramps, the scales and the singletons, `tokens/role` holds the role names with
+their values per theme, and `conventions-tokens.md` holds the rules they obey. Touch any of those and
+the system stops being a system and becomes an archive of particular cases.
 
 ## One rule makes the rest possible
 
@@ -107,9 +109,7 @@ defect is the system's and not a choice of whoever configured it.
 Reading a primitive inside a component closes the door on theming, and the check refuses it (R6). A
 magic number — `padding: 13px` — is a decision with no name and no owner. A variation per client
 inside the core turns the system into an archive of particular cases, which is what the levels above
-exist to avoid. And a second way to say the same thing — two scales for one dimension, an opacity
-beside a disabled role, an alias that only restates its primitive — is how two components come to
-look different while both being "correct".
+exist to avoid. The families this graph refuses, and why, are listed once in [tokens.md](tokens.md).
 
 A rule nobody can check is a wish. Every guard above names what holds it up.
 
