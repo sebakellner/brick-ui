@@ -10,20 +10,20 @@ from them — and a component or host that imports one file in isolation gets an
 `var()`. That is why no token read carries a literal fallback: a fallback would be a second
 value to keep true, and AGENTS.md forbids a literal one outright.
 
-| #   | Rule                                                                          | Enforced by         |
-| --- | ----------------------------------------------------------------------------- | ------------------- |
-| R1  | A role is a documented, typed commitment that resolves in every theme         | `pnpm check:tokens` |
-| R2  | In the graph an alias points one layer down, and a role never aliases a role  | review              |
-| R3  | The palette is a reference ramp, not a usage list                             | review              |
-| R4  | The token path is the public name                                             | review              |
-| R5  | A role is read under the property it belongs to                               | `pnpm check:tokens` |
-| R6  | A component reads a role for colour and a primitive for everything else       | `pnpm check:tokens` |
-| R7  | Motion is one composite token, and reduced motion zeroes it at the theme      | review              |
-| R8  | Elevation is two shadow tokens, and a shadow is the one unchecked value       | review              |
-| R9  | Stacking is a token when the DOM and the top layer cannot order the surface   | review              |
-| R10 | The palette is declared under the light selector, so a subtree re-declares it | review              |
-| R11 | The space base is computed into space, radius, `size` and `icon`              | review              |
-| R12 | Reduced motion replaces the transition composite with a duration alone        | review              |
+| #   | Rule                                                                         | Enforced by         |
+| --- | ---------------------------------------------------------------------------- | ------------------- |
+| R1  | A role is a documented, typed commitment that resolves in every theme        | `pnpm check:tokens` |
+| R2  | In the graph an alias points one layer down, and a role never aliases a role | review              |
+| R3  | The palette is a reference ramp, not a usage list                            | review              |
+| R4  | The token path is the public name                                            | review              |
+| R5  | A role is read under the property it belongs to                              | `pnpm check:tokens` |
+| R6  | A component reads a role for colour and a primitive for everything else      | `pnpm check:tokens` |
+| R7  | Motion is one composite token, and reduced motion zeroes it at the theme     | review              |
+| R8  | Elevation is two shadow tokens, and a shadow is the one unchecked value      | review              |
+| R9  | Stacking is a token when the DOM and the top layer cannot order the surface  | review              |
+| R10 | The palette is declared once, at the root, and a theme re-declares the roles | review, `pnpm test` |
+| R11 | The space base is computed into space, radius, `size` and `icon`             | review              |
+| R12 | Reduced motion replaces the transition composite with a duration alone       | review              |
 
 Before any of these rules, `pnpm check:tokens` asserts **existence**: every
 `--brikka-*` name read inside a CSS string must be a declared token or a hook. No
@@ -235,24 +235,27 @@ hurry is the symptom of having asked the wrong one.
 **Enforced by.** Review. The tokens exist in `packages/tokens/tokens/base/layout.json`; a literal
 `z-index` in a component is what review refuses.
 
-## R10. The palette is declared under the light selector
+## R10. The palette is declared once, at the root
 
-**Rule.** Every palette step is emitted inside the light-theme selector,
-`:where(:root), :where([data-theme="light"])`, and the dark blocks re-declare the semantic roles
-only. All 64 steps live there. A subtree that sets `data-theme="light"` therefore re-declares the
-whole palette, and a palette override written for the document does not follow into it.
+**Rule.** Every palette step is emitted in one block, under `:where(:root)`. The light block,
+`:where(:root), :where([data-theme="light"])`, carries the semantic roles; the two dark blocks,
+`:where([data-theme="dark"])` and `:where(:root:not([data-theme]))`, carry the roles and no palette
+step. All 64 steps live under the root selector, ahead of the roles that read them.
 
-**Why.** The ramp is one set of values shared by both themes, and declaring it once, on the
-selector a document and a light subtree both land on, is what keeps a second copy of it out of the
-graph. The consequence is the part a host meets: the subtree declares the ramp on its own element,
-and a declaration on the element beats the one it would inherit from an ancestor, whatever the
-specificity of either. So a palette override written for the document is a document-level fact, and
-a host that must repaint the ramp inside a light subtree scopes the override to that subtree too.
+**Why.** The ramp is theme-invariant: a theme re-declares the roles, and has no opinion about the
+palette. Declaring the ramp under the light selector as well made it a per-theme block, and a
+declaration on an element beats the one that would have been inherited — so a `data-theme="light"`
+container put the default palette back for everything under it, while a `data-theme="dark"`
+container kept an override written for the document. That difference was a consequence of where the
+declarations sat, not a decision anyone had made. `:root` is the one element every document has and
+neither theme block moves off, so a single block there is inherited by every subtree in either
+theme, and a host's palette override is a document-level fact in both.
 
-**Enforced by.** Review, against the generated output: `packages/tokens/src/tokens/color.css`
-opens with the light selector and carries all 64 palette steps, while
+**Enforced by.** Review, against the generated output: `packages/tokens/src/tokens/color.css` opens
+with `:where(:root)` and carries all 64 palette steps before the light role block, while
 `packages/tokens/src/tokens/color.dark.css` and `color.dark.media.css` declare no palette step at
-all.
+all. The suite holds the behaviour: `packages/tokens/test/palette.test.ts` overrides a palette step
+at the root and reads, inside a `data-theme="light"` subtree, the role that composes it.
 
 ## R11. The space base is computed into three other families
 
