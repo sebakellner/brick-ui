@@ -99,10 +99,15 @@ An ADR records one decision that would be expensive to reverse, together with th
 that lost. The rules of the folder:
 
 - One decision per file, named `NNNN-decision-in-the-imperative.md`.
-- Four digits, and a number is **never reused or renumbered**. Gaps mean a decision was withdrawn, not that the sequence is broken.
+- Four digits, and a number is **never reused or renumbered**. Gaps mean a decision was withdrawn,
+  not that the sequence is broken.
+- **The sequence restarted at 0001 when the design system became the product.** It ran to 0032 while
+  this repository built a component kit; the twenty-two records that shape the system kept their
+  meaning and took a new number in their existing order, and the ten about building elements left
+  the folder. From here the rule above holds again.
 - An accepted ADR is **not edited** when the decision changes. Write a new one and mark the old `superseded by [NNNN](NNNN-slug.md)`. The history of a reversal is the most valuable thing in the folder.
 - When only part of an accepted decision is reversed, the new ADR supersedes that part and the old one is marked `superseded in part by [NNNN](NNNN-slug.md)`, with one sentence naming what still holds. 0003 is the case: its rule about `var()` aliases survived 0006, its description of the layers did not. Marking the status is the only edit an accepted ADR receives; the body below it is never rewritten.
-- An accepted ADR's **identifiers** follow a rename of the thing they name. That is not a change of decision: `bk-` becoming `brikka-`, a `BkButton` becoming `BrikkaButton` and a package path moving are updated in place, while every sentence that says what was decided stays as it was written. The line is between the names and the reasoning. [0023](adr/0023-let-the-identifier-prefix-follow-the-product-name.md) is the rename that drew it.
+- An accepted ADR's **identifiers** follow a rename of the thing they name. That is not a change of decision: `bk-` becoming `brikka-`, a `BkButton` becoming `BrikkaButton` and a package path moving are updated in place, while every sentence that says what was decided stays as it was written. The line is between the names and the reasoning. [0013](adr/0013-let-the-identifier-prefix-follow-the-product-name.md) is the rename that drew it.
 - Start from [0000-template.md](adr/0000-template.md) and replace every prompt.
 - **The Context describes our situation, not the industry's.** What hurt, what it cost, verified in the code. Benchmarking belongs in the working notes: put it in the Context and a reader years later will take what other systems do as the argument for what we did.
 - An alternative may name the system it comes from, because that is how a rejected option proves it was real. That is the only place an outside design belongs.

@@ -1,10 +1,10 @@
-# 0027. Ship the token graph as a design system, and let the components test it
+# 0017. Ship the token graph as a design system, and let the components test it
 
 Date: 2026-11-20
 
 ## Status
 
-accepted. It extends [0019](0019-the-token-graph-is-the-public-contract.md) and reverses
+accepted. It extends [0012](0012-the-token-graph-is-the-public-contract.md) and reverses
 row R1 of [docs/conventions-tokens.md](../conventions-tokens.md), which the change that
 accepts this record rewrites. It supersedes no record.
 
@@ -53,7 +53,7 @@ elements, which means a host can install the design system and never install a c
 The name is read before the README and at every import site, and it says the package is the
 CSS of a component kit.
 
-Nothing is published, which is what makes all of it reparable at this price. [0023](0023-let-the-identifier-prefix-follow-the-product-name.md)
+Nothing is published, which is what makes all of it reparable at this price. [0013](0013-let-the-identifier-prefix-follow-the-product-name.md)
 recorded the condition on that freedom — it "stops being true the day a version ships".
 Every item in the decision below is a rename, a restructure or a removal: the three kinds
 of change that are free only now.

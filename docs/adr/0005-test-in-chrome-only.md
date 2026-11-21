@@ -5,8 +5,8 @@ Date: 2026-11-12
 ## Status
 
 accepted; superseded in part by
-[0016](0016-the-runner-launches-chrome-with-a-pointer.md) (the browser list) and in part
-by [0018](0018-the-browser-the-suite-runs-is-the-one-the-lockfile-pins.md) (which binary,
+[0009](0009-the-runner-launches-chrome-with-a-pointer.md) (the browser list) and in part
+by [0011](0011-the-browser-the-suite-runs-is-the-one-the-lockfile-pins.md) (which binary,
 and who pins it)
 
 ## Context

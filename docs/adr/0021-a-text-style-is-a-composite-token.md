@@ -1,11 +1,11 @@
-# 0031. A text style is a composite token, and a composite is serialized, not rewritten
+# 0021. A text style is a composite token, and a composite is serialized, not rewritten
 
 Date: 2026-11-20
 
 ## Status
 
 accepted, in the change that adds the type scale and the six text styles. It extends
-[0027](0027-ship-the-token-graph-as-a-design-system.md) and **interprets** the rule S1 left in
+[0017](0017-ship-the-token-graph-as-a-design-system.md) and **interprets** the rule S1 left in
 `packages/tokens/style-dictionary.config.mjs` — that no transform rewrites an authored value —
 rather than reversing it. It supersedes no record.
 

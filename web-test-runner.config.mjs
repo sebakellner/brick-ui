@@ -46,7 +46,7 @@ export default {
   browserLogs: true,
   /* 2 is hover, 1 is none. Why the flag exists, and the two ways it breaks:
    * docs/conventions-testing.md, T7. Playwright launches the Chromium its own
-   * version pins: docs/adr/0018-the-browser-the-suite-runs-is-the-one-the-lockfile-pins.md. */
+   * version pins: docs/adr/0011-the-browser-the-suite-runs-is-the-one-the-lockfile-pins.md. */
   browsers: [
     playwrightLauncher({
       product: 'chromium',

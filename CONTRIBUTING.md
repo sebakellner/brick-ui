@@ -91,7 +91,7 @@ the other.
 - Name any limitation you are shipping with in the PR description. One written
   down is a limitation someone can fix; one kept quiet is a bug report six months
   late.
-- No changeset per change: [ADR 0030](docs/adr/0030-suspend-changesets-until-the-first-version.md)
+- No changeset per change: [ADR 0020](docs/adr/0020-suspend-changesets-until-the-first-version.md)
   suspends them until the first version is cut, and the commit message is the record. The two
   shipped packages stay a `fixed` group, so the release that cuts the first version bumps both
   together, with its own procedure.

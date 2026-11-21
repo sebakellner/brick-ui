@@ -5,7 +5,7 @@ Date: 2026-11-13
 ## Status
 
 accepted; superseded in part by
-[0015](0015-the-page-loads-the-theme-the-suite-does-not.md), which supersedes the sentence
+[0008](0008-the-page-loads-the-theme-the-suite-does-not.md), which supersedes the sentence
 below that "the suite imports `theme.css` directly": the page links it and no suite does.
 The `sideEffects` field this record describes was settled differently: the contract
 declares it, and `docs/conventions-testing.md` T8 states the value.

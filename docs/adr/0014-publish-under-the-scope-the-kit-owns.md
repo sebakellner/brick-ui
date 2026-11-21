@@ -1,21 +1,21 @@
-# 0024. Publish under the scope the kit owns, and move both packages together
+# 0014. Publish under the scope the kit owns, and move both packages together
 
 Date: 2026-11-20
 
 ## Status
 
 accepted, superseded in part by
-[0026](0026-adopt-changesets-before-the-first-release.md): the deferral of a release
+[0016](0016-adopt-changesets-before-the-first-release.md): the deferral of a release
 tool is gone — changesets now enforces the `fixed` group this document decided by
 hand. What still holds is the scope and the rule that both packages carry one
 version; the paragraph below on why they move together is still the reason.
 
-Extends [0023](0023-let-the-identifier-prefix-follow-the-product-name.md), which
+Extends [0013](0013-let-the-identifier-prefix-follow-the-product-name.md), which
 named the product but not the namespace it publishes into.
 
 ## Context
 
-[0023](0023-let-the-identifier-prefix-follow-the-product-name.md) named the kit `brikka`
+[0013](0013-let-the-identifier-prefix-follow-the-product-name.md) named the kit `brikka`
 and made the identifier prefix follow the name. It said nothing about the npm
 namespace, and the namespace turned out to be the harder name to get.
 

@@ -37,7 +37,7 @@ describe('the text styles', () => {
     expect(style.lineHeight).to.equal('16.25px');
   });
 
-  /* Documented in ADR 0031: `font` resets style, variant and width along with the four it
+  /* Documented in ADR 0021: `font` resets style, variant and width along with the four it
    * sets, so a separate `font-size` written before a composite does not survive it. */
   it('overrides a size written before it, because the shorthand resets what it sets', () => {
     probe ??= document.body.appendChild(document.createElement('div'));
