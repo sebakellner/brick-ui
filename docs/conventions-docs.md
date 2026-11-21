@@ -164,7 +164,7 @@ idiom: `disabled` stays `disabled`, and how you _set_ it is the package's busine
 **Enforced by.** `pnpm check:readmes`, in both directions: a contract name the manifest
 declares and no table carries fails, and a table row with no name behind it fails too. Which
 surfaces the manifest carries from code and which are annotated is the decision in
-[ADR 0020](adr/0020-the-component-manifest-is-generated-and-the-readme-renders-it.md).
+.
 
 ## D7. Documentation in code earns its place like a comment does
 

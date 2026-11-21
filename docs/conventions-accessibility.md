@@ -61,8 +61,7 @@ who forgets is the consumer who gets a broken form, and they have no way to know
 has text. An empty description or error removes the reference. The text is not always
 the region's own: content that arrives through a slot is not in its
 `textContent`, so a control with slotted descriptions decides from `slotchange`
-and `assignedNodes()`, never from the rendered string
-([0009](adr/0009-nest-the-field-parts-inside-the-control.md)).
+and `assignedNodes()`, never from the rendered string.
 
 **Why.** A reference to an empty element is announced as an empty description by
 some screen readers, and it is the kind of detail that only surfaces by using the
@@ -78,7 +77,7 @@ the component, never in the host page. The mechanism follows what is blocked. A
 element and cancels the activation, so it keeps its place in the tab order. A
 **text field** sets the native `disabled` attribute, which already refuses typed
 text, autofill, pointer interaction, submission and constraint validation, and
-leaves the tab order as the platform means it to — [0008](adr/0008-keep-the-native-disabled-attribute-on-text-fields.md).
+leaves the tab order as the platform means it to.
 
 **Why.** On a widget, what is blocked is an action the user has not decided on
 yet, so they have to be able to reach the control to find out why it is
@@ -121,8 +120,7 @@ region stops being announced and the visual hiding also silenced it.
 implementation. `:empty` cannot see slotted content, so a region is collapsed
 from `data-empty` as well: a control marks its own `.message` wrapper, which
 `FieldMessagesController` sets from `assignedNodes()`, and an atom marks itself,
-reading its own light DOM with `SlottedTextController`
-([ADR 0022](adr/0022-an-element-marks-only-itself.md)). Each host marks only what
+reading its own light DOM with `SlottedTextController`. Each host marks only what
 it hosts. `1px` there is the geometry the technique requires, not a design value
 ([ADR 0004](adr/0004-forbid-style-literals-in-components.md)).
 
@@ -153,8 +151,7 @@ be green and broken everywhere else.
 **This is the one place A7 is relaxed**: the live region is the slotted error
 atom, not a region the component owns, because a container has no same-tree region
 to offer. It is still never removed and still collapsed rather than
-`display: none`d while empty
-([ADR 0010](adr/0010-name-a-group-on-its-host-and-let-its-atoms-be-the-regions.md)).
+`display: none`d while empty.
 
 **Enforced by.** The suite: every reference is asserted by resolving it
 (`document.getElementById` on the host's `aria-describedby`), never by comparing
