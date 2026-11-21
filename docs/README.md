@@ -52,6 +52,19 @@ history to fix a link. A new document goes in a group directory; these five stay
 [Diátaxis](https://diataxis.fr/start-here/) split. There is no tutorial, and none should be
 invented: the kit is small and the root README is the whole onboarding.
 
+### Two things the map settles
+
+**There is no `internal/` directory.** The root is the internal documentation, and it holds two
+kinds of file that look alike: five that history froze — an accepted ADR links to each one, so
+moving it would mean editing history to fix a link — and the rest, which could move and do not need
+to. A directory that separated them would need this paragraph twice to explain itself, and a reader
+would still have to consult a table to know which floor a document is on.
+
+**Component documentation lives in its package.** Each element's `README.md` sits beside its code,
+`pnpm check:readmes` ties it to the generated manifest, and it ships with the package. The published
+site reads those files from where they are; a `docs/components/` directory would be a second copy of
+a fact that already has an owner, which is the one rule this folder does not break.
+
 ## Publishable documents
 
 | Document                                                   | Answers                                                           |
