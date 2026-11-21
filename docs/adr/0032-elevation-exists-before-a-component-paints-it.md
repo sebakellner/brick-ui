@@ -35,14 +35,21 @@ only for this repository's components.
 
 ## Decision
 
-Three tokens: `elevation.color`, and two shadow composites, `elevation.raised` and
-`elevation.overlay`, both referencing the colour so a host retints every shadow with one value.
+Three tokens: `elevation.color`, and two shadow composites, `elevation.resting` and
+`elevation.floating`, both referencing the colour so a host retints every shadow with one value.
 
 The colour carries alpha and is authored as `rgb(28 25 23 / 0.12)` — a literal, not a palette
 step, because `color/css` is banned and a palette step has no alpha to give. A shadow that
 opened a second hop through a palette entry would also break R2.
 
-Two levels, not five. A component kit needs "on the page" and "above the page"; a third level
+Two levels, not five, and named for height rather than for the thing that casts them. The pair is
+Primer's `resting` / `floating`: both words describe how high a surface sits, and they leave
+`overlay` free for the scrim, which is what that word names in most systems and what this graph
+will need next. Numeric levels (`elevation.1`, `elevation.2`, as Material, Polaris and Radix
+number theirs) scale without a rename but say nothing about height; with two levels, words earn
+their place. `raised` was the first choice and it reads as a property of a control rather than
+of a surface.
+A component kit needs "on the page" and "above the page"; a third level
 is a decision to make with the component that would paint it.
 
 R8 is rewritten rather than deleted: elevation is allowed, and the part that says a shadow is
@@ -75,5 +82,5 @@ ships silently, and the suite cannot see it without a component that paints it. 
 is that two levels may not survive contact with a real dialog — a `sunken` or a `dragged` level
 is likely, and adding one later is additive, which is why the scale starts where it can grow.
 
-The mistake this invites is painting `elevation.overlay` on anything that moves, because it looks
-stronger than `raised`. Depth that is used for emphasis stops communicating height.
+The mistake this invites is painting `elevation.floating` on anything that moves, because it looks
+stronger than `resting`. Depth that is used for emphasis stops communicating height.

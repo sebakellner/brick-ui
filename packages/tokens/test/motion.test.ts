@@ -41,7 +41,15 @@ describe('motion', () => {
    * duration has to stay valid where a composite was, or reduced motion silently stops
    * applying. */
   it('accepts the bare duration the reduced-motion block substitutes', () => {
-    const style = transition('color var(--brikka-transition)');
-    expect(style.transitionDuration).to.equal('0s');
+    const root = document.documentElement;
+    /* The test page zeroes the token, and `0s` is also what an invalid declaration computes
+     * to — so this overrides it with the value reduced motion actually uses, `1ms`, and would
+     * fail if a bare duration stopped substituting into the composite's slot. */
+    root.style.setProperty('--brikka-transition', '1ms');
+    try {
+      expect(transition('color var(--brikka-transition)').transitionDuration).to.equal('0.001s');
+    } finally {
+      root.style.removeProperty('--brikka-transition');
+    }
   });
 });

@@ -14,18 +14,18 @@ const shadow = (name: string): string => {
 };
 
 describe('elevation', () => {
-  it('paints a raised surface just above the page', () => {
-    expect(shadow('raised')).to.equal('rgba(28, 25, 23, 0.12) 0px 1px 3px 0px');
+  it('paints a surface resting on the page', () => {
+    expect(shadow('resting')).to.equal('rgba(28, 25, 23, 0.12) 0px 1px 3px 0px');
   });
 
-  it('paints an overlay far enough to read as above everything', () => {
-    expect(shadow('overlay')).to.equal('rgba(28, 25, 23, 0.12) 0px 8px 24px -4px');
+  it('paints a surface floating above everything', () => {
+    expect(shadow('floating')).to.equal('rgba(28, 25, 23, 0.12) 0px 8px 24px -4px');
   });
 
   /* The colour is a reference inside a composite; if the serializer stopped resolving it, the
    * shadow would still paint — in the wrong colour, or not at all, without an error. */
   it('keeps the alpha of the colour it references', () => {
-    expect(shadow('raised')).to.contain('0.12');
+    expect(shadow('resting')).to.contain('0.12');
   });
 
   /* One colour retints both levels — but only where the composite is declared. A custom
@@ -36,8 +36,8 @@ describe('elevation', () => {
     const root = document.documentElement;
     root.style.setProperty('--brikka-elevation-color', 'rgb(37 99 235 / 0.4)');
     try {
-      expect(shadow('raised')).to.contain('rgba(37, 99, 235, 0.4)');
-      expect(shadow('overlay')).to.contain('rgba(37, 99, 235, 0.4)');
+      expect(shadow('resting')).to.contain('rgba(37, 99, 235, 0.4)');
+      expect(shadow('floating')).to.contain('rgba(37, 99, 235, 0.4)');
     } finally {
       root.style.removeProperty('--brikka-elevation-color');
     }

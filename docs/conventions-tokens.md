@@ -192,7 +192,7 @@ the same mechanism the media query uses.
 
 ## R8. Elevation is two shadow tokens, and a shadow is the one unchecked value
 
-**Rule.** Depth is `elevation.raised` and `elevation.overlay`, both referencing
+**Rule.** Depth is `elevation.resting` and `elevation.floating`, both referencing
 `elevation.color`, and a component reads one of them under `box-shadow` rather than
 composing offsets of its own.
 

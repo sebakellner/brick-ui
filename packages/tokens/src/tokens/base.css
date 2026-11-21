@@ -12,7 +12,7 @@
   --brikka-focus-ring-width: 2px;
   --brikka-focus-ring-offset: 1px;
   --brikka-opacity-disabled: 0.5;
-  --brikka-elevation-raised: 0px 1px 3px 0px var(--brikka-elevation-color);
-  --brikka-elevation-overlay: 0px 8px 24px -4px var(--brikka-elevation-color);
+  --brikka-elevation-resting: 0px 1px 3px 0px var(--brikka-elevation-color);
+  --brikka-elevation-floating: 0px 8px 24px -4px var(--brikka-elevation-color);
   --brikka-transition: var(--brikka-duration-base) var(--brikka-easing-standard) 0ms;
 }
