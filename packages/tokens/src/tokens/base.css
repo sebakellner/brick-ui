@@ -24,7 +24,7 @@
   --brikka-elevation-resting: 0px 1px 3px 0px var(--brikka-elevation-color);
   --brikka-elevation-floating: 0px 8px 24px -4px var(--brikka-elevation-color);
   --brikka-transition: var(--brikka-duration-base) var(--brikka-easing-standard) 0ms;
-  --brikka-control-height: calc(40px * var(--brikka-scale-density));
+  --brikka-control-height: calc(40px * max(var(--brikka-scale-density), 0.6));
   --brikka-icon-sm: var(--brikka-space-4);
   --brikka-icon-md: var(--brikka-space-5);
   --brikka-icon-lg: var(--brikka-space-6);
