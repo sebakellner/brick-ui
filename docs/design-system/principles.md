@@ -60,7 +60,7 @@ it moves on its own, without anybody rewriting a role.
 ```css
 /* The ramp is declared once, at the root; a theme re-declares the roles. */
 :where(:root) {
-  --brikka-palette-blue-600: #2563eb; /* one step of the nine the default ramp declares */
+  --brikka-palette-blue-600: #2563eb; /* one step of the default ramp */
 }
 
 :where(:root),
@@ -84,13 +84,13 @@ the ramp reaches every role that reads it, in every theme, at any depth.
 the roles; the palette itself has no theme. So one brand block serves both themes, needs no rule per
 theme, and nothing below it can put the default ramp back.
 
-A brand confined to a subtree is a different problem and a generated extension: `var()` resolves where
-a declaration applies, so redefining a palette step inside a subtree never reaches a role declared on
-the root, and the roles that read the brand's steps are re-declared under that same selector —
-generated, never written by the brand. That extension is held by review rather than by a test; the
-document is the case that ships, and the suite holds it. Nobody hand-writes those roles, and that is the whole point: a brand supplies values, and a
-role is always the system's name for a decision. A contract every party drafts is not a contract, and
-`surface` would stop meaning anything.
+Nobody hand-writes those roles, and that is the whole point: a brand supplies values, and a role is
+always the system's name for a decision. A brand confined to a subtree is a generated extension —
+`var()` resolves where a declaration applies, so redefining a palette step inside a subtree never
+reaches a role declared on the root, and the roles that read the brand's steps are re-declared under
+that same selector, generated rather than written. The document is the case the suite holds, down to
+the role a light subtree resolves from an override at the root; the subtree itself is held by review.
+A contract every party drafts is not a contract, and `surface` would stop meaning anything.
 
 One consequence is the same mechanism from the other side: **a token that contains another resolves
 where it is declared.** A shadow's tint is applied at the theme that declares it, not on the card that
@@ -112,7 +112,8 @@ A **hook** is named for the component it belongs to: `button-bg`, not `accent-tw
 
 Freedom is only safe when something refuses the harmful cases.
 
-**Ranges, not free values.** A brand supplies an anchor colour, a unit and two multipliers. It does
+**Ranges, not free values.** A brand supplies an anchor colour — or the ramp it builds — a unit and
+two multipliers. It does
 not supply a stylesheet.
 
 **An anchor, not a step.** A role reads the step its theme needs, and the two themes do not read the
@@ -143,19 +144,20 @@ trusted.
 and at the factory density. What ships pre-set is the design for most people.
 
 **Accessibility is an invariant.** No axis may produce a result below WCAG 2.2 AA. If one can, the
-defect is the system's and not a choice of whoever configured it.
+defect is the system's and not a choice of whoever configured it — and no check fails a build that
+breaks it: the pairs are measured by hand, and this guard is held by review.
 
 ## How this breaks
 
-Reading a palette step inside a component closes the door on theming, and the graph's own check refuses
-it. A
-magic number — `padding: 13px` — is a decision with no name and no owner. A variation per client
-inside the core turns the system into an archive of particular cases, which is what the levels above
-exist to avoid. The families this graph refuses, and why, are listed once in [the token reference](tokens.md).
+Reading a palette step inside a component closes the door on theming, and the graph's own check
+refuses it. A magic number — `padding: 13px` — is a decision with no name and no owner. A variation per
+client inside the core turns the system into an archive of particular cases, which is what the levels
+above exist to avoid. The families this graph refuses, and why, are listed once in
+[the token reference](tokens.md).
 
 A rule nobody can check is a wish. Where a guard above names a check, that check exists today; where
-it names none, the guard is held by review, and an exception is argued in a new architecture decision record
-rather than granted in passing.
+it names none, the guard is held by review, and an exception is argued in a new architecture decision
+record rather than granted in passing.
 
 ## What this document does not govern
 
