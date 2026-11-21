@@ -57,28 +57,29 @@ decision without naming a colour, so a brand can change the palette and every ro
 it moves on its own, without anybody rewriting a role.
 
 ```css
-/* The palette and the roles it feeds are declared under one selector. */
+/* The ramp is declared once, at the root; a theme re-declares the roles. */
+:where(:root) {
+  --brikka-palette-blue-600: #2563eb; /* what a brand supplies */
+}
+
 :where(:root),
 :where([data-theme='light']) {
-  --brikka-palette-blue-600: #2563eb; /* what a brand supplies */
   --brikka-bg-accent: var(--brikka-palette-blue-600); /* what we decided */
 }
 
-/* What a preset emits for a brand: the same element, so the role resolves again. */
+/* What a preset emits for a brand: a palette step on the root, and nothing else. */
 :root[data-brand='acme'] {
   --brikka-palette-blue-600: #6d28d9;
 }
 ```
 
-A brand on the document works because the two declarations meet on one element: the palette step it
-supplies and the role that reads it are both applied to the root, so the role substitutes the new
-value.
+A brand on the document works because the ramp is inherited. A role that resolves on the root reads
+the palette there; a role the theme re-declares on a subtree inherits it from the root. One palette
+step reaches every role, in every theme, at any depth.
 
-The rule behind it is that a brand lives on the element that carries the theme. The light block
-re-declares the palette under `[data-theme='light']`, so a theme attribute on a container below the
-brand puts the default palette back for everything under it. The dark block re-declares only the
-roles, which is why one brand block serves both themes: a palette does not depend on the theme, and a
-brand needs no rule per theme.
+**A brand is a document-level fact.** The ramp is declared once, at the root, and a theme re-declares
+the roles; the palette itself has no theme. So one brand block serves both themes, needs no rule per
+theme, and nothing below it can put the default ramp back.
 
 A brand confined to a subtree is a different problem: putting the attribute on a container and
 expecting the roles to follow fails in silence.
