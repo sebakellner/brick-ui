@@ -33,6 +33,30 @@
       "accent-hover": {
         "$value": "{palette.blue-700}",
         "$description": "The accent surface while a pointer is over it."
+      },
+      "scrim": {
+        "$value": "rgb(28 25 23 / 0.64)",
+        "$description": "The wash under a floating surface that dims the page behind it."
+      },
+      "surface-pressed": {
+        "$value": "{palette.neutral-600}",
+        "$description": "The surface of a pressed control: one step past hover."
+      },
+      "surface-strong-pressed": {
+        "$value": "{palette.neutral-200}",
+        "$description": "A filled control's surface while it is being pressed."
+      },
+      "accent-pressed": {
+        "$value": "{palette.blue-800}",
+        "$description": "The accent surface while it is being pressed."
+      },
+      "selected": {
+        "$value": "{palette.blue-900}",
+        "$description": "The surface of a row or an option that is chosen."
+      },
+      "disabled": {
+        "$value": "{palette.neutral-800}",
+        "$description": "The surface of a control that cannot be used."
       }
     },
     "text": {
@@ -55,6 +79,14 @@
       "danger": {
         "$value": "{palette.red-400}",
         "$description": "Text that names a failure or a destructive action."
+      },
+      "on-selected": {
+        "$value": "{palette.neutral-100}",
+        "$description": "The text of a chosen row or option, on `bg.selected`."
+      },
+      "disabled": {
+        "$value": "{palette.neutral-500}",
+        "$description": "The text of a control that cannot be used: legible enough to identify it, and deliberately below body contrast."
       }
     },
     "border": {
@@ -73,6 +105,14 @@
       "danger": {
         "$value": "{palette.red-400}",
         "$description": "The border of an invalid control."
+      },
+      "subtle": {
+        "$value": "{palette.neutral-800}",
+        "$description": "A divider, not a boundary: it separates without framing."
+      },
+      "disabled": {
+        "$value": "{palette.neutral-700}",
+        "$description": "The border of a control that cannot be used."
       }
     },
     "success": {
