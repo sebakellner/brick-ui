@@ -1,9 +1,14 @@
 import { expect } from '@open-wc/testing';
+import { setTheme } from '@brikka-ui/test-utils/theme.js';
 
 /* The state roles end the practice of fading a whole control with `--brikka-opacity-disabled`:
  * a disabled control now has a surface, an ink and a border of its own, so its geometry and its
- * label stay identifiable while the contrast drops. These read the values; the contrast pairs
- * they form are measured in `odd/tasks/token-inventory.md`. */
+ * label stay identifiable while the contrast drops.
+ *
+ * Every value here is asserted exactly and under a pinned theme. Two reasons, both learned the
+ * hard way: an inequality (`disabled !== default`) passes when the token does not resolve at all
+ * and the probe inherits body ink, and the scrim is theme-scoped, so under a dark colour scheme
+ * the light assertion reads the dark value and fails on someone else's machine. */
 
 let probe: HTMLDivElement | undefined;
 
@@ -16,35 +21,43 @@ const paint = (property: 'background' | 'color', token: string): string => {
 };
 
 describe('state roles', () => {
+  afterEach(() => setTheme('light'));
+
   it('dims the page under a floating surface with an alpha a scrim needs', () => {
+    setTheme('light');
     expect(paint('background', '--brikka-bg-scrim')).to.equal('rgba(28, 25, 23, 0.48)');
+    setTheme('dark');
+    expect(paint('background', '--brikka-bg-scrim')).to.equal('rgba(28, 25, 23, 0.64)');
   });
 
   it('gives a disabled control its own ink, not the body ink at lower opacity', () => {
-    const disabled = paint('color', '--brikka-text-disabled');
-    expect(disabled).to.not.equal(paint('color', '--brikka-text-default'));
-    expect(disabled).to.not.equal(paint('color', '--brikka-text-muted'));
+    setTheme('light');
+    /* neutral-500: below body contrast on purpose, above the point where a label is unreadable. */
+    expect(paint('color', '--brikka-text-disabled')).to.equal('rgb(120, 113, 108)');
   });
 
   it('separates a chosen row from its text', () => {
-    const surface = paint('background', '--brikka-bg-selected');
-    const ink = paint('color', '--brikka-text-on-selected');
-    expect(surface).to.be.a('string').and.not.be.empty;
-    expect(ink).to.be.a('string').and.not.be.empty;
-    expect(surface).to.not.equal(ink);
+    setTheme('light');
+    expect(paint('background', '--brikka-bg-selected')).to.equal('rgb(219, 234, 254)');
+    expect(paint('color', '--brikka-text-on-selected')).to.equal('rgb(28, 25, 23)');
   });
 
-  /* The scrim is the one role whose value is a literal with alpha rather than a palette step:
-   * a palette entry has no alpha to give, and both themes need a different one. */
-  it('carries a heavier scrim in the dark theme', async () => {
-    const css = await (await fetch('/packages/tokens/src/tokens/color.dark.css')).text();
-    expect(css).to.contain('--brikka-bg-scrim: rgb(28 25 23 / 0.64);');
+  it('burns the chosen row into the dark theme too', () => {
+    setTheme('dark');
+    expect(paint('background', '--brikka-bg-selected')).to.equal('rgb(30, 58, 138)');
+    expect(paint('color', '--brikka-text-on-selected')).to.equal('rgb(245, 245, 244)');
   });
 
   it('keeps pressed distinct from hover, one step further from rest', () => {
-    const rest = paint('background', '--brikka-bg-surface');
-    const hover = paint('background', '--brikka-bg-surface-hover');
-    const pressed = paint('background', '--brikka-bg-surface-pressed');
-    expect(new Set([rest, hover, pressed]).size).to.equal(3);
+    setTheme('light');
+    expect(paint('background', '--brikka-bg-surface')).to.equal('rgb(255, 255, 255)');
+    expect(paint('background', '--brikka-bg-surface-hover')).to.equal('rgb(231, 229, 228)');
+    expect(paint('background', '--brikka-bg-surface-pressed')).to.equal('rgb(214, 211, 209)');
+  });
+
+  it('gives a disabled control a surface and a border of its own', () => {
+    setTheme('light');
+    expect(paint('background', '--brikka-bg-disabled')).to.equal('rgb(231, 229, 228)');
+    expect(paint('color', '--brikka-text-disabled')).to.equal('rgb(120, 113, 108)');
   });
 });
