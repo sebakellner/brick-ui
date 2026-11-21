@@ -10,12 +10,12 @@
   --brikka-line-height-relaxed: 1.75;
   --brikka-letter-spacing-tight: -0.01em;
   --brikka-letter-spacing-normal: 0;
-  --brikka-font-size-xs: calc(0.75rem * var(--brikka-scale-type));
-  --brikka-font-size-sm: calc(0.8125rem * var(--brikka-scale-type));
-  --brikka-font-size-md: calc(0.9375rem * var(--brikka-scale-type));
-  --brikka-font-size-lg: calc(1.125rem * var(--brikka-scale-type));
-  --brikka-font-size-xl: calc(1.375rem * var(--brikka-scale-type));
-  --brikka-font-size-2xl: calc(1.75rem * var(--brikka-scale-type));
+  --brikka-font-size-xs: calc(0.75rem * max(var(--brikka-scale-type), 0.875));
+  --brikka-font-size-sm: calc(0.8125rem * max(var(--brikka-scale-type), 0.875));
+  --brikka-font-size-md: calc(0.9375rem * max(var(--brikka-scale-type), 0.875));
+  --brikka-font-size-lg: calc(1.125rem * max(var(--brikka-scale-type), 0.875));
+  --brikka-font-size-xl: calc(1.375rem * max(var(--brikka-scale-type), 0.875));
+  --brikka-font-size-2xl: calc(1.75rem * max(var(--brikka-scale-type), 0.875));
   --brikka-typography-heading-lg: var(--brikka-font-weight-semibold) var(--brikka-font-size-2xl)/var(--brikka-line-height-tight) var(--brikka-font-sans);
   --brikka-typography-heading-md: var(--brikka-font-weight-semibold) var(--brikka-font-size-xl)/var(--brikka-line-height-tight) var(--brikka-font-sans);
   --brikka-typography-heading-sm: var(--brikka-font-weight-semibold) var(--brikka-font-size-lg)/var(--brikka-line-height-tight) var(--brikka-font-sans);

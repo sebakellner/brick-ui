@@ -146,4 +146,7 @@ fits on a screen. A denser interface is not a smaller one: shrinking everything 
 read and controls harder to hit, while increasing density makes control surfaces shorter and leaves
 the type alone. Confusing the two produces a page that is both cramped and unreadable. And density
 never touches the space rhythm: it shortens the surfaces a page is made of and leaves every gap
-alone, which is what keeps one base unit coherent at every density.
+alone, which is what keeps one base unit coherent at every density. Both multipliers have a floor,
+and the computation is what holds it: the height never computes below the 24 pixels a target needs,
+and the scale never goes below 0.875, where the smallest size would fall under 11 pixels. A host
+cannot configure a page past either of them.

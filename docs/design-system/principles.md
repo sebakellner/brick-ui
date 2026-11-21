@@ -147,8 +147,9 @@ trusted.
 and at the factory density. What ships pre-set is the design for most people.
 
 **Accessibility is an invariant.** No axis may produce a result below WCAG 2.2 AA. If one can, the
-defect is the system's and not a choice of whoever configured it — and no check fails a build that
-breaks it: the pairs are measured by hand, and this guard is held by review.
+defect is the system's and not a choice of whoever configured it. The two multipliers carry a floor
+that the suite holds, so a configuration cannot shrink a target past the size it needs; the contrast
+pairs are measured by hand, and review is what stops a preset that would break them.
 
 ## How this breaks
 

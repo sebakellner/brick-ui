@@ -3,11 +3,11 @@
     "$type": "number",
     "type": {
       "$value": 1,
-      "$description": "The multiplier every font size is computed from: a host sets 1.125 to read comfortably without zooming, or 0.875 for a dense console."
+      "$description": "The multiplier every font size is computed from: a host sets 1.125 to read comfortably without zooming, or 0.875 for a dense console, and the scale never computes below 0.875, which keeps `xs` from falling under 10.5px."
     },
     "density": {
       "$value": 1,
-      "$description": "The multiplier the control height is computed from: a host sets 0.8 for a dense table and 1.2 for a touch surface."
+      "$description": "The multiplier the control height is computed from: a host sets 0.8 for a dense table and 1.2 for a touch surface, and the height never computes below 24px, the target 2.5.8 asks for, because the density never goes under 0.6."
     }
   }
 }

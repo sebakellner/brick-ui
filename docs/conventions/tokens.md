@@ -24,6 +24,7 @@ value to keep true, and AGENTS.md forbids a literal one outright.
 | R10 | The palette is declared once, at the root, and a theme re-declares the roles | review, `pnpm test` |
 | R11 | The space base is computed into space, radius, `size` and `icon`             | review              |
 | R12 | Reduced motion replaces the transition composite with a duration alone       | review              |
+| R13 | A configuration axis has a floor, and the computation holds it               | `pnpm test`         |
 
 Before any of these rules, `pnpm check:tokens` asserts **existence**: every
 `--brikka-*` name read inside a CSS string must be a declared token or a hook. No
@@ -286,6 +287,28 @@ way. That is the second half of R7, arriving by this route.
 
 **Enforced by.** Review, in `packages/tokens/src/theme.css`, and the suite: the test page zeroes
 `--brikka-transition`, which is the same mechanism the media query uses.
+
+## R13. A configuration axis has a floor, and the computation holds it
+
+**Rule.** The two multipliers a host can move are bounded in the expression that computes from
+them. `--brikka-control-height` is `calc(40px * max(var(--brikka-scale-density), 0.6))`, so the
+height never computes below `24px`, the target WCAG 2.2 AA, 2.5.8 asks for. Every
+`--brikka-font-size-*` is `calc(<rem> * max(var(--brikka-scale-type), 0.875))`, so the smallest,
+`xs` at `0.75rem`, never falls under `10.5px` — the dense-console setting the `type` description
+already offered. The floor lives inside the existing `max()`, adds no token name, and leaves every
+value above it following its axis.
+
+**Why.** Both multipliers were free, and the published principles promise that no axis produces a
+result below WCAG 2.2 AA. A host that set `--brikka-scale-density: 0.3` got a `12px` control and a
+host that set `--brikka-scale-type: 0.5` got a `6px` caption: a promise a host can configure away is
+not an invariant, and a `max()` in the computation is. The floor belongs there and not in a
+separate token, because a second name is a second thing to read and a floor documented instead of
+computed is one a host skips.
+
+**Enforced by.** The suite: `packages/tokens/test/axis-floors.test.ts` moves each axis at the root
+and reads the computed value. Density `0.3` has to compute `24px` or more and type scale `0.5` has
+to compute `10.5px` or more, while density `1` still computes `40px` and type scale `1.125` still
+computes `13.5px`, which is what proves the floor is a floor and not a pin.
 
 ## Scope
 
