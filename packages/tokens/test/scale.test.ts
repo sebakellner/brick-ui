@@ -17,10 +17,17 @@ const computed = (
 };
 
 describe('scale', () => {
+  /* Every step the slice added, at the default base. A step hardcoded to the value it happens to
+   * produce here would pass this and fail the next test -- which is why both exist. */
   it('grows the spacing ramp to layout sizes, from the same base', () => {
-    expect(computed('padding-inline', 'var(--brikka-space-8)', 'paddingRight')).to.equal('32px');
-    expect(computed('padding-inline', 'var(--brikka-space-16)', 'paddingRight')).to.equal('64px');
-    expect(computed('padding-inline', 'var(--brikka-space-5)', 'paddingRight')).to.equal('20px');
+    const at = (step: string) =>
+      computed('padding-inline', `var(--brikka-space-${step})`, 'paddingRight');
+    expect(at('5')).to.equal('20px');
+    expect(at('6')).to.equal('24px');
+    expect(at('8')).to.equal('32px');
+    expect(at('10')).to.equal('40px');
+    expect(at('12')).to.equal('48px');
+    expect(at('16')).to.equal('64px');
   });
 
   /* The scale has to rescale from one value: that is the whole point of `base` being a token
@@ -29,7 +36,12 @@ describe('scale', () => {
     const root = document.documentElement;
     root.style.setProperty('--brikka-space-base', '8px');
     try {
-      expect(computed('padding-inline', 'var(--brikka-space-4)', 'paddingRight')).to.equal('32px');
+      const at = (step: string) =>
+        computed('padding-inline', `var(--brikka-space-${step})`, 'paddingRight');
+      expect(at('4')).to.equal('32px');
+      expect(at('8')).to.equal('64px');
+      expect(at('12')).to.equal('96px');
+      expect(at('16')).to.equal('128px');
     } finally {
       root.style.removeProperty('--brikka-space-base');
     }
