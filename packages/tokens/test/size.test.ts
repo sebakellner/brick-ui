@@ -27,14 +27,23 @@ describe('size and border width', () => {
   });
 
   /* The alias is the claim: a hardcoded 32px would also pass the test above. */
-  it('proves the alias by moving the step it points at', () => {
+  it('proves every alias by moving the step it points at', () => {
     const root = document.documentElement;
-    expect(box('inlineSize', '--brikka-size-sm')).to.equal('32px');
-    root.style.setProperty('--brikka-space-8', '36px');
-    try {
-      expect(box('inlineSize', '--brikka-size-sm')).to.equal('36px');
-    } finally {
-      root.style.removeProperty('--brikka-space-8');
+    const aliases: [string, string][] = [
+      ['--brikka-space-8', '--brikka-size-sm'],
+      ['--brikka-space-10', '--brikka-size-md'],
+      ['--brikka-space-12', '--brikka-size-lg'],
+      ['--brikka-space-16', '--brikka-size-xl'],
+    ];
+    for (const [step, size] of aliases) {
+      const before = box('inlineSize', size);
+      root.style.setProperty(step, '37px');
+      try {
+        expect(box('inlineSize', size)).to.equal('37px');
+      } finally {
+        root.style.removeProperty(step);
+      }
+      expect(before).to.not.equal('37px');
     }
   });
 

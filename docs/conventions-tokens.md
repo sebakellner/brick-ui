@@ -240,7 +240,7 @@ at both densities.** Everything below is measured against that sentence.
 
 | Family     | What it carries                                                                        |
 | ---------- | -------------------------------------------------------------------------------------- |
-| Colour     | 64 palette steps in 7 ramps; 38 roles (bg 20, text 7, border 6, focus 2, status 9)     |
+| Colour     | 64 palette steps in 7 ramps; 38 roles (bg 14, text 7, border 6, focus 2, status 9)     |
 | Space      | 12 steps, `0` to `16`, every one `calc(base * n)`                                      |
 | Size       | `icon` 16/20/24 aligned to text; `size` 32/40/48/64 for a subject                      |
 | Shape      | `radius` 6 (including the pill and the reset); `border-width` 1px and a 2px `thick`    |
