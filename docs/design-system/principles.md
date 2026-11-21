@@ -107,17 +107,26 @@ A **hook** is named for the component it belongs to: `button-bg`, not `accent-tw
 
 Freedom is only safe when something refuses the harmful cases.
 
-**Ranges, not free values.** A brand supplies palette values, a unit and two multipliers. It does not
-supply a stylesheet. Where two of them meet the system owns the computation: a control's height is
-supplied at the resting density and the multiplier that adapts it stays the system's, so a plain
-length would opt that control out of density.
+**Ranges, not free values.** A brand supplies an anchor colour, a unit and two multipliers. It does
+not supply a stylesheet.
+
+**An anchor, not a step.** A role reads the step its theme needs, and the two themes do not read the
+same ones, so the unit a brand supplies is the ramp: the colour it is built around arrives as one
+value and every step a role reads is derived from it. A brand that wants exact control supplies the
+whole ramp it touches instead, and a ramp it does not supply stays the default. What is never
+supplied is a single step.
+
+Where two inputs meet the system owns the computation: a control's height is supplied at the resting
+density and the multiplier that adapts it stays the system's, so a plain length would opt that
+control out of density.
 
 **Contrast is measured, not assumed.** Every pair a role forms is measured and written down — the
 status families in [tokens.md](tokens.md) are the example — and a preset that would form a pair below
 its threshold has to fail rather than ship. Two classes of pair are measured: text on its surface at
 4.5:1, and everything that is not text — a control's edge, a focus ring, a boundary that carries
-meaning — at 3:1. A brand that supplies one step and not its ramp keeps the default at every step it
-did not touch, and the pairs measured on the shipped ramp stop describing that page.
+meaning — at 3:1. The pairs are re-measured on the ramp a brand brings, which is the reason a ramp
+arrives whole: a palette supplied one step at a time keeps the default at every step it did not
+touch, and the measurements above stop describing that page.
 
 **Failures are made visible.** A token that does not resolve invalidates the declaration that reads it, in
 silence. That is why a layer is loaded through `tokens.css`, and why the graph is checked rather than
