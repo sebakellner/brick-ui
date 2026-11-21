@@ -1,5 +1,8 @@
 :root {
+  --brikka-radius-none: 0;
+  --brikka-radius-full: 9999px;
   --brikka-radius-sm: var(--brikka-space-1);
   --brikka-radius-md: var(--brikka-space-2);
   --brikka-radius-lg: var(--brikka-space-4);
+  --brikka-radius-xl: var(--brikka-space-6);
 }

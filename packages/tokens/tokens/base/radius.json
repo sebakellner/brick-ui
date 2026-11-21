@@ -1,6 +1,9 @@
 {
   "radius": {
     "$type": "dimension",
+    "none": {
+      "$value": "0"
+    },
     "sm": {
       "$value": "{space.1}"
     },
@@ -9,6 +12,12 @@
     },
     "lg": {
       "$value": "{space.4}"
+    },
+    "xl": {
+      "$value": "{space.6}"
+    },
+    "full": {
+      "$value": "9999px"
     }
   }
 }
