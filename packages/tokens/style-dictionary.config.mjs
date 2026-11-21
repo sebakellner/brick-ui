@@ -235,6 +235,7 @@ export default {
         'base.css',
         only(
           'border-width',
+          'border-width-thick',
           'control-height',
           'duration',
           'easing',
@@ -246,6 +247,7 @@ export default {
           'focus-ring-offset',
           'opacity',
           'scale',
+          'size',
           'z-index',
         ),
       ),

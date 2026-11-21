@@ -231,3 +231,37 @@ hurry is the symptom of having asked the wrong one.
 
 **Enforced by.** Review. The tokens exist in `packages/tokens/tokens/base/layout.json`; a literal
 `z-index` in a component is what review refuses.
+
+## Scope: what the graph carries, and what it refuses
+
+The criterion is one sentence: **the graph is complete when a component can paint a surface, a
+text, an icon, a border, a shadow and a movement without inventing a value — in both themes and
+at both densities.** Everything below is measured against that sentence.
+
+| Family     | What it carries                                                                        |
+| ---------- | -------------------------------------------------------------------------------------- |
+| Colour     | 64 palette steps in 7 ramps; 38 roles (bg 14, text 7, border 6, focus 2, status 9)     |
+| Space      | 12 steps, `0` to `16`, every one `calc(base * n)`                                      |
+| Size       | `icon` 16/20/24 aligned to text; `size` 32/40/48/64 for a subject                      |
+| Shape      | `radius` 6 (including the pill and the reset); `border-width` 1px and a 2px `thick`    |
+| Typography | 2 families, 6 sizes, 4 weights, 3 line heights, 2 trackings, 6 text styles, 2 measures |
+| Motion     | 3 durations, 4 curves, one `transition` composite that carries duration and easing     |
+| Elevation  | 1 tint, 2 shadows (`resting`, `floating`)                                              |
+| Layout     | 5 breakpoints (as numbers, not custom properties), 5 stacking layers                   |
+| Axes       | light/dark, `scale.type`, `scale.density`, and a brand preset                          |
+| Opacity    | one: `opacity.disabled`. See below                                                     |
+
+**No opacity scale, deliberately.** There are two models in the market and they do not mix.
+Material treats state as an overlay alpha (hover `0.04`, pressed `0.12`, disabled `0.38`); Primer
+treats it as colour roles (`bgColor-disabled`, `fgColor-disabled`). This graph took Primer's —
+`bg.disabled`, `text.disabled`, `border.disabled`, `bg.scrim` — and a second way to express the
+same thing is how two components end up looking different while both being "correct". The one
+piece of the other model worth having is the hover wash on a transparent surface (`0.08` in the
+references); there is no ghost component yet, so it waits for one.
+
+**No gradient, no stroke style, no data-visualisation ramp.** Nothing in this kit paints a
+gradient, a stroke style is a canvas concept, and a chart palette needs colour-blind safe ramps
+rather than the status families reused.
+
+**`orange` stays without a role on purpose.** Nine steps exist and no role references them; a
+preset may claim the family, which is cheaper than deleting it and adding it back.
