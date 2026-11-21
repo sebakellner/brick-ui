@@ -1,5 +1,12 @@
 :root {
   --brikka-elevation-color: rgb(28 25 23 / 0.12);
+  --brikka-measure-sm: 45ch;
+  --brikka-measure-md: 65ch;
+  --brikka-z-index-base: 0;
+  --brikka-z-index-dropdown: 100;
+  --brikka-z-index-overlay: 200;
+  --brikka-z-index-modal: 300;
+  --brikka-z-index-toast: 400;
   --brikka-duration-fast: 100ms;
   --brikka-duration-base: 150ms;
   --brikka-duration-slow: 250ms;
@@ -15,4 +22,7 @@
   --brikka-elevation-resting: 0px 1px 3px 0px var(--brikka-elevation-color);
   --brikka-elevation-floating: 0px 8px 24px -4px var(--brikka-elevation-color);
   --brikka-transition: var(--brikka-duration-base) var(--brikka-easing-standard) 0ms;
+  --brikka-icon-sm: var(--brikka-space-4);
+  --brikka-icon-md: var(--brikka-space-5);
+  --brikka-icon-lg: var(--brikka-space-6);
 }
