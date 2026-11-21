@@ -13,7 +13,7 @@ const only =
  * and the serializers that format a structured value into the syntax CSS reads. The `css` group
  * stays out because it rewrites -- `color/css` turns `rgb(37 99 235 / 0.18)` into `#2563eb` and
  * drops the alpha, `size/rem` rescales lengths, `fontFamily/css` requotes the stack.
- * `typography/css/shorthand` is a serializer; ADR 0031 draws that line for every composite. */
+ * `typography/css/shorthand` is a serializer; ADR 0021 draws that line for every composite. */
 const TRANSFORMS = [
   'attribute/cti',
   'name/kebab',

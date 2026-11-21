@@ -1,4 +1,4 @@
-# 0015. The page loads the theme, the suite does not
+# 0008. The page loads the theme, the suite does not
 
 Date: 2026-11-16
 

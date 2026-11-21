@@ -1,16 +1,16 @@
-# 0018. The browser the suite runs is the one the lockfile pins
+# 0011. The browser the suite runs is the one the lockfile pins
 
 Date: 2026-11-17
 
 ## Status
 
 accepted; supersedes in part [0005](0005-test-in-chrome-only.md) and
-[0016](0016-the-runner-launches-chrome-with-a-pointer.md)
+[0009](0009-the-runner-launches-chrome-with-a-pointer.md)
 
 ## Context
 
-0005 chose one engine and 0016 claimed a pointer at the launch layer. Both named the
-launcher only in passing: 0005 recorded "the launcher's default", 0016 recorded
+0005 chose one engine and 0009 claimed a pointer at the launch layer. Both named the
+launcher only in passing: 0005 recorded "the launcher's default", 0009 recorded
 `chromeLauncher`. `@web/test-runner-chrome` drives whatever Chrome it finds — the one on
 the developer's machine locally, the one the CI runner image happens to carry otherwise.
 
@@ -52,7 +52,7 @@ browsers: [
 ],
 ```
 
-The pointer flag 0016 introduced travels through `launchOptions.args` unchanged, and
+The pointer flag 0009 introduced travels through `launchOptions.args` unchanged, and
 `npx playwright install chromium` installs the build that flag was verified against.
 
 ### Alternatives considered
@@ -71,7 +71,7 @@ Easier:
 - One browser per pinned version, on every machine. A suite that passes locally exercises
   the build the gate will use, which is what made the failure of #77 a re-run rather than
   a fix.
-- The 0016 pointer claim is verified by `src/test/browser.test.ts` against a browser the
+- The 0009 pointer claim is verified by `src/test/browser.test.ts` against a browser the
   repository chose, not one it borrowed.
 
 Harder:
@@ -82,7 +82,7 @@ Harder:
 - Every machine downloads a browser once — roughly 190 MB for Chromium plus the headless
   shell — and again whenever `playwright` is bumped. A Playwright bump is now a change
   that moves the engine, so it is reviewed like one.
-- 0005's "default launcher" clause and 0016's `chromeLauncher` snippet are superseded.
+- 0005's "default launcher" clause and 0009's `chromeLauncher` snippet are superseded.
   What stands in both: one engine, Chrome's rendering of a computed value, and the
   pointer claimed at the launch layer.
 

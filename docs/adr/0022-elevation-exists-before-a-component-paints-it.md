@@ -1,4 +1,4 @@
-# 0032. Elevation exists as tokens before a component paints it
+# 0022. Elevation exists as tokens before a component paints it
 
 Date: 2026-11-20
 
@@ -7,7 +7,7 @@ Date: 2026-11-20
 accepted, in the change that adds the elevation tokens. It supersedes **in part**
 [R8](../conventions-tokens.md) — the rule that no shadow token exists until something paints a
 shadow — and depends on
-[0031](0031-a-text-style-is-a-composite-token.md), whose serializer rule is what makes the
+[0021](0021-a-text-style-is-a-composite-token.md), whose serializer rule is what makes the
 reversal possible. It supersedes no ADR.
 
 ## Context
@@ -16,7 +16,7 @@ R8 forbade a shadow token for two reasons, and only one of them still holds.
 
 The premise that expired: "a shadow is a composite value which this token pipeline cannot
 express as references to the layer below". That was true when no transform could touch a value.
-ADR 0031 established the opposite distinction — a serializer formats a structured value into
+ADR 0021 established the opposite distinction — a serializer formats a structured value into
 platform syntax and is allowed, a rewriter changes the value and is not — so `shadow/css/shorthand`
 can compose offset, blur, spread and colour exactly as `typography/css/shorthand` composes a
 font. The pipeline expresses shadows now; R8 was written before that sentence could be true.
@@ -27,10 +27,10 @@ expected CSS property from the first segment of its name (`bg` → background, `
 nothing verifies, and that is worth writing down rather than fixing by adding a family to the
 checker's table — the thing to verify about a shadow is not the property it is read under.
 
-What changed is who the graph is for. [0027](0027-ship-the-token-graph-as-a-design-system.md)
+What changed is who the graph is for. [0017](0017-ship-the-token-graph-as-a-design-system.md)
 made it a design system a host paints with, and a host that paints a card has nowhere to look
 for depth. This is the same argument the status vocabulary used in
-[0029](0029-give-the-graph-a-status-vocabulary.md): the tokens are shipped for the export, not
+[0019](0019-give-the-graph-a-status-vocabulary.md): the tokens are shipped for the export, not
 only for this repository's components.
 
 ## Decision
@@ -53,14 +53,14 @@ A component kit needs "on the page" and "above the page"; a third level
 is a decision to make with the component that would paint it.
 
 R8 is rewritten rather than deleted: elevation is allowed, and the part that says a shadow is
-the one unchecked value in the graph stands, now with ADR 0031's serializer rule to explain why
+the one unchecked value in the graph stands, now with ADR 0021's serializer rule to explain why
 the pipeline can carry it anyway.
 
 ### Alternatives considered
 
 | Alternative                                                                       | Why it was rejected                                                                                                                                                                                                     |
 | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Keep R8 until a component paints depth                                            | The graph is exported; a host painting its own card is the consumer, and it cannot ask this repository for a token it does not ship. 0029 decided the same question the same way.                                       |
+| Keep R8 until a component paints depth                                            | The graph is exported; a host painting its own card is the consumer, and it cannot ask this repository for a token it does not ship. 0019 decided the same question the same way.                                       |
 | Tokenise elevation as a level plus a colour, as Material does                     | It needs a component to turn "level 2" into a shadow, which is the one thing the token is supposed to save it from.                                                                                                     |
 | Define the shadow colour as a role (`border-*`, `bg-*`) to satisfy `check:tokens` | A role's name states the property it is painted under, and a shadow colour is under `box-shadow`: naming it `bg-overlay` would make R5's own rejection correct, and naming it anything else leaves it unchecked anyway. |
 | Five levels                                                                       | Two are what the layer can justify. Names are irreversible, and three unused levels are the ten-roles mistake in a new costume.                                                                                         |

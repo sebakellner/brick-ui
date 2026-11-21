@@ -1,4 +1,4 @@
-# 0019. The token graph is the public contract
+# 0012. The token graph is the public contract
 
 Date: 2026-11-17
 
