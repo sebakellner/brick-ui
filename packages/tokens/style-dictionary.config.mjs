@@ -139,7 +139,9 @@ export default {
                 `breakpoint ${token.path.join('.')} must be a whole number of px, got '${token.$value}'`,
               );
             }
-            return `  '${token.path.slice(1).join('-')}': ${match[1]},`;
+            /* `Number` and not the captured text: `0640px` would otherwise be emitted as the
+             * legacy octal literal `0640`, which is a syntax error in a module. */
+            return `  '${token.path.slice(1).join('-')}': ${Number(match[1])},`;
           })
           .join('\n');
         return [
