@@ -1,14 +1,10 @@
 # Brikka design system
 
-> The token graph, the themes and the guides a host needs to paint with Brikka without
-> registering a single element. Every name here is public API.
+> The token graph, the themes and the decisions a host needs to paint with
+> Brikka without registering a single element. Every name here is public API.
 
 ## Design system
 
+- [Foundations](design-system/foundations.md): Colour decides meaning, type decides hierarchy, space decides rhythm, elevation decides what floats, an edge decides how hard a boundary reads, motion decides how a change arrives, and layout decides where the page breaks.
 - [Principles](design-system/principles.md): The core is the set of decisions, not their values; a brand supplies values, never names. Four levels say how far you go, and the guards say what cannot break.
 - [Tokens](design-system/tokens.md): The families Brikka declares, the roles a page paints with, the four axes, and the families it deliberately refuses.
-
-## Guides
-
-- [Add a component](guides/add-a-component.md): An element needs a native reference, its tokens and hooks, the accessibility bar proven with computed styles, and a README the manifest check ties to its public surface.
-- [Add a token](guides/add-a-token.md): A value enters the layer that owns it, both theme files resolve it at once, and the component reads a hook. What each step refuses, and the checks that catch it.
