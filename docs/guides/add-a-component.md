@@ -1,8 +1,14 @@
+---
+title: Add a component
+description: The checklist that adds the next element without re-deciding the token layers, the accessibility bar or the test recipe.
+summary: An element needs a native reference, its tokens and hooks, the accessibility bar proven with computed styles, and a README the manifest check ties to its public surface.
+---
+
 # Add a component
 
 Use this to add the next element to the kit. It assumes the token layers are
-familiar — read [architecture.md](architecture.md) and
-[conventions-tokens.md](conventions-tokens.md) first — and it exists so the next
+familiar — read [architecture/system.md](../architecture/system.md) and
+[conventions/tokens.md](../conventions/tokens.md) first — and it exists so the next
 component does not re-decide any of it.
 
 ## Prerequisites
@@ -35,7 +41,7 @@ component does not re-decide any of it.
    | anything that must know whether slotted content has text         | `SlottedTextController`                                                                                               |
 
    The layers, and what each assumes of its host, are listed in
-   [CONTRIBUTING.md](../CONTRIBUTING.md#how-a-field-is-built).
+   [CONTRIBUTING.md](../../CONTRIBUTING.md#how-a-field-is-built).
 
 3. **An atom is public; a part is private.** Both are elements, and the difference is who may
    compose with them:
@@ -73,17 +79,17 @@ component does not re-decide any of it.
    ```
 
    If the variant wrote `--brikka-x-bg` itself, an inherited override would lose —
-   [ADR 0002](adr/0002-require-the-theme.md).
+   [ADR 0002](../adr/0002-require-the-theme.md).
 
 6. **Accessibility.** Not a step to finish later; it is the component. The bar is in
-   [conventions-accessibility.md](conventions-accessibility.md), and most of it is asserted by
+   [conventions/accessibility.md](../conventions/accessibility.md), and most of it is asserted by
    the suite.
 
 7. **Tests.** `test/brikka-<name>.test.ts` (the component's `test/` folder holds every suite it
    ships) and assertions on computed styles. No registration suite: `package.json` declares
    `"sideEffects": ["**/define.js", "**/define.ts"]` and the suite proves registration by
    using the element.
-   See [conventions-testing.md](conventions-testing.md), T8.
+   See [conventions/testing.md](../conventions/testing.md), T8.
 
 8. **Stories.** `brikka-<name>.stories.ts` with one story per variant and per state, and a
    `title` that states the kind of component it is: `Form/<Name>` for anything that takes
@@ -97,12 +103,12 @@ component does not re-decide any of it.
    limitation someone can fix, and one kept quiet is a bug report six months
    late.
 
-10. **Check the definition of done** in [AGENTS.md](../AGENTS.md).
+10. **Check the definition of done** in [AGENTS.md](../../AGENTS.md).
 
 ## What each component documents
 
 The sections, their names and their order are fixed in
-[conventions-docs.md](conventions-docs.md), in "The README sections are a fixed set, in a
+[conventions/docs.md](../conventions/docs.md), in "The README sections are a fixed set, in a
 fixed order", which also names the README to start from. This document does not repeat
 that list: a second copy is a second thing to keep true, and the copy that used to live
 here had already lost two sections. The Storybook page renders the same file, so it is
@@ -110,7 +116,7 @@ never a second place to maintain the API.
 
 ## Verify
 
-- Every gate in the [definition of done](../AGENTS.md#definition-of-done) is green. A
+- Every gate in the [definition of done](../../AGENTS.md#definition-of-done) is green. A
   component that fails `check:readmes` is one whose README and manifest disagree, which
   no test catches, so it is worth knowing that the check exists before the merge rather
   than after it.
@@ -125,6 +131,6 @@ never a second place to maintain the API.
 
 ## Related
 
-- [conventions-accessibility.md](conventions-accessibility.md)
-- [conventions-testing.md](conventions-testing.md)
-- [0002](adr/0002-require-the-theme.md) — why there are no fallbacks
+- [conventions/accessibility.md](../conventions/accessibility.md)
+- [conventions/testing.md](../conventions/testing.md)
+- [0002](../adr/0002-require-the-theme.md) — why there are no fallbacks

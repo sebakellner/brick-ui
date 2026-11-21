@@ -20,7 +20,7 @@ primitives exist.
 
 The gap is semantic, not chromatic. Everything needed to paint a status surface is already in
 the graph; what is missing is nine names, a `$type`, a `$description`, and a value in each
-theme. R1 of [docs/conventions-tokens.md](../conventions-tokens.md) makes all three mandatory
+theme. R1 of [docs/conventions/tokens.md](../conventions/tokens.md) makes all three mandatory
 for a role.
 
 The trap is the value mapping. "Warning is yellow" is the easy half; picking steps that a

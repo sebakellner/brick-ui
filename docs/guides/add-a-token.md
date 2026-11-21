@@ -1,15 +1,21 @@
+---
+title: Add a token
+description: The path a new design value takes from a JSON file to a component, without breaking the build.
+summary: A value enters the layer that owns it, both theme files resolve it at once, and the component reads a hook. What each step refuses, and the checks that catch it.
+---
+
 # Add a token
 
 Use this when a component needs a value it cannot get from an existing token, or
-when a control needs a new paint. Read [architecture.md](architecture.md) first if
+when a control needs a new paint. Read [architecture/system.md](../architecture/system.md) first if
 the three layers are not familiar; the rules are in
-[conventions-tokens.md](conventions-tokens.md).
+[conventions/tokens.md](../conventions/tokens.md).
 
 ## Prerequisites
 
 - The value is real: a color, length, weight, duration or opacity that a host might
   reasonably want to change. A reset or a technique geometry is not a token
-  ([ADR 0004](adr/0004-forbid-style-literals-in-components.md)).
+  ([ADR 0004](../adr/0004-forbid-style-literals-in-components.md)).
 - You know which layer it belongs to. Only one component paints it → a control
   token. Shared across controls, or read directly by a component for a state → a
   semantic role. A raw color → the palette, if the ramp is missing the step.
@@ -67,6 +73,6 @@ declared.
 
 ## Related
 
-- [conventions-tokens.md](conventions-tokens.md) — the rules this follows
-- [0001](adr/0001-generate-token-css-from-json.md) — why the CSS is generated
-- [0003](adr/0003-keep-aliases-as-var.md) — why aliases stay `var()`
+- [conventions/tokens.md](../conventions/tokens.md) — the rules this follows
+- [0001](../adr/0001-generate-token-css-from-json.md) — why the CSS is generated
+- [0003](../adr/0003-keep-aliases-as-var.md) — why aliases stay `var()`

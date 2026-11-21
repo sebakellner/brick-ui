@@ -42,6 +42,6 @@ fallback, and a page without the theme still renders unstyled on purpose.
   run, none of them a defect. Anything else that grades against the page inherits this.
 - **The failure mode is one place.** A suite that forgets the theme fails with an
   unrelated-looking assertion, which is why the page is asserted to serve it
-  (`docs/conventions-testing.md` T1) rather than remembered.
+  (`docs/conventions/testing.md` T1) rather than remembered.
 - **0002's supporting clause is superseded**; its main decision, and the hook pattern
   it describes, are untouched.

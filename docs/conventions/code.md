@@ -1,8 +1,8 @@
 # Code Conventions
 
 Rules for the TypeScript, the stylesheets and the tooling. Token rules are in
-[conventions-tokens.md](conventions-tokens.md); testing is in
-[conventions-testing.md](conventions-testing.md).
+[tokens.md](tokens.md); testing is in
+[testing.md](testing.md).
 
 | #   | Rule                                                                         | Enforced by      |
 | --- | ---------------------------------------------------------------------------- | ---------------- |
@@ -38,7 +38,7 @@ import { BrikkaInput } from './brikka-input';
 ## C2. No comments in CSS
 
 **Rule.** Token files and component styles carry no comments. The explanation
-lives in this directory.
+lives in [system.md](../architecture/system.md).
 
 **Why.** The generated token CSS cannot carry comments at all — Style Dictionary
 is configured with `showFileHeader: false` — so a comment in a component
@@ -171,7 +171,7 @@ assertion cannot pass in a browser that never applies the hover rule.
 reintroduce a bug: a platform limit, an ordering requirement, a trap whose mutation
 would stay green, or a reading that differs from the obvious one. Nothing else.
 What the code does belongs in its names; why the kit is shaped a certain way belongs
-in an ADR or in `docs/architecture.md`; CSS carries no comments at all
+in an ADR or in `docs/architecture/system.md`; CSS carries no comments at all
 ([C2](#c2-no-comments-in-css)). One line is the budget; a header that needs more
 than about five is not a comment, it is a decision record that lives in the wrong
 file.
@@ -180,13 +180,13 @@ file.
 being true. A comment that argues a decision forks it: the ADR says one thing and
 the file says a slightly different one, and the next reader keeps whichever they met
 first. The header this rule was written after had thirty lines retelling
-`docs/architecture.md`, and the code it described fitted in four.
+`docs/architecture/system.md`, and the code it described fitted in four.
 
 **Do** — the constraint, in a line or two, pointing at the record:
 
 ```ts
 /* Read unflattened: flattening answers with the slot's fallback, which is the
- * field's own message. Why the kit needs an observer: architecture.md. */
+ * field's own message. Why the kit needs an observer: architecture/system.md. */
 ```
 
 **Don't** — a doc block that retells a decision, or a paragraph the ADR already

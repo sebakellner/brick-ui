@@ -2,50 +2,52 @@
 
 Two audiences, two promises.
 
-- **Whoever changes Brikka** reads the frozen documents at this root and the ADRs: how a value
-  travels from a JSON file to a pixel, the rules each layer obeys, and every decision with the
-  alternatives that lost.
-- **Whoever consumes Brikka** —a person or an agent— reads `design-system/` and `guides/`. Those
-  are written to be published as a site later; nothing has to move for that to happen.
+- **Whoever changes Brikka** reads the internal directories — `architecture/` and `conventions/` —
+  and the ADRs: how a value travels from a JSON file to a pixel, the rules each layer obeys, and
+  every decision with the alternatives that lost.
+- **Whoever consumes Brikka** —a person or an agent— reads `design-system/` and `guides/`. Both carry
+  the frontmatter a site renders, and `llms.txt` is their index.
 
 `AGENTS.md` at the repository root is the entry point for coding agents working on the code; this
-file is the map, and the published site gets its own `llms.txt`, generated from the publishable
-directories.
+file is the map.
 
-## The three groups, and why the files are where they are
+## One directory per category
 
-| Group       | Where                                                       | Rule                                                                    |
-| ----------- | ----------------------------------------------------------- | ----------------------------------------------------------------------- |
-| Decisions   | [`adr/`](adr/)                                              | Frozen history. An accepted ADR is not edited; a reversal is a new ADR. |
-| Internal    | this directory                                              | How to work here. Not published.                                        |
-| Publishable | [`design-system/`](design-system/) and [`guides/`](guides/) | Written for a consumer, with the frontmatter a site needs.              |
+| Group      | Where                                                            | Rule                                                                    |
+| ---------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| Decisions  | [`adr/`](adr/)                                                   | Frozen history. An accepted ADR is not edited; a reversal is a new ADR. |
+| The system | [`architecture/`](architecture/), [`conventions/`](conventions/) | Internal. How a value travels, and the rules each layer obeys.          |
+| Tasks      | [`guides/`](guides/)                                             | The path through a change, and the first place a reader goes.           |
+| Consumer   | [`design-system/`](design-system/)                               | Written for whoever consumes Brikka, not for whoever changes it.        |
 
-**Nothing under `adr/` moves, and five documents stay beside it** —
-[architecture.md](architecture.md), [conventions-tokens.md](conventions-tokens.md),
-[conventions-code.md](conventions-code.md), [conventions-testing.md](conventions-testing.md) and
-[conventions-accessibility.md](conventions-accessibility.md). Accepted ADRs link to them with
-relative paths, and an accepted ADR is never edited, so moving one of those files would rewrite
-history to fix a link. A new document goes in a group directory; these five stay.
+This file is the map, so it is the one document that stays at the root.
+
+**A document sits in the directory its category names.** `adr/` is the frozen one: an accepted ADR
+is never edited, so nothing under it moves and nothing joins it out of order. Everything else lives
+one level down, in `architecture/`, `conventions/`, `guides/` or `design-system/`.
+
+**A path is an identifier.** Moving a document updates every link that names it, in the same change,
+and leaves the reasoning around that link untouched —
+[0015](adr/0015-keep-identifiers-in-an-accepted-adr-current.md) draws the same line between the
+names and the reasoning.
 
 ## Read in this order
 
-1. [architecture.md](architecture.md) — the system in one screen, and what it deliberately does not do.
-2. [conventions-tokens.md](conventions-tokens.md) — the rules the token layers obey, each with what enforces it.
-3. [add-a-component.md](add-a-component.md) — the first real task. Follow its links into the accessibility, testing and code conventions as you need them.
+1. [architecture/system.md](architecture/system.md) — the system in one screen, and what it deliberately does not do.
+2. [conventions/tokens.md](conventions/tokens.md) — the rules the token layers obey, each with what enforces it.
+3. [guides/add-a-component.md](guides/add-a-component.md) — the first real task. Follow its links into the accessibility, testing and code conventions as you need them.
 4. [0001. Generate the token CSS from JSON](adr/0001-generate-token-css-from-json.md) — why, and what lost.
 
 ## Internal documents
 
 | Document                                                     | Type        | Answers                                                                   |
 | ------------------------------------------------------------ | ----------- | ------------------------------------------------------------------------- |
-| [architecture.md](architecture.md)                           | explanation | how a value travels from a JSON file to a pixel, and what is out of scope |
-| [conventions-tokens.md](conventions-tokens.md)               | reference   | which token rules apply, and what enforces each                           |
-| [conventions-accessibility.md](conventions-accessibility.md) | reference   | the bar a component clears before it ships                                |
-| [conventions-testing.md](conventions-testing.md)             | reference   | how to write a test that proves something                                 |
-| [conventions-code.md](conventions-code.md)                   | reference   | TypeScript, stylesheets and tooling                                       |
-| [conventions-docs.md](conventions-docs.md)                   | reference   | the shape of a component's README, its Storybook page and its stories     |
-| [add-a-token.md](add-a-token.md)                             | how-to      | a new design value, without breaking the build                            |
-| [add-a-component.md](add-a-component.md)                     | how-to      | the next element, without re-deciding anything                            |
+| [architecture/system.md](architecture/system.md)             | explanation | how a value travels from a JSON file to a pixel, and what is out of scope |
+| [conventions/tokens.md](conventions/tokens.md)               | reference   | which token rules apply, and what enforces each                           |
+| [conventions/accessibility.md](conventions/accessibility.md) | reference   | the bar a component clears before it ships                                |
+| [conventions/testing.md](conventions/testing.md)             | reference   | how to write a test that proves something                                 |
+| [conventions/code.md](conventions/code.md)                   | reference   | TypeScript, stylesheets and tooling                                       |
+| [conventions/docs.md](conventions/docs.md)                   | reference   | the shape of a component's README, its Storybook page and its stories     |
 | [adr/](adr/)                                                 | explanation | why the kit is arranged this way, and what was rejected                   |
 
 `Type` is one of tutorial, how-to, reference and explanation — the
@@ -54,24 +56,28 @@ invented: the kit is small and the root README is the whole onboarding.
 
 ### Two things the map settles
 
-**There is no `internal/` directory.** The root is the internal documentation, and it holds two
-kinds of file that look alike: five that history froze — an accepted ADR links to each one, so
-moving it would mean editing history to fix a link — and the rest, which could move and do not need
-to. A directory that separated them would need this paragraph twice to explain itself, and a reader
-would still have to consult a table to know which floor a document is on.
+**There is no `internal/` directory.** What this map calls internal is simply the three directories
+it does not publish — `adr/`, `architecture/` and `conventions/` — and a fourth layer would only add
+a place for a document to be misfiled. The category a file belongs to is its directory, so a reader
+never consults a table to learn where a document lives.
 
 **Component documentation lives in its package.** Each element's `README.md` sits beside its code,
 `pnpm check:readmes` ties it to the generated manifest, and it ships with the package. The published
 site reads those files from where they are; a `docs/components/` directory would be a second copy of
 a fact that already has an owner, which is the one rule this folder does not break.
 
-## Publishable documents
+## Published documents
 
 | Document                                                   | Answers                                                           |
 | ---------------------------------------------------------- | ----------------------------------------------------------------- |
 | [design-system/principles.md](design-system/principles.md) | what the system decides, in whose name, and what it refuses       |
 | [design-system/tokens.md](design-system/tokens.md)         | the families, the roles, the axes, and the names a consumer reads |
+| [guides/add-a-token.md](guides/add-a-token.md)             | how a new design value enters, without breaking the build         |
+| [guides/add-a-component.md](guides/add-a-component.md)     | the next element, without re-deciding anything already decided    |
 | `llms.txt` (generated)                                     | the index an agent reads: one line per page, with its summary     |
+
+These two directories are the ones `pnpm check:llms` reads, so every page in them carries
+`title`, `description` and `summary`, and the summary is the line the index carries.
 
 A publishable page starts with the answer. The first two lines say what it is and what it is for,
 so a reader —or an agent given a truncated page— gets the point before the argument. Then the
@@ -114,22 +120,22 @@ that lost. The rules of the folder:
 
 ## When to update what
 
-| If you change…                             | Update                                                                                                                                                                                         |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| a token, a layer or the pipeline           | [architecture.md](architecture.md) and [conventions-tokens.md](conventions-tokens.md); [design-system/tokens.md](design-system/tokens.md) if a consumer sees it; a new ADR if it is a decision |
-| a component's public surface               | its `README.md` and its Storybook page, in the shape [conventions-docs.md](conventions-docs.md) fixes                                                                                          |
-| a shared layer — a mixin, a controller     | the layers table in [CONTRIBUTING.md](../CONTRIBUTING.md#how-a-field-is-built), and the map in [architecture.md](architecture.md)                                                              |
-| a test rule                                | [conventions-testing.md](conventions-testing.md), and the suite that enforces it                                                                                                               |
-| adding an element or a part                | [add-a-component.md](add-a-component.md), which is where the current checklist lives                                                                                                           |
-| a check, a CI gate or a command            | [CONTRIBUTING.md](../CONTRIBUTING.md)                                                                                                                                                          |
-| a publishable page                         | regenerate `llms.txt`; the gate fails when it is stale                                                                                                                                         |
-| something that makes a past decision false | not that ADR — a new one that supersedes it                                                                                                                                                    |
+| If you change…                             | Update                                                                                                                                                                                                       |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| a token, a layer or the pipeline           | [architecture/system.md](architecture/system.md) and [conventions/tokens.md](conventions/tokens.md); [design-system/tokens.md](design-system/tokens.md) if a consumer sees it; a new ADR if it is a decision |
+| a component's public surface               | its `README.md` and its Storybook page, in the shape [conventions/docs.md](conventions/docs.md) fixes                                                                                                        |
+| a shared layer — a mixin, a controller     | the layers table in [CONTRIBUTING.md](../CONTRIBUTING.md#how-a-field-is-built), and the map in [architecture/system.md](architecture/system.md)                                                              |
+| a test rule                                | [conventions/testing.md](conventions/testing.md), and the suite that enforces it                                                                                                                             |
+| adding an element or a part                | [guides/add-a-component.md](guides/add-a-component.md), which is where the current checklist lives                                                                                                           |
+| a check, a CI gate or a command            | [CONTRIBUTING.md](../CONTRIBUTING.md)                                                                                                                                                                        |
+| a publishable page                         | regenerate `llms.txt`; the gate fails when it is stale                                                                                                                                                       |
+| something that makes a past decision false | not that ADR — a new one that supersedes it                                                                                                                                                                  |
 
 ## Glossary
 
 | Term                | Meaning                                                                                                                                    |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | primitive / palette | a raw declared value (`--brikka-palette-blue-600`). A reference ramp, not a usage list                                                     |
-| semantic role       | a role in `color.json` read **directly** by a component (`--brikka-text-danger`). See R1 in [conventions-tokens.md](conventions-tokens.md) |
+| semantic role       | a role in `color.json` read **directly** by a component (`--brikka-text-danger`). See R1 in [conventions/tokens.md](conventions/tokens.md) |
 | hook                | a component-level custom property a host may set (`--brikka-button-bg`). The default is a variable, never a literal                        |
 | axis                | a value a host turns instead of editing tokens: theme, density, type scale, brand preset                                                   |

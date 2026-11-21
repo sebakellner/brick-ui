@@ -5,13 +5,13 @@ Date: 2026-11-20
 ## Status
 
 accepted. It extends [0012](0012-the-token-graph-is-the-public-contract.md) and reverses
-row R1 of [docs/conventions-tokens.md](../conventions-tokens.md), which the change that
+row R1 of [docs/conventions/tokens.md](../conventions/tokens.md), which the change that
 accepts this record rewrites. It supersedes no record.
 
 ## Context
 
 Today `@brikka-ui/styles` is the theming of the kit: a token source justified by what
-`packages/web-components` reads. Row R1 of `docs/conventions-tokens.md` states the rule
+`packages/web-components` reads. Row R1 of `docs/conventions/tokens.md` states the rule
 and `pnpm check:tokens` enforces it — `scripts/check-token-usage.mjs` derives the
 semantic roles from `color.css` minus the `palette` prefix, and fails on a role no file
 reads.
@@ -68,7 +68,7 @@ and the components are its integration test rather than its definition.**
    with its own brand rebrands by forking the token source; the fork procedure is written
    the day a second consumer exists, not before.
 2. **R1 is deprecated and replaced.** The replacement lives in
-   `docs/conventions-tokens.md` from the change that accepts this record: a role is a
+   `docs/conventions/tokens.md` from the change that accepts this record: a role is a
    documented, typed commitment that resolves in every theme, and its removal or rename
    is a breaking change that ships with the changeset saying so. The converse of R1
    survives unchanged — a value only one component paints is a component token, and it is

@@ -71,7 +71,7 @@ they are not what a reader assumes:
 
 The layering rules themselves — reference downwards, one hop, and when a
 semantic role earns its existence — live with the conventions, not here: see
-[Token Conventions](../conventions-tokens.md).
+[Token Conventions](../conventions/tokens.md).
 
 ### Alternatives considered
 

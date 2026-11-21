@@ -31,7 +31,7 @@ docs/                                        conventions and decision records
 [docs/README.md](docs/README.md) is the index: every document, its type, and the
 "when to update what" table. Start there. The two you will need most:
 
-- [docs/conventions-tokens.md](docs/conventions-tokens.md) — the token rules,
+- [docs/conventions/tokens.md](docs/conventions/tokens.md) — the token rules,
   each with the thing that enforces it.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — component conventions, the accessibility
   bar, the testing recipe and the CI gates.
@@ -54,7 +54,7 @@ identifiers are the one exception: a rename updates the names, never the reasoni
 - Write a CSS comment. Token files and component styles stay declarative.
 - Point a token reference at a control token, or make a chain longer than one
   hop. `control → palette`, `semantic → palette`, `radius → space` —
-  [docs/conventions-tokens.md](docs/conventions-tokens.md), R2.
+  [docs/conventions/tokens.md](docs/conventions/tokens.md), R2.
 - Add a semantic role that resolves in one theme and not the other. `pnpm check:tokens`
   fails on it — R1.
 - Import `'./x'` from a `.ts` file. The imports carry `.js`
