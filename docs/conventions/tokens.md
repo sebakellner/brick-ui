@@ -191,6 +191,9 @@ theme switches, with nothing to notice it.
 **Rule.** `--brikka-transition` is the only timing a component reads, and it carries the
 duration and the easing together. `theme.css` sets it to `1ms` under
 `prefers-reduced-motion: reduce`, and no component writes a duration of its own.
+`--brikka-duration-*` and `--brikka-easing-*` are declared and read by no component: they are the
+criterion a new timing has to meet, and a need that starts to be read arrives as its own composite,
+so the `1ms` replacement reaches it in the one place it is written.
 
 **Why.** One value read everywhere means one rule retimes the whole kit, which is the
 property a host needs in order to opt out of motion without auditing every component.

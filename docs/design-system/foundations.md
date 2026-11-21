@@ -9,7 +9,7 @@ summary: Colour decides meaning, type decides hierarchy, space decides rhythm, e
 A page is built from seven foundations, and each one answers a single question. This is the
 conceptual layer: what each foundation decides, and the criterion that makes one choice right and
 another merely different. The way the system thinks about all of them is in
-[principles.md](principles.md); the names that carry them are in [tokens.md](tokens.md).
+[principles.md](principles.md); the names that carry them are in [the token reference](tokens.md).
 
 | Foundation | The question it answers                                                  |
 | ---------- | ------------------------------------------------------------------------ |
@@ -59,10 +59,10 @@ together, so they travel together. A page that picks a size and improvises the r
 paragraphs on the same screen with different rhythms, and the reader feels it without being able to
 name it.
 
-**The line matters more than the point size.** What a reader's eye has to do is return to the start of
-the next line, and it does that badly past about sixty-five characters. A comfortable measure is the
-single typographic decision that most affects whether a page is read, which is why it is a foundation
-and not a detail of a container.
+**The line matters as much as the point size.** What a reader's eye has to do is return to the start of
+the next line, and it does that badly past about sixty-five characters. A comfortable measure is one of
+the decisions that most affects whether a page is read, which is why it is a foundation and not a
+detail of a container.
 
 **The scale is a multiplier, not a second design.** It exists so a host can read comfortably or fit
 more without a redesign. A host that sets one element's size by hand has opted that element out of the
@@ -77,7 +77,8 @@ list of numbers is what makes one gap look accidental forever.
 **A single base moves everything.** Because the corner of a card, the box of an icon and the height of
 a control are all read from the same rhythm, changing that base changes the page as a whole. Nothing
 is left behind at the old scale, which is the difference between a system and a set of decisions that
-happened to agree at the start.
+happened to agree at the start. Density is the one dial that does not move it; see
+[Layout](#layout-decides-where-the-page-breaks-and-what-stacks).
 
 **There is one ramp, deliberately.** A second scale for "sizes" is how two dimensions drift until a
 gap is four pixels off and nobody can say which of the two is wrong. Squares, icons and corners
@@ -90,7 +91,10 @@ override that. A gap that contradicts the grouping is a layout bug that no amoun
 
 Two states, not a ladder. A surface either rests on the page — a card, something that belongs to what
 you are reading — or it floats above it and takes your attention, which is a promise about behaviour:
-a floating surface can be dismissed, and the page behind it is waiting.
+a floating surface can be dismissed, and the page behind it is waiting. Whether the page behind is
+blocked is modality, not elevation: a menu, a tooltip and a dialog all float. What orders them is
+either the browser's top layer, for what it can host, or the stacking vocabulary in
+[Layout](#layout-decides-where-the-page-breaks-and-what-stacks), for what it cannot.
 
 A system decides what floating _means_ before the first dialog asks for it. Declaring the states early
 is what stops the third dialog from inventing a fourth shadow, and it is why the two states exist
@@ -117,15 +121,18 @@ ring is legible on some surfaces and invisible on others, which is the same as b
 
 ## Motion decides how a change arrives
 
-Motion answers one question: was the eye meant to follow this? A state that changes under the pointer
-is instant enough to feel immediate; a colour settling after a change is quick; a movement the eye has
-to track is slower, because tracking is work. Duration is chosen by what the reader has to do, never
-by how long the animation looks good.
+Motion answers one question: was the eye meant to follow this? Duration follows what the reader has
+to do, not how long an animation looks good: a state that changes under the pointer should read as
+immediate, a colour settling after a change as quick, and a movement the eye has to track as slower,
+because tracking is work. The system declares a speed for each of those three.
 
-**One timing, shared.** A single timing that every component reads is what lets a system feel like one
-system — and it is the only thing that makes reduced motion possible: a preference can retime the
-whole kit at once only because there is one timing to replace. A component that writes its own
-duration sits outside that promise.
+**Every component reads one timing.** Duration and curve arrive together as a single value, built from
+the middle speed and the standard curve, so the kit moves at one pace. That single value is also the
+only reason reduced motion works: a preference can retime the whole kit at once because there is one
+place to replace. The other speeds and curves are declared so that a new need has a criterion to meet
+rather than a number to invent; one that starts to be read arrives as its own composite, retimed in
+the same place, so reduced motion keeps covering it. A component that writes its own duration sits
+outside that promise.
 
 **Motion is never decoration.** It describes a change; it does not draw attention to the interface
 having changed. When a page animates to be noticed, the reader learns to wait, and the animation has
