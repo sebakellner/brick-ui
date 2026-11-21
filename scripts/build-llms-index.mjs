@@ -31,14 +31,19 @@ for (const directory of DIRECTORIES) {
   let entries;
   try {
     entries = readdirSync(path);
-  } catch {
-    continue;
+  } catch (error) {
+    /* A directory that is not there yet is optional; a directory that is there and cannot be read
+     * is not. Swallowing the second would publish an index with a whole section missing and bless
+     * it in `--check`, which is a gate passing over nothing. */
+    if (error.code === 'ENOENT') continue;
+    throw error;
   }
   for (const entry of entries.filter((name) => name.endsWith('.md')).sort()) {
     const fields = frontmatter(readFileSync(join(path, entry), 'utf8'));
-    if (!fields?.summary) {
+    const missing = ['title', 'description', 'summary'].filter((field) => !fields?.[field]);
+    if (missing.length > 0) {
       console.error(
-        `${directory}/${entry}: a publishable page needs frontmatter with a summary; it is what the index carries`,
+        `${directory}/${entry}: a publishable page needs frontmatter with ${missing.join(', ')}; the summary is what the index carries and the other two are what a site renders`,
       );
       process.exit(1);
     }
@@ -55,7 +60,7 @@ const section = (title, entries) =>
         '',
         ...entries.map(
           ({ file, directory, fields }) =>
-            `- [${fields.title ?? file}](${directory}/${file}): ${fields.summary}`,
+            `- [${fields.title}](${directory}/${file}): ${fields.summary}`,
         ),
       ];
 

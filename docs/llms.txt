@@ -5,5 +5,5 @@
 
 ## Design system
 
-- [Principles](design-system/principles.md): The core is not edited, the surface is configured; four levels and three layers say who may touch what, and the guards say what no configuration may break.
-- [Tokens](design-system/tokens.md): 144 primitive values in 26 groups and 38 semantic roles per theme, plus four axes; every name is the API.
+- [Principles](design-system/principles.md): The core is the set of decisions, not their values; a brand supplies values, never names. Four levels say how far you go, and the guards say what cannot break.
+- [Tokens](design-system/tokens.md): The families Brikka declares, the roles a page paints with, the four axes, and the families it deliberately refuses.

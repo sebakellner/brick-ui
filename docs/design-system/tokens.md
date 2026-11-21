@@ -1,7 +1,7 @@
 ---
 title: Tokens
 description: The families Brikka declares, the roles a page paints with, and the names a consumer reads.
-summary: 144 primitive values in 26 groups and 38 semantic roles per theme, plus four axes; every name is the API.
+summary: The families Brikka declares, the roles a page paints with, the four axes, and the families it deliberately refuses.
 ---
 
 # Tokens
@@ -36,7 +36,7 @@ the components are its first consumer.
 
 ## Semantic roles
 
-38 per theme: `bg` 14, `text` 7, `border` 6, `focus` 2, `status` 9. A role is read **under the
+A role is read **under the
 property it names** — `bg-*` under `background`, `text-*` under `color`, `border-*` under
 `border-*` — and that is the rule `pnpm check:tokens` enforces.
 
@@ -44,6 +44,27 @@ The status families are `success`, `warning` and `info`, each with `bg`, `text` 
 their pairs are measured rather than chosen: `text.on-selected` on `bg.selected` reads at 14.33:1
 in light and 9.49:1 in dark, and the disabled ink at 3.82:1 and 3.16:1 — below body contrast on
 purpose, because WCAG exempts inactive components and a label still has to be identifiable.
+
+## What it refuses, and why
+
+**A second scale next to the space ramp.** `size` and `icon` alias it, because two scales for one
+dimension drift and nobody notices until a gap is 4px off.
+
+**An opacity scale beside the colour roles.** There are two models in the market and they do not mix:
+Material treats state as an overlay alpha, Primer as colour roles (`bgColor-disabled`). This graph
+took Primer's — `bg.disabled`, `text.disabled`, `border.disabled`, `bg.scrim` — and a second way to
+say the same thing is how two components end up looking different while both being "correct".
+
+**Gradient and stroke-style tokens.** Nothing here paints a gradient, and a stroke style is a canvas
+concept.
+
+**A data-visualisation ramp.** A chart palette needs colour-blind safe ramps, which is a different
+problem from reusing the status families.
+
+**An alias that only restates a primitive.** It is a second name for one decision.
+
+`orange` stays without a role on purpose: nine steps exist, no role references them, and a preset may
+claim the family — cheaper than deleting it and adding it back.
 
 ## Naming
 
