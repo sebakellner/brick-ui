@@ -237,14 +237,14 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1(supports-color@7.2.0)
       '@web/test-runner-commands':
-        specifier: ^1.0.3
-        version: 1.0.3(supports-color@7.2.0)
+        specifier: ^1.1.0
+        version: 1.1.0(supports-color@7.2.0)
       '@web/test-runner-playwright':
         specifier: ^1.0.2
         version: 1.0.2(supports-color@7.2.0)
       axe-core:
-        specifier: ^4.14.0
-        version: 4.14.0
+        specifier: ^4.14.1
+        version: 4.14.1
       playwright:
         specifier: 1.65.1
         version: 1.65.1
@@ -270,11 +270,11 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0(supports-color@7.2.0)
       '@web/test-runner-commands':
-        specifier: ^1.0.3
-        version: 1.0.3(supports-color@7.2.0)
+        specifier: ^1.1.0
+        version: 1.1.0(supports-color@7.2.0)
       axe-core:
-        specifier: ^4.14.0
-        version: 4.14.0
+        specifier: ^4.14.1
+        version: 4.14.1
 
   packages/tokens: {}
 
@@ -1712,8 +1712,8 @@ packages:
     resolution: {integrity: sha512-ZuZgP60obK5KrRZqsNxuJpZhrT0UM1uzIgOJn6cOmpjadnlz6e9eeIw46FpQcf49gWwIpGFVc1cXvAQhiaLnCw==}
     engines: {node: '>=22.0.0'}
 
-  '@web/test-runner-commands@1.0.3':
-    resolution: {integrity: sha512-8p1tQX/JRVAwuDhTbTQ3bneAlajeygJHBM6DBzo87Zs9J8HINY9sHg+N/4JVB3WQRO50dMsi21GbbmRyebxptA==}
+  '@web/test-runner-commands@1.1.0':
+    resolution: {integrity: sha512-8Psi6Wuc3VjoAyfkzjsJtqpvVSg9JnZV5EjmecaLTJvRMt3L3sx9beNNdrPLDs+gP+kM2sScxx0yHjfKFP0czg==}
     engines: {node: '>=22.0.0'}
 
   '@web/test-runner-core@1.0.1':
@@ -1880,8 +1880,8 @@ packages:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
 
-  axe-core@4.14.0:
-    resolution: {integrity: sha512-9WTZxEjsZ7b13TH8JPmbV2z8CHbl80/2hm3XPEG4JgNdQLK81IBRXmSxHfMAOkSqQeRxT/0dwNDz2GOm3zzpcQ==}
+  axe-core@4.14.1:
+    resolution: {integrity: sha512-FHfa+lmNjQZfJz1q8wKqIDwC6DExcHt/pkjNQb09a3NPjCKg2rhu5qb2S4r76ASyFNNtuFooJpZe37OgudVGtQ==}
     engines: {node: '>=4'}
 
   balanced-match@4.0.4:
@@ -3933,7 +3933,7 @@ snapshots:
   '@open-wc/semantic-dom-diff@0.21.0(supports-color@7.2.0)':
     dependencies:
       '@types/chai': 4.3.20
-      '@web/test-runner-commands': 1.0.3(supports-color@7.2.0)
+      '@web/test-runner-commands': 1.1.0(supports-color@7.2.0)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -4692,7 +4692,7 @@ snapshots:
       - utf-8-validate
       - yauzl
 
-  '@web/test-runner-commands@1.0.3(supports-color@7.2.0)':
+  '@web/test-runner-commands@1.1.0(supports-color@7.2.0)':
     dependencies:
       '@web/test-runner-core': 1.0.2(supports-color@7.2.0)
       mkdirp: 1.0.4
@@ -4803,7 +4803,7 @@ snapshots:
       '@web/config-loader': 1.0.1
       '@web/dev-server': 1.0.1(supports-color@7.2.0)
       '@web/test-runner-chrome': 1.0.2(supports-color@7.2.0)
-      '@web/test-runner-commands': 1.0.3(supports-color@7.2.0)
+      '@web/test-runner-commands': 1.1.0(supports-color@7.2.0)
       '@web/test-runner-core': 1.0.1(supports-color@7.2.0)
       '@web/test-runner-mocha': 1.0.1(supports-color@7.2.0)
       camelcase: 6.3.0
@@ -4915,7 +4915,7 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
-  axe-core@4.14.0: {}
+  axe-core@4.14.1: {}
 
   balanced-match@4.0.4: {}
 
@@ -4970,7 +4970,7 @@ snapshots:
 
   chai-a11y-axe@1.5.0:
     dependencies:
-      axe-core: 4.14.0
+      axe-core: 4.14.1
 
   chai@5.3.3:
     dependencies:
