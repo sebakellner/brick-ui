@@ -56,7 +56,7 @@ still works, and the changeset written before this record
 change is made because of it today.
 
 `CONTRIBUTING.md` stops asking for a changeset and points here instead; R1 of
-[docs/conventions-tokens.md](../conventions-tokens.md) stops counting the changeset among what
+[docs/conventions/tokens.md](../conventions/tokens.md) stops counting the changeset among what
 enforces it.
 
 ### Alternatives considered

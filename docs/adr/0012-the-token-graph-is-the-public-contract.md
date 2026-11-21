@@ -9,7 +9,7 @@ accepted
 ## Context
 
 Themes are configured by writing token values, so the token graph is already the surface a
-consumer touches: R4 in [conventions-tokens.md](../conventions-tokens.md) says a rename is a
+consumer touches: R4 in [conventions/tokens.md](../conventions/tokens.md) says a rename is a
 breaking change, and R6 says a component reads a role for colour and a primitive for
 everything else. Both were decided while solving a local problem, and neither says what
 "breaking" obliges anyone to do.

@@ -54,6 +54,6 @@ is not left as configuration people trust:
   jsdom, and its Chrome-only rounding rule are untouched.
 - **The flag is one global, and two things rewrite it.** `setViewport` in a test silences
   the hover capability, so a test that resizes cannot expect hover; and the flag is
-  Blink-only, which is why the skip branch still exists (`docs/conventions-testing.md` T7).
+  Blink-only, which is why the skip branch still exists (`docs/conventions/testing.md` T7).
 - The pointer state also leaks between suites — Chrome keeps the last hovered element — so
   a suite that moves it resets it in `afterEach`.

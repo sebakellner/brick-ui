@@ -5,7 +5,7 @@ Date: 2026-11-20
 ## Status
 
 accepted, in the change that adds the elevation tokens. It supersedes **in part**
-[R8](../conventions-tokens.md) — the rule that no shadow token exists until something paints a
+[R8](../conventions/tokens.md) — the rule that no shadow token exists until something paints a
 shadow — and depends on
 [0021](0021-a-text-style-is-a-composite-token.md), whose serializer rule is what makes the
 reversal possible. It supersedes no ADR.

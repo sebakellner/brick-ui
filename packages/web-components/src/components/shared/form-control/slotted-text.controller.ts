@@ -12,7 +12,7 @@ const OBSERVE: MutationObserverInit = {
  * assigned nodes, and `slotchange` reports only a change of assignment, never an
  * atom edited in place. Read unflattened — flattening answers with the slot's
  * fallback, which is the field's own message.
- * Why the kit needs an observer at all: docs/architecture.md, "Slotted text". */
+ * Why the kit needs an observer at all: docs/architecture/system.md, "Slotted text". */
 export class SlottedTextController implements ReactiveController {
   private readonly host: LitElement;
 

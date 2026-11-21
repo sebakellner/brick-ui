@@ -7,14 +7,14 @@ internals lives in [`docs/`](docs/README.md); the [README](README.md) covers usa
 
 | You want                                 | Go to                                                                  |
 | ---------------------------------------- | ---------------------------------------------------------------------- |
-| how a value travels from JSON to a pixel | [docs/architecture.md](docs/architecture.md)                           |
-| the rules the token layers obey          | [docs/conventions-tokens.md](docs/conventions-tokens.md)               |
-| the accessibility bar                    | [docs/conventions-accessibility.md](docs/conventions-accessibility.md) |
-| how to test, and what makes a test real  | [docs/conventions-testing.md](docs/conventions-testing.md)             |
-| how to document a component              | [docs/conventions-docs.md](docs/conventions-docs.md)                   |
-| TypeScript and tooling gotchas           | [docs/conventions-code.md](docs/conventions-code.md)                   |
-| add a token                              | [docs/add-a-token.md](docs/add-a-token.md)                             |
-| add a component                          | [docs/add-a-component.md](docs/add-a-component.md)                     |
+| how a value travels from JSON to a pixel | [docs/architecture/system.md](docs/architecture/system.md)             |
+| the rules the token layers obey          | [docs/conventions/tokens.md](docs/conventions/tokens.md)               |
+| the accessibility bar                    | [docs/conventions/accessibility.md](docs/conventions/accessibility.md) |
+| how to test, and what makes a test real  | [docs/conventions/testing.md](docs/conventions/testing.md)             |
+| how to document a component              | [docs/conventions/docs.md](docs/conventions/docs.md)                   |
+| TypeScript and tooling gotchas           | [docs/conventions/code.md](docs/conventions/code.md)                   |
+| add a token                              | [docs/guides/add-a-token.md](docs/guides/add-a-token.md)               |
+| add a component                          | [docs/guides/add-a-component.md](docs/guides/add-a-component.md)       |
 | why the kit is arranged this way         | [docs/adr/](docs/adr/)                                                 |
 | instructions for coding agents           | [AGENTS.md](AGENTS.md)                                                 |
 
@@ -114,5 +114,5 @@ the other.
 
 What the kit deliberately does not do — no published package, no visual
 regression, one browser — is recorded with its revisit condition in
-[docs/architecture.md](docs/architecture.md#boundaries). A change that would cross
+[docs/architecture/system.md](docs/architecture/system.md#boundaries). A change that would cross
 one of those lines is a decision, not an implementation detail: it needs an ADR.

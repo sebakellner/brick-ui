@@ -19,7 +19,7 @@ invisible until someone cannot use the control.
 **The rules are asserted, and the component is also audited.** Each rule below has its own
 cases; on top of them, every component suite runs one axe audit per theme
 (`wcag2a`, `wcag2aa`, `best-practice`) through `packages/test-utils/src/a11y.ts`. Neither half
-replaces the other, and the split is `docs/conventions-testing.md` T15.
+replaces the other, and the split is `docs/conventions/testing.md` T15.
 
 ## A1. Native semantics first
 
@@ -122,14 +122,14 @@ from `data-empty` as well: a control marks its own `.message` wrapper, which
 `FieldMessagesController` sets from `assignedNodes()`, and an atom marks itself,
 reading its own light DOM with `SlottedTextController`. Each host marks only what
 it hosts. `1px` there is the geometry the technique requires, not a design value
-([ADR 0004](adr/0004-forbid-style-literals-in-components.md)).
+([ADR 0004](../adr/0004-forbid-style-literals-in-components.md)).
 
 **Enforced by.** The suite, for the part a test can see: the region keeps
 `role="status"` while it is empty (`brikka-checkbox.test.ts`, `brikka-input.test.ts`), stays
 connected, and is collapsed rather than hidden (`brikka-field-error.test.ts` proves the
 collapse; the `role` it carries is the atom's own). Whether the
 announcement actually reaches a screen reader is not assertable here — the suite runs
-in Chrome alone ([0005](adr/0005-test-in-chrome-only.md)) — so that half stays a review
+in Chrome alone ([0005](../adr/0005-test-in-chrome-only.md)) — so that half stays a review
 question.
 
 ## A7a. A container of controls is named on its host
@@ -145,7 +145,7 @@ references it.
 element reflection keeps that rule: a host cannot name or describe a node in its
 own shadow root. A container that renders its own regions looks finished and
 announces nothing. The alternative — `referenceTarget` — is Chromium-only, and the
-suite runs in Chrome alone ([0005](adr/0005-test-in-chrome-only.md)), so it would
+suite runs in Chrome alone ([0005](../adr/0005-test-in-chrome-only.md)), so it would
 be green and broken everywhere else.
 
 **This is the one place A7 is relaxed**: the live region is the slotted error

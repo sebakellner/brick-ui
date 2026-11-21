@@ -55,7 +55,7 @@ superseding this record, not adding a dev dependency.
 
 ## Consequences
 
-- `docs/conventions-testing.md` T12 states the rule and links here; the reasoning lives in
+- `docs/conventions/testing.md` T12 states the rule and links here; the reasoning lives in
   this record.
 - **The honest risk is that "no number" hides a component nobody wrote a suite for.** The
   mitigations are structural rather than numeric: T8 makes a missing file visible in the

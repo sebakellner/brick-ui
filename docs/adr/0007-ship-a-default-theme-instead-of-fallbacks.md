@@ -8,7 +8,7 @@ accepted; superseded in part by
 [0008](0008-the-page-loads-the-theme-the-suite-does-not.md), which supersedes the sentence
 below that "the suite imports `theme.css` directly": the page links it and no suite does.
 The `sideEffects` field this record describes was settled differently: the contract
-declares it, and `docs/conventions-testing.md` T8 states the value.
+declares it, and `docs/conventions/testing.md` T8 states the value.
 
 ## Context
 
@@ -36,7 +36,7 @@ What exists in this repository today:
   `--brikka-button-disabled-opacity`; without the theme, `opacity: var(…)` is invalid
   at computed-value time, resolves to nothing, and a disabled button looks
   enabled.
-- **No outside consumer.** [architecture.md](../architecture.md) records the
+- **No outside consumer.** [architecture/system.md](../architecture/system.md) records the
   published package as out of scope because there is no consumer yet, so the
   friction is prospective rather than observed. It becomes real the day one
   exists, and the cost of deciding it then is a breaking change.

@@ -4,7 +4,7 @@ The suite runs in real Chrome through Web Test Runner. `web-test-runner.config.m
 picks up `src/**/*.test.ts`: a component's rule suites live in its `test/` folder, an assembly of two
 or more widgets that the test composes lives under `packages/web-components/test/integration/`, and the
 `sendMouse` plugin is what the hover and focus tests need. One engine is a decision, not
-an accident: see [ADR 0005](adr/0005-test-in-chrome-only.md).
+an accident: see [ADR 0005](../adr/0005-test-in-chrome-only.md).
 
 The **three levels** come first, because they are the frame the rules sit in: where a
 suite lives and what it is allowed to assert. They are not numbered because they are judged
@@ -133,11 +133,11 @@ a group changes the reading order and never the name of a rule.
 `/packages/tokens/src/theme.css` and zeroes `--brikka-transition`. A suite never loads the stylesheet
 itself; when it needs the other theme it calls `setTheme('dark')` and nothing else.
 
-**Why.** Components carry no fallback values ([ADR 0002](adr/0002-require-the-theme.md)), so
+**Why.** Components carry no fallback values ([ADR 0002](../adr/0002-require-the-theme.md)), so
 a suite without the theme asserts against nothing — but that is a property of the page, not
 of every file. ADR 0002 still decides that the theme is required; the loader it
 mentions (`before(loadTheme)`) is gone, and
-[0008](adr/0008-the-page-loads-the-theme-the-suite-does-not.md) supersedes that part of
+[0008](../adr/0008-the-page-loads-the-theme-the-suite-does-not.md) supersedes that part of
 it. Fetching the same stylesheet from each suite gave every file its own chance to forget,
 and the copy that forgot failed with an unrelated-looking assertion.
 
@@ -452,7 +452,7 @@ request. A suite is judged by whether each rule a component documents has a case
 much of a file it executes.
 
 **Why.** The full record, including the position this reverses, is
-[0010](adr/0010-coverage-is-not-measured.md). Briefly: Google's testing chapter names the
+[0010](../adr/0010-coverage-is-not-measured.md). Briefly: Google's testing chapter names the
 failure mode — engineers treat the number "like a ceiling … changes begin landing with no
 more than 80% coverage" — and Fowler calls it "of little use as a numeric statement of how
 good your tests are". The counter-example is real and named there: Spectrum Web Components
@@ -510,7 +510,7 @@ multiple tests for one feature into describe blocks".
 ## T15. Accessibility is asserted by rule and by audit
 
 **Rule.** A component suite carries both halves. The rules are cases like any other, from
-[conventions-accessibility.md](conventions-accessibility.md): the association, the reference
+[accessibility.md](accessibility.md): the association, the reference
 that disappears with its content, the disabled state, the live region that stays, and every
 contrast pair A2 owes. The audit is one more case per theme: `await expectNoViolations(el)`
 from `packages/test-utils/src/a11y.ts`, running `wcag2a`, `wcag2aa` and `best-practice`. Neither half

@@ -1,9 +1,9 @@
 # Documentation Conventions
 
 Rules for what a component ships as documentation: its `README.md`, its Storybook page
-and its stories. Token rules are in [conventions-tokens.md](conventions-tokens.md),
-testing is in [conventions-testing.md](conventions-testing.md), and the rules for the
-documents in this directory are in [README.md](README.md).
+and its stories. Token rules are in [tokens.md](tokens.md),
+testing is in [testing.md](testing.md), and the rules these documents obey are in
+[README.md](../README.md).
 
 **Scope: the web components package.** These rules describe a custom element, so they use
 the platform's vocabulary — attributes, properties, events, slots, `part`s and custom
@@ -101,7 +101,7 @@ limitation the README declares gets a case too, the one that shows the limit.
 statement as an `Enforced by` column that names a check nobody runs.
 
 **Enforced by.** `pnpm check:readmes` proves the name is in the code and in the table; the
-rule in [conventions-testing.md](conventions-testing.md) that gives every documented name a
+rule in [testing.md](testing.md) that gives every documented name a
 case proves the rest, and review guards the case that exists without a name.
 
 ## D4. A story is one decision, and its name says which
@@ -125,7 +125,7 @@ component.
 
 **Rule.** The `.mdx` carries the canvases and, between them, the sentence that says why
 this canvas follows the previous one. The explanation — why a decision was made, what was
-rejected — belongs in the README or in an [ADR](adr/), never in a paragraph next to a
+rejected — belongs in the README or in an [ADR](../adr/), never in a paragraph next to a
 canvas.
 
 **Why.** The page is read with one hand on the controls, and a paragraph there is read
@@ -151,7 +151,7 @@ idiomatic usage, the snippet a consumer of that technology writes, is authored p
 
 **Why.** Two hand-written READMEs per component are two documents per fact per technology,
 and the first divergence will be a default or an event name. The rule that keeps them honest
-is the one this folder already uses: a fact true of every technology belongs to the manifest,
+is the one this repository already uses: a fact true of every technology belongs to the manifest,
 and a fact true of one technology belongs to that package.
 
 **Do** — a React README whose tables are generated from the manifest and whose `## Usage`
@@ -184,12 +184,12 @@ the least reviewed line in the file.
 `value` saying "the value".
 
 **Enforced by.** Review. The budget for an ordinary comment is the rule in
-[conventions-code.md](conventions-code.md) about what a comment is allowed to say.
+[code.md](code.md) about what a comment is allowed to say.
 
 ## D8. The README explains itself; it never sends the reader to an ADR
 
 **Rule.** A component README states its contract and the reasons it needs **in its own words**.
-It carries no link to an [ADR](adr/): an ADR is cited from `docs/` and from other ADRs, where a
+It carries no link to an [ADR](../adr/): an ADR is cited from `docs/` and from other ADRs, where a
 maintainer is already reading reasoning. What D5 says still holds — the explanation belongs to the
 README or to an ADR — with one clause added: when it is the README, the README says it.
 

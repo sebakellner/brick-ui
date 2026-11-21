@@ -8,7 +8,7 @@ proposed. It becomes accepted with the change that lands the preset pipeline: th
 parametric tokens and the validation a host can run. It extends
 [0012](0012-the-token-graph-is-the-public-contract.md) and
 [0017](0017-ship-the-token-graph-as-a-design-system.md) and supersedes no record. It depends
-on R1 and R2 of [docs/conventions-tokens.md](../conventions-tokens.md) and reverses neither:
+on R1 and R2 of [docs/conventions/tokens.md](../conventions/tokens.md) and reverses neither:
 
 ## Context
 
