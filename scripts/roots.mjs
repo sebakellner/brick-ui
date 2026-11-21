@@ -28,6 +28,7 @@ export const paths = {
   tokensJson: at('packages', 'tokens', 'tokens'),
   manifest: at('packages', 'web-components', 'src', 'custom-elements.json'),
   tokensSrc: at('packages', 'tokens', 'src'),
+  docs: at('docs'),
 };
 
 export class MissingRoot extends Error {

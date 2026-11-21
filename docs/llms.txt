@@ -1,0 +1,9 @@
+# Brikka design system
+
+> The token graph, the themes and the guides a host needs to paint with Brikka without
+> registering a single element. Every name here is public API.
+
+## Design system
+
+- [Principles](design-system/principles.md): Primitives are what a brand owns, roles are what a page paints, hooks are what a component exposes — and the graph is the product, not a byproduct of the elements.
+- [Tokens](design-system/tokens.md): 144 primitive values in 26 groups and 38 semantic roles per theme, plus four axes; every name is the API.
