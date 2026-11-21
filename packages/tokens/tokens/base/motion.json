@@ -1,0 +1,45 @@
+{
+  "duration": {
+    "$type": "duration",
+    "fast": {
+      "$value": "100ms",
+      "$description": "A state that changes under the pointer: hover, focus, pressed."
+    },
+    "base": {
+      "$value": "150ms",
+      "$description": "The default: a colour or a border settling after a state change."
+    },
+    "slow": {
+      "$value": "250ms",
+      "$description": "A movement the eye is meant to follow, like a thumb crossing its track."
+    }
+  },
+  "easing": {
+    "$type": "cubicBezier",
+    "standard": {
+      "$value": [0.2, 0, 0, 1],
+      "$description": "Leaves immediately and settles: what most state changes use."
+    },
+    "decelerate": {
+      "$value": [0.05, 0.7, 0.1, 1],
+      "$description": "An element entering the screen, arriving without overshoot."
+    },
+    "accelerate": {
+      "$value": [0.3, 0, 0.8, 0.15],
+      "$description": "An element leaving the screen: it starts slow and is gone."
+    },
+    "linear": {
+      "$value": [0, 0, 1, 1],
+      "$description": "Motion with no easing, for something that must not appear to settle."
+    }
+  },
+  "transition": {
+    "$type": "transition",
+    "$value": {
+      "duration": "{duration.base}",
+      "delay": "0ms",
+      "timingFunction": "{easing.standard}"
+    },
+    "$description": "The only timing a component reads: duration and easing together, so one rule retimes the kit and reduced motion can replace it with a duration alone."
+  }
+}

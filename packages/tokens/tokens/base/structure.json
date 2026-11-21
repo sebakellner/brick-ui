@@ -7,9 +7,6 @@
     "$value": "40px",
     "$type": "dimension"
   },
-  "transition": {
-    "$value": "120ms ease"
-  },
   "focus-ring-width": {
     "$value": "2px",
     "$type": "dimension"
