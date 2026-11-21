@@ -59,7 +59,7 @@ together, so they travel together. A page that picks a size and improvises the r
 paragraphs on the same screen with different rhythms, and the reader feels it without being able to
 name it.
 
-**The line matters more than the point size.** What a reader's eye has to do is return to the start of
+**The line matters as much as the point size.** What a reader's eye has to do is return to the start of
 the next line, and it does that badly past about sixty-five characters. A comfortable measure is one of
 the decisions that most affects whether a page is read, which is why it is a foundation and not a
 detail of a container.
@@ -127,10 +127,12 @@ immediate, a colour settling after a change as quick, and a movement the eye has
 because tracking is work. The graph declares a speed for each of those three.
 
 **Every component reads one timing.** Duration and curve arrive together as a single value, built from
-the middle speed and the standard curve, so the kit moves at one pace; the other speeds and the
-remaining curves are the vocabulary a page composes when it needs something else. That single value is
-also the only reason reduced motion works: a preference can retime the whole kit at once because there
-is one place to replace. A component that writes its own duration sits outside that promise.
+the middle speed and the standard curve, so the kit moves at one pace. That single value is also the
+only reason reduced motion works: a preference can retime the whole kit at once because there is one
+place to replace. The other speeds and curves are declared so that a new need has a criterion to meet
+rather than a number to invent; one that starts to be read arrives as its own composite, retimed in
+the same place, so reduced motion keeps covering it. A component that writes its own duration sits
+outside that promise.
 
 **Motion is never decoration.** It describes a change; it does not draw attention to the interface
 having changed. When a page animates to be noticed, the reader learns to wait, and the animation has
