@@ -18,8 +18,8 @@ of decisions, not the values that fill them.**
 
 Adding a name, a scale or a rule changes the core, and that is ours to decide, with a version.
 Changing the colour of a palette step, the width of the space unit or how tall a control is does
-**not** change it — that is exactly what a brand comes here to do. It is why a brand writes
-primitives and never roles (the role is the name _we_ gave the decision), and why the preset exists:
+**not** change it — that is exactly what a brand comes here to do. It is why a brand supplies
+values for primitives and never roles (the role is the name _we_ gave the decision), and why the preset exists:
 so the boundary is mechanical rather than a recommendation.
 
 If you ever have to touch a name in the core to reach your goal, the system failed you. A
@@ -43,51 +43,58 @@ someone is asking for a configuration point, or for a component that does not ex
 
 **The core.** Names, scales, rules, and which property each role forms — and it has an address:
 `tokens/base` holds the ramps, the scales and the singletons, `tokens/role` holds the role names with
-their values per theme, and the rules they obey are on this page and in [foundations.md](foundations.md). Touch any of those and
-the system stops being a system and becomes an archive of particular cases.
+their values per theme, and the rules they obey live beside them in `conventions/tokens.md`. The
+thinking behind those rules is on this page and in [foundations.md](foundations.md). Touch any of them
+and the system stops being a system and becomes an archive of particular cases.
 
 **The fourth level is not one you climb.** It is requested, and the answer is a version.
 
 ## One rule makes the rest possible
 
-**A component never reads a primitive.** It reads a role.
+**A component never reads a palette step.** It reads a role.
 
 That looks like a style rule and is the condition of theming. The role is the indirection: it names a
 decision without naming a colour, so a brand can change the palette and every role that references
 it moves on its own, without anybody rewriting a role.
 
 ```css
-/* The palette and the roles it feeds are declared under one selector. */
+/* The ramp is declared once, at the root; a theme re-declares the roles. */
+:where(:root) {
+  --brikka-palette-blue-600: #2563eb; /* one step of the default ramp */
+}
+
 :where(:root),
 :where([data-theme='light']) {
-  --brikka-palette-blue-600: #2563eb; /* what a brand supplies */
   --brikka-bg-accent: var(--brikka-palette-blue-600); /* what we decided */
 }
 
-/* What a preset emits for a brand: the same element, so the role resolves again. */
+/* What a preset emits for a brand: the steps it derives from the anchor. */
 :root[data-brand='acme'] {
-  --brikka-palette-blue-600: #6d28d9;
+  --brikka-palette-blue-600: oklch(0.55 0.19 285);
+  --brikka-palette-blue-400: oklch(0.68 0.17 285);
+  /* …and every other step a role reads, in either theme. */
 }
 ```
 
-A brand on the document works because the two declarations meet on one element: the palette step it
-supplies and the role that reads it are both applied to the root, so the role substitutes the new
-value.
+A brand on the document works because the ramp is inherited. A role that resolves on the root reads
+the palette there; a role the theme re-declares on a subtree inherits it from the root. Every step of
+the ramp reaches every role that reads it, in every theme, at any depth.
 
-The rule behind it is that a brand lives on the element that carries the theme. The light block
-re-declares the palette under `[data-theme='light']`, so a theme attribute on a container below the
-brand puts the default palette back for everything under it. The dark block re-declares only the
-roles, which is why one brand block serves both themes: a palette does not depend on the theme, and a
-brand needs no rule per theme.
+One more reason the brand block holds: the theme blocks are written with `:where()`, which carries no
+specificity, so the selector that names the brand outranks them on the element they share without
+depending on the order the stylesheets load in.
 
-A brand confined to a subtree is a different problem: putting the attribute on a container and
-expecting the roles to follow fails in silence.
-`var()` resolves where a declaration applies, so redefining a palette step inside a subtree never
-reaches a role declared on the root. What makes it work is that the graph re-emits the roles that read
-the brand's steps under that same selector — the generation that produces a theme produces a brand's
-scope too. Nobody hand-writes those roles, and that is the whole point: a brand supplies values, and a
-role is always the system's name for a decision. A contract every party drafts is not a contract, and
-`surface` would stop meaning anything.
+**A brand is a document-level fact.** The ramp is declared once, at the root, and a theme re-declares
+the roles; the palette itself has no theme. So one brand block serves both themes, needs no rule per
+theme, and nothing below it can put the default ramp back.
+
+A brand confined to a subtree is a generated extension — `var()` resolves where a declaration applies,
+so redefining a palette step inside a subtree never reaches a role declared on the root, and the roles
+that read the brand's steps are re-declared under that same selector. Nobody hand-writes those roles,
+and that is the whole point: a brand supplies values, and a role is always the system's name for a
+decision. The suite tests the document, including the role a light subtree resolves from an override
+at the root; the subtree itself is held by review. A contract every party drafts is not a contract,
+and `surface` would stop meaning anything.
 
 One consequence is the same mechanism from the other side: **a token that contains another resolves
 where it is declared.** A shadow's tint is applied at the theme that declares it, not on the card that
@@ -109,7 +116,8 @@ A **hook** is named for the component it belongs to: `button-bg`, not `accent-tw
 
 Freedom is only safe when something refuses the harmful cases.
 
-**Ranges, not free values.** A brand supplies an anchor colour, a unit and two multipliers. It does
+**Ranges, not free values.** A brand supplies an anchor colour — or the ramp it builds — a unit and
+two multipliers. It does
 not supply a stylesheet.
 
 **An anchor, not a step.** A role reads the step its theme needs, and the two themes do not read the
@@ -123,13 +131,13 @@ density and the multiplier that adapts it stays the system's, so a plain length 
 control out of density.
 
 **Contrast is measured, not assumed.** Every pair a role forms is measured and written down — the
-status families in [tokens.md](tokens.md) are the example — and a preset that would form a pair below
-its threshold has to fail rather than ship. Two classes of pair are measured: text on its surface at
+status families in [the token reference](tokens.md) are the example — and a preset that would form a pair below
+its threshold must not ship. Two classes of pair are measured: text on its surface at
 4.5:1, and everything that is not text — a control's edge, a focus ring, a boundary that carries
 meaning — at 3:1. The pairs are measured on the composed ramp — a brand's values over the defaults,
 never the factory ramp alone — which is the reason a ramp arrives whole: a palette supplied one step
 at a time keeps the default at every step it did not touch, and the measurements above stop
-describing that page.
+describing that page. Nothing automated stops it; review does, like the ranges above it.
 
 **Failures are made visible.** A token that does not resolve invalidates the declaration that reads it, in
 silence. That is why a layer is loaded through `tokens.css`, and why the graph is checked rather than
@@ -139,18 +147,20 @@ trusted.
 and at the factory density. What ships pre-set is the design for most people.
 
 **Accessibility is an invariant.** No axis may produce a result below WCAG 2.2 AA. If one can, the
-defect is the system's and not a choice of whoever configured it.
+defect is the system's and not a choice of whoever configured it — and no check fails a build that
+breaks it: the pairs are measured by hand, and this guard is held by review.
 
 ## How this breaks
 
-Reading a primitive inside a component closes the door on theming, and the graph's own check refuses it. A
-magic number — `padding: 13px` — is a decision with no name and no owner. A variation per client
-inside the core turns the system into an archive of particular cases, which is what the levels above
-exist to avoid. The families this graph refuses, and why, are listed once in [tokens.md](tokens.md).
+Reading a palette step inside a component closes the door on theming, and the graph's own check
+refuses it. A magic number — `padding: 13px` — is a decision with no name and no owner. A variation per
+client inside the core turns the system into an archive of particular cases, which is what the levels
+above exist to avoid. The families this graph refuses, and why, are listed once in
+[the token reference](tokens.md).
 
 A rule nobody can check is a wish. Where a guard above names a check, that check exists today; where
-it names none, the guard is held by review, and an exception is argued in a new ADR
-rather than granted in passing.
+it names none, the guard is held by review, and an exception is argued in a new architecture decision
+record rather than granted in passing.
 
 ## What this document does not govern
 
