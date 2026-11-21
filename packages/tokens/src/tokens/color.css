@@ -64,7 +64,6 @@
   --brikka-palette-sky-800: #075985;
   --brikka-palette-sky-900: #0c4a6e;
   --brikka-bg-scrim: rgb(28 25 23 / 0.48);
-  --brikka-focus-halo: rgb(37 99 235 / 0.18);
   --brikka-bg-inverse: var(--brikka-palette-neutral-900);
   --brikka-bg-surface: var(--brikka-palette-white);
   --brikka-bg-surface-muted: var(--brikka-palette-neutral-100);
@@ -100,5 +99,6 @@
   --brikka-info-bg: var(--brikka-palette-blue-100);
   --brikka-info-text: var(--brikka-palette-blue-800);
   --brikka-info-border: var(--brikka-palette-blue-600);
+  --brikka-focus-halo: color-mix(in oklab, var(--brikka-palette-blue-600) 18%, transparent);
   --brikka-focus-ring: var(--brikka-palette-sky-600);
 }

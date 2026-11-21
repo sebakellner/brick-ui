@@ -12,25 +12,25 @@
   "font-size": {
     "$type": "dimension",
     "xs": {
-      "$value": "0.75rem",
+      "$value": "calc(0.75rem * {scale.type})",
       "$description": "The floor: a caption or a helper line that must not compete with its subject."
     },
     "sm": {
-      "$value": "0.8125rem"
+      "$value": "calc(0.8125rem * {scale.type})"
     },
     "md": {
-      "$value": "0.9375rem"
+      "$value": "calc(0.9375rem * {scale.type})"
     },
     "lg": {
-      "$value": "1.125rem",
+      "$value": "calc(1.125rem * {scale.type})",
       "$description": "Above body text, for a heading that groups rather than announces."
     },
     "xl": {
-      "$value": "1.375rem",
+      "$value": "calc(1.375rem * {scale.type})",
       "$description": "A section title above the content it introduces."
     },
     "2xl": {
-      "$value": "1.75rem",
+      "$value": "calc(1.75rem * {scale.type})",
       "$description": "A page title: the largest size the scale offers."
     }
   },
