@@ -92,9 +92,9 @@ override that. A gap that contradicts the grouping is a layout bug that no amoun
 Two states, not a ladder. A surface either rests on the page — a card, something that belongs to what
 you are reading — or it floats above it and takes your attention, which is a promise about behaviour:
 a floating surface can be dismissed, and the page behind it is waiting. Whether the page behind is
-blocked is modality, not elevation: a menu, a tooltip and a dialog all float, and what orders them is
-the stacking vocabulary in
-[Layout](#layout-decides-where-the-page-breaks-and-what-stacks).
+blocked is modality, not elevation: a menu, a tooltip and a dialog all float. What orders them is
+either the browser's top layer, for what it can host, or the stacking vocabulary in
+[Layout](#layout-decides-where-the-page-breaks-and-what-stacks), for what it cannot.
 
 A system decides what floating _means_ before the first dialog asks for it. Declaring the states early
 is what stops the third dialog from inventing a fourth shadow, and it is why the two states exist
@@ -124,7 +124,7 @@ ring is legible on some surfaces and invisible on others, which is the same as b
 Motion answers one question: was the eye meant to follow this? Duration follows what the reader has
 to do, not how long an animation looks good: a state that changes under the pointer should read as
 immediate, a colour settling after a change as quick, and a movement the eye has to track as slower,
-because tracking is work. The graph declares a speed for each of those three.
+because tracking is work. The system declares a speed for each of those three.
 
 **Every component reads one timing.** Duration and curve arrive together as a single value, built from
 the middle speed and the standard curve, so the kit moves at one pace. That single value is also the
