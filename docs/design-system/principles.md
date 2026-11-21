@@ -43,14 +43,15 @@ someone is asking for a configuration point, or for a component that does not ex
 
 **The core.** Names, scales, rules, and which property each role forms — and it has an address:
 `tokens/base` holds the ramps, the scales and the singletons, `tokens/role` holds the role names with
-their values per theme, and the rules they obey are on this page and in [foundations.md](foundations.md). Touch any of those and
-the system stops being a system and becomes an archive of particular cases.
+their values per theme, and the rules they obey live beside them in `conventions/tokens.md`. The
+thinking behind those rules is on this page and in [foundations.md](foundations.md). Touch any of them
+and the system stops being a system and becomes an archive of particular cases.
 
 **The fourth level is not one you climb.** It is requested, and the answer is a version.
 
 ## One rule makes the rest possible
 
-**A component never reads a primitive.** It reads a role.
+**A component never reads a palette step.** It reads a role.
 
 That looks like a style rule and is the condition of theming. The role is the indirection: it names a
 decision without naming a colour, so a brand can change the palette and every role that references
@@ -59,7 +60,7 @@ it moves on its own, without anybody rewriting a role.
 ```css
 /* The ramp is declared once, at the root; a theme re-declares the roles. */
 :where(:root) {
-  --brikka-palette-blue-600: #2563eb; /* what a brand supplies */
+  --brikka-palette-blue-600: #2563eb; /* one step of the nine the default ramp declares */
 }
 
 :where(:root),
@@ -67,26 +68,27 @@ it moves on its own, without anybody rewriting a role.
   --brikka-bg-accent: var(--brikka-palette-blue-600); /* what we decided */
 }
 
-/* What a preset emits for a brand: a palette step on the root, and nothing else. */
+/* What a preset emits for a brand: the steps it derives from the anchor. */
 :root[data-brand='acme'] {
-  --brikka-palette-blue-600: #6d28d9;
+  --brikka-palette-blue-600: oklch(0.55 0.19 285);
+  --brikka-palette-blue-400: oklch(0.68 0.17 285);
+  /* …and every other step a role reads, in either theme. */
 }
 ```
 
 A brand on the document works because the ramp is inherited. A role that resolves on the root reads
-the palette there; a role the theme re-declares on a subtree inherits it from the root. One palette
-step reaches every role, in every theme, at any depth.
+the palette there; a role the theme re-declares on a subtree inherits it from the root. Every step of
+the ramp reaches every role that reads it, in every theme, at any depth.
 
 **A brand is a document-level fact.** The ramp is declared once, at the root, and a theme re-declares
 the roles; the palette itself has no theme. So one brand block serves both themes, needs no rule per
 theme, and nothing below it can put the default ramp back.
 
-A brand confined to a subtree is a different problem: putting the attribute on a container and
-expecting the roles to follow fails in silence.
-`var()` resolves where a declaration applies, so redefining a palette step inside a subtree never
-reaches a role declared on the root. What makes it work is that the graph re-emits the roles that read
-the brand's steps under that same selector — the generation that produces a theme produces a brand's
-scope too. Nobody hand-writes those roles, and that is the whole point: a brand supplies values, and a
+A brand confined to a subtree is a different problem and a generated extension: `var()` resolves where
+a declaration applies, so redefining a palette step inside a subtree never reaches a role declared on
+the root, and the roles that read the brand's steps are re-declared under that same selector —
+generated, never written by the brand. That extension is held by review rather than by a test; the
+document is the case that ships, and the suite holds it. Nobody hand-writes those roles, and that is the whole point: a brand supplies values, and a
 role is always the system's name for a decision. A contract every party drafts is not a contract, and
 `surface` would stop meaning anything.
 
@@ -124,13 +126,14 @@ density and the multiplier that adapts it stays the system's, so a plain length 
 control out of density.
 
 **Contrast is measured, not assumed.** Every pair a role forms is measured and written down — the
-status families in [tokens.md](tokens.md) are the example — and a preset that would form a pair below
+status families in [the token reference](tokens.md) are the example — and a preset that would form a pair below
 its threshold has to fail rather than ship. Two classes of pair are measured: text on its surface at
 4.5:1, and everything that is not text — a control's edge, a focus ring, a boundary that carries
 meaning — at 3:1. The pairs are measured on the composed ramp — a brand's values over the defaults,
 never the factory ramp alone — which is the reason a ramp arrives whole: a palette supplied one step
 at a time keeps the default at every step it did not touch, and the measurements above stop
-describing that page.
+describing that page. Nothing automated fails a preset below the threshold; this guard is held by
+review, like the ranges above it.
 
 **Failures are made visible.** A token that does not resolve invalidates the declaration that reads it, in
 silence. That is why a layer is loaded through `tokens.css`, and why the graph is checked rather than
@@ -144,13 +147,14 @@ defect is the system's and not a choice of whoever configured it.
 
 ## How this breaks
 
-Reading a primitive inside a component closes the door on theming, and the graph's own check refuses it. A
+Reading a palette step inside a component closes the door on theming, and the graph's own check refuses
+it. A
 magic number — `padding: 13px` — is a decision with no name and no owner. A variation per client
 inside the core turns the system into an archive of particular cases, which is what the levels above
-exist to avoid. The families this graph refuses, and why, are listed once in [tokens.md](tokens.md).
+exist to avoid. The families this graph refuses, and why, are listed once in [the token reference](tokens.md).
 
 A rule nobody can check is a wish. Where a guard above names a check, that check exists today; where
-it names none, the guard is held by review, and an exception is argued in a new ADR
+it names none, the guard is held by review, and an exception is argued in a new architecture decision record
 rather than granted in passing.
 
 ## What this document does not govern
