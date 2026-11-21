@@ -35,23 +35,31 @@ describe('layout, stacking and sizing', () => {
     expect(modal).to.be.greaterThan(dropdown);
   });
 
-  it('sizes an icon from the space ramp rather than from a second scale', () => {
+  /* The alias is the claim, not the pixel value: 16px and 24px would also be produced by a
+   * literal. Moving the space step it points at is what proves the alias. */
+  it('sizes an icon from the space ramp, not from a second scale', () => {
+    const root = document.documentElement;
     probe ??= document.body.appendChild(document.createElement('div'));
     probe.style.inlineSize = 'var(--brikka-icon-lg)';
     expect(getComputedStyle(probe).width).to.equal('24px');
-    probe.style.inlineSize = 'var(--brikka-icon-sm)';
-    expect(getComputedStyle(probe).width).to.equal('16px');
+    root.style.setProperty('--brikka-space-6', '30px');
+    try {
+      expect(getComputedStyle(probe).width).to.equal('30px');
+    } finally {
+      root.style.removeProperty('--brikka-space-6');
+    }
   });
 
-  it('measures a line in characters, not in pixels', () => {
+  /* `ch` is what makes a measure follow the type; a px measure would not move when the font
+   * size does. Doubling the font size is the difference the unit has to show. */
+  it('measures a line in characters, so it grows with the type', () => {
     probe ??= document.body.appendChild(document.createElement('div'));
     probe.style.maxInlineSize = 'var(--brikka-measure-md)';
-    /* Chrome resolves the unit: what matters is that the token is a length the browser accepts,
-     * and that the wider measure is the wider of the two. */
-    const wide = parseFloat(getComputedStyle(probe).maxInlineSize);
-    probe.style.maxInlineSize = 'var(--brikka-measure-sm)';
-    const narrow = parseFloat(getComputedStyle(probe).maxInlineSize);
-    expect(wide).to.be.greaterThan(narrow);
-    expect(narrow).to.be.greaterThan(0);
+    probe.style.fontSize = '16px';
+    const at16 = parseFloat(getComputedStyle(probe).maxInlineSize);
+    probe.style.fontSize = '32px';
+    const at32 = parseFloat(getComputedStyle(probe).maxInlineSize);
+    expect(at16).to.be.greaterThan(0);
+    expect(at32).to.be.closeTo(at16 * 2, 1);
   });
 });

@@ -51,23 +51,23 @@
   "z-index": {
     "$type": "number",
     "base": {
-      "$value": "0",
+      "$value": 0,
       "$description": "In flow. Nothing should need this, and a component that sets it is overreaching."
     },
     "dropdown": {
-      "$value": "100",
+      "$value": 100,
       "$description": "A surface that follows its trigger: a select, a menu."
     },
     "overlay": {
-      "$value": "200",
+      "$value": 200,
       "$description": "The scrim and anything that sits directly on it."
     },
     "modal": {
-      "$value": "300",
+      "$value": 300,
       "$description": "A dialog that takes the page's attention."
     },
     "toast": {
-      "$value": "400",
+      "$value": 400,
       "$description": "A message that must be readable over a dialog."
     }
   }
