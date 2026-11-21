@@ -12,7 +12,7 @@ requireRoots('docs');
  * page. `--check` fails when the file on disk disagrees, which is what makes the rule enforceable
  * instead of aspirational. */
 
-const DIRECTORIES = ['design-system', 'guides'];
+const DIRECTORIES = ['design-system'];
 
 const frontmatter = (source) => {
   const match = /^---\n([\s\S]*?)\n---\n/.exec(source);
@@ -32,9 +32,10 @@ for (const directory of DIRECTORIES) {
   try {
     entries = readdirSync(path);
   } catch (error) {
-    /* A directory that is not there yet is optional; a directory that is there and cannot be read
-     * is not. Swallowing the second would publish an index with a whole section missing and bless
-     * it in `--check`, which is a gate passing over nothing. */
+    /* A directory that is not there is optional; a directory that is there and cannot be read is
+     * not. Swallowing the second would publish an index with a whole section missing and bless it
+     * in `--check`, which is a gate passing over nothing. Only `design-system/` is published, so
+     * the frontmatter requirement below is asked of it alone. */
     if (error.code === 'ENOENT') continue;
     throw error;
   }
@@ -67,15 +68,11 @@ const section = (title, entries) =>
 const body = [
   '# Brikka design system',
   '',
-  '> The token graph, the themes and the guides a host needs to paint with Brikka without',
-  '> registering a single element. Every name here is public API.',
+  '> The token graph, the themes and the decisions a host needs to paint with',
+  '> Brikka without registering a single element. Every name here is public API.',
   ...section(
     'Design system',
     pages.filter((page) => page.directory === 'design-system'),
-  ),
-  ...section(
-    'Guides',
-    pages.filter((page) => page.directory === 'guides'),
   ),
   '',
 ].join('\n');

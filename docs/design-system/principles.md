@@ -43,7 +43,7 @@ someone is asking for a configuration point, or for a component that does not ex
 
 **The core.** Names, scales, rules, and which property each role forms — and it has an address:
 `tokens/base` holds the ramps, the scales and the singletons, `tokens/role` holds the role names with
-their values per theme, and `conventions/tokens.md` holds the rules they obey. Touch any of those and
+their values per theme, and the rules they obey are on this page and in [foundations.md](foundations.md). Touch any of those and
 the system stops being a system and becomes an archive of particular cases.
 
 ## One rule makes the rest possible

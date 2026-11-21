@@ -5,20 +5,20 @@ Two audiences, two promises.
 - **Whoever changes Brikka** reads the internal directories — `architecture/` and `conventions/` —
   and the ADRs: how a value travels from a JSON file to a pixel, the rules each layer obeys, and
   every decision with the alternatives that lost.
-- **Whoever consumes Brikka** —a person or an agent— reads `design-system/` and `guides/`. Both carry
-  the frontmatter a site renders, and `llms.txt` is their index.
+- **Whoever consumes Brikka** —a person or an agent— reads `design-system/`. It carries the
+  frontmatter a site renders, and `llms.txt` is its index.
 
 `AGENTS.md` at the repository root is the entry point for coding agents working on the code; this
 file is the map.
 
 ## One directory per category
 
-| Group      | Where                                                            | Rule                                                                    |
-| ---------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| Decisions  | [`adr/`](adr/)                                                   | Frozen history. An accepted ADR is not edited; a reversal is a new ADR. |
-| The system | [`architecture/`](architecture/), [`conventions/`](conventions/) | Internal. How a value travels, and the rules each layer obeys.          |
-| Tasks      | [`guides/`](guides/)                                             | The path through a change, and the first place a reader goes.           |
-| Consumer   | [`design-system/`](design-system/)                               | Written for whoever consumes Brikka, not for whoever changes it.        |
+| Group      | Where                                                            | Rule                                                                                  |
+| ---------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Decisions  | [`adr/`](adr/)                                                   | Frozen history. An accepted ADR is not edited; a reversal is a new ADR.               |
+| The system | [`architecture/`](architecture/), [`conventions/`](conventions/) | Internal. How a value travels, and the rules each layer obeys.                        |
+| Tasks      | [`guides/`](guides/)                                             | The path through a change. Internal: it sends the reader into the internal documents. |
+| Consumer   | [`design-system/`](design-system/)                               | Written for whoever consumes Brikka, not for whoever changes it.                      |
 
 This file is the map, so it is the one document that stays at the root.
 
@@ -48,6 +48,8 @@ names and the reasoning.
 | [conventions/testing.md](conventions/testing.md)             | reference   | how to write a test that proves something                                 |
 | [conventions/code.md](conventions/code.md)                   | reference   | TypeScript, stylesheets and tooling                                       |
 | [conventions/docs.md](conventions/docs.md)                   | reference   | the shape of a component's README, its Storybook page and its stories     |
+| [guides/add-a-token.md](guides/add-a-token.md)               | how-to      | how a new design value enters, without breaking the build                 |
+| [guides/add-a-component.md](guides/add-a-component.md)       | how-to      | the next element, without re-deciding anything already decided            |
 | [adr/](adr/)                                                 | explanation | why the kit is arranged this way, and what was rejected                   |
 
 `Type` is one of tutorial, how-to, reference and explanation — the
@@ -56,10 +58,10 @@ invented: the kit is small and the root README is the whole onboarding.
 
 ### Two things the map settles
 
-**There is no `internal/` directory.** What this map calls internal is simply the three directories
-it does not publish — `adr/`, `architecture/` and `conventions/` — and a fourth layer would only add
-a place for a document to be misfiled. The category a file belongs to is its directory, so a reader
-never consults a table to learn where a document lives.
+**There is no `internal/` directory.** What this map calls internal is simply the four directories
+it does not publish — `adr/`, `architecture/`, `conventions/` and `guides/` — and a fifth layer would
+only add a place for a document to be misfiled. The category a file belongs to is its directory, so a
+reader never consults a table to learn where a document lives.
 
 **Component documentation lives in its package.** Each element's `README.md` sits beside its code,
 `pnpm check:readmes` ties it to the generated manifest, and it ships with the package. The published
@@ -68,15 +70,14 @@ a fact that already has an owner, which is the one rule this folder does not bre
 
 ## Published documents
 
-| Document                                                   | Answers                                                           |
-| ---------------------------------------------------------- | ----------------------------------------------------------------- |
-| [design-system/principles.md](design-system/principles.md) | what the system decides, in whose name, and what it refuses       |
-| [design-system/tokens.md](design-system/tokens.md)         | the families, the roles, the axes, and the names a consumer reads |
-| [guides/add-a-token.md](guides/add-a-token.md)             | how a new design value enters, without breaking the build         |
-| [guides/add-a-component.md](guides/add-a-component.md)     | the next element, without re-deciding anything already decided    |
-| `llms.txt` (generated)                                     | the index an agent reads: one line per page, with its summary     |
+| Document                                                     | Answers                                                                 |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| [design-system/principles.md](design-system/principles.md)   | what the system decides, in whose name, and what it refuses             |
+| [design-system/foundations.md](design-system/foundations.md) | the seven decisions a page is built from, and the criterion behind each |
+| [design-system/tokens.md](design-system/tokens.md)           | the families, the roles, the axes, and the names a consumer reads       |
+| `llms.txt` (generated)                                       | the index an agent reads: one line per page, with its summary           |
 
-These two directories are the ones `pnpm check:llms` reads, so every page in them carries
+`design-system/` is the directory `pnpm check:llms` reads, so every page in it carries
 `title`, `description` and `summary`, and the summary is the line the index carries.
 
 A publishable page starts with the answer. The first two lines say what it is and what it is for,
@@ -87,6 +88,10 @@ detail, under headings whose names are stable enough to jump to.
 
 - A fact lives in exactly one file; everything else links to it. A second copy is a second thing
   to keep true.
+- **A published page stands alone.** `design-system/` is a set, and a page there links only to another
+  page in it, never to `adr/`, `architecture/` or `conventions/`: those are not published, so the link
+  has no destination on the site. A reason a consumer needs is stated on the page, in one clause; the
+  history of that reason stays in the record that decided it.
 - English, like the code and the commit messages.
 - **Frontmatter belongs to the publishable directories and nowhere else.** A site needs a title, a
   description and a one-line summary, and the summary is what the generated index carries. An

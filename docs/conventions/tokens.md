@@ -10,17 +10,20 @@ from them — and a component or host that imports one file in isolation gets an
 `var()`. That is why no token read carries a literal fallback: a fallback would be a second
 value to keep true, and AGENTS.md forbids a literal one outright.
 
-| #   | Rule                                                                         | Enforced by         |
-| --- | ---------------------------------------------------------------------------- | ------------------- |
-| R1  | A role is a documented, typed commitment that resolves in every theme        | `pnpm check:tokens` |
-| R2  | In the graph an alias points one layer down, and a role never aliases a role | review              |
-| R3  | The palette is a reference ramp, not a usage list                            | review              |
-| R4  | The token path is the public name                                            | review              |
-| R5  | A role is read under the property it belongs to                              | `pnpm check:tokens` |
-| R6  | A component reads a role for colour and a primitive for everything else      | `pnpm check:tokens` |
-| R7  | Motion is one composite token, and reduced motion zeroes it at the theme     | review              |
-| R8  | Elevation is two shadow tokens, and a shadow is the one unchecked value      | review              |
-| R9  | Stacking is a token when the DOM and the top layer cannot order the surface  | review              |
+| #   | Rule                                                                          | Enforced by         |
+| --- | ----------------------------------------------------------------------------- | ------------------- |
+| R1  | A role is a documented, typed commitment that resolves in every theme         | `pnpm check:tokens` |
+| R2  | In the graph an alias points one layer down, and a role never aliases a role  | review              |
+| R3  | The palette is a reference ramp, not a usage list                             | review              |
+| R4  | The token path is the public name                                             | review              |
+| R5  | A role is read under the property it belongs to                               | `pnpm check:tokens` |
+| R6  | A component reads a role for colour and a primitive for everything else       | `pnpm check:tokens` |
+| R7  | Motion is one composite token, and reduced motion zeroes it at the theme      | review              |
+| R8  | Elevation is two shadow tokens, and a shadow is the one unchecked value       | review              |
+| R9  | Stacking is a token when the DOM and the top layer cannot order the surface   | review              |
+| R10 | The palette is declared under the light selector, so a subtree re-declares it | review              |
+| R11 | The space base is computed into space, radius, `size` and `icon`              | review              |
+| R12 | Reduced motion replaces the transition composite with a duration alone        | review              |
 
 Before any of these rules, `pnpm check:tokens` asserts **existence**: every
 `--brikka-*` name read inside a CSS string must be a declared token or a hook. No
@@ -231,6 +234,55 @@ hurry is the symptom of having asked the wrong one.
 
 **Enforced by.** Review. The tokens exist in `packages/tokens/tokens/base/layout.json`; a literal
 `z-index` in a component is what review refuses.
+
+## R10. The palette is declared under the light selector
+
+**Rule.** Every palette step is emitted inside the light-theme selector,
+`:where(:root), :where([data-theme="light"])`, and the dark blocks re-declare the semantic roles
+only. All 64 steps live there. A subtree that sets `data-theme="light"` therefore re-declares the
+whole palette, and a palette override written for the document does not follow into it.
+
+**Why.** The ramp is one set of values shared by both themes, and declaring it once, on the
+selector a document and a light subtree both land on, is what keeps a second copy of it out of the
+graph. The consequence is the part a host meets: the subtree declares the ramp on its own element,
+and a declaration on the element beats the one it would inherit from an ancestor, whatever the
+specificity of either. So a palette override written for the document is a document-level fact, and
+a host that must repaint the ramp inside a light subtree scopes the override to that subtree too.
+
+**Enforced by.** Review, against the generated output: `packages/tokens/src/tokens/color.css`
+opens with the light selector and carries all 64 palette steps, while
+`packages/tokens/src/tokens/color.dark.css` and `color.dark.media.css` declare no palette step at
+all.
+
+## R11. The space base is computed into three other families
+
+**Rule.** Each space step is `calc(var(--brikka-space-base) * n)`. Every radius step but `none` and
+`full` reads a space step, and every `size` and `icon` step reads one too. Overriding
+`--brikka-space-base` rescales all four families at once, and nothing is left at the old scale.
+
+**Why.** That is the intent. One base is what makes the rhythm of a page one decision instead of
+four, and a value that stayed behind would be the one thing on the page at the previous size. It is
+also why the base is not a per-page value: it sets the scale of the whole surface, radii, icons and
+squares included, so it is a theme-level decision and not a section's.
+
+**Enforced by.** Review, against the generated output: `packages/tokens/src/tokens/space.css`
+computes every step from the base, `rounded.css` reads space steps, and `base.css` reads them for
+`size` and `icon`.
+
+## R12. Reduced motion replaces the transition composite wholesale
+
+**Rule.** Under `prefers-reduced-motion: reduce`, `theme.css` sets `--brikka-transition: 1ms`. The
+declaration is a duration alone: it replaces the composite, easing included, rather than editing one
+part of it. A component that writes a duration of its own is not retimed by that rule.
+
+**Why.** One declaration retimes the whole kit, which is the property R7 protects and the reason
+reduced motion is a fact about the theme rather than an audit of every component. Replacing the
+composite is what keeps it to one declaration: a rule that reached into the duration half would have
+to carry the composite's syntax, and a component with a duration of its own would keep it either
+way. That is the second half of R7, arriving by this route.
+
+**Enforced by.** Review, in `packages/tokens/src/theme.css`, and the suite: the test page zeroes
+`--brikka-transition`, which is the same mechanism the media query uses.
 
 ## Scope
 
