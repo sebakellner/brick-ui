@@ -1,5 +1,6 @@
 @media (prefers-color-scheme: dark) {
   :where(:root:not([data-theme])) {
+    --brikka-bg-scrim: rgb(28 25 23 / 0.64);
     --brikka-focus-halo: rgb(96 165 250 / 0.24);
     --brikka-bg-inverse: var(--brikka-palette-neutral-100);
     --brikka-bg-surface: var(--brikka-palette-neutral-900);
@@ -9,15 +10,24 @@
     --brikka-bg-surface-strong-hover: var(--brikka-palette-neutral-300);
     --brikka-bg-accent: var(--brikka-palette-blue-600);
     --brikka-bg-accent-hover: var(--brikka-palette-blue-700);
+    --brikka-bg-surface-pressed: var(--brikka-palette-neutral-600);
+    --brikka-bg-surface-strong-pressed: var(--brikka-palette-neutral-200);
+    --brikka-bg-accent-pressed: var(--brikka-palette-blue-800);
+    --brikka-bg-selected: var(--brikka-palette-blue-900);
+    --brikka-bg-disabled: var(--brikka-palette-neutral-800);
     --brikka-text-inverse: var(--brikka-palette-neutral-900);
     --brikka-text-default: var(--brikka-palette-neutral-100);
     --brikka-text-muted: var(--brikka-palette-neutral-400);
     --brikka-text-on-accent: var(--brikka-palette-white);
     --brikka-text-danger: var(--brikka-palette-red-400);
+    --brikka-text-on-selected: var(--brikka-palette-neutral-100);
+    --brikka-text-disabled: var(--brikka-palette-neutral-500);
     --brikka-border-on-accent: var(--brikka-palette-neutral-900);
     --brikka-border-default: var(--brikka-palette-neutral-500);
     --brikka-border-strong: var(--brikka-palette-neutral-400);
     --brikka-border-danger: var(--brikka-palette-red-400);
+    --brikka-border-subtle: var(--brikka-palette-neutral-800);
+    --brikka-border-disabled: var(--brikka-palette-neutral-700);
     --brikka-success-bg: var(--brikka-palette-green-900);
     --brikka-success-text: var(--brikka-palette-green-400);
     --brikka-success-border: var(--brikka-palette-green-700);
