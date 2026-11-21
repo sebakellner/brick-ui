@@ -99,9 +99,14 @@ const platform = (files, { transforms = [], preprocessors = [] } = {}) => ({
   files,
 });
 
+/* The ramp is theme-invariant, so it is declared once, where a document and a theme container
+ * both inherit it from: `:root` alone. A theme block re-declares the roles, which is the only
+ * part of the colour graph a theme has an opinion about. */
+const PALETTE = ':where(:root)';
 const LIGHT_ROLES = ':where(:root), :where([data-theme="light"])';
 const DARK_ROLES = ':where([data-theme="dark"])';
 const DARK_ROLES_AUTO = ':where(:root:not([data-theme]))';
+const IS_PALETTE_GROUP = (token) => token.path[0] === 'palette';
 
 export default {
   source: LIGHT,
@@ -169,6 +174,26 @@ export default {
           '',
         ].join('\n');
       },
+      /* One file, two blocks: the palette under `:root` and the roles under the theme selector,
+       * in that order, because a role is written as a read of a palette step. Only `allTokens`
+       * is narrowed per block; the references are resolved against the whole dictionary, so a
+       * role still emits `var(--brikka-palette-…)` and not the value it points at. */
+      'css/variables-in-theme': ({ dictionary, options }) => {
+        const block = (selector, keep) => {
+          const body = formattedVariables({
+            format: 'css',
+            dictionary: { ...dictionary, allTokens: dictionary.allTokens.filter(keep) },
+            outputReferences: options.outputReferences,
+            usesDtcg: options.usesDtcg,
+            formatting: FORMATTING,
+          });
+          return `${selector} {\n${body}\n}\n`;
+        };
+        return [
+          block(PALETTE, IS_PALETTE_GROUP),
+          block(options.selector, (token) => !IS_PALETTE_GROUP(token)),
+        ].join('\n');
+      },
       'css/variables-in-media': ({ dictionary, options }) => {
         const body = formattedVariables({
           format: 'css',
@@ -194,9 +219,22 @@ export default {
   platforms: {
     space: platform([cssFile('space.css', only('space'))]),
     rounded: platform([cssFile('rounded.css', only('radius'))]),
-    color: platform([cssFile('color.css', only('palette', 'role'), LIGHT_ROLES)], {
-      transforms: ['name/strip-role'],
-    }),
+    color: platform(
+      [
+        {
+          destination: 'color.css',
+          format: 'css/variables-in-theme',
+          filter: only('palette', 'role'),
+          options: {
+            selector: LIGHT_ROLES,
+            outputReferences: true,
+            showFileHeader: false,
+            formatting: FORMATTING,
+          },
+        },
+      ],
+      { transforms: ['name/strip-role'] },
+    ),
     colorDark: platform([cssFile('color.dark.css', only('role'), DARK_ROLES)], {
       transforms: ['name/strip-role'],
       preprocessors: ['theme/dark'],

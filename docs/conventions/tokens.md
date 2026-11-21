@@ -21,6 +21,7 @@ value to keep true, and AGENTS.md forbids a literal one outright.
 | R7  | Motion is one composite token, and reduced motion zeroes it at the theme     | review              |
 | R8  | Elevation is two shadow tokens, and a shadow is the one unchecked value      | review              |
 | R9  | Stacking is a token when the DOM and the top layer cannot order the surface  | review              |
+| R10 | The palette is declared once, at the root, and a theme re-declares the roles | review, `pnpm test` |
 
 Before any of these rules, `pnpm check:tokens` asserts **existence**: every
 `--brikka-*` name read inside a CSS string must be a declared token or a hook. No
@@ -231,6 +232,28 @@ hurry is the symptom of having asked the wrong one.
 
 **Enforced by.** Review. The tokens exist in `packages/tokens/tokens/base/layout.json`; a literal
 `z-index` in a component is what review refuses.
+
+## R10. The palette is declared once, at the root
+
+**Rule.** Every palette step is emitted in one block, under `:where(:root)`. The light block,
+`:where(:root), :where([data-theme="light"])`, carries the semantic roles; the two dark blocks,
+`:where([data-theme="dark"])` and `:where(:root:not([data-theme]))`, carry the roles and no palette
+step. All 64 steps live under the root selector, ahead of the roles that read them.
+
+**Why.** The ramp is theme-invariant: a theme re-declares the roles, and has no opinion about the
+palette. Declaring the ramp under the light selector as well made it a per-theme block, and a
+declaration on an element beats the one that would have been inherited — so a `data-theme="light"`
+container put the default palette back for everything under it, while a `data-theme="dark"`
+container kept an override written for the document. That difference was a consequence of where the
+declarations sat, not a decision anyone had made. `:root` is the one element every document has and
+neither theme block moves off, so a single block there is inherited by every subtree in either
+theme, and a host's palette override is a document-level fact in both.
+
+**Enforced by.** Review, against the generated output: `packages/tokens/src/tokens/color.css` opens
+with `:where(:root)` and carries all 64 palette steps before the light role block, while
+`packages/tokens/src/tokens/color.dark.css` and `color.dark.media.css` declare no palette step at
+all. The suite holds the behaviour: `packages/tokens/test/palette.test.ts` overrides a palette step
+at the root and reads, inside a `data-theme="light"` subtree, the role that composes it.
 
 ## Scope
 
