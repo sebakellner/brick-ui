@@ -18,8 +18,8 @@ of decisions, not the values that fill them.**
 
 Adding a name, a scale or a rule changes the core, and that is ours to decide, with a version.
 Changing the colour of a palette step, the width of the space unit or how tall a control is does
-**not** change it — that is exactly what a brand comes here to do. It is why a brand writes
-primitives and never roles (the role is the name _we_ gave the decision), and why the preset exists:
+**not** change it — that is exactly what a brand comes here to do. It is why a brand supplies
+values for primitives and never roles (the role is the name _we_ gave the decision), and why the preset exists:
 so the boundary is mechanical rather than a recommendation.
 
 If you ever have to touch a name in the core to reach your goal, the system failed you. A
@@ -80,17 +80,21 @@ A brand on the document works because the ramp is inherited. A role that resolve
 the palette there; a role the theme re-declares on a subtree inherits it from the root. Every step of
 the ramp reaches every role that reads it, in every theme, at any depth.
 
+One more reason the brand block holds: the theme blocks are written with `:where()`, which carries no
+specificity, so the selector that names the brand outranks them on the element they share without
+depending on the order the stylesheets load in.
+
 **A brand is a document-level fact.** The ramp is declared once, at the root, and a theme re-declares
 the roles; the palette itself has no theme. So one brand block serves both themes, needs no rule per
 theme, and nothing below it can put the default ramp back.
 
-Nobody hand-writes those roles, and that is the whole point: a brand supplies values, and a role is
-always the system's name for a decision. A brand confined to a subtree is a generated extension —
-`var()` resolves where a declaration applies, so redefining a palette step inside a subtree never
-reaches a role declared on the root, and the roles that read the brand's steps are re-declared under
-that same selector, generated rather than written. The document is the case the suite holds, down to
-the role a light subtree resolves from an override at the root; the subtree itself is held by review.
-A contract every party drafts is not a contract, and `surface` would stop meaning anything.
+A brand confined to a subtree is a generated extension — `var()` resolves where a declaration applies,
+so redefining a palette step inside a subtree never reaches a role declared on the root, and the roles
+that read the brand's steps are re-declared under that same selector. Nobody hand-writes those roles,
+and that is the whole point: a brand supplies values, and a role is always the system's name for a
+decision. The suite tests the document, including the role a light subtree resolves from an override
+at the root; the subtree itself is held by review. A contract every party drafts is not a contract,
+and `surface` would stop meaning anything.
 
 One consequence is the same mechanism from the other side: **a token that contains another resolves
 where it is declared.** A shadow's tint is applied at the theme that declares it, not on the card that
@@ -128,13 +132,12 @@ control out of density.
 
 **Contrast is measured, not assumed.** Every pair a role forms is measured and written down — the
 status families in [the token reference](tokens.md) are the example — and a preset that would form a pair below
-its threshold has to fail rather than ship. Two classes of pair are measured: text on its surface at
+its threshold must not ship. Two classes of pair are measured: text on its surface at
 4.5:1, and everything that is not text — a control's edge, a focus ring, a boundary that carries
 meaning — at 3:1. The pairs are measured on the composed ramp — a brand's values over the defaults,
 never the factory ramp alone — which is the reason a ramp arrives whole: a palette supplied one step
 at a time keeps the default at every step it did not touch, and the measurements above stop
-describing that page. Nothing automated fails a preset below the threshold; this guard is held by
-review, like the ranges above it.
+describing that page. Nothing automated stops it; review does, like the ranges above it.
 
 **Failures are made visible.** A token that does not resolve invalidates the declaration that reads it, in
 silence. That is why a layer is loaded through `tokens.css`, and why the graph is checked rather than
