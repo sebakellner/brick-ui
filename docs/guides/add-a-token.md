@@ -1,9 +1,3 @@
----
-title: Add a token
-description: The path a new design value takes from a JSON file to a component, without breaking the build.
-summary: A value enters the layer that owns it, both theme files resolve it at once, and the component reads a hook. What each step refuses, and the checks that catch it.
----
-
 # Add a token
 
 Use this when a component needs a value it cannot get from an existing token, or

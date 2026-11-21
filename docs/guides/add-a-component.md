@@ -1,9 +1,3 @@
----
-title: Add a component
-description: The checklist that adds the next element without re-deciding the token layers, the accessibility bar or the test recipe.
-summary: An element needs a native reference, its tokens and hooks, the accessibility bar proven with computed styles, and a README the manifest check ties to its public surface.
----
-
 # Add a component
 
 Use this to add the next element to the kit. It assumes the token layers are
