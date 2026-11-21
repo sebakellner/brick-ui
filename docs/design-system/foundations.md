@@ -144,4 +144,6 @@ The moment one writes a raw number, the next one has to guess above or below it.
 **Two multipliers, and they are not the same axis.** One is reading comfort, the other is how much
 fits on a screen. A denser interface is not a smaller one: shrinking everything makes text harder to
 read and controls harder to hit, while increasing density makes control surfaces shorter and leaves
-the type alone. Confusing the two produces a page that is both cramped and unreadable.
+the type alone. Confusing the two produces a page that is both cramped and unreadable. And density
+never touches the space rhythm: it shortens the surfaces a page is made of and leaves every gap
+alone, which is what keeps one base unit coherent at every density.

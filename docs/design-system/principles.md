@@ -46,6 +46,9 @@ someone is asking for a configuration point, or for a component that does not ex
 their values per theme, and the rules they obey are on this page and in [foundations.md](foundations.md). Touch any of those and
 the system stops being a system and becomes an archive of particular cases.
 
+**The fourth level is not one you climb.** The rule above has no lowest rung at the top: reaching the
+core means asking, and the answer is a version.
+
 ## One rule makes the rest possible
 
 **A component never reads a primitive.** It reads a role.
@@ -55,23 +58,36 @@ decision without naming a colour, so a brand can change the palette and every ro
 it moves on its own, without anybody rewriting a role.
 
 ```css
-:root {
+/* The palette and the roles it feeds are declared under one selector. */
+:where(:root),
+:where([data-theme='light']) {
   --brikka-palette-blue-600: #2563eb; /* what a brand supplies */
   --brikka-bg-accent: var(--brikka-palette-blue-600); /* what we decided */
 }
 
-/* The brand redefines the palette. The roles follow, because they never named a colour. */
-[data-brand='acme'] {
-  --brikka-palette-blue-600: oklch(0.55 0.19 285);
+/* A brand on the document matches the same element, so the role resolves again. */
+:root[data-brand='acme'] {
+  --brikka-palette-blue-600: #6d28d9;
 }
 ```
 
-What a brand does not do is write `--brikka-bg-accent` itself. A contract every party drafts is not a
-contract, and `surface` would stop meaning anything.
+A brand on the document works because the two declarations meet on one element: the palette step it
+supplies and the role that reads it are both applied to the root, so the role substitutes the new
+value.
 
-One consequence surprises people the first time: **a token that contains another resolves where it is
-declared.** A shadow's tint is retinted by theme, not on the card that paints it. That is the right
-shape for that knob — a shadow tint is a theme decision — but the obvious attempt fails in silence.
+A brand confined to a subtree is a different problem, and the obvious attempt fails in silence.
+`var()` resolves where a declaration applies, so redefining a palette step inside a subtree never
+reaches a role declared on the root: that subtree has to re-declare the role as well, under its own
+selector. It is what a theme does, and why the light block declares the palette and the roles
+together.
+
+What a brand does not do is choose a role itself: it supplies values, and the roles that read them are
+re-declared for it. A contract every party drafts is not a contract, and `surface` would stop meaning
+anything.
+
+One consequence is the same mechanism from the other side: **a token that contains another resolves
+where it is declared.** A shadow's tint is applied at the theme that declares it, not on the card that
+paints the shadow — and retinting it on the card is the attempt that fails in silence.
 
 ## Naming
 
@@ -79,7 +95,9 @@ A **role** is named for what it does: `bg-surface`, `text-danger`. A role named 
 would not survive a redesign.
 
 A **primitive** is named for where it sits in its ramp: `blue-600`, `space.4`. It is a reference, not
-a usage, and naming it by intent would force us to decide which intent owns step 600.
+a usage, and naming it by intent would force us to decide which intent owns step 600. The tone in that
+name belongs to the default palette: a brand that brings another hue is replacing the ramp, and the
+name keeps pointing at the step rather than at the colour.
 
 A **hook** is named for the component it belongs to: `button-bg`, not `accent-two`.
 
@@ -88,13 +106,17 @@ A **hook** is named for the component it belongs to: `button-bg`, not `accent-tw
 Freedom is only safe when something refuses the harmful cases.
 
 **Ranges, not free values.** A brand supplies a colour, a unit and two multipliers. It does not
-supply a stylesheet.
+supply a stylesheet. Where two of them meet the system owns the computation: a control's height is
+supplied at the resting density and the multiplier that adapts it stays the system's, so a plain
+length would opt that control out of density.
 
 **Contrast is measured, not assumed.** Every pair a role forms is measured and written down — the
 status families in [tokens.md](tokens.md) are the example — and a preset that would form a pair below
-the body-text threshold has to fail rather than ship.
+its threshold has to fail rather than ship. Two classes of pair are measured: text on its surface at
+4.5:1, and everything that is not text — a control's edge, a focus ring, a boundary that carries
+meaning — at 3:1.
 
-**Failures are visible.** A token that does not resolve invalidates the declaration that reads it, in
+**Failures are made visible.** A token that does not resolve invalidates the declaration that reads it, in
 silence. That is why a layer is loaded through `tokens.css`, and why the graph is checked rather than
 trusted.
 
@@ -106,7 +128,7 @@ defect is the system's and not a choice of whoever configured it.
 
 ## How this breaks
 
-Reading a primitive inside a component closes the door on theming, and the check refuses it (R6). A
+Reading a primitive inside a component closes the door on theming, and the graph's own check refuses it. A
 magic number — `padding: 13px` — is a decision with no name and no owner. A variation per client
 inside the core turns the system into an archive of particular cases, which is what the levels above
 exist to avoid. The families this graph refuses, and why, are listed once in [tokens.md](tokens.md).
