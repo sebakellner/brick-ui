@@ -1,7 +1,11 @@
 {
   "border-width": {
     "$value": "1px",
-    "$type": "dimension"
+    "$description": "The default boundary: a table rule, a divider, the edge of a control at rest."
+  },
+  "border-width-thick": {
+    "$value": "2px",
+    "$description": "A boundary that must be seen: a selected card, a container being edited."
   },
   "control-height": {
     "$value": "calc(40px * {scale.density})",

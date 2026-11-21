@@ -17,6 +17,7 @@
   --brikka-scale-type: 1;
   --brikka-scale-density: 1;
   --brikka-border-width: 1px;
+  --brikka-border-width-thick: 2px;
   --brikka-focus-ring-width: 2px;
   --brikka-focus-ring-offset: 1px;
   --brikka-opacity-disabled: 0.5;
@@ -27,4 +28,8 @@
   --brikka-icon-sm: var(--brikka-space-4);
   --brikka-icon-md: var(--brikka-space-5);
   --brikka-icon-lg: var(--brikka-space-6);
+  --brikka-size-sm: var(--brikka-space-8);
+  --brikka-size-md: var(--brikka-space-10);
+  --brikka-size-lg: var(--brikka-space-12);
+  --brikka-size-xl: var(--brikka-space-16);
 }

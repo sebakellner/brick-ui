@@ -1,0 +1,21 @@
+{
+  "size": {
+    "$type": "dimension",
+    "sm": {
+      "$value": "{space.8}",
+      "$description": "A small square: an avatar in a dense list."
+    },
+    "md": {
+      "$value": "{space.10}",
+      "$description": "A square beside a line of text: a thumbnail in a result row."
+    },
+    "lg": {
+      "$value": "{space.12}",
+      "$description": "A square that carries a subject: a preview card."
+    },
+    "xl": {
+      "$value": "{space.16}",
+      "$description": "A square that is the content: a profile header image."
+    }
+  }
+}
