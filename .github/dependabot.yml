@@ -25,7 +25,7 @@ updates:
     ignore:
       # Playwright's own version pins the browser revision the suite runs, so a bump
       # is a change of engine rather than a dependency update — it is decided in
-      # docs/adr/0018-the-browser-the-suite-runs-is-the-one-the-lockfile-pins.md, by a
+      # docs/adr/0011-the-browser-the-suite-runs-is-the-one-the-lockfile-pins.md, by a
       # person, with a CI run that installs the new browser.
       - dependency-name: playwright
       - dependency-name: '@web/test-runner-playwright'

@@ -74,10 +74,10 @@ it.
 another. The `$description` and `$type` half is not a gate yet: the token source moved to
 DTCG, and the check that reads it arrives with the `tokens.json` entry point; the graph diff a
 removal needs against the base branch is recorded in
-[ADR 0027](adr/0027-ship-the-token-graph-as-a-design-system.md), together with the changeset the
+[ADR 0017](adr/0017-ship-the-token-graph-as-a-design-system.md), together with the changeset the
 removal ships with — suspended for now by
-[ADR 0030](adr/0030-suspend-changesets-until-the-first-version.md). Neither is a gate today. What the graph as a public contract obliges is
-[ADR 0019](adr/0019-the-token-graph-is-the-public-contract.md).
+[ADR 0020](adr/0020-suspend-changesets-until-the-first-version.md). Neither is a gate today. What the graph as a public contract obliges is
+[ADR 0012](adr/0012-the-token-graph-is-the-public-contract.md).
 
 ## R2. In the token graph, an alias points one layer down and a role never aliases a role
 
@@ -146,7 +146,7 @@ to say what the value is for, because that is what a consumer greps for.
 
 **Enforced by.** Review. What a breaking rename obliges — an alias, or a release note that
 names the old token — is the decision in
-[ADR 0019](adr/0019-the-token-graph-is-the-public-contract.md).
+[ADR 0012](adr/0012-the-token-graph-is-the-public-contract.md).
 
 ## R5. A role is read under the property it belongs to
 
@@ -181,7 +181,7 @@ theme switches, with nothing to notice it.
 
 **Enforced by.** `pnpm check:tokens`. Why the primitives a component reads stay single-purpose
 — one axis each, never merged — is the decision in
-[ADR 0019](adr/0019-the-token-graph-is-the-public-contract.md).
+[ADR 0012](adr/0012-the-token-graph-is-the-public-contract.md).
 
 ## R7. Motion is one composite token, and reduced motion zeroes it at the theme
 
@@ -203,9 +203,9 @@ the same mechanism the media query uses.
 `elevation.color`, and a component reads one of them under `box-shadow` rather than
 composing offsets of its own.
 
-**Why.** [ADR 0032](adr/0032-elevation-exists-before-a-component-paints-it.md) reversed the
+**Why.** [ADR 0022](adr/0022-elevation-exists-before-a-component-paints-it.md) reversed the
 old rule, and only one of its two reasons had expired. The pipeline now expresses a shadow:
-ADR 0031 allowed serializers, so `shadow/css/shorthand` composes offset, blur, spread and
+ADR 0021 allowed serializers, so `shadow/css/shorthand` composes offset, blur, spread and
 colour. The other reason did not expire — `check:tokens` derives a role's expected property
 from the first segment of its name, so `elevation` falls through unchecked, and a shadow stays
 the one value in the graph nothing verifies. That is written down here instead of being

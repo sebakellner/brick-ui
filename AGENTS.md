@@ -61,8 +61,7 @@ identifiers are the one exception: a rename updates the names, never the reasoni
   (`verbatimModuleSyntax`).
 - Use `disabled` on an inner widget. A button or a checkbox is blocked with
   `aria-disabled` and cancels its own activation, so it stays focusable and
-  discoverable; a text field keeps the native `disabled` attribute —
-  [ADR 0008](docs/adr/0008-keep-the-native-disabled-attribute-on-text-fields.md).
+  discoverable; a text field keeps the native `disabled` attribute.
 
 ## Commands
 

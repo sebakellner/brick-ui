@@ -1,13 +1,13 @@
-# 0029. Give the graph a status vocabulary, and measure the pair each role forms
+# 0019. Give the graph a status vocabulary, and measure the pair each role forms
 
 Date: 2026-11-20
 
 ## Status
 
 accepted, in the change that adds the nine roles. It extends
-[0019](0019-the-token-graph-is-the-public-contract.md) and
-[0027](0027-ship-the-token-graph-as-a-design-system.md), and it moves the anchor count fixed by
-[0028](0028-let-a-preset-define-primitives-not-roles.md) from sixteen to thirty-one.
+[0012](0012-the-token-graph-is-the-public-contract.md) and
+[0017](0017-ship-the-token-graph-as-a-design-system.md), and it moves the anchor count fixed by
+[0018](0018-let-a-preset-define-primitives-not-roles.md) from sixteen to thirty-one.
 
 ## Context
 
@@ -66,7 +66,7 @@ Three consequences are part of the decision rather than left to the implementer:
   `blue-600` and `blue-700`, which `info.border` consumes and the roles already referenced, so they
   are not new but they are still required. Measured on the committed tree, the role layer
   references thirty-one palette steps in total, and a preset supplies all of them. That is the
-  preset contract of [0028](0028-let-a-preset-define-primitives-not-roles.md)
+  preset contract of [0018](0018-let-a-preset-define-primitives-not-roles.md)
   growing, and it is recorded there rather than discovered by the first preset author.
 
 The roles are additive. No declaration that exists today changes value, so the gate for this
@@ -74,7 +74,7 @@ change is the narrow one: the diff of `packages/tokens/src` is additions only. T
 gate stays reserved for changes that move an existing scale.
 
 The ratios above are measured now and hand-verified. They become a check when the preset
-validation of 0028 lands, because that is the gate a host's preset runs; a check nobody can run
+validation of 0018 lands, because that is the gate a host's preset runs; a check nobody can run
 against their own graph would not have prevented the dark pairing this record rejects.
 
 ### Alternatives considered
@@ -83,9 +83,9 @@ against their own graph would not have prevented the dark pairing this record re
 | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | One role per family (`status.warning` as a single colour)    | A status is always a pair: a surface and the text that must be read on it. One colour forces every consumer to invent the second half, and the pairing is exactly what is measurable and what this record measures. |
 | Reuse `danger`'s mapping for the other families              | `danger` was tuned as text and border on a neutral surface, not as a tint with contrasting text. Copying it produces the `-500` border that measures 1.92:1.                                                        |
-| Derive status colours from the brand accent                  | Status carries meaning, not identity: a system whose errors are violet still has to say "error" unambiguously. 0028 keeps the status families in the host's hands for the same reason.                              |
+| Derive status colours from the brand accent                  | Status carries meaning, not identity: a system whose errors are violet still has to say "error" unambiguously. 0018 keeps the status families in the host's hands for the same reason.                              |
 | Ship the roles without `$description` and fill them in later | R1 makes the description the condition for shipping a role at all, and the twenty-seven dead steps are the cost of the version of this that skipped the vocabulary.                                                 |
-| Wait for the first component that paints a status            | The graph is exported as a design system (0027); a host painting its own banner has nowhere to look. The primitives for these families have been waiting since before the export existed.                           |
+| Wait for the first component that paints a status            | The graph is exported as a design system (0017); a host painting its own banner has nowhere to look. The primitives for these families have been waiting since before the export existed.                           |
 
 ## Consequences
 

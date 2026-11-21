@@ -1,21 +1,21 @@
-# 0023. Let the identifier prefix follow the product name
+# 0013. Let the identifier prefix follow the product name
 
 Date: 2026-11-20
 
 ## Status
 
 accepted, superseded in part by
-[0025](0025-keep-identifiers-in-an-accepted-adr-current.md). What still holds is
+[0015](0015-keep-identifiers-in-an-accepted-adr-current.md). What still holds is
 everything this document decided: the rename, and that the reasoning in the earlier
 ADRs was written for the rule rather than for the prefix. What no longer holds is
 the last half of this status — those ADRs **do** carry `brikka-` identifiers now,
 because a name is not a decision and their examples had stopped naming anything.
-Read 0025 for that line.
+Read 0015 for that line.
 
 It reverses no decision of its own: it renames the identifiers that
 [0002](0002-require-the-theme.md), [0004](0004-forbid-style-literals-in-components.md),
 [0006](0006-stack-the-token-layers-and-add-a-theme.md) and
-[0019](0019-the-token-graph-is-the-public-contract.md) argue about, and every
+[0012](0012-the-token-graph-is-the-public-contract.md) argue about, and every
 rule they state still holds under the new names.
 
 ## Context

@@ -1,4 +1,4 @@
-# 0028. Let a preset define primitives, and derive every role from them
+# 0018. Let a preset define primitives, and derive every role from them
 
 Date: 2026-11-20
 
@@ -6,13 +6,13 @@ Date: 2026-11-20
 
 proposed. It becomes accepted with the change that lands the preset pipeline: the merge, the
 parametric tokens and the validation a host can run. It extends
-[0019](0019-the-token-graph-is-the-public-contract.md) and
-[0027](0027-ship-the-token-graph-as-a-design-system.md) and supersedes no record. It depends
+[0012](0012-the-token-graph-is-the-public-contract.md) and
+[0017](0017-ship-the-token-graph-as-a-design-system.md) and supersedes no record. It depends
 on R1 and R2 of [docs/conventions-tokens.md](../conventions-tokens.md) and reverses neither:
 
 ## Context
 
-A host that loads `packages/tokens/src/theme.css` can paint its own markup, and 0027 makes
+A host that loads `packages/tokens/src/theme.css` can paint its own markup, and 0017 makes
 that the point of the graph. The next thing a host asks for is not a role but a _different
 graph_: our ramp is neutral blue, theirs is not; our density is 40px controls, theirs is
 denser; our type has two sizes, theirs has five. Today there is no supported answer. A host
@@ -43,7 +43,7 @@ migration:
   ignores a per-platform `source`, so the dark theme is currently swapped by a per-platform
   preprocessor. A second axis multiplies what that mechanism has to do.
 
-The alternative to deciding this now is deciding it later, against published names. ADR 0019
+The alternative to deciding this now is deciding it later, against published names. ADR 0012
 makes the name the API: a `brand` segment added to a token name after release is a breaking
 change, and a role supplied by a preset is a different contract in every brand.
 
@@ -57,7 +57,7 @@ over the default before transforming anything. Its contract is four things:
 
 1. **16 colour anchors**, named for what they are on the ramp, not for what they paint — the
    count this record was written with, and thirty-one once
-   [0029](0029-give-the-graph-a-status-vocabulary.md) adds the status families. A ramp step a
+   [0019](0019-give-the-graph-a-status-vocabulary.md) adds the status families. A ramp step a
    role needs and a preset omits is a build failure, not a fallback.
 2. **One space unit**, `space.base`. The ramp and the radii follow by arithmetic.
 3. **One density and one type scale**, `control.height` and `type.scale`, so a host picks a
@@ -83,7 +83,7 @@ paint passes the accessibility rules. A preset that fails does not build.
 
 | Alternative                                               | Why it was rejected                                                                                                                                                                                                                                                               |
 | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A preset supplies roles                                   | The semantic layer stops meaning anything: `bg.surface` would be whatever a brand says, R1 could not be enforced, and every brand would be a separate graph with its own names to keep in sync. 0019 says the role is the contract; a contract that each party writes is not one. |
+| A preset supplies roles                                   | The semantic layer stops meaning anything: `bg.surface` would be whatever a brand says, R1 could not be enforced, and every brand would be a separate graph with its own names to keep in sync. 0012 says the role is the contract; a contract that each party writes is not one. |
 | A preset supplies the emitted CSS by hand                 | It is what overwriting `--brikka-*` already is, without validation, and it drifts silently: the build cannot tell a deliberate override from a missing primitive.                                                                                                                 |
 | Generate the graph from one seed colour, inside the build | Non-deterministic colour science in the pipeline, and it cannot produce the status families, which carry meaning rather than identity. Kept as a generator that writes a preset — an authoring aid outside the build, validated like any other preset.                            |
 | One role file per brand and mode, 19 roles each           | The same explicitness with 19×2N edits per role change. Sixteen anchors per brand is the same surface, a quarter of the size, and it keeps role authoring in one place.                                                                                                           |

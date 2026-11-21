@@ -44,8 +44,7 @@ at a control token. See R2 in
 A component cannot see the text of the nodes slotted into it: `textContent` does
 not include assigned nodes, and `slotchange` fires when the _set_ of assigned
 nodes changes — never when the text of an assigned node is edited. Every message
-in this kit is an atom ([0009](adr/0009-nest-the-field-parts-inside-the-control.md),
-[0010](adr/0010-name-a-group-on-its-host-and-let-its-atoms-be-the-regions.md))
+in this kit is an atom
 rather than a `help-text` property, so something has to observe them:
 `SlottedTextController` in
 `packages/web-components/src/components/shared/form-control/slotted-text.controller.ts`. One

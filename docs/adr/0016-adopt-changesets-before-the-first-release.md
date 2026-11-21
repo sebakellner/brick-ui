@@ -1,18 +1,18 @@
-# 0026. Adopt changesets before the first release, for the lockstep
+# 0016. Adopt changesets before the first release, for the lockstep
 
 Date: 2026-11-20
 
 ## Status
 
 accepted. Supersedes in part
-[0024](0024-publish-under-the-scope-the-kit-owns.md): that document deferred a
+[0014](0014-publish-under-the-scope-the-kit-owns.md): that document deferred a
 release tool until a package needed independent bumping or a second person
 published, and this adopts one earlier. The scope, the lockstep rule and the peer
 reasoning all still hold.
 
 ## Context
 
-[0024](0024-publish-under-the-scope-the-kit-owns.md) decided that
+[0014](0014-publish-under-the-scope-the-kit-owns.md) decided that
 `@brikka-ui/web-components` and `@brikka-ui/tokens` carry **one version and move
 together**, because `tokens` is the peer of the elements. It then wrote the debt
 down honestly: _the version is set by hand, and nothing enforces that the two stay
@@ -20,7 +20,7 @@ equal._ The failure that debt allows is a published peer range pointing at a
 version the consumer cannot resolve — loud at install time, but only after the
 irreversible step.
 
-The condition 0024 set for a tool was "the first release that needs more than one
+The condition 0014 set for a tool was "the first release that needs more than one
 package bumped independently, or a second contributor publishing". Neither has
 happened, and the milestone is still ahead, so adopting now needs a reason that is
 not "the milestone arrived". The reason is the debt itself: a rule enforced by
@@ -48,7 +48,7 @@ baseBranch: "main"
 
 A changeset that declares a bump for either package bumps both. Declaring one is
 enough, and forgetting the other stops being possible — which is precisely the
-condition 0024 could not enforce.
+condition 0014 could not enforce.
 
 `commit: false`, because the repository squash-merges and the changelog file belongs
 in the version PR rather than in a commit of its own. The changelog generator is the
@@ -67,7 +67,7 @@ can reach the registry.
 | A CI check that the two versions are equal | Closes half the debt: it catches a mismatch, not the missing changelog, and it fires after someone has already edited a manifest by hand. It also makes the version a thing two places compute instead of a thing a tool owns.                        |
 | `semantic-release`                         | Derives the number from commit messages and publishes on merge, with no human between the decision and the registry. A kit that has not shipped once should choose its own first numbers, and "you cannot unpublish" argues for a person at the gate. |
 | `beachball` / `lerna`                      | What Fluent and Carbon use, and both carry more machinery than two packages justify: lerna is in maintenance for the publishing role, and beachball is shaped around a much larger review and bump workflow.                                          |
-| Keep it manual, as 0024 wrote it           | The honest option, and it fails exactly when the debt says it fails: on a busy day, at publish time, with an unresolvable peer range as the symptom.                                                                                                  |
+| Keep it manual, as 0014 wrote it           | The honest option, and it fails exactly when the debt says it fails: on a busy day, at publish time, with an unresolvable peer range as the symptom.                                                                                                  |
 
 ## Consequences
 

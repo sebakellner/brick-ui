@@ -137,7 +137,7 @@ itself; when it needs the other theme it calls `setTheme('dark')` and nothing el
 a suite without the theme asserts against nothing — but that is a property of the page, not
 of every file. ADR 0002 still decides that the theme is required; the loader it
 mentions (`before(loadTheme)`) is gone, and
-[0015](adr/0015-the-page-loads-the-theme-the-suite-does-not.md) supersedes that part of
+[0008](adr/0008-the-page-loads-the-theme-the-suite-does-not.md) supersedes that part of
 it. Fetching the same stylesheet from each suite gave every file its own chance to forget,
 and the copy that forgot failed with an unrelated-looking assertion.
 
@@ -452,7 +452,7 @@ request. A suite is judged by whether each rule a component documents has a case
 much of a file it executes.
 
 **Why.** The full record, including the position this reverses, is
-[0017](adr/0017-coverage-is-not-measured.md). Briefly: Google's testing chapter names the
+[0010](adr/0010-coverage-is-not-measured.md). Briefly: Google's testing chapter names the
 failure mode — engineers treat the number "like a ceiling … changes begin landing with no
 more than 80% coverage" — and Fowler calls it "of little use as a numeric statement of how
 good your tests are". The counter-example is real and named there: Spectrum Web Components

@@ -5,7 +5,7 @@ Date: 2026-11-12
 ## Status
 
 superseded in part by [0007](0007-ship-a-default-theme-instead-of-fallbacks.md),
-and in part by [0015](0015-the-page-loads-the-theme-the-suite-does-not.md), which
+and in part by [0008](0008-the-page-loads-the-theme-the-suite-does-not.md), which
 supersedes the test loader this decision recorded.
 The decision below still holds: no token read carries a literal fallback, and the
 only legal one is the hook pattern's variable default. What 0007 replaced is who
