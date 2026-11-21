@@ -1,0 +1,74 @@
+{
+  "breakpoint": {
+    "$type": "dimension",
+    "sm": {
+      "$value": "640px",
+      "$description": "The first width where two columns fit without crowding."
+    },
+    "md": {
+      "$value": "768px",
+      "$description": "A tablet held upright: layout starts to breathe."
+    },
+    "lg": {
+      "$value": "1024px",
+      "$description": "The narrowest desktop the kit is designed for."
+    },
+    "xl": {
+      "$value": "1280px",
+      "$description": "A full desktop: content starts to need a measure."
+    },
+    "2xl": {
+      "$value": "1536px",
+      "$description": "The widest layout the kit promises, not the widest screen."
+    }
+  },
+  "measure": {
+    "$type": "dimension",
+    "sm": {
+      "$value": "45ch",
+      "$description": "A narrow column: a sidebar note, a caption that has to stay short."
+    },
+    "md": {
+      "$value": "65ch",
+      "$description": "Running text at its longest comfortable line, which is what the eye can return from."
+    }
+  },
+  "icon": {
+    "$type": "dimension",
+    "sm": {
+      "$value": "{space.4}",
+      "$description": "An icon inside a dense control: a chip, a badge."
+    },
+    "md": {
+      "$value": "{space.5}",
+      "$description": "An icon beside body text, aligned to its cap height."
+    },
+    "lg": {
+      "$value": "{space.6}",
+      "$description": "A standalone icon: an empty state, a touch target."
+    }
+  },
+  "z-index": {
+    "$type": "number",
+    "base": {
+      "$value": 0,
+      "$description": "In flow. Nothing should need this, and a component that sets it is overreaching."
+    },
+    "dropdown": {
+      "$value": 100,
+      "$description": "A surface that follows its trigger: a select, a menu."
+    },
+    "overlay": {
+      "$value": 200,
+      "$description": "The scrim and anything that sits directly on it."
+    },
+    "modal": {
+      "$value": 300,
+      "$description": "A dialog that takes the page's attention."
+    },
+    "toast": {
+      "$value": 400,
+      "$description": "A message that must be readable over a dialog."
+    }
+  }
+}

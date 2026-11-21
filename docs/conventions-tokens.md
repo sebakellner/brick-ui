@@ -14,6 +14,7 @@ why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 | R6  | A component reads a role for colour and a primitive for everything else      | `pnpm check:tokens` |
 | R7  | Motion is one composite token, and reduced motion zeroes it at the theme     | review              |
 | R8  | Elevation is two shadow tokens, and a shadow is the one unchecked value      | review              |
+| R9  | Stacking is a token when the DOM and the top layer cannot order the surface  | review              |
 
 Before any of these rules, `pnpm check:tokens` asserts **existence**: every
 `--brikka-*` name read inside a CSS string must be a declared token or a hook. No
@@ -207,3 +208,20 @@ papered over by renaming the colour into a family the checker happens to know.
 **Enforced by.** Review, and the suite: a test reads the computed `box-shadow` the tokens
 produce. The `box-shadow` question in `check:tokens` is still open, deliberately, because the
 useful thing to check about a shadow is not the property it is read under.
+
+## R9. Stacking is a token when the DOM and the top layer cannot order the surface
+
+**Rule.** A component that needs a stacking order reads `--brikka-z-index-*` and never writes a
+number of its own. A dialog uses `<dialog>` with `showModal()` and a popover uses the `popover`
+attribute: both paint in the top layer, which no `z-index` can compete with, so they read no
+token at all. A component that has to contain what its children stack sets `isolation: isolate`
+instead of inventing a number.
+
+**Why.** `z-index` orders within a stacking context and nowhere else, and a component that sets
+`position` with a `z-index` creates one its parents cannot see past. The layers that genuinely
+stack are few — dropdown, overlay, modal, toast — and they are already ordered in the graph;
+everything else is a context question, not a number question. The `9999` a component writes in a
+hurry is the symptom of having asked the wrong one.
+
+**Enforced by.** Review. The tokens exist in `packages/tokens/tokens/base/layout.json`; a literal
+`z-index` in a component is what review refuses.

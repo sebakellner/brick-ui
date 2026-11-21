@@ -67,6 +67,16 @@ export const tokens = {
   elevationColor: '--brikka-elevation-color',
   elevationResting: '--brikka-elevation-resting',
   elevationFloating: '--brikka-elevation-floating',
+  measureSm: '--brikka-measure-sm',
+  measureMd: '--brikka-measure-md',
+  iconSm: '--brikka-icon-sm',
+  iconMd: '--brikka-icon-md',
+  iconLg: '--brikka-icon-lg',
+  zIndexBase: '--brikka-z-index-base',
+  zIndexDropdown: '--brikka-z-index-dropdown',
+  zIndexOverlay: '--brikka-z-index-overlay',
+  zIndexModal: '--brikka-z-index-modal',
+  zIndexToast: '--brikka-z-index-toast',
   durationFast: '--brikka-duration-fast',
   durationBase: '--brikka-duration-base',
   durationSlow: '--brikka-duration-slow',
@@ -163,6 +173,17 @@ export const tokens = {
 } as const;
 
 export type TokenName = (typeof tokens)[keyof typeof tokens];
+
+/** Breakpoints are numbers, not custom properties: `@media` cannot read one. */
+export const breakpoints = {
+  'sm': 640,
+  'md': 768,
+  'lg': 1024,
+  'xl': 1280,
+  '2xl': 1536,
+} as const;
+
+export type Breakpoint = keyof typeof breakpoints;
 
 export const hooks = {
   buttonBg: '--brikka-button-bg',
