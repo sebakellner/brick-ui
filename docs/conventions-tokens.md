@@ -4,6 +4,12 @@ Rules for the token source in `tokens/*.json` and for the layers it generates.
 The pipeline is explained in [ADR 0001](adr/0001-generate-token-css-from-json.md);
 why aliases survive as `var()` is [ADR 0003](adr/0003-keep-aliases-as-var.md).
 
+A layer is loaded through `tokens.css`, never on its own. A layer may read a token another
+layer declares — the type and density scales live in `base.css` and `typography.css` computes
+from them — and a component or host that imports one file in isolation gets an unresolved
+`var()`. That is why no token read carries a literal fallback: a fallback would be a second
+value to keep true, and AGENTS.md forbids a literal one outright.
+
 | #   | Rule                                                                         | Enforced by         |
 | --- | ---------------------------------------------------------------------------- | ------------------- |
 | R1  | A role is a documented, typed commitment that resolves in every theme        | `pnpm check:tokens` |

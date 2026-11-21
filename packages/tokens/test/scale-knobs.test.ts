@@ -23,10 +23,24 @@ describe('the parametric foundations', () => {
     setTheme('light');
   });
 
+  /* Every step, not one: five of the six were converted in the same commit and a missing
+   * reference in any of them would have passed a test that only asked about `md`. */
   it('computes every font size from one type scale', () => {
-    expect(at('font-size', '--brikka-font-size-md')).to.equal('15px');
+    const sizes: [string, string, string][] = [
+      ['xs', '12px', '24px'],
+      ['sm', '13px', '26px'],
+      ['md', '15px', '30px'],
+      ['lg', '18px', '36px'],
+      ['xl', '22px', '44px'],
+      ['2xl', '28px', '56px'],
+    ];
+    for (const [step, one, two] of sizes) {
+      expect(at('font-size', `--brikka-font-size-${step}`)).to.equal(one);
+    }
     document.documentElement.style.setProperty('--brikka-scale-type', '2');
-    expect(at('font-size', '--brikka-font-size-md')).to.equal('30px');
+    for (const [step, , two] of sizes) {
+      expect(at('font-size', `--brikka-font-size-${step}`)).to.equal(two);
+    }
   });
 
   it('keeps the text styles on the same scale, so a composite follows it too', () => {
@@ -61,5 +75,12 @@ describe('the parametric foundations', () => {
     } finally {
       root.style.removeProperty('--brikka-palette-blue-600');
     }
+
+    /* The dark theme derives its halo from a different step and a different alpha, so it is a
+     * second claim, not the same one in another palette. */
+    setTheme('dark');
+    const dark = getComputedStyle(probe).outlineColor;
+    expect(dark).to.contain('/ 0.24');
+    expect(dark).to.not.equal(before);
   });
 });
