@@ -4,6 +4,9 @@
     "base": {
       "$value": "4px"
     },
+    "0": {
+      "$value": "calc({space.base} * 0)"
+    },
     "1": {
       "$value": "calc({space.base} * 1)"
     },
@@ -15,6 +18,24 @@
     },
     "4": {
       "$value": "calc({space.base} * 4)"
+    },
+    "5": {
+      "$value": "calc({space.base} * 5)"
+    },
+    "6": {
+      "$value": "calc({space.base} * 6)"
+    },
+    "8": {
+      "$value": "calc({space.base} * 8)"
+    },
+    "10": {
+      "$value": "calc({space.base} * 10)"
+    },
+    "12": {
+      "$value": "calc({space.base} * 12)"
+    },
+    "16": {
+      "$value": "calc({space.base} * 16)"
     }
   }
 }

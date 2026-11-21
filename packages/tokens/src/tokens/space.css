@@ -1,7 +1,14 @@
 :root {
   --brikka-space-base: 4px;
+  --brikka-space-0: calc(var(--brikka-space-base) * 0);
   --brikka-space-1: calc(var(--brikka-space-base) * 1);
   --brikka-space-2: calc(var(--brikka-space-base) * 2);
   --brikka-space-3: calc(var(--brikka-space-base) * 3);
   --brikka-space-4: calc(var(--brikka-space-base) * 4);
+  --brikka-space-5: calc(var(--brikka-space-base) * 5);
+  --brikka-space-6: calc(var(--brikka-space-base) * 6);
+  --brikka-space-8: calc(var(--brikka-space-base) * 8);
+  --brikka-space-10: calc(var(--brikka-space-base) * 10);
+  --brikka-space-12: calc(var(--brikka-space-base) * 12);
+  --brikka-space-16: calc(var(--brikka-space-base) * 16);
 }
