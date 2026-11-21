@@ -64,7 +64,7 @@ it moves on its own, without anybody rewriting a role.
   --brikka-bg-accent: var(--brikka-palette-blue-600); /* what we decided */
 }
 
-/* A brand on the document matches the same element, so the role resolves again. */
+/* What a preset emits for a brand: the same element, so the role resolves again. */
 :root[data-brand='acme'] {
   --brikka-palette-blue-600: #6d28d9;
 }
@@ -72,9 +72,11 @@ it moves on its own, without anybody rewriting a role.
 
 A brand on the document works because the two declarations meet on one element: the palette step it
 supplies and the role that reads it are both applied to the root, so the role substitutes the new
-value. The rule behind it is that a brand lives on the element that carries the theme. The light
-block re-declares the palette under `[data-theme='light']`, so a theme attribute on a container below
-the brand puts the default palette back for everything under it. The dark block re-declares only the
+value.
+
+The rule behind it is that a brand lives on the element that carries the theme. The light block
+re-declares the palette under `[data-theme='light']`, so a theme attribute on a container below the
+brand puts the default palette back for everything under it. The dark block re-declares only the
 roles, which is why one brand block serves both themes: a palette does not depend on the theme, and a
 brand needs no rule per theme.
 
@@ -124,9 +126,10 @@ control out of density.
 status families in [tokens.md](tokens.md) are the example — and a preset that would form a pair below
 its threshold has to fail rather than ship. Two classes of pair are measured: text on its surface at
 4.5:1, and everything that is not text — a control's edge, a focus ring, a boundary that carries
-meaning — at 3:1. The pairs are re-measured on the ramp a brand brings, which is the reason a ramp
-arrives whole: a palette supplied one step at a time keeps the default at every step it did not
-touch, and the measurements above stop describing that page.
+meaning — at 3:1. The pairs are measured on the composed ramp — a brand's values over the defaults,
+never the factory ramp alone — which is the reason a ramp arrives whole: a palette supplied one step
+at a time keeps the default at every step it did not touch, and the measurements above stop
+describing that page.
 
 **Failures are made visible.** A token that does not resolve invalidates the declaration that reads it, in
 silence. That is why a layer is loaded through `tokens.css`, and why the graph is checked rather than
@@ -146,8 +149,8 @@ inside the core turns the system into an archive of particular cases, which is w
 exist to avoid. The families this graph refuses, and why, are listed once in [tokens.md](tokens.md).
 
 A rule nobody can check is a wish. Where a guard above names a check, that check exists today; where
-it names none, the guard is held by review, and an exception is argued in a new record rather than
-granted in passing.
+it names none, the guard is held by review, and an exception is argued in a new ADR
+rather than granted in passing.
 
 ## What this document does not govern
 
