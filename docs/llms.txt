@@ -5,5 +5,5 @@
 
 ## Design system
 
-- [Principles](design-system/principles.md): Primitives are what a brand owns, roles are what a page paints, hooks are what a component exposes — and the graph is the product, not a byproduct of the elements.
+- [Principles](design-system/principles.md): The core is not edited, the surface is configured; four levels and three layers say who may touch what, and the guards say what no configuration may break.
 - [Tokens](design-system/tokens.md): 144 primitive values in 26 groups and 38 semantic roles per theme, plus four axes; every name is the API.

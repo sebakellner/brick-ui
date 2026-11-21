@@ -76,7 +76,9 @@ detail, under headings whose names are stable enough to jump to.
   task, no "not yet", no roadmap. What changes a document is the thing it describes changing, in
   the same change, per the table below. An ADR is the deliberate exception: it records a decision
   and its date, which is history by design.
-- Rationale belongs in an ADR. A convention states the rule and links the reason; it does not argue.
+- Rationale belongs in an ADR. A convention states the rule and links the reason; it does not
+  argue. **`design-system/principles.md` is the one exception**: it argues, because a principle is
+  the only place where the thinking behind a rule is the point. Everywhere else, cite.
 
 ## Architecture decisions
 
