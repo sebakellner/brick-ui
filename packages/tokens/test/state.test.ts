@@ -12,12 +12,13 @@ import { setTheme } from '@brikka-ui/test-utils/theme.js';
 
 let probe: HTMLDivElement | undefined;
 
-const paint = (property: 'background' | 'color', token: string): string => {
+const paint = (property: 'background' | 'color' | 'border-color', token: string): string => {
   probe ??= document.body.appendChild(document.createElement('div'));
   probe.style.setProperty(property, `var(${token})`);
-  return property === 'background'
-    ? getComputedStyle(probe).backgroundColor
-    : getComputedStyle(probe).color;
+  const style = getComputedStyle(probe);
+  if (property === 'background') return style.backgroundColor;
+  if (property === 'border-color') return style.borderTopColor;
+  return style.color;
 };
 
 describe('state roles', () => {
@@ -55,9 +56,12 @@ describe('state roles', () => {
     expect(paint('background', '--brikka-bg-surface-pressed')).to.equal('rgb(214, 211, 209)');
   });
 
-  it('gives a disabled control a surface and a border of its own', () => {
+  it('gives a disabled control a surface, an ink and a border of its own', () => {
     setTheme('light');
     expect(paint('background', '--brikka-bg-disabled')).to.equal('rgb(231, 229, 228)');
     expect(paint('color', '--brikka-text-disabled')).to.equal('rgb(120, 113, 108)');
+    /* neutral-300. The old rule faded the whole control, border included; this is the token
+     * that says what a disabled border is instead of deriving it from an opacity. */
+    expect(paint('border-color', '--brikka-border-disabled')).to.equal('rgb(214, 211, 209)');
   });
 });
